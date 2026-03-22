@@ -255,6 +255,32 @@ export class CardManager {
     }
 
     /**
+     * 研修リフレッシュ: 現在の候補カードをゲームから除外し、新しい候補を抽選
+     * @param {string} rarity - レアリティ ('R', 'SR', 'SSR')
+     * @param {Array} currentCards - 現在表示中の候補カード（ゲームから永久除外）
+     * @param {number} count - 新たに抽選する枚数
+     * @returns {Array} 新しい候補カード
+     */
+    refreshTrainingCards(rarity, currentCards, count) {
+        // 現在の候補カードをゲームから永久除外（捨て札にも戻さない）
+        currentCards.forEach(card => {
+            const idx = this.trainingDecks[rarity]?.findIndex(c => c === card);
+            if (idx > -1) {
+                this.trainingDecks[rarity].splice(idx, 1);
+            }
+            const discardIdx = this.trainingDiscards[rarity]?.findIndex(c => c === card);
+            if (discardIdx > -1) {
+                this.trainingDiscards[rarity].splice(discardIdx, 1);
+            }
+        });
+
+        this.logger?.log(`研修リフレッシュ: カード${currentCards.length}枚を除外し、新たに${count}枚を抽選`, 'action');
+
+        // 新しい候補を抽選（既存のdrawTrainingCardsを利用）
+        return this.drawTrainingCards(rarity, count);
+    }
+
+    /**
      * ステータス名の日本語→英語マッピング
      */
     getStatusMap() {

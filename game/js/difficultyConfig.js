@@ -11,6 +11,9 @@ export const DIFFICULTY_CONFIG = {
             enrollment: 0,
             satisfaction: 3,
             accounting: 3
+        },
+        trainingRefresh: {
+            enabled: false
         }
     },
     PRO: {
@@ -22,6 +25,10 @@ export const DIFFICULTY_CONFIG = {
             enrollment: 0,
             satisfaction: 3,
             accounting: 5  // 経理の初期値が高い（仮値）
+        },
+        trainingRefresh: {
+            enabled: true,
+            maxCount: 2
         }
     }
 };

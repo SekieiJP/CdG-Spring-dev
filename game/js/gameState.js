@@ -37,6 +37,11 @@ export class GameState {
         this.turn = 0;  // 0-7 (1月下旬〜5月上旬)
         this.phase = 'start';  // start, training, action, meeting, end
         this.tokens = { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
+        // 研修リフレッシュ残り回数
+        const difficultyId = difficulty || this.difficulty;
+        const diffConfig = getDifficultyConfig(difficultyId || 'fresh');
+        this.trainingRefreshRemaining = diffConfig.trainingRefresh?.enabled
+            ? diffConfig.trainingRefresh.maxCount : 0;
 
         this.logger?.log(`ゲーム状態を初期化しました (難易度: ${config.name})`, 'info');
     }

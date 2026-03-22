@@ -75,6 +75,8 @@ export class UIController {
         // 研修確定ボタン
         const confirmTrainingBtn = document.getElementById('confirm-training');
         confirmTrainingBtn?.addEventListener('click', () => this.onConfirmTraining());
+        const refreshTrainingBtn = document.getElementById('btn-training-refresh');
+        refreshTrainingBtn?.addEventListener('click', () => this.onTrainingRefresh());
 
         // アクション実行ボタン
         const confirmActionBtn = document.getElementById('confirm-action');
@@ -1188,6 +1190,8 @@ export class UIController {
             container.appendChild(cardElem);
         });
 
+        // リフレッシュボタン表示制御
+        this.updateTrainingRefreshUI(config.training);
         this.showPhaseArea('training');
         this.updateTurnDisplay();
 
@@ -1250,6 +1254,65 @@ export class UIController {
         if (confirmBtn) {
             confirmBtn.disabled = false;
         }
+    }
+
+    /**
+     * 研修リフレッシュボタンの表示状態を更新
+     */
+    updateTrainingRefreshUI(rarity) {
+        const row = document.getElementById('training-refresh-row');
+        const countElem = document.getElementById('training-refresh-count');
+        if (!row) return;
+
+        const remaining = this.gameState.trainingRefreshRemaining ?? 0;
+        const enabled = this.gameState.difficulty === 'pro' && remaining > 0 && rarity !== 'N';
+
+        if (enabled) {
+            row.classList.remove('hidden');
+            if (countElem) countElem.textContent = `残り${remaining}回`;
+        } else {
+            row.classList.add('hidden');
+        }
+    }
+
+    /**
+     * 研修リフレッシュ実行
+     */
+    onTrainingRefresh() {
+        const config = this.turnManager.getCurrentTurnConfig();
+        const remaining = this.gameState.trainingRefreshRemaining ?? 0;
+        if (remaining <= 0) return;
+
+        // 現在の候補カードを取得してリフレッシュ
+        const currentCards = this.gameState.currentTrainingCards || [];
+        const newCards = this.cardManager.refreshTrainingCards(config.training, currentCards, 3);
+
+        // 残り回数を減らす
+        this.gameState.trainingRefreshRemaining = remaining - 1;
+
+        // 新カードで表示を更新
+        this.gameState.currentTrainingCards = newCards.map(c => ({ ...c }));
+        this.selectedTrainingCard = null;
+
+        const container = document.getElementById('training-cards');
+        if (container) {
+            container.innerHTML = '';
+            newCards.forEach(card => {
+                const cardElem = this.createCardElement(card, {
+                    clickable: true,
+                    compact: true,
+                    onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+                });
+                container.appendChild(cardElem);
+            });
+        }
+
+        const confirmBtn = document.getElementById('confirm-training');
+        if (confirmBtn) confirmBtn.disabled = true;
+
+        this.updateTrainingRefreshUI(config.training);
+        this.saveGameState();
+        this.logger?.log(`研修リフレッシュ実行: 残り${this.gameState.trainingRefreshRemaining}回`, 'action');
     }
 
     /**

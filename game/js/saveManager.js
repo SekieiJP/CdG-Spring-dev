@@ -134,6 +134,7 @@ export class SaveManager {
                 },
                 tokens: { ...gameState.tokens }
             },
+            trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
             // 研修フェーズ中の抽選カード
             currentTrainingCards: gameState.currentTrainingCards ?
                 gameState.currentTrainingCards.map(card => this.serializeCard(card)) : null
@@ -192,6 +193,7 @@ export class SaveManager {
         gameState.tokens = savedState.tokens
             ? { ...savedState.tokens }
             : { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
+        gameState.trainingRefreshRemaining = savedState.trainingRefreshRemaining ?? 0;
         // 研修フェーズ中の抽選カードを復元
         if (savedState.currentTrainingCards) {
             gameState.currentTrainingCards = savedState.currentTrainingCards.map(card => ({ ...card }));
