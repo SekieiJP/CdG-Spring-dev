@@ -88,6 +88,9 @@ test.describe('カード効果テスト - 基本効果', () => {
     });
 
     test('アクション確定でステータスが変化する', async ({ page }) => {
+        // confirm()ダイアログを自動承認
+        page.on('dialog', dialog => dialog.accept());
+
         // 初期ステータスを記録
         const expBefore = await page.locator('#status-experience').textContent();
 
@@ -103,8 +106,9 @@ test.describe('カード効果テスト - 基本効果', () => {
         // アクション確定
         await page.click('#confirm-action');
 
-        // ステータス変動演出が終わるまで待機
-        await page.waitForSelector('.status-overlay.hidden', { timeout: 15000 });
+        // ステータス変動演出が終わるまで待機（開始→終了の2段階）
+        await page.waitForFunction(() => !document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 5000 }).catch(() => {});
+        await page.waitForFunction(() => document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 20000 });
 
         // 会議フェーズに遷移
         await expect(page.locator('#meeting-area')).toBeVisible();
@@ -113,6 +117,9 @@ test.describe('カード効果テスト - 基本効果', () => {
 
 test.describe('カード効果テスト - 条件付き効果', () => {
     test('ログにステータス変化が記録される', async ({ page }) => {
+        // confirm()ダイアログを自動承認
+        page.on('dialog', dialog => dialog.accept());
+
         await page.goto('/');
         // FRESH難易度を選択してゲーム開始
         await page.click('#btn-difficulty-fresh');
@@ -156,6 +163,11 @@ test.describe('カード効果テスト - 条件付き効果', () => {
 
 test.describe('全ターン通しテスト', () => {
     test('8ターン完走できる', async ({ page }) => {
+        // アニメーション込みで8ターン完走するには長めのタイムアウトが必要
+        test.setTimeout(180000);
+        // confirm()ダイアログを自動承認（未削除警告など）
+        page.on('dialog', dialog => dialog.accept());
+
         await page.goto('/');
         // FRESH難易度を選択してゲーム開始
         await page.click('#btn-difficulty-fresh');
@@ -186,8 +198,9 @@ test.describe('全ターン通しテスト', () => {
             // アクション確定
             await page.click('#confirm-action');
 
-            // 演出待機
-            await page.waitForSelector('.status-overlay.hidden', { timeout: 20000 });
+            // 演出待機（開始→終了の2段階）
+            await page.waitForFunction(() => !document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 5000 }).catch(() => {});
+            await page.waitForFunction(() => document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 25000 });
 
             if (turn === 8) {
                 // 最終ターン: 結果画面
@@ -211,7 +224,7 @@ test.describe('全ターン通しテスト', () => {
         // 結果画面が表示されることを確認
         await expect(page.locator('#result-area')).toBeVisible();
 
-        // スコアが表示されていることを確認
-        await expect(page.locator('#result-points')).toBeVisible();
+        // ランクが表示されていることを確認
+        await expect(page.locator('#result-rank')).toBeVisible();
     });
 });

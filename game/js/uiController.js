@@ -549,7 +549,7 @@ export class UIController {
 
         // 空いている最初のスロットに配置
         for (const staff of staffOrder) {
-            if (!this.gameState.player.placed[staff]) {
+            if (this.gameState.player.placed[staff].length === 0) {
                 this.tryPlaceCardToSlot(card, staff);
                 break;
             }
@@ -686,34 +686,51 @@ export class UIController {
         this.gameState.placeCard(card, staff);
         this.gameState.removeFromHand(card);
 
-        // UI更新
-        const slot = document.getElementById(`slot-${staff}`);
-        if (slot) {
-            slot.innerHTML = '';
-            const cardElem = this.createCardElement(card, {
-                clickable: true,
-                compact: true,
-                onClick: () => this.onPlacedCardClick(card, staff)
-            });
-            slot.appendChild(cardElem);
-            slot.classList.add('filled');
-        }
-
+        this.renderStaffSlot(staff);
         this.renderHand();
         this.updateActionButtonState();
+    }
+
+    /**
+     * スタッフスロットのUI再描画
+     */
+    renderStaffSlot(staff) {
+        const slot = document.getElementById(`slot-${staff}`);
+        if (!slot) return;
+        const cards = this.gameState.player.placed[staff];
+        slot.innerHTML = '';
+        if (cards.length === 0) {
+            slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
+            slot.classList.remove('filled');
+        } else {
+            cards.forEach(card => {
+                const cardElem = this.createCardElement(card, {
+                    clickable: true,
+                    compact: true,
+                    onClick: () => this.onPlacedCardClick(card, staff)
+                });
+                slot.appendChild(cardElem);
+            });
+            slot.classList.add('filled');
+        }
     }
 
     /**
      * 配置済みカードクリック（取り消し）
      */
     onPlacedCardClick(card, staff) {
-        this.gameState.player.placed[staff] = null;
+        this.gameState.removePlacedCard(card, staff);
         this.gameState.addToHand(card);
 
         const slot = document.getElementById(`slot-${staff}`);
         if (slot) {
-            slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
-            slot.classList.remove('filled');
+            if (this.gameState.player.placed[staff].length === 0) {
+                slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
+                slot.classList.remove('filled');
+            } else {
+                // まだカードが残っている場合はスロットを再描画
+                this.renderStaffSlot(staff);
+            }
         }
 
         this.renderHand();
@@ -730,23 +747,24 @@ export class UIController {
             const slot = document.getElementById(`slot-${staff}`);
             if (!slot) return;
 
-            slot.addEventListener('dragover', (e) => {
+            // プロパティ代入で上書きし、累積登録を防ぐ
+            slot.ondragover = (e) => {
                 e.preventDefault();
                 slot.classList.add('drag-over');
-            });
+            };
 
-            slot.addEventListener('dragleave', () => {
+            slot.ondragleave = () => {
                 slot.classList.remove('drag-over');
-            });
+            };
 
-            slot.addEventListener('drop', (e) => {
+            slot.ondrop = (e) => {
                 e.preventDefault();
                 slot.classList.remove('drag-over');
 
-                if (this.draggedCard && !this.gameState.player.placed[staff]) {
+                if (this.draggedCard) {
                     this.placeCardToSlot(this.draggedCard, staff);
                 }
-            });
+            };
         });
     }
 
@@ -782,7 +800,7 @@ export class UIController {
      */
     isAllStaffPlaced() {
         const placed = this.gameState.player.placed;
-        return Object.values(placed).every(card => card !== null);
+        return Object.values(placed).every(cards => cards.length > 0);
     }
 
     /**
@@ -885,50 +903,44 @@ export class UIController {
         const staffOrder = ['leader', 'teacher', 'staff'];
         const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
 
-        staffOrder.forEach((staff, i) => {
-            const card = placed[staff];
+        // アニメーション表示: スタッフ×カード単位で順番に表示
+        let animStep = 0;
+        staffOrder.forEach(staff => {
+            const staffCards = placed[staff]; // 配列
             const cardEffectInfo = actionInfo?.cardEffects?.[staff];
-            if (card && cardEffectInfo) {
-                setTimeout(() => {
-                    // カテゴリ色付き2文字
-                    const categoryColor = categoryColors[card.category] || '#9CA3AF';
-                    const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${card.category}</span>`;
+            if (staffCards.length > 0 && cardEffectInfo) {
+                const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
+                staffCards.forEach((card, cardIdx) => {
+                    const perCardInfo = cardEffectInfo.cards?.[cardIdx];
+                    setTimeout(() => {
+                        const categoryColor = categoryColors[card.category] || '#9CA3AF';
+                        const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${card.category}</span>`;
+                        const isRecommended = perCardInfo?.isRecommended || false;
+                        const recommendedMark = isRecommended ? ' 🎯' : '';
+                        const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
 
-                    // おすすめ行動合致チェック
-                    const isRecommended = cardEffectInfo.isRecommended;
-                    const recommendedMark = isRecommended ? ' 🎯' : '';
+                        cards.innerHTML = `
+                            <div class="animation-card-item">
+                                <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
+                                <div class="anim-card-name">${card.cardName}${categoryBadge}${recommendedMark}</div>
+                                <div class="anim-card-effect">${card.effect}</div>
+                                ${bonusText}
+                            </div>
+                        `;
 
-                    // おすすめボーナス効果テキスト（日本語表記）
-                    const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
-                    const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
-
-                    // カード表示
-                    cards.innerHTML = `
-                        <div class="animation-card-item">
-                            <div class="anim-staff-name">${staffNames[staff]}</div>
-                            <div class="anim-card-name">${card.cardName}${categoryBadge}${recommendedMark}</div>
-                            <div class="anim-card-effect">${card.effect}</div>
-                            ${bonusText}
-                        </div>
-                    `;
-
-                    // actionInfoから実際の効果変動を取得してステータス更新
-                    const prevStats = { ...currentStats };
-
-                    // cardEffectsからの差分を適用
-                    const delta = this.calculateDelta(cardEffectInfo.beforeStats, cardEffectInfo.afterStats);
-                    Object.entries(delta).forEach(([key, value]) => {
-                        if (currentStats.hasOwnProperty(key)) {
-                            currentStats[key] += value;
+                        if (perCardInfo) {
+                            const delta = this.calculateDelta(perCardInfo.beforeStats, perCardInfo.afterStats);
+                            Object.entries(delta).forEach(([key, value]) => {
+                                if (currentStats.hasOwnProperty(key)) currentStats[key] += value;
+                            });
+                            this.updateAnimationStats(currentStats, delta);
                         }
-                    });
-
-                    // ステータス変動をアニメーション表示
-                    this.updateAnimationStats(currentStats, delta);
-                }, delay + i * 2000);
+                    }, delay + animStep * 2000);
+                    animStep++;
+                });
             }
         });
-        delay += staffOrder.filter(s => placed[s] && actionInfo?.cardEffects?.[s]).length * 2000;
+        delay += animStep * 2000;
 
         // 演出終了（📊行動結果ステップを除去）
         setTimeout(() => {
@@ -1246,8 +1258,7 @@ export class UIController {
     showResultPhase() {
         // Bug1修正: 最終ターンのカード情報を保存（deck + hand + placed を含める）
         const placedCards = Object.values(this.gameState.player.placed)
-            .filter(c => c !== null)
-            .map(c => ({ ...c }));
+            .flatMap(cards => cards.map(c => ({ ...c })));
         const finalDeck = [
             ...this.gameState.player.deck.map(c => ({ ...c })),
             ...this.gameState.player.hand.map(c => ({ ...c })),
@@ -1644,8 +1655,8 @@ export class UIController {
         // 配置済みカードを復元
         const placed = this.gameState.player.placed;
         for (const staff of ['leader', 'teacher', 'staff']) {
-            if (placed[staff]) {
-                this.placeCardToSlot(placed[staff], staff);
+            for (const card of placed[staff]) {
+                this.placeCardToSlot(card, staff);
             }
         }
 

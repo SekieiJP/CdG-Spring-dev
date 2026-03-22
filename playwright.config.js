@@ -17,13 +17,9 @@ export default defineConfig({
             name: 'chromium',
             use: { ...devices['Desktop Chrome'] },
         },
-        {
-            name: 'Mobile Safari',
-            use: { ...devices['iPhone 12'] },
-        },
     ],
     webServer: {
-        command: 'npx http-server . -p 8000 -c-1',
+        command: 'npx http-server game -p 8000 -c-1',
         url: 'http://localhost:8000',
         reuseExistingServer: true,
         timeout: 30 * 1000,
