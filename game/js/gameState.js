@@ -28,14 +28,15 @@ export class GameState {
             deck: [],           // デッキ
             hand: [],           // 手札
             placed: {           // 配置済みカード
-                leader: null,
-                teacher: null,
-                staff: null
+                leader: [],
+                teacher: [],
+                staff: []
             }
         };
 
         this.turn = 0;  // 0-7 (1月下旬〜5月上旬)
         this.phase = 'start';  // start, training, action, meeting, end
+        this.tokens = { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
 
         this.logger?.log(`ゲーム状態を初期化しました (難易度: ${config.name})`, 'info');
     }
@@ -171,7 +172,7 @@ export class GameState {
      * カードを配置
      */
     placeCard(card, staff) {
-        this.player.placed[staff] = card;
+        this.player.placed[staff].push(card);
         const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
         this.logger?.log(`${staffNames[staff]}に配置: ${card.cardName}`, 'action');
     }
@@ -180,7 +181,17 @@ export class GameState {
      * 配置をクリア
      */
     clearPlaced() {
-        this.player.placed = { leader: null, teacher: null, staff: null };
+        this.player.placed = { leader: [], teacher: [], staff: [] };
+    }
+
+    /**
+     * 配置済みカードを取り消し
+     */
+    removePlacedCard(card, staff) {
+        const idx = this.player.placed[staff].indexOf(card);
+        if (idx > -1) {
+            this.player.placed[staff].splice(idx, 1);
+        }
     }
 
     /**
@@ -210,10 +221,11 @@ export class GameState {
      * 全カードをデッキに戻す（手札・配置済みを含む）
      */
     returnAllToDeck() {
-        // 配置済みカードをデッキに戻す
-        Object.values(this.player.placed).forEach(card => {
-            if (card) this.player.deck.push(card);
-        });
+        // 配置済みカードをデッキに戻す（配列対応）
+        const placedCards = Object.values(this.player.placed).flatMap(cards =>
+            Array.isArray(cards) ? cards : (cards ? [cards] : [])
+        );
+        placedCards.forEach(card => this.player.deck.push(card));
 
         // 手札をデッキに戻す
         this.player.hand.forEach(card => {

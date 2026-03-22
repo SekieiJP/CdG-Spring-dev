@@ -128,10 +128,11 @@ export class SaveManager {
                 deck: gameState.player.deck.map(card => this.serializeCard(card)),
                 hand: gameState.player.hand.map(card => this.serializeCard(card)),
                 placed: {
-                    leader: gameState.player.placed.leader ? this.serializeCard(gameState.player.placed.leader) : null,
-                    teacher: gameState.player.placed.teacher ? this.serializeCard(gameState.player.placed.teacher) : null,
-                    staff: gameState.player.placed.staff ? this.serializeCard(gameState.player.placed.staff) : null
-                }
+                    leader: gameState.player.placed.leader.map(c => this.serializeCard(c)),
+                    teacher: gameState.player.placed.teacher.map(c => this.serializeCard(c)),
+                    staff: gameState.player.placed.staff.map(c => this.serializeCard(c))
+                },
+                tokens: { ...gameState.tokens }
             },
             // 研修フェーズ中の抽選カード
             currentTrainingCards: gameState.currentTrainingCards ?
@@ -184,10 +185,13 @@ export class SaveManager {
         gameState.player.deck = savedState.player.deck.map(card => ({ ...card }));
         gameState.player.hand = savedState.player.hand.map(card => ({ ...card }));
         gameState.player.placed = {
-            leader: savedState.player.placed.leader ? { ...savedState.player.placed.leader } : null,
-            teacher: savedState.player.placed.teacher ? { ...savedState.player.placed.teacher } : null,
-            staff: savedState.player.placed.staff ? { ...savedState.player.placed.staff } : null
+            leader: (savedState.player.placed.leader || []).map(c => ({ ...c })),
+            teacher: (savedState.player.placed.teacher || []).map(c => ({ ...c })),
+            staff: (savedState.player.placed.staff || []).map(c => ({ ...c }))
         };
+        gameState.tokens = savedState.tokens
+            ? { ...savedState.tokens }
+            : { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
         // 研修フェーズ中の抽選カードを復元
         if (savedState.currentTrainingCards) {
             gameState.currentTrainingCards = savedState.currentTrainingCards.map(card => ({ ...card }));

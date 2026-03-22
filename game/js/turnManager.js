@@ -27,6 +27,14 @@ export class TurnManager {
     }
 
     /**
+     * 現在の削除上限を取得（整理トークン込み）
+     */
+    getCurrentDeleteMax() {
+        const config = this.getCurrentTurnConfig();
+        return config.delete + (this.gameState.tokens?.organize || 0);
+    }
+
+    /**
      * 全ターン設定を取得
      */
     getTurnConfigs() {
@@ -51,10 +59,10 @@ export class TurnManager {
             console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
             this.startActionPhase();
         } else if (currentPhase === 'action') {
-            const config = this.getCurrentTurnConfig();
-            // 削除枚数が0の場合は教室会議フェーズをスキップ
-            if (config.delete === 0) {
-                this.logger?.log('[DEBUG] 削除枚数0のため教室会議フェーズをスキップ', 'info');
+            const maxDelete = this.getCurrentDeleteMax();
+            // 最終ターン(turn===7)は会議スキップ。それ以外はmaxDelete>0なら開く
+            if (maxDelete === 0 || this.gameState.turn === 7) {
+                this.logger?.log('[DEBUG] 会議フェーズをスキップして次ターンへ遷移', 'info');
                 this.gameState.phase = 'meeting'; // 一時的にmeetingへ
                 this.advancePhase(); // 即座に次のターンへ
             } else {
@@ -98,13 +106,30 @@ export class TurnManager {
         console.log('[DEBUG] デッキ枚数（シャッフル前）:', this.gameState.player.deck.length);
         console.log('[DEBUG] 手札枚数（ドロー前）:', this.gameState.player.hand.length);
 
+        if (!this.gameState.tokens) {
+            this.gameState.tokens = { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
+        }
+
+        // 情熱・疲労トークン消費
+        const passion = this.gameState.tokens.passion || 0;
+        const fatigue = this.gameState.tokens.fatigue || 0;
+        const drawCount = Math.max(0, 4 + passion - fatigue);
+        if (passion > 0) {
+            this.logger?.log(`✊情熱発動: ドロー+${passion} → ${drawCount}枚`, 'action');
+            this.gameState.tokens.passion = 0;
+        }
+        if (fatigue > 0) {
+            this.logger?.log(`💤疲労発動: ドロー-${fatigue} → ${drawCount}枚`, 'action');
+            this.gameState.tokens.fatigue = 0;
+        }
+
         // デッキをシャッフル
         this.gameState.shuffleDeck();
         console.log('[DEBUG] デッキシャッフル完了');
 
-        // 手札を4枚引く
-        this.gameState.drawCards(4);
-        console.log('[DEBUG] 手札を4枚引いた後の手札枚数:', this.gameState.player.hand.length);
+        // 手札を引く
+        this.gameState.drawCards(drawCount);
+        console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
         console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
     }
 
@@ -112,6 +137,11 @@ export class TurnManager {
      * 教室会議フェーズ開始
      */
     startMeetingPhase() {
+        const organizeBonus = this.gameState.tokens?.organize || 0;
+        if (organizeBonus > 0) {
+            this.logger?.log(`🚥整理発動: 削除上限+${organizeBonus}`, 'action');
+            // トークンはUIが削除処理完了後にリセット
+        }
         this.logger?.log('教室会議フェーズ開始', 'info');
 
         // 全カードをデッキに戻す
@@ -134,30 +164,51 @@ export class TurnManager {
         // 各スタッフのカード効果を実行（おすすめボーナスも含めて記録）
         const staffOrder = ['leader', 'teacher', 'staff'];
         staffOrder.forEach(staff => {
-            const card = placed[staff];
-            if (card) {
-                // 適用前のステータスを記録
-                const beforeStats = {
+            const cards = Array.isArray(placed[staff]) ? placed[staff] : (placed[staff] ? [placed[staff]] : []);
+            if (cards.length > 0) {
+                const staffBeforeStats = {
                     experience: this.gameState.player.experience,
                     enrollment: this.gameState.player.enrollment,
                     satisfaction: this.gameState.player.satisfaction,
                     accounting: this.gameState.player.accounting
                 };
 
-                // おすすめ行動かどうかチェック
-                const isRecommended = config.recommended && card.category === config.recommended;
+                let recommendedApplied = false;
+                const perCard = [];
 
-                // おすすめ行動ボーナスを適用（該当カードの処理時に）
-                if (isRecommended && config.recommendedStatus) {
-                    this.gameState.updateStatus(config.recommendedStatus, 1);
-                    this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
-                }
+                cards.forEach(card => {
+                    const beforeStats = {
+                        experience: this.gameState.player.experience,
+                        enrollment: this.gameState.player.enrollment,
+                        satisfaction: this.gameState.player.satisfaction,
+                        accounting: this.gameState.player.accounting
+                    };
 
-                // カード効果を適用
-                this.cardManager.applyCardEffect(card, staff, this.gameState);
+                    const isRecommended = config.recommended && card.category === config.recommended;
+                    if (isRecommended && !recommendedApplied && config.recommendedStatus) {
+                        this.gameState.updateStatus(config.recommendedStatus, 1);
+                        this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
+                        recommendedApplied = true;
+                    }
 
-                // 適用後のステータスを記録
-                const afterStats = {
+                    this.cardManager.applyCardEffect(card, staff, this.gameState);
+
+                    const afterStats = {
+                        experience: this.gameState.player.experience,
+                        enrollment: this.gameState.player.enrollment,
+                        satisfaction: this.gameState.player.satisfaction,
+                        accounting: this.gameState.player.accounting
+                    };
+
+                    perCard.push({
+                        cardName: card.cardName,
+                        beforeStats,
+                        afterStats,
+                        isRecommended
+                    });
+                });
+
+                const staffAfterStats = {
                     experience: this.gameState.player.experience,
                     enrollment: this.gameState.player.enrollment,
                     satisfaction: this.gameState.player.satisfaction,
@@ -165,9 +216,10 @@ export class TurnManager {
                 };
 
                 actionInfo.cardEffects[staff] = {
-                    beforeStats,
-                    afterStats,
-                    isRecommended
+                    beforeStats: staffBeforeStats,
+                    afterStats: staffAfterStats,
+                    isRecommended: recommendedApplied,
+                    cards: perCard
                 };
             }
         });
@@ -181,10 +233,13 @@ export class TurnManager {
      */
     calculateRecommendedBonus(placedCards, recommendedCategory) {
         let count = 0;
-        Object.values(placedCards).forEach(card => {
-            if (card && card.category === recommendedCategory) {
-                count++;
-            }
+        Object.values(placedCards).forEach(cards => {
+            const list = Array.isArray(cards) ? cards : (cards ? [cards] : []);
+            list.forEach(card => {
+                if (card && card.category === recommendedCategory) {
+                    count++;
+                }
+            });
         });
         return count;
     }
