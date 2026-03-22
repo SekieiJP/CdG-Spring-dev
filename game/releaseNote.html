@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>アップデート情報 - カードで学習塾</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tutorial-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: var(--color-bg-card);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--color-primary-light);
+            margin: 0;
+        }
+
+        .slide-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-content {
+            padding-bottom: 20px;
+            text-align: center;
+            /* 中央揃えでメッセージを目立たせる */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        /* フッターエリア（ナビゲーション） */
+        .footer-controls {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .page-indicator {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: bold;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-prev {
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-next {
+            background-color: var(--color-primary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-return {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background-color: transparent;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-return:hover {
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+        }
+
+        /* 小さい画面調整 */
+        @media (max-height: 700px) {
+            .tutorial-container {
+                height: 100vh;
+                padding: 10px;
+            }
+
+            .nav-btn {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tutorial-container">
+        <header>
+            <h1>アップデート情報</h1>
+        </header>
+
+        <div class="slide-container" id="slide-container">
+
+            <!-- Slide 1: v20260220-2350 追加機能 -->
+            <div class="slide active">
+                <div class="slide-content">
+                    <h2>v20260220-2350 追加機能</h2>
+                    <p>文字サイズ変更機能を追加しました。</p>
+                    <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                        <li>「標準」では、文字が大きいほか、カード効果テキストが常に全て表示されます。</li>
+                        <li>「小さめ」では、文字がやや小さくなり、一部の場面でカード効果テキストを省略表示します。</li>
+                        <li>テキスト表示内容の違いについては、再読み込み後から適用されます。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 2: 機能追加 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>v20260215-2240 機能追加</h2>
+                    <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                        <li>オートセーブ機能に対応しました。はじめからやり直したいときは設定⚙️からリセットしてください。</li>
+                        <li>トップページと設定画面から遊び方とアップデート情報を確認できるようになりました。</li>
+                        <li>最終結果画面で、最終所持カード一覧を表示する機能を追加しました。</li>
+                        <li>カード削除画面で、そのターンに削除できる最大枚数を選択せずに次のターンに進もうとすると、確認画面を表示するようにしました。</li>
+                        <li>カード削除画面では、選択したカードが赤く強調されるようになりました。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 2: バランス調整 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>v20260215-2240 バランス調整</h2>
+                    <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                        <li>一部のカードの性能、特に職種条件やデメリット効果を変更しました。</li>
+                        <li>カード抽選の仕組みを変更し、一度研修候補に表示されたカードも、やや低い確率で次以降のターンで再度抽選されるようになりました。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 3: 不具合修正 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>v20260215-2240 不具合修正</h2>
+                    <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                        <li>結果画面からもう一度遊ぶ時の初期化漏れについて、対策を施しました。</li>
+                        <li>その他、不具合をたくさん修正しました。</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- フッターナビゲーション -->
+        <div class="footer-controls">
+            <div class="page-indicator">
+                <span id="current-page">1</span> / <span id="total-pages">1</span>
+            </div>
+
+            <div class="nav-buttons">
+                <button id="prev-btn" class="nav-btn btn-prev">前へ</button>
+                <button id="next-btn" class="nav-btn btn-next">次へ</button>
+            </div>
+
+            <a href="index.html" class="btn-return">ゲームに戻る</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentPageElem = document.getElementById('current-page');
+            const totalPagesElem = document.getElementById('total-pages');
+
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+
+            // 初期表示
+            totalPagesElem.textContent = totalSlides;
+            updateButtons();
+
+            // 次へボタン
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < totalSlides - 1) {
+                    switchSlide(currentIndex + 1);
+                } else {
+                    // 最後のページで「次へ」を押すとゲームに戻る
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // 前へボタン
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    switchSlide(currentIndex - 1);
+                }
+            });
+
+            function switchSlide(newIndex) {
+                // 現在のスライドを非表示
+                slides[currentIndex].classList.remove('active');
+
+                // 新しいスライドを表示
+                currentIndex = newIndex;
+                slides[currentIndex].classList.add('active');
+
+                // ページ番号更新
+                currentPageElem.textContent = currentIndex + 1;
+
+                // ボタン状態更新
+                updateButtons();
+            }
+
+            function updateButtons() {
+                // 前へボタン：最初のページでは無効化
+                prevBtn.disabled = (currentIndex === 0);
+                prevBtn.style.opacity = (currentIndex === 0) ? '0.5' : '1';
+
+                // 次へボタン：最後のページではテキストを「ゲームに戻る」に変更
+                if (currentIndex === totalSlides - 1) {
+                    nextBtn.textContent = 'ゲームに戻る';
+                    nextBtn.classList.add('pulse-animation'); // 最後のボタンを目立たせる
+                } else {
+                    nextBtn.textContent = '次へ';
+                    nextBtn.classList.remove('pulse-animation');
+                }
+            }
+        });
+    </script>
+
+    <style>
+        /* 追加のアニメーション */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+            background-color: var(--color-accent) !important;
+            /* 強調色 */
+        }
+    </style>
+
+</body>
+
+</html>

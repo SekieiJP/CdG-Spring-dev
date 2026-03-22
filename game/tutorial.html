@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>遊び方 - カードで学習塾</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tutorial-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            /* PCでもスマホのような幅に */
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: var(--color-bg-card);
+            /* カード背景色をベースに */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            color: var(--color-primary-light);
+            margin: 0;
+        }
+
+        .slide-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            /* スクロールは各スライド内で */
+        }
+
+        .slide {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            overflow-y: auto;
+            /* コンテンツが長い場合はスクロール */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-content {
+            padding-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--color-secondary);
+            border-left: 4px solid var(--color-secondary);
+            padding-left: 10px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .highlight {
+            color: var(--color-accent);
+            font-weight: bold;
+        }
+
+        .parameter-list dt {
+            font-weight: bold;
+            color: var(--color-primary-light);
+            margin-top: 10px;
+        }
+
+        .parameter-list dd {
+            margin-left: 0;
+            margin-bottom: 10px;
+            padding-left: 15px;
+            border-left: 2px solid var(--color-border);
+        }
+
+        .slide-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 2px solid var(--color-border);
+            margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        strong {
+            color: var(--color-warning);
+        }
+
+        /* フッターエリア（ナビゲーション） */
+        .footer-controls {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .page-indicator {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: bold;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-prev {
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-next {
+            background-color: var(--color-primary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-return {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            text-align: center;
+            background-color: transparent;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-return:hover {
+            background-color: var(--color-bg-light);
+            color: var(--color-text);
+        }
+
+        /* リストの装飾 */
+        ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* 小さい画面調整 */
+        @media (max-height: 700px) {
+            .tutorial-container {
+                height: 100vh;
+                padding: 10px;
+            }
+
+            .nav-btn {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.2rem;
+            }
+
+            h2 {
+                font-size: 1rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tutorial-container">
+        <header>
+            <h1>ボードでRinkai ルール説明</h1>
+        </header>
+
+        <div class="slide-container" id="slide-container">
+
+            <!-- Slide 1: イントロダクション -->
+            <div class="slide active">
+                <div class="slide-content">
+                    <h2>学習塾経営シミュレーション</h2>
+                    <p>あなたは学習塾の教室長。</p>
+                    <p>講師・事務スタッフと一緒に、<span class="highlight">体験生の勧誘・授業・満足度向上・経理手続き</span>をバランスよく進めて、春期講習を大成功させましょう！</p>
+
+                    <h3>ゲームの流れ（全8ターン）</h3>
+                    <ol>
+                        <li><strong>[研修]</strong> カードを選択肢から1枚ゲット</li>
+                        <li><strong>[行動]</strong> 手札4枚中3枚をスタッフ3人に配置
+                            <ul>
+                                <li>使ったカードに応じて教室パラメータがUP！</li>
+                            </ul>
+                        </li>
+                        <li><strong>[会議]</strong> デッキから不要なカードを選んで削除</li>
+                    </ol>
+                    <p>1月下旬〜5月上旬までの8ターン（各ターン0.5ヶ月）を繰り返します。</p>
+                </div>
+            </div>
+
+            <!-- Slide 2: パラメータ -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>4つの教室パラメータ</h2>
+                    <p>カードは「動員」「教務」「応対」「庶務」の4区分あり、それぞれ対応するパラメータが向上します。</p>
+
+                    <dl class="parameter-list">
+                        <dt>【体験】 (動員)</dt>
+                        <dd>体験授業の申込件数。まずはこれを集めないと始まりません！</dd>
+
+                        <dt>【入塾】 (教務)</dt>
+                        <dd>新規入塾者数。<span class="highlight">体験生がいないと上がりません！</span><br>目標は8, 10, 12, 15名の4段階。</dd>
+
+                        <dt>【満足】 (応対)</dt>
+                        <dd>既存生徒の満足度。<br>終了時に<strong>15を下回った数だけ生徒が退塾</strong>してしまいます！</dd>
+
+                        <dt>【経理】 (庶務)</dt>
+                        <dd>授業料や契約書類の手続き進捗度。<br>終了時に<strong>15を下回った数だけ生徒が退塾</strong>してしまいます！</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <!-- Slide 3: カードの見方 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>カードの見方</h2>
+                    <img src="data/手札4枚のリスト.jpeg" alt="手札のリスト画像" class="slide-image">
+
+                    <ul>
+                        <li><strong>カード上段:</strong> カード名、カテゴリ、レアリティ</li>
+                        <li><strong>カード下段:</strong> 効果テキスト (長押しで詳細確認可能)</li>
+                    </ul>
+                    <p>カードには配置条件や発動条件があるものも存在します。次のページで詳しく見てみましょう。</p>
+                </div>
+            </div>
+
+            <!-- Slide 4: 条件付き効果 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>配置条件と発動条件</h2>
+
+                    <h3>【 】: 配置条件</h3>
+                    <p>カードを配置できる職種（室長・講師・事務）が限定されているカードです。</p>
+                    <img src="data/備品注文.jpeg" alt="備品注文カード画像" class="slide-image">
+                    <p>例：『備品注文』は<strong>【事務】</strong>にしか配置できません。（経理+2, 満足+1）</p>
+
+                    <hr style="border:0; border-top:1px dashed var(--color-border); margin: 20px 0;">
+
+                    <h3>〈 〉: 条件付き効果</h3>
+                    <p>特定の職種に配置した時だけ効果が発揮（または変化）します。</p>
+                    <img src="data/休み時間トーク.jpeg" alt="休み時間トークカード画像" class="slide-image">
+                    <p>例：『休み時間トーク』<br>
+                        室長に配置 → 満足+1<br>
+                        <strong>〈講師・事務〉に配置 → 満足+3</strong>（話が盛り上がる！）
+                    </p>
+                </div>
+            </div>
+
+            <!-- Slide 5: 営業目標（減点回避） -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>営業目標：退塾を防げ！</h2>
+
+                    <h3>【退塾目標】</h3>
+                    <p>「満足」と「経理」不足による退塾者数を規定以下に抑えるのが最重要課題です。</p>
+                    <ul>
+                        <li>目標値は <strong>2名, 1名, 0名</strong> の3段階。</li>
+                        <li>退塾が<strong>4名以上だと評価大幅減点！</strong></li>
+                    </ul>
+
+                    <p class="highlight">⚠️ 注意！</p>
+                    <p>片方のパラメータだけ高くてもダメです。<br>
+                        「満足」「経理」<strong>両方が15に達しないと退塾者が出ます。</strong>バランス良く上げましょう。</p>
+                </div>
+            </div>
+
+            <!-- Slide 6: その他の目標・評価 -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>営業目標：生徒を増やせ！</h2>
+
+                    <h3>【動員目標】</h3>
+                    <p>体験申込数を競います。目標は 10, 12, 15名の3段階。</p>
+
+                    <h3>【入塾・退塾差目標】</h3>
+                    <p>春期終了時の生徒純増数 <code>(入塾数) - (退塾数)</code> を競います。</p>
+                    <ul>
+                        <li>目標は 8, 10, 12, 15名の4段階。</li>
+                    </ul>
+
+                    <h3>つまり…</h3>
+                    <p>入塾させるには「体験」が必要。<br>
+                        退塾を防ぐには「満足」と「経理」が必要。<br>
+                        <strong>結局4項目とも必要です！</strong>
+                    </p>
+
+                    <h3>評価ランク</h3>
+                    <p>E〜S+の7段階評価。<strong>Cランク以上でクリア！</strong><br>
+                        目指せS+「全社最優秀教室」！（開発チームはS+達成済みです）</p>
+                </div>
+            </div>
+
+            <!-- Slide 7: ヒント -->
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>画面情報の活用</h2>
+                    <p>画面最上部の情報エリアを活用して戦略を立てましょう。</p>
+
+                    <dl>
+                        <dt>🎯 おすすめ行動カテゴリ</dt>
+                        <dd>このアイコンと一致するカテゴリのカードを使うと、対応するパラメータが <strong>+1 ボーナス</strong> されます。</dd>
+
+                        <dt>📋 デッキを表示</dt>
+                        <dd>現在のデッキ構成を確認できます。</dd>
+
+                        <dt>📅 スケジュール</dt>
+                        <dd>今後のターンのイベント（カード削除枚数など）を確認できます。</dd>
+                    </dl>
+
+                    <div style="text-align: center; margin-top: 40px;">
+                        <p class="highlight">準備ができたら、ゲームを始めましょう！</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- フッターナビゲーション -->
+        <div class="footer-controls">
+            <div class="page-indicator">
+                <span id="current-page">1</span> / <span id="total-pages">7</span>
+            </div>
+
+            <div class="nav-buttons">
+                <button id="prev-btn" class="nav-btn btn-prev">前へ</button>
+                <button id="next-btn" class="nav-btn btn-next">次へ</button>
+            </div>
+
+            <a href="index.html" class="btn-return">ゲームに戻る</a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentPageElem = document.getElementById('current-page');
+            const totalPagesElem = document.getElementById('total-pages');
+
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+
+            // 初期表示
+            totalPagesElem.textContent = totalSlides;
+            updateButtons();
+
+            // 次へボタン
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < totalSlides - 1) {
+                    switchSlide(currentIndex + 1);
+                } else {
+                    // 最後のページで「次へ」を押すとゲームに戻る
+                    window.location.href = 'index.html';
+                }
+            });
+
+            // 前へボタン
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    switchSlide(currentIndex - 1);
+                }
+            });
+
+            function switchSlide(newIndex) {
+                // 現在のスライドを非表示
+                slides[currentIndex].classList.remove('active');
+
+                // 新しいスライドを表示
+                currentIndex = newIndex;
+                slides[currentIndex].classList.add('active');
+
+                // ページ番号更新
+                currentPageElem.textContent = currentIndex + 1;
+
+                // ボタン状態更新
+                updateButtons();
+
+                // スクロール位置をリセット
+                const container = document.querySelector('.slide-container');
+                if (container) container.scrollTop = 0;
+            }
+
+            function updateButtons() {
+                // 前へボタン：最初のページでは無効化（あるいは非表示）
+                prevBtn.disabled = (currentIndex === 0);
+                prevBtn.style.opacity = (currentIndex === 0) ? '0.5' : '1';
+
+                // 次へボタン：最後のページではテキストを「ゲームを始める」に変更
+                if (currentIndex === totalSlides - 1) {
+                    nextBtn.textContent = 'ゲームを始める';
+                    nextBtn.classList.add('pulse-animation'); // 最後のボタンを目立たせる
+                } else {
+                    nextBtn.textContent = '次へ';
+                    nextBtn.classList.remove('pulse-animation');
+                }
+            }
+        });
+    </script>
+
+    <style>
+        /* 追加のアニメーション */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                transform: scale(1.02);
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        .pulse-animation {
+            animation: pulse 1.5s infinite;
+            background-color: var(--color-accent) !important;
+            /* 強調色 */
+        }
+    </style>
+
+</body>
+
+</html>
