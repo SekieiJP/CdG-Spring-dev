@@ -1297,7 +1297,7 @@ export class UIController {
                         </tr>
                         <tr class="total-row">
                             <td colspan="2">合計スコア</td>
-                            <td><strong>${score.points}</strong></td>
+                            <td><strong>${score.displayScore}</strong></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1310,7 +1310,7 @@ export class UIController {
         const highScore = this.scoreManager.getHighScore(difficulty);
         const highScoreElem = document.getElementById('high-score');
         if (highScoreElem && highScore) {
-            highScoreElem.textContent = `${highScore.points}ポイント`;
+            highScoreElem.textContent = `${highScore.displayScore ?? highScore.points}ポイント`;
         }
 
         // セーブデータクリア（ゲーム終了）

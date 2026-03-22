@@ -96,8 +96,18 @@ export class ScoreManager {
         // ランク計算
         const rank = this.calculateRank(points, withdrawal, mobilization, gameState.player.enrollment);
 
+        // S+かつFRESHのとき: 小数スコアを計算（満点10）
+        let displayScore = points;
+        if (rank.grade === 'S+' && (gameState.difficulty || 'fresh') === 'fresh') {
+            const exp = Math.min(gameState.player.experience, 30);
+            const enr = Math.min(gameState.player.enrollment, 30);
+            const splusScore = 8 + 0.5 * (exp - 15) / 15 + 1.5 * (enr - 15) / 15;
+            displayScore = Math.round(splusScore * 10) / 10;
+        }
+
         return {
             points,
+            displayScore,
             withdrawal,
             mobilization,
             enrollmentDiff,
@@ -158,10 +168,12 @@ export class ScoreManager {
             const current = this.getHighScore(difficulty);
 
             // 現在のスコアがハイスコアより高い場合のみ保存
-            if (!current || score.points > current.points) {
+            const currentBest = current ? (current.displayScore ?? current.points) : -Infinity;
+            if (!current || score.displayScore > currentBest) {
                 const key = getHighScoreKey(difficulty);
                 localStorage.setItem(key, JSON.stringify({
                     points: score.points,
+                    displayScore: score.displayScore,
                     date: new Date().toISOString(),
                     ...score
                 }));
