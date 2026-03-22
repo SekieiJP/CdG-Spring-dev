@@ -149,6 +149,53 @@ test.describe('効果テキストパーサー単体テスト', () => {
 
         expect(failures).toHaveLength(0);
     });
+
+    test('全PRO CSVカードの効果がパース可能', async () => {
+        const results = await page.evaluate(async () => {
+            const response = await fetch('./data/cards_pro.csv');
+            const csvText = await response.text();
+            const lines = csvText.trim().split('\n').slice(1); // ヘッダースキップ
+
+            const parseResults = [];
+            for (const line of lines) {
+                const parts = [];
+                let current = '';
+                let inQuotes = false;
+                for (const char of line) {
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        parts.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                parts.push(current);
+
+                if (parts.length >= 5) {
+                    const cardName = parts[2].trim();
+                    const effectText = parts[4].trim(); // effectPro列
+                    try {
+                        const parsed = window.testCardManager.parseEffect(effectText);
+                        const hasContent = parsed.baseEffects.length > 0
+                            || parsed.conditionalBlocks.length > 0
+                            || parsed.staffRestrictions.length > 0;
+                        parseResults.push({ cardName, effect: effectText, parsed, success: true, hasContent });
+                    } catch (e) {
+                        parseResults.push({ cardName, effect: effectText, error: e.message, success: false, hasContent: false });
+                    }
+                }
+            }
+            return parseResults;
+        });
+
+        const failures = results.filter(r => !r.success || !r.hasContent);
+        if (failures.length > 0) {
+            console.log('PRO パース失敗カード:', failures);
+        }
+        expect(failures).toHaveLength(0);
+    });
 });
 
 test.describe('条件評価テスト', () => {

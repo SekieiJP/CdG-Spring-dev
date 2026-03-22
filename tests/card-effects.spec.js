@@ -228,3 +228,39 @@ test.describe('全ターン通しテスト', () => {
         await expect(page.locator('#result-rank')).toBeVisible();
     });
 });
+
+test.describe('PRO難易度 基本動作テスト', () => {
+    test('PRO難易度でゲームが開始できる', async ({ page }) => {
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+
+        // 研修エリアが表示される
+        await expect(page.locator('#training-area')).toBeVisible();
+
+        // 研修カードが表示される（PRO難易度でも研修カードが出る）
+        const cards = page.locator('#training-cards .card');
+        await expect(cards).toHaveCount(4);
+    });
+
+    test('PRO難易度でアクションフェーズまで進める', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+
+        // 初回研修: 2枚選択して確定
+        await page.waitForSelector('#training-cards .card');
+        const cards = page.locator('#training-cards .card');
+        await cards.nth(0).click();
+        await cards.nth(1).click();
+        await page.click('#confirm-training');
+
+        // アクションフェーズに遷移
+        await expect(page.locator('#action-area')).toBeVisible();
+
+        // 手札が4枚表示される
+        const handCards = page.locator('#hand-cards .card');
+        await expect(handCards).toHaveCount(4);
+    });
+});
