@@ -240,6 +240,12 @@ export class UIController {
                 elem.classList.toggle('hidden', areaId !== `${phase}-area`);
             }
         });
+
+        // ステータス直下のトークン表示はアクションフェーズ以外で非表示
+        const tokenStatusDisplay = document.getElementById('token-status-display');
+        if (tokenStatusDisplay && phase !== 'action') {
+            tokenStatusDisplay.classList.add('hidden');
+        }
     }
 
     /**
@@ -522,8 +528,10 @@ export class UIController {
      * 保有数が0より大きいトークンのみ表示する
      */
     renderTokenDisplay() {
-        const container = document.getElementById('token-display');
-        if (!container) return;
+        const containers = ['token-display', 'token-status-display']
+            .map(id => document.getElementById(id))
+            .filter(Boolean);
+        if (containers.length === 0) return;
 
         const tokens = this.gameState.tokens ?? {};
         const tokenDefs = [
@@ -538,13 +546,15 @@ export class UIController {
             .map(t => `<span class="token-chip ${t.cls}">${t.label} ×${tokens[t.key]}</span>`)
             .join('');
 
-        if (chips) {
-            container.innerHTML = chips;
-            container.classList.remove('hidden');
-        } else {
-            container.innerHTML = '';
-            container.classList.add('hidden');
-        }
+        containers.forEach(container => {
+            if (chips) {
+                container.innerHTML = chips;
+                container.classList.remove('hidden');
+            } else {
+                container.innerHTML = '';
+                container.classList.add('hidden');
+            }
+        });
     }
 
     /**

@@ -1589,6 +1589,19 @@ html.font-normal .help-longpress {
     padding: 6px 0 2px;
 }
 
+.token-status-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
+    padding: 0 var(--spacing-md) var(--spacing-sm);
+    background: var(--color-bg);
+}
+
+.token-status-display.hidden {
+    display: none;
+}
+
 .token-chip {
     display: inline-flex;
     align-items: center;
