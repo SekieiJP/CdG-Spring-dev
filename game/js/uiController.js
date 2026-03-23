@@ -510,6 +510,9 @@ export class UIController {
         // 配置済み状態もクリア
         this.gameState.clearPlaced();
 
+        // ドロー変動通知を表示
+        this.renderDrawNotification();
+
         // トークン表示更新
         this.renderTokenDisplay();
 
@@ -521,6 +524,30 @@ export class UIController {
 
         // ボタン状態を更新
         this.updateActionButtonState();
+    }
+
+    /**
+     * ドロー変動通知を表示
+     */
+    renderDrawNotification() {
+        const container = document.getElementById('draw-notification');
+        if (!container) return;
+
+        const notif = this.gameState.lastDrawNotification;
+        if (!notif) {
+            container.innerHTML = '';
+            container.classList.add('hidden');
+            this.gameState.lastDrawNotification = null;
+            return;
+        }
+
+        const parts = [];
+        if (notif.passion > 0) parts.push(`✊情熱 +${notif.passion}`);
+        if (notif.fatigue > 0) parts.push(`💤疲労 -${notif.fatigue}`);
+
+        container.innerHTML = `<span class="draw-notif-text">${parts.join(' / ')} → ${notif.drawCount}枚ドロー</span>`;
+        container.classList.remove('hidden');
+        this.gameState.lastDrawNotification = null;
     }
 
     /**
@@ -1159,18 +1186,18 @@ export class UIController {
         this.showPhaseArea('meeting');
         this.updateTurnDisplay();
 
-        const config = this.turnManager.getCurrentTurnConfig();
+        const maxDelete = this.turnManager.getCurrentDeleteMax();
         const deleteCountElem = document.getElementById('delete-count');
         const maxDeleteElem = document.getElementById('max-delete');
 
-        if (deleteCountElem) deleteCountElem.textContent = config.delete;
-        if (maxDeleteElem) maxDeleteElem.textContent = config.delete;
+        if (deleteCountElem) deleteCountElem.textContent = maxDelete;
+        if (maxDeleteElem) maxDeleteElem.textContent = maxDelete;
 
         this.selectedCardsForDeletion = [];
         // Bug3修正: 選択済み枚数の表示を0にリセット
         const selectedCountElem = document.getElementById('selected-count');
         if (selectedCountElem) selectedCountElem.textContent = '0';
-        this.renderDeck(config.delete);
+        this.renderDeck(maxDelete);
 
         // フェーズ開始時に保存（思考場面の維持）
         this.saveGameState();
@@ -1229,8 +1256,8 @@ export class UIController {
      */
     onConfirmMeeting() {
         // Spec1修正: 最大枚数未満の場合は確認ダイアログを表示
-        const config = this.turnManager.getCurrentTurnConfig();
-        if (config.delete > 0 && this.selectedCardsForDeletion.length < config.delete) {
+        const maxDelete = this.turnManager.getCurrentDeleteMax();
+        if (maxDelete > 0 && this.selectedCardsForDeletion.length < maxDelete) {
             const confirmed = confirm('まだ削除できる枚数が残っています。次のターンに進んでよろしいですか？');
             if (!confirmed) return;
         }
@@ -1241,6 +1268,7 @@ export class UIController {
         });
 
         this.selectedCardsForDeletion = [];
+        this.gameState.tokens.organize = 0;
 
         // 手札補充は削除（アクションフェーズ開始時に引くため）
         // 代わりに、残りの手札をデッキに戻す

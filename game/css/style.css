@@ -1581,6 +1581,27 @@ html.font-normal .help-longpress {
     white-space: nowrap;
 }
 
+/* ===== ドロー変動通知 ===== */
+.draw-notification {
+    margin: 8px 0 10px;
+    padding: 8px 10px;
+    border: 1px solid #fcd34d;
+    border-radius: 10px;
+    background: #fef3c7;
+    text-align: center;
+}
+
+.draw-notif-text {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #92400e;
+    line-height: 1.4;
+}
+
+.draw-notification.hidden {
+    display: none;
+}
+
 /* ===== トークンチップ表示 ===== */
 .token-display {
     display: flex;

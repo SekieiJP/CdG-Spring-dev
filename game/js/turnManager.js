@@ -123,6 +123,13 @@ export class TurnManager {
             this.gameState.tokens.fatigue = 0;
         }
 
+        // 次回の行動フェーズ表示時に、ドロー変動通知を出すための一時情報
+        if (passion > 0 || fatigue > 0) {
+            this.gameState.lastDrawNotification = { passion, fatigue, drawCount };
+        } else {
+            this.gameState.lastDrawNotification = null;
+        }
+
         // デッキをシャッフル
         this.gameState.shuffleDeck();
         console.log('[DEBUG] デッキシャッフル完了');

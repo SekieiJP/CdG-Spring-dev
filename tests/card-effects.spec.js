@@ -520,3 +520,94 @@ test.describe('[並行🤹] 効果 配置ロジックテスト', () => {
         expect(dialogs.some(msg => msg.includes('まだ配置できるカードがあります'))).toBe(true);
     });
 });
+
+test.describe('[情熱✊] トークン効果テスト', () => {
+    test.beforeEach(async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const cards = page.locator('#training-cards .card');
+        await cards.nth(0).click();
+        await cards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+    });
+
+    test('情熱トークン2つで手札が6枚になる', async ({ page }) => {
+        await page.evaluate(() => {
+            const game = window.game;
+            game.gameState.tokens.passion = 2;
+            game.gameState.tokens.fatigue = 0;
+            game.gameState.player.hand = [];
+            game.gameState.player.deck = [...(game.cardManager.allCards.slice(0, 10))];
+            game.turnManager.startActionPhase();
+            game.uiController.showActionPhase();
+        });
+
+        await expect(page.locator('#hand-cards .card')).toHaveCount(6);
+    });
+
+    test('疲労トークン1つで手札が3枚になる', async ({ page }) => {
+        await page.evaluate(() => {
+            const game = window.game;
+            game.gameState.tokens.passion = 0;
+            game.gameState.tokens.fatigue = 1;
+            game.gameState.player.hand = [];
+            game.gameState.player.deck = [...(game.cardManager.allCards.slice(0, 10))];
+            game.turnManager.startActionPhase();
+            game.uiController.showActionPhase();
+        });
+
+        await expect(page.locator('#hand-cards .card')).toHaveCount(3);
+    });
+
+    test('疲労トークン4つで手札が0枚になり行動確定できる', async ({ page }) => {
+        await page.evaluate(() => {
+            const game = window.game;
+            game.gameState.tokens.passion = 0;
+            game.gameState.tokens.fatigue = 4;
+            game.gameState.player.hand = [];
+            game.gameState.player.deck = [...(game.cardManager.allCards.slice(0, 10))];
+            game.turnManager.startActionPhase();
+            game.uiController.showActionPhase();
+        });
+
+        await expect(page.locator('#hand-cards .card')).toHaveCount(0);
+        await page.click('#confirm-action');
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 20000 });
+        await expect(page.locator('#meeting-area:not(.hidden)')).toBeVisible();
+    });
+});
+
+test.describe('[整理🗑️] トークン効果テスト', () => {
+    test.beforeEach(async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const cards = page.locator('#training-cards .card');
+        await cards.nth(0).click();
+        await cards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+    });
+
+    test('整理トークン1つで削除可能枚数が+1される', async ({ page }) => {
+        await page.evaluate(() => {
+            window.game.gameState.tokens.organize = 1;
+        });
+
+        await page.click('#confirm-action');
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 20000 });
+        await expect(page.locator('#meeting-area:not(.hidden)')).toBeVisible();
+        await expect(page.locator('#max-delete')).toHaveText('3');
+
+        const deleteMax = await page.evaluate(() => {
+            return window.game.turnManager.getCurrentDeleteMax();
+        });
+        expect(deleteMax).toBe(3);
+    });
+});

@@ -407,9 +407,10 @@ getHighScoreKey(difficulty) {
 8. `cardManager.js` に新効果キーワード（情熱/発想/整理/並行/疲労）のパース追加 ✅
 9. `gameState.js` に `tokens` フィールド追加、`placed` を配列構造に変更 ✅
 10. `turnManager.js` でトークンを消費するロジック追加（情熱/疲労/整理） ✅
-11a. `uiController.js` 並行配置UI対応（placed配列化・renderStaffSlot） ✅
-11b. `uiController.js` トークン表示UI（手札エリア上にチップ表示） ⬜ 未実装
-11c. `uiController.js` + `turnManager.js` 発想トークン追加習得フロー ⬜ 未実装
+11a. `uiController.js` 並行配置UI対応（placed配列化・renderStaffSlot・[並行🤹]自動配置・重ね拒否） ✅
+11b. `uiController.js` トークン表示UI（手札エリア上＋ステータスパネル下にチップ表示） ✅
+11c. `uiController.js` + `turnManager.js` 発想トークン追加習得フロー ✅
+11d. 情熱/疲労/整理トークン効果のE2Eテスト追加 ⬜ 未実装
 
 ### Phase 4: 研修リフレッシュ
 12. `uiController.js` に研修リフレッシュUI追加（ボタン条件表示・残回数表示） ✅
