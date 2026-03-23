@@ -1330,7 +1330,10 @@ export class UIController {
 
         // 現在の候補カードを取得してリフレッシュ
         const currentCards = this.gameState.currentTrainingCards || [];
-        const newCards = this.cardManager.refreshTrainingCards(config.training, currentCards, 3);
+        const isInitialTraining = this.gameState.turn === 0;
+        const rarity = isInitialTraining ? 'R' : config.training;
+        const count = isInitialTraining ? 4 : 3;
+        const newCards = this.cardManager.refreshTrainingCards(rarity, currentCards, count);
 
         // 残り回数を減らす
         this.gameState.trainingRefreshRemaining = remaining - 1;
@@ -1355,7 +1358,7 @@ export class UIController {
         const confirmBtn = document.getElementById('confirm-training');
         if (confirmBtn) confirmBtn.disabled = true;
 
-        this.updateTrainingRefreshUI(config.training);
+        this.updateTrainingRefreshUI(rarity);
         this.saveGameState();
         this.logger?.log(`研修リフレッシュ実行: 残り${this.gameState.trainingRefreshRemaining}回`, 'action');
     }

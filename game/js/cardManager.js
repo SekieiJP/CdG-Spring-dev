@@ -105,19 +105,13 @@ export class CardManager {
     }
 
     /**
-     * 基本カード（N）を取得（各2枚ずつ）
+     * 基本カード（N）を取得
      */
     getBasicCards() {
-        const basicCards = [];
-        const nCards = this.allCards.filter(c => c.rarity === 'N');
-
-        // 各基本カードを2枚ずつ
-        nCards.forEach(card => {
-            basicCards.push({ ...card });
-            basicCards.push({ ...card });
-        });
-
-        return basicCards;
+        // CSV上のNレアリティカードをそのまま返す（複製しない）
+        return this.allCards
+            .filter(c => c.rarity === 'N')
+            .map(card => ({ ...card }));
     }
 
     /**
