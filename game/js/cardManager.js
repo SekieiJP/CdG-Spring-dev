@@ -21,6 +21,8 @@ export class CardManager {
             const response = await fetch(csvPath);
             const csvText = await response.text();
 
+            // 難易度切替時の混在防止
+            this.allCards = [];
             this.parseCSV(csvText);
             this.logger?.log(`カードデータ読み込み完了: ${this.allCards.length}枚`, 'info');
 
@@ -262,6 +264,14 @@ export class CardManager {
      * @returns {Array} 新しい候補カード
      */
     refreshTrainingCards(rarity, currentCards, count) {
+        // リロード復元後に trainingDiscards が未初期化の場合を吸収
+        if (!this.trainingDiscards) {
+            this.trainingDiscards = { R: [], SR: [], SSR: [] };
+        }
+        if (!this.trainingDiscards[rarity]) {
+            this.trainingDiscards[rarity] = [];
+        }
+
         // 現在の候補カードをゲームから永久除外（捨て札にも戻さない）
         currentCards.forEach(card => {
             const idx = this.trainingDecks[rarity]?.findIndex(c => c === card);
