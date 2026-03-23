@@ -11,7 +11,7 @@ import { UIController } from './uiController.js?v=20260323-2000';
 import { SaveManager } from './saveManager.js?v=20260323-2000';
 import { getDifficultyConfig } from './difficultyConfig.js?v=20260323-2000';
 
-const CACHE_BUSTER = 'v20260323-1500';
+const CACHE_BUSTER = 'v20260323-2000';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
