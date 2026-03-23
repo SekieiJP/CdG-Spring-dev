@@ -419,6 +419,10 @@ export class UIController {
                 instruction.innerHTML = `研修: 3枚から1枚を選んで習得してください${helpText}`;
             }
         }
+
+        // リフレッシュボタン表示更新（初回研修含む）
+        const rarity = this.gameState.turn === 0 ? 'R' : this.turnManager.getCurrentTurnConfig()?.training;
+        this.updateTrainingRefreshUI(rarity);
     }
 
     /**
