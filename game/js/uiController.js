@@ -13,6 +13,8 @@ export class UIController {
         this.selectedTrainingCard = null;
         this.selectedCardsForDeletion = [];
         this.tapMode = true; // タップ順配置モード
+        this.trainingSelectionMode = 'normal'; // 'normal' | 'inspiration'
+        this.inspirationRemaining = 0;
     }
 
     /**
@@ -456,6 +458,12 @@ export class UIController {
     onConfirmTraining() {
         console.log('[SAVE-DEBUG] onConfirmTraining: 開始, turn=', this.gameState.turn);
 
+        // 発想追加習得モードの確定処理
+        if (this.trainingSelectionMode === 'inspiration') {
+            this.confirmInspirationTraining();
+            return;
+        }
+
         if (this.gameState.turn === 0 && this.selectedInitialCards) {
             // 初回研修
             this.selectedInitialCards.forEach(card => {
@@ -467,21 +475,19 @@ export class UIController {
                 this.gameState.addToDeck(this.selectedTrainingCard);
                 this.selectedTrainingCard = null;
             }
+
+            // 発想トークンがあれば追加習得フローへ
+            const inspiration = this.gameState.tokens?.inspiration ?? 0;
+            if (inspiration > 0) {
+                this.startInspirationTrainingFlow();
+                return;
+            }
         }
 
         // 研修カードをクリア（選択済み）
         this.gameState.currentTrainingCards = null;
 
-        // フェーズをtrainingに設定してからadvancePhaseを呼ぶ
-        // これによりadvancePhaseがtraining→actionへ正しく遷移する
-        this.gameState.phase = 'training';
-
-        this.turnManager.advancePhase();
-        this.showActionPhase();
-
-        // 手札ドロー完了直後に保存（再抽選防止）
-        console.log('[SAVE-DEBUG] onConfirmTraining: 手札ドロー完了, hand=', this.gameState.player.hand.map(c => c.cardName));
-        this.saveGameState();
+        this.finalizeTrainingToAction();
     }
 
     /**
@@ -1194,6 +1200,8 @@ export class UIController {
      * 研修フェーズ表示（2ターン目以降）
      */
     showTrainingPhase() {
+        this.trainingSelectionMode = 'normal';
+        this.inspirationRemaining = 0;
         const config = this.turnManager.getCurrentTurnConfig();
         console.log('[SAVE-DEBUG] showTrainingPhase: 開始, turn=', this.gameState.turn, ', training=', config.training);
 
@@ -1350,6 +1358,106 @@ export class UIController {
         this.updateTrainingRefreshUI(config.training);
         this.saveGameState();
         this.logger?.log(`研修リフレッシュ実行: 残り${this.gameState.trainingRefreshRemaining}回`, 'action');
+    }
+
+    /**
+     * 発想トークン追加習得フロー開始
+     */
+    startInspirationTrainingFlow() {
+        this.trainingSelectionMode = 'inspiration';
+        this.inspirationRemaining = this.gameState.tokens?.inspiration ?? 0;
+        this.showInspirationTrainingRound();
+    }
+
+    /**
+     * 発想追加習得ラウンドの表示
+     */
+    showInspirationTrainingRound() {
+        const candidates = this.drawInspirationCandidates();
+        if (candidates.length === 0) {
+            // カードが引けない場合はスキップ
+            this.gameState.tokens.inspiration = 0;
+            this.finalizeTrainingToAction();
+            return;
+        }
+
+        this.gameState.currentTrainingCards = candidates.map(c => ({ ...c }));
+        this.selectedTrainingCard = null;
+
+        const container = document.getElementById('training-cards');
+        if (container) {
+            container.innerHTML = '';
+            candidates.forEach(card => {
+                const cardElem = this.createCardElement(card, {
+                    clickable: true,
+                    compact: true,
+                    onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+                });
+                container.appendChild(cardElem);
+            });
+        }
+
+        const confirmBtn = document.getElementById('confirm-training');
+        if (confirmBtn) confirmBtn.disabled = true;
+
+        const instruction = document.querySelector('#training-area .instruction');
+        if (instruction) {
+            const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+            instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): 1枚を選んで習得してください${helpText}`;
+        }
+
+        // リフレッシュボタンは非表示
+        const refreshRow = document.getElementById('training-refresh-row');
+        if (refreshRow) refreshRow.classList.add('hidden');
+
+        this.showPhaseArea('training');
+        this.updateTurnDisplay();
+        this.saveGameState();
+    }
+
+    /**
+     * R・SR・SSR各1枚を抽選して合計3枚返す
+     */
+    drawInspirationCandidates() {
+        const candidates = [];
+        for (const rarity of ['R', 'SR', 'SSR']) {
+            const drawn = this.cardManager.drawTrainingCards(rarity, 1);
+            if (drawn.length > 0) candidates.push(drawn[0]);
+        }
+        return candidates;
+    }
+
+    /**
+     * 発想追加習得の確定
+     */
+    confirmInspirationTraining() {
+        if (!this.selectedTrainingCard) return;
+
+        this.gameState.addToDeck({ ...this.selectedTrainingCard });
+        this.selectedTrainingCard = null;
+        this.inspirationRemaining -= 1;
+
+        if (this.inspirationRemaining > 0) {
+            this.gameState.tokens.inspiration = this.inspirationRemaining;
+            this.showInspirationTrainingRound();
+        } else {
+            this.gameState.tokens.inspiration = 0;
+            this.trainingSelectionMode = 'normal';
+            this.gameState.currentTrainingCards = null;
+            this.finalizeTrainingToAction();
+        }
+    }
+
+    /**
+     * 研修フェーズ終了→行動フェーズへ遷移する共通処理
+     */
+    finalizeTrainingToAction() {
+        this.trainingSelectionMode = 'normal';
+        // advancePhaseはtraining→action遷移を前提としている
+        this.gameState.phase = 'training';
+        this.turnManager.advancePhase();
+        this.showActionPhase();
+        this.saveGameState();
     }
 
     /**
@@ -1734,6 +1842,36 @@ export class UIController {
             console.error('[SAVE-DEBUG] restoreTrainingUI: 研修カードが見つかりません！');
             // フォールバック: 新規抽選（本来ありえない）
             this.showInitialTraining();
+            return;
+        }
+
+        // 発想追加習得フロー中の復元
+        if ((this.gameState.tokens?.inspiration ?? 0) > 0) {
+            this.trainingSelectionMode = 'inspiration';
+            this.inspirationRemaining = this.gameState.tokens.inspiration;
+            // showInspirationTrainingRound は currentTrainingCards を再抽選するが、
+            // 復元時はすでに保存済みのカードを使う
+            const container = document.getElementById('training-cards');
+            if (container) {
+                container.innerHTML = '';
+                trainingCards.forEach(card => {
+                    const cardElem = this.createCardElement(card, {
+                        clickable: true,
+                        compact: true,
+                        onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+                    });
+                    container.appendChild(cardElem);
+                });
+            }
+            const confirmBtn = document.getElementById('confirm-training');
+            if (confirmBtn) confirmBtn.disabled = true;
+            const instruction = document.querySelector('#training-area .instruction');
+            if (instruction) {
+                const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+                instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): 1枚を選んで習得してください${helpText}`;
+            }
+            const refreshRow = document.getElementById('training-refresh-row');
+            if (refreshRow) refreshRow.classList.add('hidden');
             return;
         }
 

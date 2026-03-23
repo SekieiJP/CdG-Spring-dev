@@ -264,3 +264,136 @@ test.describe('PRO難易度 基本動作テスト', () => {
         await expect(handCards).toHaveCount(4);
     });
 });
+
+test.describe('発想トークン追加習得フロー', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+    });
+
+    test('発想トークンがある状態で通常研修を確定すると追加習得画面が表示される', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+
+        // PRO難易度でゲーム開始
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        // 初回研修: カード2枚選択して確定
+        const cards = page.locator('#training-cards .card');
+        await cards.nth(0).click();
+        await cards.nth(1).click();
+        await page.click('#confirm-training');
+
+        // ターン1の行動フェーズまで進む
+        await page.waitForFunction(() => {
+            const area = document.getElementById('action-area');
+            return area && !area.classList.contains('hidden');
+        }, { timeout: 10000 });
+
+        // 発想トークンをデバッグで注入
+        await page.evaluate(() => {
+            window.game.gameState.tokens.inspiration = 2;
+        });
+
+        // アクション確定
+        await page.click('#confirm-action');
+
+        // アニメーション完了待機
+        await page.waitForFunction(() => !document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 5000 }).catch(() => {});
+        await page.waitForFunction(() => document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 20000 });
+
+        // 会議フェーズ
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 10000 });
+        await page.click('#confirm-meeting');
+
+        // 研修フェーズへ遷移
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        // 通常研修: 1枚選択して確定
+        const trainingCards = page.locator('#training-cards .card');
+        await trainingCards.nth(0).click();
+        await page.click('#confirm-training');
+
+        // 発想追加習得画面が表示されることを確認
+        await page.waitForFunction(() => {
+            const instruction = document.querySelector('#training-area .instruction');
+            return instruction && instruction.textContent.includes('発想追加習得');
+        }, { timeout: 10000 });
+
+        const instruction = await page.locator('#training-area .instruction').textContent();
+        expect(instruction).toContain('発想追加習得');
+        expect(instruction).toContain('残り2回');
+
+        // リフレッシュボタンが非表示であることを確認
+        const refreshRow = page.locator('#training-refresh-row');
+        await expect(refreshRow).toHaveClass(/hidden/);
+    });
+
+    test('発想追加習得で1枚選択して確定するとデッキに追加される', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+
+        // PRO難易度でゲーム開始 → 初回研修
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const initCards = page.locator('#training-cards .card');
+        await initCards.nth(0).click();
+        await initCards.nth(1).click();
+        await page.click('#confirm-training');
+
+        // ターン1の行動フェーズまで進む
+        await page.waitForFunction(() => {
+            const area = document.getElementById('action-area');
+            return area && !area.classList.contains('hidden');
+        }, { timeout: 10000 });
+
+        // 発想トークンを1つ注入
+        await page.evaluate(() => {
+            window.game.gameState.tokens.inspiration = 1;
+        });
+
+        const deckBefore = await page.evaluate(() => window.game.gameState.player.deck.length);
+
+        // 行動確定
+        await page.click('#confirm-action');
+
+        // アニメーション完了待機
+        await page.waitForFunction(() => !document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 5000 }).catch(() => {});
+        await page.waitForFunction(() => document.getElementById('status-animation-overlay')?.classList.contains('hidden'), { timeout: 20000 });
+
+        // 会議フェーズ
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 10000 });
+        await page.click('#confirm-meeting');
+
+        // 研修フェーズ
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const trainingCards = page.locator('#training-cards .card');
+        await trainingCards.nth(0).click();
+        await page.click('#confirm-training');
+
+        // 発想追加習得画面に切り替わる
+        await page.waitForFunction(() => {
+            const instruction = document.querySelector('#training-area .instruction');
+            return instruction && instruction.textContent.includes('発想追加習得');
+        }, { timeout: 10000 });
+
+        // 発想追加習得: 1枚選択して確定
+        const inspirationCards = page.locator('#training-cards .card');
+        await inspirationCards.nth(0).click();
+        await page.click('#confirm-training');
+
+        // 行動フェーズに遷移することを確認
+        await page.waitForFunction(() => {
+            const area = document.getElementById('action-area');
+            return area && !area.classList.contains('hidden');
+        }, { timeout: 10000 });
+
+        // デッキが増加していることを確認（通常1枚 + 発想1枚）
+        const deckAfter = await page.evaluate(() => window.game.gameState.player.deck.length + window.game.gameState.player.hand.length);
+        expect(deckAfter).toBeGreaterThan(deckBefore + 1);
+
+        // inspiration トークンがリセットされていることを確認
+        const inspirationRemaining = await page.evaluate(() => window.game.gameState.tokens.inspiration);
+        expect(inspirationRemaining).toBe(0);
+    });
+});
