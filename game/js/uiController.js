@@ -590,14 +590,9 @@ export class UIController {
      * 手札カードタップ（タップ順配置）
      */
     onHandCardTap(card) {
-        const staffOrder = ['leader', 'teacher', 'staff'];
-
-        // 空いている最初のスロットに配置
-        for (const staff of staffOrder) {
-            if (this.gameState.player.placed[staff].length === 0) {
-                this.tryPlaceCardToSlot(card, staff);
-                break;
-            }
+        const targetSlot = this.findBestSlot(card);
+        if (targetSlot !== null) {
+            this.tryPlaceCardToSlot(card, targetSlot);
         }
     }
 
@@ -612,6 +607,12 @@ export class UIController {
         const allowedStaff = this.parseStaffRestriction(card.effect);
         if (allowedStaff && !allowedStaff.includes(currentStaffName)) {
             this.showFloatNotification(`このカードは ${allowedStaff.join('・')} 専用です`, 'error');
+            return;
+        }
+
+        // 並行効果を持たないカードは埋まったスロットに配置できない
+        if (!this.hasParallelEffect(card) && this.gameState.player.placed[staff].length > 0) {
+            this.showFloatNotification('このカードは重ね配置できません', 'error');
             return;
         }
 
@@ -648,6 +649,41 @@ export class UIController {
             }
         }
         return null;
+    }
+
+    /**
+     * カードが並行効果を持つか判定
+     */
+    hasParallelEffect(card) {
+        return !!(card.effect && card.effect.includes('並行'));
+    }
+
+    /**
+     * 最適な配置スロットを探索
+     * - 並行カード: 配置枚数が最少のスロット（同数なら室長>講師>事務）
+     * - 非並行カード: 空きスロットのみ（室長>講師>事務の優先順）
+     * - 職種制限【】も考慮
+     * @returns {string|null} 'leader'|'teacher'|'staff' または null（配置不可）
+     */
+    findBestSlot(card) {
+        const isParallel = this.hasParallelEffect(card);
+        const staffOrder = ['leader', 'teacher', 'staff'];
+        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+        const allowedStaff = this.parseStaffRestriction(card.effect);
+
+        let bestSlot = null;
+        let bestCount = Infinity;
+
+        for (const slotKey of staffOrder) {
+            if (allowedStaff && !allowedStaff.includes(staffNames[slotKey])) continue;
+            const count = this.gameState.player.placed[slotKey].length;
+            if (!isParallel && count > 0) continue; // 非並行は空きスロットのみ
+            if (count < bestCount) {
+                bestCount = count;
+                bestSlot = slotKey;
+            }
+        }
+        return bestSlot;
     }
 
     /**
@@ -807,7 +843,7 @@ export class UIController {
                 slot.classList.remove('drag-over');
 
                 if (this.draggedCard) {
-                    this.placeCardToSlot(this.draggedCard, staff);
+                    this.tryPlaceCardToSlot(this.draggedCard, staff);
                 }
             };
         });
@@ -841,6 +877,23 @@ export class UIController {
     }
 
     /**
+     * 手札の中で、現在配置可能なカード枚数を返す
+     * 並行カードは常に配置可能、非並行カードは空きスロットがある場合のみ
+     */
+    getPlaceableCardCountInHand() {
+        const staffMap = { leader: '室長', teacher: '講師', staff: '事務' };
+        return this.gameState.player.hand.filter(card => {
+            const isParallel = this.hasParallelEffect(card);
+            const allowedStaff = this.parseStaffRestriction(card.effect);
+            return ['leader', 'teacher', 'staff'].some(slotKey => {
+                if (allowedStaff && !allowedStaff.includes(staffMap[slotKey])) return false;
+                const count = this.gameState.player.placed[slotKey].length;
+                return isParallel || count === 0;
+            });
+        }).length;
+    }
+
+    /**
      * 全スタッフ配置済みチェック
      */
     isAllStaffPlaced() {
@@ -852,9 +905,9 @@ export class UIController {
      * アクション実行
      */
     onConfirmAction() {
-        // 未配置スタッフがいる場合は警告
-        if (!this.isAllStaffPlaced()) {
-            const confirmed = confirm('カードが配置されていないスタッフがいます。教室行動を確定させてよろしいですか？');
+        const placeableCount = this.getPlaceableCardCountInHand();
+        if (placeableCount > 0) {
+            const confirmed = confirm(`まだ配置できるカードがあります（${placeableCount}枚）。このまま教室行動を確定しますか？`);
             if (!confirmed) {
                 return;
             }

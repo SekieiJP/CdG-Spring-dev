@@ -438,9 +438,20 @@ body {
     border: 2px dashed var(--color-border);
     border-radius: var(--border-radius);
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 4px;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.card-slot .slot-placeholder {
+    display: flex;
     align-items: center;
     justify-content: center;
-    transition: border-color 0.2s, background 0.2s;
+    flex: 1;
+    min-height: 72px;
 }
 
 .card-slot.drag-over {

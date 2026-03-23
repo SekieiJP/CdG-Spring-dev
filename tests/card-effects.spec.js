@@ -397,3 +397,126 @@ test.describe('発想トークン追加習得フロー', () => {
         expect(inspirationRemaining).toBe(0);
     });
 });
+
+test.describe('[並行🤹] 効果 配置ロジックテスト', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/');
+    });
+
+    test('並行カードを埋まりスロットに重ね配置できる（タップ自動配置）', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+
+        // PRO難易度でゲーム開始 → 初回研修 → 行動フェーズへ
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const initCards = page.locator('#training-cards .card');
+        await initCards.nth(0).click();
+        await initCards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        // 手札に非並行カード3枚 + 並行カード1枚を設定
+        await page.evaluate(() => {
+            const normalCards = window.game.cardManager.allCards
+                .filter(c => c.effect && !c.effect.includes('並行') && !c.effect.includes('【'))
+                .slice(0, 3);
+            const parallelCard = window.game.cardManager.allCards
+                .find(c => c.effect && c.effect.includes('並行'));
+            if (normalCards.length >= 3 && parallelCard) {
+                window.game.gameState.player.hand = [...normalCards, parallelCard];
+                window.game.uiController.renderHand();
+            }
+        });
+
+        // 非並行3枚を各スロットにタップ配置（室長→講師→事務の順）
+        for (let i = 0; i < 3; i++) {
+            await page.locator('#hand-cards .card').first().click();
+        }
+
+        // 全スロットに1枚ずつ入ったことを確認
+        await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+        await expect(page.locator('#slot-teacher .card')).toHaveCount(1);
+        await expect(page.locator('#slot-staff .card')).toHaveCount(1);
+
+        // 並行カードをタップ → 最少枚数スロット（全て1枚 → 室長が優先）に重ね配置
+        await page.locator('#hand-cards .card').first().click();
+
+        // 室長スロットに2枚入ったことを確認（重ね配置成功）
+        await expect(page.locator('#slot-leader .card')).toHaveCount(2);
+    });
+
+    test('非並行カードは埋まりスロットに配置できない（重ね配置拒否）', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const initCards = page.locator('#training-cards .card');
+        await initCards.nth(0).click();
+        await initCards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        // ゲーム状態を直接操作: 室長スロットに1枚配置済み、手札に非並行カード1枚
+        const rejected = await page.evaluate(() => {
+            const normalCard = window.game.cardManager.allCards
+                .find(c => c.effect && !c.effect.includes('並行') && !c.effect.includes('【'));
+            if (!normalCard) return null;
+
+            // 室長スロットに1枚セット（直接状態操作）
+            window.game.gameState.player.placed.leader = [{ ...normalCard }];
+            window.game.uiController.renderStaffSlot('leader');
+
+            // tryPlaceCardToSlot を呼び、拒否されることを確認
+            const beforeCount = window.game.gameState.player.placed.leader.length; // 1
+            window.game.uiController.tryPlaceCardToSlot(normalCard, 'leader');
+            const afterCount = window.game.gameState.player.placed.leader.length;
+            return afterCount === beforeCount; // trueなら拒否された
+        });
+
+        expect(rejected).toBe(true);
+
+        // 室長スロットは1枚のまま
+        await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+    });
+
+    test('全スロット埋まり時に並行カードが手札にあると確定ダイアログが出る', async ({ page }) => {
+        const dialogs = [];
+        page.on('dialog', dialog => {
+            dialogs.push(dialog.message());
+            dialog.accept();
+        });
+
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        const initCards = page.locator('#training-cards .card');
+        await initCards.nth(0).click();
+        await initCards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        // 手札を「非並行カード3枚 + 並行カード1枚」に設定し、非並行3枚を各スロットに配置
+        await page.evaluate(() => {
+            const normalCards = window.game.cardManager.allCards.filter(c => c.effect && !c.effect.includes('並行') && !c.effect.includes('【'));
+            const parallelCard = window.game.cardManager.allCards.find(c => c.effect && c.effect.includes('並行'));
+            if (normalCards.length >= 3 && parallelCard) {
+                window.game.gameState.player.hand = [...normalCards.slice(0, 3), parallelCard];
+                window.game.uiController.renderHand();
+            }
+        });
+
+        // 非並行カードを3スロットに配置
+        for (const slot of ['#slot-leader', '#slot-teacher', '#slot-staff']) {
+            const card = page.locator('#hand-cards .card').first();
+            await card.dragTo(page.locator(slot));
+        }
+
+        // 全スロット埋まり・並行カード1枚残り状態で確定ボタンを押す
+        await page.click('#confirm-action');
+
+        // 「まだ配置できるカードがあります」ダイアログが出たことを確認
+        expect(dialogs.some(msg => msg.includes('まだ配置できるカードがあります'))).toBe(true);
+    });
+});
