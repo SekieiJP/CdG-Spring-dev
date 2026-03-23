@@ -1565,3 +1565,41 @@ html.font-normal .help-longpress {
     border-radius: 12px;
     white-space: nowrap;
 }
+
+/* ===== トークンチップ表示 ===== */
+.token-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 6px 0 2px;
+}
+
+.token-chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.token-passion {
+    background-color: #7a1f2e;
+    color: #fdd;
+}
+
+.token-inspiration {
+    background-color: #1a4a7a;
+    color: #cdf;
+}
+
+.token-organize {
+    background-color: #2a5a2a;
+    color: #cfc;
+}
+
+.token-fatigue {
+    background-color: #4a4a4a;
+    color: #ddd;
+}

@@ -498,6 +498,9 @@ export class UIController {
         // 配置済み状態もクリア
         this.gameState.clearPlaced();
 
+        // トークン表示更新
+        this.renderTokenDisplay();
+
         // 手札表示
         this.renderHand();
 
@@ -506,6 +509,36 @@ export class UIController {
 
         // ボタン状態を更新
         this.updateActionButtonState();
+    }
+
+    /**
+     * アクションフェーズのトークンチップ表示を更新する
+     * 保有数が0より大きいトークンのみ表示する
+     */
+    renderTokenDisplay() {
+        const container = document.getElementById('token-display');
+        if (!container) return;
+
+        const tokens = this.gameState.tokens ?? {};
+        const tokenDefs = [
+            { key: 'passion',     label: '情熱✊',  cls: 'token-passion'     },
+            { key: 'inspiration', label: '発想💡',  cls: 'token-inspiration' },
+            { key: 'organize',    label: '整理🗑️', cls: 'token-organize'    },
+            { key: 'fatigue',     label: '疲労💤',  cls: 'token-fatigue'     },
+        ];
+
+        const chips = tokenDefs
+            .filter(t => (tokens[t.key] ?? 0) > 0)
+            .map(t => `<span class="token-chip ${t.cls}">${t.label} ×${tokens[t.key]}</span>`)
+            .join('');
+
+        if (chips) {
+            container.innerHTML = chips;
+            container.classList.remove('hidden');
+        } else {
+            container.innerHTML = '';
+            container.classList.add('hidden');
+        }
     }
 
     /**
