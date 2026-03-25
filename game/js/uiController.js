@@ -12,6 +12,8 @@ export class UIController {
 
         this.selectedTrainingCard = null;
         this.selectedCardsForDeletion = [];
+        this.slotSelectionMode = false;       // スロット手動指定モード
+        this.selectedCardForPlacement = null; // 手動指定時に選択中のカード
         this.tapMode = true; // タップ順配置モード
         this.trainingSelectionMode = 'normal'; // 'normal' | 'inspiration'
         this.inspirationRemaining = 0;
@@ -83,6 +85,8 @@ export class UIController {
         // アクション実行ボタン
         const confirmActionBtn = document.getElementById('confirm-action');
         confirmActionBtn?.addEventListener('click', () => this.onConfirmAction());
+        const btnSlotManual = document.getElementById('btn-slot-manual');
+        btnSlotManual?.addEventListener('click', () => this.toggleSlotSelectionMode());
 
         // 会議確定ボタン
         const confirmMeetingBtn = document.getElementById('confirm-meeting');
@@ -240,12 +244,6 @@ export class UIController {
                 elem.classList.toggle('hidden', areaId !== `${phase}-area`);
             }
         });
-
-        // ステータス直下のトークン表示はアクションフェーズ以外で非表示
-        const tokenStatusDisplay = document.getElementById('token-status-display');
-        if (tokenStatusDisplay && phase !== 'action') {
-            tokenStatusDisplay.classList.add('hidden');
-        }
     }
 
     /**
@@ -349,6 +347,13 @@ export class UIController {
 
         this.gameState.difficulty = difficulty;
         this.turnManager.initializeGame();
+        this.slotSelectionMode = false;
+        this.selectedCardForPlacement = null;
+        const btnSlotManual = document.getElementById('btn-slot-manual');
+        if (btnSlotManual) {
+            btnSlotManual.classList.remove('active');
+            btnSlotManual.title = 'スロット手動指定: OFF（タップで自動配置）';
+        }
 
         // Bug2修正: リスタート時もステータス表示をリセット
         this.updateStatusDisplay();
@@ -417,6 +422,8 @@ export class UIController {
 
         this.showPhaseArea('training');
         this.updateTurnDisplay();
+        this.updateStatusDisplay();
+        this.renderTokenDisplay();
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
@@ -516,8 +523,21 @@ export class UIController {
         // トークン表示更新
         this.renderTokenDisplay();
 
+        // ターンをまたいだ選択残りをクリア
+        this.selectedCardForPlacement = null;
+
         // 手札表示
         this.renderHand();
+
+        // スロット指定ボタンの状態を反映
+        const btnSlotManual = document.getElementById('btn-slot-manual');
+        if (btnSlotManual) {
+            btnSlotManual.classList.toggle('active', this.slotSelectionMode);
+            btnSlotManual.title = this.slotSelectionMode
+                ? 'スロット手動指定: ON（カードを選んでからスロットをタップ）'
+                : 'スロット手動指定: OFF（タップで自動配置）';
+        }
+        this.selectedCardForPlacement = null; // 念のため再クリア
 
         // スタッフスロットにドロップイベント設定
         this.setupDropZones();
@@ -619,6 +639,9 @@ export class UIController {
                 recommendedCategory: recommendedCategory,
                 onClick: (c) => this.onHandCardTap(c)
             });
+            if (this.slotSelectionMode && this.selectedCardForPlacement === card) {
+                cardElem.classList.add('selected-for-placement');
+            }
             handContainer.appendChild(cardElem);
         });
     }
@@ -627,10 +650,37 @@ export class UIController {
      * 手札カードタップ（タップ順配置）
      */
     onHandCardTap(card) {
+        if (this.slotSelectionMode) {
+            if (this.selectedCardForPlacement === card) {
+                // 同じカードを再タップ → 選択キャンセル
+                this.selectedCardForPlacement = null;
+            } else {
+                // 別のカードをタップ → 選択切り替え
+                this.selectedCardForPlacement = card;
+            }
+            this.renderHand(); // ハイライト更新
+            return;
+        }
+        // 自動配置モード（既存挙動）
         const targetSlot = this.findBestSlot(card);
         if (targetSlot !== null) {
             this.tryPlaceCardToSlot(card, targetSlot);
         }
+    }
+
+    toggleSlotSelectionMode() {
+        this.slotSelectionMode = !this.slotSelectionMode;
+        this.selectedCardForPlacement = null;
+
+        const btn = document.getElementById('btn-slot-manual');
+        if (btn) {
+            btn.classList.toggle('active', this.slotSelectionMode);
+            btn.title = this.slotSelectionMode
+                ? 'スロット手動指定: ON（カードを選んでからスロットをタップ）'
+                : 'スロット手動指定: OFF（タップで自動配置）';
+        }
+        // 選択中ハイライトを解除
+        this.renderHand();
     }
 
     /**
@@ -801,6 +851,9 @@ export class UIController {
      * カードをスロットに配置
      */
     placeCardToSlot(card, staff) {
+        if (this.selectedCardForPlacement === card) {
+            this.selectedCardForPlacement = null;
+        }
         this.gameState.placeCard(card, staff);
         this.gameState.removeFromHand(card);
 
@@ -882,6 +935,16 @@ export class UIController {
                 if (this.draggedCard) {
                     this.tryPlaceCardToSlot(this.draggedCard, staff);
                 }
+            };
+
+            slot.onclick = () => {
+                // 手動指定モードON かつ カード選択中 のときのみ処理
+                if (!this.slotSelectionMode || !this.selectedCardForPlacement) return;
+                // クリックが子要素（配置済みカード）由来でも親スロットのstaffを使う
+                const card = this.selectedCardForPlacement;
+                this.selectedCardForPlacement = null;
+                this.renderHand(); // ハイライト解除
+                this.tryPlaceCardToSlot(card, staff);
             };
         });
     }
@@ -1185,6 +1248,8 @@ export class UIController {
     showMeetingPhase() {
         this.showPhaseArea('meeting');
         this.updateTurnDisplay();
+        this.updateStatusDisplay();
+        this.renderTokenDisplay();
 
         const maxDelete = this.turnManager.getCurrentDeleteMax();
         const deleteCountElem = document.getElementById('delete-count');
@@ -1330,6 +1395,8 @@ export class UIController {
         this.updateTrainingRefreshUI(config.training);
         this.showPhaseArea('training');
         this.updateTurnDisplay();
+        this.updateStatusDisplay();
+        this.renderTokenDisplay();
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
@@ -1506,6 +1573,8 @@ export class UIController {
 
         this.showPhaseArea('training');
         this.updateTurnDisplay();
+        this.updateStatusDisplay();
+        this.renderTokenDisplay();
         this.saveGameState();
     }
 
@@ -1570,6 +1639,8 @@ export class UIController {
         const score = this.scoreManager.calculateScore(this.gameState);
 
         this.showPhaseArea('result');
+        this.updateStatusDisplay();
+        this.renderTokenDisplay();
 
         // ランク表示
         const rankElem = document.getElementById('result-rank');
@@ -1898,6 +1969,7 @@ export class UIController {
         // ステータスとターン表示を更新
         this.updateStatusDisplay();
         this.updateTurnDisplay();
+        this.renderTokenDisplay();
 
         // 現在のフェーズに応じてUIを表示
         const phase = this.gameState.phase;
@@ -1980,6 +2052,7 @@ export class UIController {
         this.showPhaseArea('action');
         this.updateTurnDisplay();
         this.updateStatusDisplay();
+        this.renderTokenDisplay();
 
         // スタッフスロットをクリア
         this.clearStaffSlots();
@@ -1992,8 +2065,18 @@ export class UIController {
             }
         }
 
+        this.selectedCardForPlacement = null;
+
         // 手札表示
         this.renderHand();
+        const btnSlotManual = document.getElementById('btn-slot-manual');
+        if (btnSlotManual) {
+            btnSlotManual.classList.toggle('active', this.slotSelectionMode);
+            btnSlotManual.title = this.slotSelectionMode
+                ? 'スロット手動指定: ON（カードを選んでからスロットをタップ）'
+                : 'スロット手動指定: OFF（タップで自動配置）';
+        }
+        this.selectedCardForPlacement = null;
 
         // スタッフスロットにドロップイベント設定
         this.setupDropZones();

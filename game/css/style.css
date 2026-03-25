@@ -266,6 +266,13 @@ body {
     background: var(--color-bg-light);
 }
 
+/* 手動指定モードで選択中のカード */
+.card.selected-for-placement {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
 /* 削除画面での選択ハイライト（赤） */
 #meeting-area .card.selected {
     border-color: var(--color-danger);
@@ -412,6 +419,28 @@ body {
 }
 
 /* ==================== スタッフエリア（1行3枚） ==================== */
+.slot-mode-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-xs);
+}
+
+.btn-slot-toggle {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background: var(--color-bg-light);
+    cursor: pointer;
+    color: var(--color-text-secondary);
+}
+
+.btn-slot-toggle.active {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
 .staff-area {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

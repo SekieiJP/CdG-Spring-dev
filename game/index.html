@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20260325-0900">
+    <link rel="stylesheet" href="css/style.css?v=20260325-1000">
 </head>
 
 <body>
@@ -71,7 +71,7 @@
                 <div class="status-target">目標: 15</div>
             </div>
         </section>
-        <!-- トークン表示（ステータスパネル下・アクションフェーズ時のみ表示） -->
+        <!-- トークン表示（ステータスパネル下） -->
         <div id="token-status-display" class="token-status-display hidden"></div>
 
         <!-- メインコンテンツ -->
@@ -93,6 +93,10 @@
                 <h2>教室行動: カード配置</h2>
                 <p class="instruction">手札から3枚を選び、スタッフに配置してください</p>
                 <div id="draw-notification" class="draw-notification hidden"></div>
+
+                <div class="slot-mode-row">
+                    <button id="btn-slot-manual" class="btn-slot-toggle" title="手動でスロットを指定して配置します">⊞ スロット指定</button>
+                </div>
 
                 <!-- スタッフ配置エリア -->
                 <div class="staff-area">
@@ -231,8 +235,8 @@
         </div>
     </div>
 
-    <!-- JavaScriptモジュール（キャッシュバスター付き v20260325-0900） -->
-    <script type="module" src="js/main.js?v=20260325-0900"></script>
+    <!-- JavaScriptモジュール（キャッシュバスター付き v20260325-1000） -->
+    <script type="module" src="js/main.js?v=20260325-1000"></script>
 </body>
 
 </html>
