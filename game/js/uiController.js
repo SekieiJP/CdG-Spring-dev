@@ -1498,23 +1498,39 @@ export class UIController {
 
         // 新カードで表示を更新
         this.gameState.currentTrainingCards = newCards.map(c => ({ ...c }));
-        this.selectedTrainingCard = null;
 
         const container = document.getElementById('training-cards');
         if (container) {
             container.innerHTML = '';
-            newCards.forEach(card => {
-                const cardElem = this.createCardElement(card, {
-                    clickable: true,
-                    compact: true,
-                    onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+            if (isInitialTraining) {
+                // 初回研修: 2枚選択モード
+                this.selectedInitialCards = [];
+                newCards.forEach(card => {
+                    const cardElem = this.createCardElement(card, {
+                        clickable: true,
+                        compact: true,
+                        onClick: (c, elem) => this.onInitialCardSelect(c, elem, newCards)
+                    });
+                    container.appendChild(cardElem);
                 });
-                container.appendChild(cardElem);
-            });
+                // 初回研修は selectedInitialCards が2枚になるまで確定ボタン無効
+                const confirmBtn = document.getElementById('confirm-training');
+                if (confirmBtn) confirmBtn.disabled = true;
+            } else {
+                // 通常研修: 1枚選択モード
+                this.selectedTrainingCard = null;
+                newCards.forEach(card => {
+                    const cardElem = this.createCardElement(card, {
+                        clickable: true,
+                        compact: true,
+                        onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+                    });
+                    container.appendChild(cardElem);
+                });
+                const confirmBtn = document.getElementById('confirm-training');
+                if (confirmBtn) confirmBtn.disabled = true;
+            }
         }
-
-        const confirmBtn = document.getElementById('confirm-training');
-        if (confirmBtn) confirmBtn.disabled = true;
 
         this.updateTrainingRefreshUI(rarity);
         this.saveGameState();

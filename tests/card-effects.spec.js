@@ -611,3 +611,43 @@ test.describe('[整理🗑️] トークン効果テスト', () => {
         expect(deleteMax).toBe(3);
     });
 });
+
+test.describe('初回研修リフレッシュ', () => {
+    test('初回研修でリフレッシュ後も4枚表示・2枚選択できる', async ({ page }) => {
+        // PRO難易度でゲーム開始（FRESHはリフレッシュ機能なし）
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-area:not(.hidden)');
+
+        // 初回研修: 4枚表示を確認
+        const initialCount = await page.locator('#training-cards .card').count();
+        expect(initialCount).toBe(4);
+
+        // リフレッシュ
+        await page.click('#btn-training-refresh');
+
+        // リフレッシュ後も4枚表示されることを確認
+        const afterCount = await page.locator('#training-cards .card').count();
+        expect(afterCount).toBe(4);
+
+        // 1枚目をタップ（選択）
+        await page.locator('#training-cards .card').nth(0).click();
+        // 2枚目をタップ（選択）
+        await page.locator('#training-cards .card').nth(1).click();
+
+        // 確定ボタンが有効になることを確認（2枚選択で解放）
+        const confirmEnabled = await page.locator('#confirm-training').isEnabled();
+        expect(confirmEnabled).toBe(true);
+
+        // 確定してデッキに2枚追加されることを確認
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)');
+
+        const deckSize = await page.evaluate(() =>
+            window.game.gameState.player.deck.length + window.game.gameState.player.hand.length
+        );
+        // 初期デッキ8枚 + 習得2枚 = 10枚
+        expect(deckSize).toBe(10);
+    });
+});
