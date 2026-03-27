@@ -538,7 +538,7 @@ export class CardManager {
             const tokenNames = {
                 passion: '✊情熱',
                 inspiration: '💡発想',
-                organize: '🚥整理',
+                organize: '🗑️整理',
                 fatigue: '💤疲労'
             };
             this.logger?.log(`  ${tokenNames[effect.token]}トークン獲得 (計${gameState.tokens[effect.token]})`, 'action');

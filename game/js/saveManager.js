@@ -190,8 +190,10 @@ export class SaveManager {
             teacher: (savedState.player.placed.teacher || []).map(c => ({ ...c })),
             staff: (savedState.player.placed.staff || []).map(c => ({ ...c }))
         };
-        gameState.tokens = savedState.tokens
-            ? { ...savedState.tokens }
+        // 旧形式（ルート直下tokens）と新形式（player.tokens）の両方に対応
+        const savedTokens = savedState.player?.tokens || savedState.tokens;
+        gameState.tokens = savedTokens
+            ? { passion: 0, inspiration: 0, organize: 0, fatigue: 0, ...savedTokens }
             : { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
         gameState.trainingRefreshRemaining = savedState.trainingRefreshRemaining ?? 0;
         // 研修フェーズ中の抽選カードを復元

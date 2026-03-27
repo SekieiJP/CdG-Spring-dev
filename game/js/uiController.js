@@ -1252,6 +1252,17 @@ export class UIController {
         this.renderTokenDisplay();
 
         const maxDelete = this.turnManager.getCurrentDeleteMax();
+        const organizeBonus = this.gameState.tokens?.organize || 0;
+        const bonusInfo = document.getElementById('organize-bonus-info');
+        if (bonusInfo) {
+            if (organizeBonus > 0) {
+                bonusInfo.textContent = `🗑️ 整理トークン効果: +${organizeBonus}枚追加削除できます`;
+                bonusInfo.classList.remove('hidden');
+            } else {
+                bonusInfo.classList.add('hidden');
+            }
+        }
+
         const deleteCountElem = document.getElementById('delete-count');
         const maxDeleteElem = document.getElementById('max-delete');
 
@@ -1580,7 +1591,7 @@ export class UIController {
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
             const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
-            instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): 1枚を選んで習得してください${helpText}`;
+            instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
         }
 
         // リフレッシュボタンは非表示
@@ -1595,15 +1606,10 @@ export class UIController {
     }
 
     /**
-     * R・SR・SSR各1枚を抽選して合計3枚返す
+     * SRカードを3枚抽選して返す
      */
     drawInspirationCandidates() {
-        const candidates = [];
-        for (const rarity of ['R', 'SR', 'SSR']) {
-            const drawn = this.cardManager.drawTrainingCards(rarity, 1);
-            if (drawn.length > 0) candidates.push(drawn[0]);
-        }
-        return candidates;
+        return this.cardManager.drawTrainingCards('SR', 3);
     }
 
     /**
@@ -2050,7 +2056,7 @@ export class UIController {
             const instruction = document.querySelector('#training-area .instruction');
             if (instruction) {
                 const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
-                instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): 1枚を選んで習得してください${helpText}`;
+                instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
             }
             const refreshRow = document.getElementById('training-refresh-row');
             if (refreshRow) refreshRow.classList.add('hidden');

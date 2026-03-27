@@ -146,7 +146,7 @@ export class TurnManager {
     startMeetingPhase() {
         const organizeBonus = this.gameState.tokens?.organize || 0;
         if (organizeBonus > 0) {
-            this.logger?.log(`🚥整理発動: 削除上限+${organizeBonus}`, 'action');
+            this.logger?.log(`🗑️整理発動: 削除上限+${organizeBonus}`, 'action');
             // トークンはUIが削除処理完了後にリセット
         }
         this.logger?.log('教室会議フェーズ開始', 'info');

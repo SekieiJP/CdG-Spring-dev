@@ -610,6 +610,47 @@ test.describe('[整理🗑️] トークン効果テスト', () => {
         });
         expect(deleteMax).toBe(3);
     });
+
+    test('整理カード効果でトークンが付与され会議フェーズで削除枚数が増える（E2E）', async ({ page }) => {
+        // 整理トークンを持つカードを手札に注入し、アクション確定後の会議フェーズを検証
+
+        // turn=0, PRO: config.delete=2 → organize+1で3になるはず
+        // 手札に整理効果カードを注入（整理キーワードを含む効果テキストを持つカードを作成）
+        await page.evaluate(() => {
+            const organizeCard = {
+                category: '庶務',
+                rarity: 'R',
+                cardName: 'テスト整理カード',
+                topEffect: '整理',
+                effect: '[整理🗑️] 次の会議で削除枚数+1',
+                acquiredTurn: 0
+            };
+            // デッキと手札にカードを追加してスロットに配置
+            const gs = window.game.gameState;
+            gs.player.hand.unshift(organizeCard);
+            window.game.uiController.renderHand();
+        });
+
+        // 手札の最初のカードを室長スロットへ配置
+        await page.locator('#hand-cards .card').first().click();
+        await page.click('#confirm-action');
+
+        // アクション実行後、整理トークンが付与されていること
+        const organizeToken = await page.evaluate(() => window.game.gameState.tokens.organize);
+        expect(organizeToken).toBeGreaterThanOrEqual(1);
+
+        // 会議フェーズへ
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 20000 });
+
+        // max-deleteが規定値+1になっていること（PRO turn1: 2+1=3）
+        const maxDeleteText = await page.locator('#max-delete').textContent();
+        const maxDelete = parseInt(maxDeleteText, 10);
+        expect(maxDelete).toBeGreaterThanOrEqual(3);
+
+        // 整理ボーナス説明が表示されていること
+        await expect(page.locator('#organize-bonus-info')).not.toHaveClass(/hidden/);
+        await expect(page.locator('#organize-bonus-info')).toContainText('整理トークン効果');
+    });
 });
 
 test.describe('初回研修リフレッシュ', () => {
