@@ -348,8 +348,8 @@ export class UIController {
         overlay?.classList.add('hidden');
 
         this.gameState.difficulty = difficulty;
-        this.gameState.recordStartTime();
         this.turnManager.initializeGame();
+        this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
         this.slotSelectionMode = false;
         this.selectedCardForPlacement = null;
         const btnSlotManual = document.getElementById('btn-slot-manual');
