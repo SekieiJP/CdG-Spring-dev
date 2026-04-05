@@ -1,4 +1,4 @@
-import { submitScore } from './scoreSubmitter.js?v=20260327-1930';
+import { submitScore } from './scoreSubmitter.js?v=20260406-1300';
 
 /**
  * UIController - UI操作・表示制御
@@ -893,6 +893,11 @@ export class UIController {
      * 配置済みカードクリック（取り消し）
      */
     onPlacedCardClick(card, staff) {
+        // スロット指定モードでカード選択中の場合、slot.onclickに処理を任せる
+        if (this.slotSelectionMode && this.selectedCardForPlacement !== null) {
+            return;
+        }
+
         this.gameState.removePlacedCard(card, staff);
         this.gameState.addToHand(card);
 
