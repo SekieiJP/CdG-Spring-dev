@@ -134,6 +134,7 @@ export class SaveManager {
                 },
                 tokens: { ...gameState.tokens }
             },
+            startedAt: gameState.startedAt || null,
             trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
             // 研修フェーズ中の抽選カード
             currentTrainingCards: gameState.currentTrainingCards ?
@@ -195,6 +196,7 @@ export class SaveManager {
         gameState.tokens = savedTokens
             ? { passion: 0, inspiration: 0, organize: 0, fatigue: 0, ...savedTokens }
             : { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
+        gameState.startedAt = savedState.startedAt || null;
         gameState.trainingRefreshRemaining = savedState.trainingRefreshRemaining ?? 0;
         // 研修フェーズ中の抽選カードを復元
         if (savedState.currentTrainingCards) {

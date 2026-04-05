@@ -1,3 +1,5 @@
+import { submitScore } from './scoreSubmitter.js?v=20260327-1930';
+
 /**
  * UIController - UI操作・表示制御
  */
@@ -346,6 +348,7 @@ export class UIController {
         overlay?.classList.add('hidden');
 
         this.gameState.difficulty = difficulty;
+        this.gameState.recordStartTime();
         this.turnManager.initializeGame();
         this.slotSelectionMode = false;
         this.selectedCardForPlacement = null;
@@ -1718,6 +1721,9 @@ export class UIController {
         if (highScoreElem && highScore) {
             highScoreElem.textContent = `${highScore.displayScore ?? highScore.points}ポイント`;
         }
+
+        // スコア自動送信（fire-and-forget）
+        submitScore(this.gameState, score, finalDeck, this.logger);
 
         // セーブデータクリア（ゲーム終了）
         this.saveManager?.clear();

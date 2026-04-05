@@ -42,8 +42,13 @@ export class GameState {
         const diffConfig = getDifficultyConfig(difficultyId || 'fresh');
         this.trainingRefreshRemaining = diffConfig.trainingRefresh?.enabled
             ? diffConfig.trainingRefresh.maxCount : 0;
+        this.startedAt = null;
 
         this.logger?.log(`ゲーム状態を初期化しました (難易度: ${config.name})`, 'info');
+    }
+
+    recordStartTime() {
+        this.startedAt = new Date().toISOString();
     }
 
     /**
