@@ -178,6 +178,56 @@ export class UIController {
                 compactElem.textContent = this.gameState.player[status];
             }
         });
+
+        // ランク表示更新
+        this.updateRankDisplay();
+    }
+
+    /**
+     * ステータスランク表示を更新
+     */
+    updateRankDisplay() {
+        if (!this.scoreManager?.rankTable) return;
+
+        const showLabel = ['experience', 'enrollment']; // ランクラベルを表示するステータス
+        const statuses = ['experience', 'enrollment', 'satisfaction', 'accounting'];
+
+        statuses.forEach(stat => {
+            const value = this.gameState.player[stat];
+            const rankInfo = this.scoreManager.getStatusRank(stat, value);
+            if (!rankInfo) return;
+
+            const container = document.getElementById(`rank-info-${stat}`);
+            if (!container) return;
+
+            // ランクラベル（体験・入塾のみ）
+            const labelElem = container.querySelector('.rank-label');
+            if (labelElem) {
+                labelElem.textContent = showLabel.includes(stat) ? rankInfo.grade : '';
+            }
+
+            // プログレスバー
+            const fillElem = container.querySelector('.rank-progress-fill');
+            if (fillElem) {
+                const range = rankInfo.nextThreshold - rankInfo.currentThreshold;
+                const progress = range > 0
+                    ? Math.min(((value - rankInfo.currentThreshold) / range) * 100, 100)
+                    : 100; // 最高ランク到達時
+                fillElem.style.width = `${progress}%`;
+            }
+
+            // あとN表示
+            const deficitElem = container.querySelector('.rank-deficit');
+            if (deficitElem) {
+                if (rankInfo.deficit > 0) {
+                    deficitElem.textContent = `あと${rankInfo.deficit}`;
+                    deficitElem.classList.remove('hidden');
+                } else {
+                    deficitElem.textContent = '';
+                    deficitElem.classList.add('hidden');
+                }
+            }
+        });
     }
 
     /**
@@ -1684,38 +1734,43 @@ export class UIController {
         // 得点内訳表示
         const breakdownElem = document.getElementById('result-breakdown');
         if (breakdownElem) {
-            breakdownElem.innerHTML = `
-                <table class="breakdown-table">
-                    <thead>
-                        <tr>
-                            <th>達成項目</th>
-                            <th>結果</th>
-                            <th>ポイント</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>退塾目標</td>
-                            <td>退塾 ${score.withdrawal}</td>
-                            <td>${this.renderPointRange('withdrawal', score.withdrawal, score.breakdown.withdrawalPoints)}</td>
-                        </tr>
-                        <tr>
-                            <td>動員目標</td>
-                            <td>体験 ${score.mobilization}</td>
-                            <td>${this.renderPointRange('mobilization', score.mobilization, score.breakdown.mobilizationPoints)}</td>
-                        </tr>
-                        <tr>
-                            <td>入退目標</td>
-                            <td>入退差 ${score.enrollmentDiff}</td>
-                            <td>${this.renderPointRange('enrollmentDiff', score.enrollmentDiff, score.breakdown.enrollmentDiffPoints)}</td>
-                        </tr>
-                        <tr class="total-row">
-                            <td colspan="2">合計スコア</td>
-                            <td><strong>${score.displayScore}</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
+            const difficulty = this.gameState.difficulty || 'fresh';
+            if (difficulty === 'pro') {
+                breakdownElem.innerHTML = this.renderProBreakdown(score);
+            } else {
+                breakdownElem.innerHTML = `
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>達成項目</th>
+                                <th>結果</th>
+                                <th>ポイント</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>退塾目標</td>
+                                <td>退塾 ${score.withdrawal}</td>
+                                <td>${this.renderPointRange('withdrawal', score.withdrawal, score.breakdown.withdrawalPoints)}</td>
+                            </tr>
+                            <tr>
+                                <td>動員目標</td>
+                                <td>体験 ${score.mobilization}</td>
+                                <td>${this.renderPointRange('mobilization', score.mobilization, score.breakdown.mobilizationPoints)}</td>
+                            </tr>
+                            <tr>
+                                <td>入退目標</td>
+                                <td>入退差 ${score.enrollmentDiff}</td>
+                                <td>${this.renderPointRange('enrollmentDiff', score.enrollmentDiff, score.breakdown.enrollmentDiffPoints)}</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td colspan="2">合計スコア</td>
+                                <td><strong>${score.displayScore}</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+            }
         }
 
         // ハイスコア保存・表示
@@ -1804,6 +1859,58 @@ export class UIController {
             }
             return `<span class="point-inactive">${pointStr}</span>`;
         }).join(' | ');
+    }
+
+    /**
+     * PRO難易度の結果内訳テーブルを生成
+     * @param {Object} score - calculateScorePro() の戻り値
+     * @returns {string} HTML文字列
+     */
+    renderProBreakdown(score) {
+        const b = score.breakdown;
+        const formatPoints = (pts) => {
+            if (pts > 0) return `<span class="point-active">+${pts}</span>`;
+            if (pts < 0) return `<span class="point-active">${pts}</span>`;
+            return `<span class="point-inactive">0</span>`;
+        };
+
+        return `
+            <table class="breakdown-table">
+                <thead>
+                    <tr>
+                        <th>達成項目</th>
+                        <th>結果</th>
+                        <th>スコア</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>動員</td>
+                        <td>体験 ${score.experience}</td>
+                        <td>${formatPoints(b.mobilizationPoints)}</td>
+                    </tr>
+                    <tr>
+                        <td>退塾</td>
+                        <td>退塾 ${score.withdrawal}</td>
+                        <td>${formatPoints(b.withdrawalPoints)}</td>
+                    </tr>
+                    <tr>
+                        <td>入退差</td>
+                        <td>入退差 ${score.enrollmentDiff}</td>
+                        <td>${formatPoints(b.enrollmentDiffPoints)}</td>
+                    </tr>
+                    <tr>
+                        <td>満足</td>
+                        <td>満足 ${score.satisfaction}</td>
+                        <td>${formatPoints(b.satisfactionPoints)}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="2">合計スコア</td>
+                        <td><strong>${score.displayScore}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
     }
 
     /**

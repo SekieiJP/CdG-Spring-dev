@@ -1692,3 +1692,46 @@ html.font-normal .help-longpress {
     background-color: #4a4a4a;
     color: #ddd;
 }
+
+/* ステータスランク表示 */
+.status-rank-info {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+    font-size: 0.7rem;
+    min-height: 16px;
+}
+
+.rank-label {
+    font-weight: bold;
+    color: #f0c040;
+    min-width: 1.5em;
+    text-align: center;
+}
+
+.rank-progress {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.rank-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4fc3f7, #81c784);
+    border-radius: 2px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.rank-deficit {
+    color: #aaa;
+    white-space: nowrap;
+    font-size: 0.65rem;
+}
+
+.rank-deficit.hidden {
+    display: none;
+}

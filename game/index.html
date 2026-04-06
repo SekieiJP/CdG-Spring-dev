@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20260406-1300">
+    <link rel="stylesheet" href="css/style.css?v=20260407-0900">
 </head>
 
 <body>
@@ -53,22 +53,36 @@
             <div class="status-item status-experience">
                 <div class="status-label">体験</div>
                 <div class="status-value" id="status-experience">0</div>
-                <div class="status-target">目標: 10+</div>
+                <div class="status-rank-info" id="rank-info-experience">
+                    <span class="rank-label"></span>
+                    <div class="rank-progress"><div class="rank-progress-fill"></div></div>
+                    <span class="rank-deficit"></span>
+                </div>
             </div>
             <div class="status-item status-enrollment">
                 <div class="status-label">入塾</div>
                 <div class="status-value" id="status-enrollment">0</div>
-                <div class="status-target">目標: 8+</div>
+                <div class="status-rank-info" id="rank-info-enrollment">
+                    <span class="rank-label"></span>
+                    <div class="rank-progress"><div class="rank-progress-fill"></div></div>
+                    <span class="rank-deficit"></span>
+                </div>
             </div>
             <div class="status-item status-satisfaction">
                 <div class="status-label">満足</div>
                 <div class="status-value" id="status-satisfaction">3</div>
-                <div class="status-target">目標: 15</div>
+                <div class="status-rank-info" id="rank-info-satisfaction">
+                    <div class="rank-progress"><div class="rank-progress-fill"></div></div>
+                    <span class="rank-deficit"></span>
+                </div>
             </div>
             <div class="status-item status-accounting">
                 <div class="status-label">経理</div>
                 <div class="status-value" id="status-accounting">3</div>
-                <div class="status-target">目標: 15</div>
+                <div class="status-rank-info" id="rank-info-accounting">
+                    <div class="rank-progress"><div class="rank-progress-fill"></div></div>
+                    <span class="rank-deficit"></span>
+                </div>
             </div>
         </section>
         <!-- トークン表示（ステータスパネル下） -->
@@ -236,8 +250,8 @@
         </div>
     </div>
 
-    <!-- JavaScriptモジュール（キャッシュバスター付き v20260406-1300） -->
-    <script type="module" src="js/main.js?v=20260406-1300"></script>
+    <!-- JavaScriptモジュール（キャッシュバスター付き v20260407-0900） -->
+    <script type="module" src="js/main.js?v=20260407-0900"></script>
 </body>
 
 </html>

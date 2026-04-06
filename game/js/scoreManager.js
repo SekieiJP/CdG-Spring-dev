@@ -6,6 +6,7 @@ import { getHighScoreKey } from './difficultyConfig.js';
 export class ScoreManager {
     constructor(logger) {
         this.logger = logger;
+        this.rankTable = null;
         this.migrateOldHighScore();
     }
 
@@ -28,6 +29,242 @@ export class ScoreManager {
     }
 
     /**
+     * ランクCSVを読み込み
+     * @param {string} csvPath
+     * @returns {Promise<Array|null>}
+     */
+    async loadRankData(csvPath) {
+        try {
+            const response = await fetch(csvPath);
+            if (!response.ok) {
+                throw new Error(`CSV読み込み失敗: ${response.status}`);
+            }
+
+            const text = await response.text();
+            const lines = text
+                .split(/\r?\n/)
+                .map((line) => line.trim())
+                .filter((line) => line !== '');
+
+            if (lines.length <= 1) {
+                this.rankTable = [];
+                return this.rankTable;
+            }
+
+            const headers = lines[0]
+                .split(',')
+                .map((header) => header.replace(/^\uFEFF/, '').trim());
+            const headerIndex = {};
+            headers.forEach((header, index) => {
+                headerIndex[header] = index;
+            });
+
+            const isPro = headers.includes('満足スコア') || headers.includes('ランク基準スコア');
+
+            const getCell = (cells, headerName) => cells[headerIndex[headerName]];
+            const toNullableInt = (raw) => {
+                if (raw === undefined || raw === null) return null;
+                const trimmed = String(raw).trim();
+                if (trimmed === '') return null;
+                const parsed = parseInt(trimmed, 10);
+                return Number.isNaN(parsed) ? null : parsed;
+            };
+
+            this.rankTable = lines
+                .slice(1)
+                .map((line) => {
+                    const cells = line.split(',').map((cell) => cell.trim());
+                    const grade = (getCell(cells, 'ランク') || '').replace(/^\uFEFF/, '').trim();
+                    if (!grade) return null;
+
+                    const baseRow = {
+                        grade,
+                        thresholds: {
+                            experience: toNullableInt(getCell(cells, '体験基準')),
+                            enrollment: toNullableInt(getCell(cells, '入塾基準')),
+                            satisfaction: toNullableInt(getCell(cells, '満足基準')),
+                            accounting: toNullableInt(getCell(cells, '経理基準'))
+                        },
+                        withdrawalThreshold: null,
+                        enrollmentDiffThreshold: null,
+                        scores: {
+                            mobilization: null,
+                            withdrawal: null,
+                            enrollmentDiff: null,
+                            satisfaction: null
+                        },
+                        rankThreshold: null
+                    };
+
+                    if (!isPro) {
+                        return baseRow;
+                    }
+
+                    return {
+                        ...baseRow,
+                        withdrawalThreshold: toNullableInt(getCell(cells, '退塾基準')),
+                        enrollmentDiffThreshold: toNullableInt(getCell(cells, '入退差基準')),
+                        scores: {
+                            mobilization: toNullableInt(getCell(cells, '動員スコア')),
+                            withdrawal: toNullableInt(getCell(cells, '退塾スコア')),
+                            enrollmentDiff: toNullableInt(getCell(cells, '入退差スコア')),
+                            satisfaction: toNullableInt(getCell(cells, '満足スコア'))
+                        },
+                        rankThreshold: toNullableInt(getCell(cells, 'ランク基準スコア'))
+                    };
+                })
+                .filter(Boolean);
+
+            return this.rankTable;
+        } catch (error) {
+            this.logger?.log(`ランクCSV読み込みエラー: ${error.message}`, 'error');
+            this.rankTable = null;
+            return null;
+        }
+    }
+
+    /**
+     * ステータスの現在ランクを取得
+     * @param {'experience'|'enrollment'|'satisfaction'|'accounting'} statKey
+     * @param {number} value
+     * @returns {{grade:string,currentThreshold:number,nextThreshold:number,deficit:number}|null}
+     */
+    getStatusRank(statKey, value) {
+        if (!this.rankTable || this.rankTable.length === 0) {
+            return null;
+        }
+
+        let currentIndex = -1;
+        for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+            const threshold = this.rankTable[i]?.thresholds?.[statKey];
+            if (threshold !== null && threshold !== undefined && value >= threshold) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        if (currentIndex === -1) {
+            currentIndex = 0;
+        }
+
+        const currentRow = this.rankTable[currentIndex];
+        const currentThreshold = currentRow?.thresholds?.[statKey] ?? 0;
+        const isHighest = currentIndex === this.rankTable.length - 1;
+        const nextRow = isHighest ? currentRow : this.rankTable[currentIndex + 1];
+        const nextThreshold = nextRow?.thresholds?.[statKey] ?? currentThreshold;
+        const deficit = isHighest ? 0 : Math.max(nextThreshold - value, 0);
+
+        return {
+            grade: currentRow.grade,
+            currentThreshold,
+            nextThreshold: isHighest ? currentThreshold : nextThreshold,
+            deficit
+        };
+    }
+
+    /**
+     * PRO難易度のスコア計算
+     * @param {Object} gameState
+     */
+    calculateScorePro(gameState) {
+        const PRO_RANK_NAMES = {
+            F: '達成ならず',
+            E: '達成ならず',
+            D: '達成まであと一歩',
+            C: 'ギリギリ達成',
+            B: '危なげなく達成',
+            'B+': '好調教室の仲間入り',
+            A: '近隣教室の憧れ！',
+            'A+': '地域最優秀教室ノミネート！',
+            S: '地域最優秀教室！！',
+            'S+': '全社最優秀教室！！',
+            SS: '空前絶後の偉業達成！！'
+        };
+
+        const withdrawal = this.calculateWithdrawal(gameState);
+        const mobilization = gameState.player.experience;
+        const enrollmentDiff = gameState.player.enrollment - withdrawal;
+
+        const findPoints = (predicate, scoreKey) => {
+            for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+                const row = this.rankTable[i];
+                if (predicate(row)) {
+                    return row.scores[scoreKey];
+                }
+            }
+            return 0;
+        };
+
+        const mobilizationPoints = findPoints(
+            (row) =>
+                row?.scores?.mobilization !== null &&
+                row?.thresholds?.experience !== null &&
+                mobilization >= row.thresholds.experience,
+            'mobilization'
+        );
+        const withdrawalPoints = findPoints(
+            (row) =>
+                row?.scores?.withdrawal !== null &&
+                row?.withdrawalThreshold !== null &&
+                withdrawal <= row.withdrawalThreshold,
+            'withdrawal'
+        );
+        const enrollmentDiffPoints = findPoints(
+            (row) =>
+                row?.scores?.enrollmentDiff !== null &&
+                row?.enrollmentDiffThreshold !== null &&
+                enrollmentDiff >= row.enrollmentDiffThreshold,
+            'enrollmentDiff'
+        );
+        const satisfactionPoints = findPoints(
+            (row) =>
+                row?.scores?.satisfaction !== null &&
+                row?.thresholds?.satisfaction !== null &&
+                gameState.player.satisfaction >= row.thresholds.satisfaction,
+            'satisfaction'
+        );
+
+        const points = mobilizationPoints + withdrawalPoints + enrollmentDiffPoints + satisfactionPoints;
+
+        let rankGrade = this.rankTable[0]?.grade || 'F';
+        for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+            const row = this.rankTable[i];
+            if (row?.rankThreshold !== null && points >= row.rankThreshold) {
+                rankGrade = row.grade;
+                break;
+            }
+        }
+
+        this.logger?.log('--- スコア計算 ---', 'info');
+        this.logger?.log(`退塾数: ${withdrawal}`, 'status');
+        this.logger?.log(`動員合計: ${mobilization}`, 'status');
+        this.logger?.log(`入退差: ${enrollmentDiff}`, 'status');
+        this.logger?.log(`目標ポイント: ${points}`, 'status');
+
+        return {
+            points,
+            displayScore: points,
+            withdrawal,
+            mobilization,
+            enrollmentDiff,
+            experience: gameState.player.experience,
+            enrollment: gameState.player.enrollment,
+            satisfaction: gameState.player.satisfaction,
+            accounting: gameState.player.accounting,
+            rank: {
+                grade: rankGrade,
+                name: PRO_RANK_NAMES[rankGrade] || rankGrade
+            },
+            breakdown: {
+                mobilizationPoints,
+                withdrawalPoints,
+                enrollmentDiffPoints,
+                satisfactionPoints
+            }
+        };
+    }
+
+    /**
      * 退塾数を計算
      */
     calculateWithdrawal(gameState) {
@@ -44,6 +281,11 @@ export class ScoreManager {
      * スコアを計算
      */
     calculateScore(gameState) {
+        // PROの場合はPRO専用ロジックを使う
+        if ((gameState.difficulty || 'fresh') === 'pro' && this.rankTable) {
+            return this.calculateScorePro(gameState);
+        }
+
         const withdrawal = this.calculateWithdrawal(gameState);
         const mobilization = gameState.player.experience; // 動員目標は体験数のみ
         const enrollmentDiff = gameState.player.enrollment - withdrawal;

@@ -6,6 +6,7 @@ export const DIFFICULTY_CONFIG = {
         id: 'fresh',
         name: 'FRESH',
         csvPath: 'data/cards_fresh.csv',
+        rankCsvPath: 'data/rankFresh.csv',
         initialStatus: {
             experience: 0,
             enrollment: 0,
@@ -20,6 +21,7 @@ export const DIFFICULTY_CONFIG = {
         id: 'pro',
         name: 'PRO',
         csvPath: 'data/cards_pro.csv',
+        rankCsvPath: 'data/rankPro.csv',
         initialStatus: {
             experience: 0,
             enrollment: 0,
