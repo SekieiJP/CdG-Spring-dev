@@ -1696,6 +1696,7 @@ html.font-normal .help-longpress {
 /* ステータスランク表示 */
 .status-rank-info {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 4px;
     margin-top: 2px;
@@ -1727,9 +1728,11 @@ html.font-normal .help-longpress {
 }
 
 .rank-deficit {
+    width: 100%;
     color: #aaa;
     white-space: nowrap;
     font-size: 0.65rem;
+    text-align: center;
 }
 
 .rank-deficit.hidden {

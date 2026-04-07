@@ -127,9 +127,10 @@ export class ScoreManager {
      * ステータスの現在ランクを取得
      * @param {'experience'|'enrollment'|'satisfaction'|'accounting'} statKey
      * @param {number} value
-     * @returns {{grade:string,currentThreshold:number,nextThreshold:number,deficit:number}|null}
+     * @param {'fresh'|'pro'} difficulty
+     * @returns {{grade:string,currentThreshold:number,nextThreshold:number,deficit:number,targetGrade:string}|null}
      */
-    getStatusRank(statKey, value) {
+    getStatusRank(statKey, value, difficulty = 'fresh') {
         if (!this.rankTable || this.rankTable.length === 0) {
             return null;
         }
@@ -149,16 +150,144 @@ export class ScoreManager {
 
         const currentRow = this.rankTable[currentIndex];
         const currentThreshold = currentRow?.thresholds?.[statKey] ?? 0;
-        const isHighest = currentIndex === this.rankTable.length - 1;
-        const nextRow = isHighest ? currentRow : this.rankTable[currentIndex + 1];
-        const nextThreshold = nextRow?.thresholds?.[statKey] ?? currentThreshold;
-        const deficit = isHighest ? 0 : Math.max(nextThreshold - value, 0);
+        const findGradeIndex = (grade) => this.rankTable.findIndex((row) => row?.grade === grade);
+        const getSequentialNextTarget = () => {
+            if (currentIndex >= this.rankTable.length - 1) return null;
+            const nextRow = this.rankTable[currentIndex + 1];
+            const threshold = nextRow?.thresholds?.[statKey];
+            if (threshold === null || threshold === undefined) return null;
+            return {
+                threshold,
+                grade: nextRow.grade
+            };
+        };
+
+        let target = null;
+
+        if (difficulty === 'pro') {
+            if (statKey === 'experience') {
+                let currentMobilizationScore = 0;
+                for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+                    const row = this.rankTable[i];
+                    if (
+                        row?.scores?.mobilization !== null &&
+                        row?.thresholds?.experience !== null &&
+                        value >= row.thresholds.experience
+                    ) {
+                        currentMobilizationScore = row.scores.mobilization;
+                        break;
+                    }
+                }
+
+                for (let i = 0; i < this.rankTable.length; i += 1) {
+                    const row = this.rankTable[i];
+                    if (
+                        row?.scores?.mobilization !== null &&
+                        row.scores.mobilization > currentMobilizationScore &&
+                        row?.thresholds?.experience !== null
+                    ) {
+                        target = {
+                            threshold: row.thresholds.experience,
+                            grade: row.grade
+                        };
+                        break;
+                    }
+                }
+            } else if (statKey === 'enrollment') {
+                let currentEnrollmentDiffScore = 0;
+                for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+                    const row = this.rankTable[i];
+                    if (
+                        row?.scores?.enrollmentDiff !== null &&
+                        row?.enrollmentDiffThreshold !== null &&
+                        value >= row.enrollmentDiffThreshold
+                    ) {
+                        currentEnrollmentDiffScore = row.scores.enrollmentDiff;
+                        break;
+                    }
+                }
+
+                for (let i = 0; i < this.rankTable.length; i += 1) {
+                    const row = this.rankTable[i];
+                    if (
+                        row?.scores?.enrollmentDiff !== null &&
+                        row.scores.enrollmentDiff > currentEnrollmentDiffScore &&
+                        row?.enrollmentDiffThreshold !== null
+                    ) {
+                        target = {
+                            threshold: row.enrollmentDiffThreshold,
+                            grade: row.grade
+                        };
+                        break;
+                    }
+                }
+            } else if (statKey === 'satisfaction' || statKey === 'accounting') {
+                const aIndex = findGradeIndex('A');
+                const aThreshold = aIndex >= 0 ? this.rankTable[aIndex]?.thresholds?.[statKey] : null;
+                if (
+                    aIndex >= 0 &&
+                    currentIndex < aIndex &&
+                    aThreshold !== null &&
+                    aThreshold !== undefined
+                ) {
+                    target = {
+                        threshold: aThreshold,
+                        grade: 'A'
+                    };
+                } else {
+                    target = getSequentialNextTarget();
+                }
+            } else {
+                target = getSequentialNextTarget();
+            }
+        } else {
+            if (statKey === 'satisfaction') {
+                const aIndex = findGradeIndex('A');
+                const aThreshold = aIndex >= 0 ? this.rankTable[aIndex]?.thresholds?.satisfaction : null;
+                if (
+                    aIndex >= 0 &&
+                    currentIndex < aIndex &&
+                    aThreshold !== null &&
+                    aThreshold !== undefined
+                ) {
+                    target = {
+                        threshold: aThreshold,
+                        grade: 'A'
+                    };
+                } else {
+                    target = getSequentialNextTarget();
+                }
+            } else if (statKey === 'accounting') {
+                const sIndex = findGradeIndex('S');
+                const sThreshold = sIndex >= 0 ? this.rankTable[sIndex]?.thresholds?.accounting : null;
+                if (
+                    sIndex >= 0 &&
+                    currentIndex < sIndex &&
+                    sThreshold !== null &&
+                    sThreshold !== undefined
+                ) {
+                    target = {
+                        threshold: sThreshold,
+                        grade: 'S'
+                    };
+                } else {
+                    target = getSequentialNextTarget();
+                }
+            } else {
+                target = getSequentialNextTarget();
+            }
+        }
+
+        const nextThreshold = target?.threshold ?? currentThreshold;
+        const targetGrade = target?.grade ?? currentRow.grade;
+        const deficit = target ? Math.max(nextThreshold - value, 0) : 0;
 
         return {
             grade: currentRow.grade,
             currentThreshold,
-            nextThreshold: isHighest ? currentThreshold : nextThreshold,
-            deficit
+            nextThreshold,
+            deficit,
+            targetGrade
         };
     }
 

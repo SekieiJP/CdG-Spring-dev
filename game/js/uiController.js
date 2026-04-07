@@ -189,21 +189,21 @@ export class UIController {
     updateRankDisplay() {
         if (!this.scoreManager?.rankTable) return;
 
-        const showLabel = ['experience', 'enrollment']; // ランクラベルを表示するステータス
+        const difficulty = this.gameState.difficulty || 'fresh';
         const statuses = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 
         statuses.forEach(stat => {
             const value = this.gameState.player[stat];
-            const rankInfo = this.scoreManager.getStatusRank(stat, value);
+            const rankInfo = this.scoreManager.getStatusRank(stat, value, difficulty);
             if (!rankInfo) return;
 
             const container = document.getElementById(`rank-info-${stat}`);
             if (!container) return;
 
-            // ランクラベル（体験・入塾のみ）
+            // ランクラベル（全4ステータス共通で表示）
             const labelElem = container.querySelector('.rank-label');
             if (labelElem) {
-                labelElem.textContent = showLabel.includes(stat) ? rankInfo.grade : '';
+                labelElem.textContent = rankInfo.grade;
             }
 
             // プログレスバー
@@ -212,15 +212,15 @@ export class UIController {
                 const range = rankInfo.nextThreshold - rankInfo.currentThreshold;
                 const progress = range > 0
                     ? Math.min(((value - rankInfo.currentThreshold) / range) * 100, 100)
-                    : 100; // 最高ランク到達時
+                    : 100;
                 fillElem.style.width = `${progress}%`;
             }
 
-            // あとN表示
+            // あとN表示（「Xまであと Y」形式）
             const deficitElem = container.querySelector('.rank-deficit');
             if (deficitElem) {
                 if (rankInfo.deficit > 0) {
-                    deficitElem.textContent = `あと${rankInfo.deficit}`;
+                    deficitElem.textContent = `${rankInfo.targetGrade}まであと${rankInfo.deficit}`;
                     deficitElem.classList.remove('hidden');
                 } else {
                     deficitElem.textContent = '';
