@@ -2109,7 +2109,248 @@ export class UIController {
         });
 
         content.appendChild(table);
+        this.renderScoreSection(content);
         document.body.appendChild(overlay);
+    }
+
+    /**
+     * スコア換算表セクションをスケジュールオーバーレイに追加
+     */
+    renderScoreSection(content) {
+        const difficulty = this.gameState.difficulty || 'fresh';
+        const withdrawal = this.scoreManager?.calculateWithdrawal?.(this.gameState) ?? 0;
+        const mobilization = this.gameState.player.experience;
+        const enrollmentDiff = this.gameState.player.enrollment - withdrawal;
+        const satisfaction = this.gameState.player.satisfaction;
+
+        // ---- セクションタイトル ----
+        const title = document.createElement('div');
+        title.className = 'score-section-title';
+        title.textContent = '📊 スコア換算表';
+        content.appendChild(title);
+
+        // ---- サマリー行 ----
+        const summary = document.createElement('div');
+        summary.className = 'score-summary';
+
+        if (difficulty === 'fresh') {
+            summary.textContent = `退塾${withdrawal}名 / 体験${mobilization} / 入退差${enrollmentDiff}`;
+        } else {
+            summary.textContent = `退塾${withdrawal}名 / 体験${mobilization} / 入退差${enrollmentDiff} / 満足${satisfaction}`;
+        }
+        content.appendChild(summary);
+
+        if (difficulty === 'fresh') {
+            this._renderFreshScoreTable(content, withdrawal, mobilization, enrollmentDiff);
+        } else {
+            this._renderProScoreTable(content, withdrawal, mobilization, enrollmentDiff, satisfaction);
+        }
+    }
+
+    /**
+     * FRESHのスコア換算表を描画
+     */
+    _renderFreshScoreTable(content, withdrawal, mobilization, enrollmentDiff) {
+        // ---- 退塾 + 動員 の2列グリッド ----
+        const grid1 = document.createElement('div');
+        grid1.className = 'score-grid';
+
+        // 退塾ポイントテーブル
+        const withdrawalRows = [
+            { label: '0〜1', min: 0, max: 1, pts: 1 },
+            { label: '2〜3', min: 2, max: 3, pts: 0 },
+            { label: '4以上', min: 4, max: Infinity, pts: -3 },
+        ];
+        grid1.appendChild(this._buildScoreTable(
+            '退塾ポイント',
+            [{ header: '退塾数' }, { header: 'pt' }],
+            withdrawalRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: withdrawal >= r.min && withdrawal <= r.max,
+            }))
+        ));
+
+        // 動員ポイントテーブル
+        const mobilizationRows = [
+            { label: '12以上', min: 12, max: Infinity, pts: 2 },
+            { label: '10〜11', min: 10, max: 11, pts: 1 },
+            { label: '9以下', min: 0, max: 9, pts: 0 },
+        ];
+        grid1.appendChild(this._buildScoreTable(
+            '動員ポイント',
+            [{ header: '体験' }, { header: 'pt' }],
+            mobilizationRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: mobilization >= r.min && mobilization <= r.max,
+            }))
+        ));
+        content.appendChild(grid1);
+
+        // ---- 入退差（全幅） ----
+        const enrollmentRows = [
+            { label: '12以上', min: 12, max: Infinity, pts: 5 },
+            { label: '10〜11', min: 10, max: 11, pts: 4 },
+            { label: '8〜9', min: 8, max: 9, pts: 3 },
+            { label: '7以下', min: -Infinity, max: 7, pts: 0 },
+        ];
+        const fullTable = this._buildScoreTable(
+            '入退差ポイント',
+            [{ header: '入退差（入塾−退塾）' }, { header: 'pt' }],
+            enrollmentRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: enrollmentDiff >= (r.min === -Infinity ? -999 : r.min) && enrollmentDiff <= (r.max === Infinity ? 999 : r.max),
+            }))
+        );
+        fullTable.style.marginBottom = '6px';
+        content.appendChild(fullTable);
+
+        // S+条件ノート
+        const note = document.createElement('div');
+        note.className = 'score-note';
+        note.textContent = '★ S+条件: 退塾0 かつ 体験15以上 かつ 入塾15以上';
+        content.appendChild(note);
+    }
+
+    /**
+     * PROのスコア換算表を描画
+     */
+    _renderProScoreTable(content, withdrawal, mobilization, enrollmentDiff, satisfaction) {
+        // ---- 動員 + 満足 の2列グリッド ----
+        const grid1 = document.createElement('div');
+        grid1.className = 'score-grid';
+
+        // 動員ポイント（体験数 → scores.mobilization）
+        // rankPro.csv: C=15→1, B=20→2, B+=23→2(同), A=25→3, A+=32→3(同), S=40→4, S+=50→5
+        const mobilizationRows = [
+            { label: '50以上', min: 50, max: Infinity, pts: 5 },
+            { label: '40〜49', min: 40, max: 49, pts: 4 },
+            { label: '25〜39', min: 25, max: 39, pts: 3 },
+            { label: '20〜24', min: 20, max: 24, pts: 2 },
+            { label: '15〜19', min: 15, max: 19, pts: 1 },
+            { label: '14以下', min: 0, max: 14, pts: 0 },
+        ];
+        grid1.appendChild(this._buildScoreTable(
+            '動員ポイント',
+            [{ header: '体験' }, { header: 'pt' }],
+            mobilizationRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: mobilization >= r.min && mobilization <= r.max,
+            }))
+        ));
+
+        // 満足ポイント（scores.satisfaction: S=1, S+=2）
+        const satisfactionRows = [
+            { label: '40以上', min: 40, max: Infinity, pts: 2 },
+            { label: '30〜39', min: 30, max: 39, pts: 1 },
+            { label: '29以下', min: 0, max: 29, pts: 0 },
+        ];
+        grid1.appendChild(this._buildScoreTable(
+            '満足ポイント',
+            [{ header: '満足' }, { header: 'pt' }],
+            satisfactionRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: satisfaction >= r.min && satisfaction <= r.max,
+            }))
+        ));
+        content.appendChild(grid1);
+
+        // ---- 退塾 + 入退差 の2列グリッド ----
+        const grid2 = document.createElement('div');
+        grid2.className = 'score-grid';
+
+        // 退塾ポイント（withdrawal <= withdrawalThreshold → score）
+        // rankPro.csv: S+=0→+1, S=1→0, A=2→0, B=3→-1, C=4→-3, D=5→-4, E=6→-6, F=30→-8
+        const withdrawalRows = [
+            { label: '0', min: 0, max: 0, pts: 1 },
+            { label: '1〜2', min: 1, max: 2, pts: 0 },
+            { label: '3', min: 3, max: 3, pts: -1 },
+            { label: '4', min: 4, max: 4, pts: -3 },
+            { label: '5', min: 5, max: 5, pts: -4 },
+            { label: '6', min: 6, max: 6, pts: -6 },
+            { label: '7以上', min: 7, max: Infinity, pts: -8 },
+        ];
+        grid2.appendChild(this._buildScoreTable(
+            '退塾ポイント',
+            [{ header: '退塾数' }, { header: 'pt' }],
+            withdrawalRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: withdrawal >= r.min && withdrawal <= (r.max === Infinity ? 9999 : r.max),
+            }))
+        ));
+
+        // 入退差ポイント（enrollmentDiff >= enrollmentDiffThreshold → score）
+        // rankPro.csv: F=0→0, E=4→0, D=8→0, C=12→1, B=16→2, B+=18→3, A=20→4, A+=26→5, S=32→6, S+=40→7, SS=48→8
+        const enrollmentRows = [
+            { label: '48以上', min: 48, max: Infinity, pts: 8 },
+            { label: '40〜47', min: 40, max: 47, pts: 7 },
+            { label: '32〜39', min: 32, max: 39, pts: 6 },
+            { label: '26〜31', min: 26, max: 31, pts: 5 },
+            { label: '20〜25', min: 20, max: 25, pts: 4 },
+            { label: '18〜19', min: 18, max: 19, pts: 3 },
+            { label: '16〜17', min: 16, max: 17, pts: 2 },
+            { label: '12〜15', min: 12, max: 15, pts: 1 },
+            { label: '11以下', min: -Infinity, max: 11, pts: 0 },
+        ];
+        grid2.appendChild(this._buildScoreTable(
+            '入退差ポイント',
+            [{ header: '入退差' }, { header: 'pt' }],
+            enrollmentRows.map(r => ({
+                cells: [r.label, this._fmtPts(r.pts)],
+                current: enrollmentDiff >= (r.min === -Infinity ? -9999 : r.min) && enrollmentDiff <= (r.max === Infinity ? 9999 : r.max),
+            }))
+        ));
+        content.appendChild(grid2);
+    }
+
+    /**
+     * スコアテーブルを生成するヘルパー
+     * @param {string} categoryTitle - テーブルタイトル
+     * @param {Array<{header:string}>} headers - ヘッダー列定義
+     * @param {Array<{cells:string[], current:boolean}>} rows - 行データ
+     * @returns {HTMLElement} テーブル要素を内包するラッパーdiv
+     */
+    _buildScoreTable(categoryTitle, headers, rows) {
+        const wrapper = document.createElement('div');
+
+        const catTitle = document.createElement('div');
+        catTitle.className = 'score-category-title';
+        catTitle.textContent = categoryTitle;
+        wrapper.appendChild(catTitle);
+
+        const table = document.createElement('table');
+        table.className = 'score-table';
+
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        headers.forEach(h => {
+            const th = document.createElement('th');
+            th.textContent = h.header;
+            headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        rows.forEach(row => {
+            const tr = document.createElement('tr');
+            if (row.current) tr.className = 'current';
+            row.cells.forEach(cell => {
+                const td = document.createElement('td');
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        table.appendChild(tbody);
+        wrapper.appendChild(table);
+        return wrapper;
+    }
+
+    /**
+     * ポイント値を表示用文字列に変換（正数は+付き）
+     */
+    _fmtPts(pts) {
+        return pts > 0 ? `+${pts}` : `${pts}`;
     }
 
     /**

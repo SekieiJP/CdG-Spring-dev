@@ -1348,6 +1348,66 @@ body {
     color: var(--color-accent);
 }
 
+/* スコア換算表 */
+.score-section-title {
+    font-size: 0.85rem;
+    font-weight: bold;
+    margin: 14px 0 4px;
+    color: var(--color-accent);
+    border-top: 1px solid #444;
+    padding-top: 10px;
+}
+
+.score-summary {
+    font-size: 0.72rem;
+    color: #bbb;
+    margin-bottom: 8px;
+}
+
+.score-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.score-category-title {
+    font-size: 0.72rem;
+    font-weight: bold;
+    color: #ccc;
+    margin-bottom: 2px;
+}
+
+.score-table {
+    width: 100%;
+    font-size: 0.7rem;
+    border-collapse: collapse;
+}
+
+.score-table th,
+.score-table td {
+    padding: 3px 5px;
+    border: 1px solid #444;
+    text-align: center;
+}
+
+.score-table th {
+    background: #2a2a2a;
+    color: #aaa;
+}
+
+.score-table tr.current {
+    background: rgba(59, 130, 246, 0.35);
+    font-weight: bold;
+}
+
+.score-note {
+    font-size: 0.68rem;
+    color: #aaa;
+    margin-top: 4px;
+    margin-bottom: 8px;
+}
+
 /* ==================== フロート通知 ==================== */
 .float-notification {
     position: fixed;

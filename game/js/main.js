@@ -2,16 +2,16 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20260408-1028';
-import { GameState } from './gameState.js?v=20260408-1028';
-import { CardManager } from './cardManager.js?v=20260408-1028';
-import { TurnManager } from './turnManager.js?v=20260408-1028';
-import { ScoreManager } from './scoreManager.js?v=20260408-1028';
-import { UIController } from './uiController.js?v=20260408-1028';
-import { SaveManager } from './saveManager.js?v=20260408-1028';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260408-1028';
+import { Logger } from './logger.js?v=20260408-1212';
+import { GameState } from './gameState.js?v=20260408-1212';
+import { CardManager } from './cardManager.js?v=20260408-1212';
+import { TurnManager } from './turnManager.js?v=20260408-1212';
+import { ScoreManager } from './scoreManager.js?v=20260408-1212';
+import { UIController } from './uiController.js?v=20260408-1212';
+import { SaveManager } from './saveManager.js?v=20260408-1212';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260408-1212';
 
-const CACHE_BUSTER = 'v20260408-1028';
+const CACHE_BUSTER = 'v20260408-1212';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
