@@ -528,11 +528,7 @@ export class CardManager {
             gameState.player[effect.status] = effect.value;
             this.logger?.log(`  ${statusNames[effect.status]}: ${before} → ${effect.value}`, 'status');
         } else if (effect.type === 'change') {
-            const before = gameState.player[effect.status];
             gameState.updateStatus(effect.status, effect.value);
-            const after = gameState.player[effect.status];
-            const sign = effect.value > 0 ? '+' : '';
-            this.logger?.log(`  ${statusNames[effect.status]}: ${before} → ${after} (${sign}${effect.value})`, 'status');
         } else if (effect.type === 'token') {
             gameState.tokens[effect.token] = (gameState.tokens[effect.token] || 0) + 1;
             const tokenNames = {

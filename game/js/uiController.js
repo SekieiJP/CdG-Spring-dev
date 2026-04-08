@@ -1239,6 +1239,54 @@ export class UIController {
                 }
             }
         });
+
+        this.updateAnimationRankDisplay(stats);
+    }
+
+    /**
+     * アニメーション画面のランク表示を更新
+     */
+    updateAnimationRankDisplay(stats) {
+        if (!this.scoreManager?.rankTable) return;
+        const difficulty = this.gameState.difficulty || 'fresh';
+        const statMap = {
+            experience: 'exp',
+            enrollment: 'enr',
+            satisfaction: 'sat',
+            accounting: 'acc'
+        };
+
+        Object.entries(statMap).forEach(([stat, id]) => {
+            const container = document.getElementById(`anim-${id}-rank`);
+            if (!container) return;
+
+            const value = stats[stat] ?? 0;
+            const rankInfo = this.scoreManager.getStatusRank(stat, value, difficulty);
+            if (!rankInfo) return;
+
+            const labelElem = container.querySelector('.rank-label');
+            if (labelElem) labelElem.textContent = rankInfo.grade;
+
+            const fillElem = container.querySelector('.rank-progress-fill');
+            if (fillElem) {
+                const range = rankInfo.nextThreshold - rankInfo.currentThreshold;
+                const progress = range > 0
+                    ? Math.min(((value - rankInfo.currentThreshold) / range) * 100, 100)
+                    : 100;
+                fillElem.style.width = `${progress}%`;
+            }
+
+            const deficitElem = container.querySelector('.rank-deficit');
+            if (deficitElem) {
+                if (rankInfo.deficit > 0) {
+                    deficitElem.textContent = `${rankInfo.targetGrade}まであと${rankInfo.deficit}`;
+                    deficitElem.classList.remove('hidden');
+                } else {
+                    deficitElem.textContent = '';
+                    deficitElem.classList.add('hidden');
+                }
+            }
+        });
     }
 
     /**
@@ -1311,6 +1359,7 @@ export class UIController {
 
         const maxDelete = this.turnManager.getCurrentDeleteMax();
         const organizeBonus = this.gameState.tokens?.organize || 0;
+        this.gameState.tokens.organize = 0;  // 消費
         const bonusInfo = document.getElementById('organize-bonus-info');
         if (bonusInfo) {
             if (organizeBonus > 0) {
@@ -1557,9 +1606,10 @@ export class UIController {
 
         // 現在の候補カードを取得してリフレッシュ
         const currentCards = this.gameState.currentTrainingCards || [];
+        const isInspiration = this.trainingSelectionMode === 'inspiration';
         const isInitialTraining = this.gameState.turn === 0;
-        const rarity = isInitialTraining ? 'R' : config.training;
-        const count = isInitialTraining ? 4 : 3;
+        const rarity = isInspiration ? 'SR' : (isInitialTraining ? 'R' : config.training);
+        const count = (isInspiration || !isInitialTraining) ? 3 : 4;
         const newCards = this.cardManager.refreshTrainingCards(rarity, currentCards, count);
 
         // 残り回数を減らす
@@ -1652,9 +1702,7 @@ export class UIController {
             instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
         }
 
-        // リフレッシュボタンは非表示
-        const refreshRow = document.getElementById('training-refresh-row');
-        if (refreshRow) refreshRow.classList.add('hidden');
+        this.updateTrainingRefreshUI('SR');
 
         this.showPhaseArea('training');
         this.updateTurnDisplay();
@@ -2176,8 +2224,7 @@ export class UIController {
                 const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
                 instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
             }
-            const refreshRow = document.getElementById('training-refresh-row');
-            if (refreshRow) refreshRow.classList.add('hidden');
+            this.updateTrainingRefreshUI('SR');
             return;
         }
 
