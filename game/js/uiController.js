@@ -209,9 +209,9 @@ export class UIController {
             // プログレスバー
             const fillElem = container.querySelector('.rank-progress-fill');
             if (fillElem) {
-                const range = rankInfo.nextThreshold - rankInfo.currentThreshold;
+                const range = rankInfo.nextThreshold - rankInfo.startThreshold;
                 const progress = range > 0
-                    ? Math.min(((value - rankInfo.currentThreshold) / range) * 100, 100)
+                    ? Math.min(((value - rankInfo.startThreshold) / range) * 100, 100)
                     : 100;
                 fillElem.style.width = `${progress}%`;
             }
@@ -1269,9 +1269,9 @@ export class UIController {
 
             const fillElem = container.querySelector('.rank-progress-fill');
             if (fillElem) {
-                const range = rankInfo.nextThreshold - rankInfo.currentThreshold;
+                const range = rankInfo.nextThreshold - rankInfo.startThreshold;
                 const progress = range > 0
-                    ? Math.min(((value - rankInfo.currentThreshold) / range) * 100, 100)
+                    ? Math.min(((value - rankInfo.startThreshold) / range) * 100, 100)
                     : 100;
                 fillElem.style.width = `${progress}%`;
             }

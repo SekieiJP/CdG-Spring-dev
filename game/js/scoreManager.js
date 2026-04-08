@@ -128,7 +128,7 @@ export class ScoreManager {
      * @param {'experience'|'enrollment'|'satisfaction'|'accounting'} statKey
      * @param {number} value
      * @param {'fresh'|'pro'} difficulty
-     * @returns {{grade:string,currentThreshold:number,nextThreshold:number,deficit:number,targetGrade:string}|null}
+     * @returns {{grade:string,startThreshold:number,currentThreshold:number,nextThreshold:number,deficit:number,targetGrade:string}|null}
      */
     getStatusRank(statKey, value, difficulty = 'fresh') {
         if (!this.rankTable || this.rankTable.length === 0) {
@@ -163,10 +163,11 @@ export class ScoreManager {
         };
 
         let target = null;
+        let currentMobilizationScore = 0;
+        let currentEnrollmentDiffScore = 0;
 
         if (difficulty === 'pro') {
             if (statKey === 'experience') {
-                let currentMobilizationScore = 0;
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
                     if (
@@ -194,7 +195,6 @@ export class ScoreManager {
                     }
                 }
             } else if (statKey === 'enrollment') {
-                let currentEnrollmentDiffScore = 0;
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
                     if (
@@ -278,12 +278,82 @@ export class ScoreManager {
             }
         }
 
+        // --- startThreshold の計算 ---
+        let startThreshold = currentThreshold; // デフォルト（逐次の場合）
+
+        if (difficulty === 'pro') {
+            if (statKey === 'experience') {
+                // PRO体験: currentMobilizationScore が 0 なら 0、
+                // それ以外は rankTable を低→高で走査し、
+                // scores.mobilization === currentMobilizationScore の最初の行の thresholds.experience
+                if (currentMobilizationScore === 0) {
+                    startThreshold = 0;
+                } else {
+                    for (let i = 0; i < this.rankTable.length; i += 1) {
+                        const row = this.rankTable[i];
+                        if (
+                            row?.scores?.mobilization === currentMobilizationScore &&
+                            row?.thresholds?.experience !== null &&
+                            row?.thresholds?.experience !== undefined
+                        ) {
+                            startThreshold = row.thresholds.experience;
+                            break;
+                        }
+                    }
+                }
+            } else if (statKey === 'enrollment') {
+                // PRO入塾: currentEnrollmentDiffScore が 0 なら 0、
+                // それ以外は rankTable を低→高で走査し、
+                // scores.enrollmentDiff === currentEnrollmentDiffScore の最初の行の enrollmentDiffThreshold
+                if (currentEnrollmentDiffScore === 0) {
+                    startThreshold = 0;
+                } else {
+                    for (let i = 0; i < this.rankTable.length; i += 1) {
+                        const row = this.rankTable[i];
+                        if (
+                            row?.scores?.enrollmentDiff === currentEnrollmentDiffScore &&
+                            row?.enrollmentDiffThreshold !== null &&
+                            row?.enrollmentDiffThreshold !== undefined
+                        ) {
+                            startThreshold = row.enrollmentDiffThreshold;
+                            break;
+                        }
+                    }
+                }
+            } else if (statKey === 'satisfaction' || statKey === 'accounting') {
+                // PRO満足・経理: Aランク未到達なら始点=0、A以上は currentThreshold（逐次）
+                const aIndex = findGradeIndex('A');
+                if (aIndex >= 0 && currentIndex < aIndex) {
+                    startThreshold = 0;
+                }
+                // else: startThreshold = currentThreshold (初期値のまま)
+            }
+            // PRO体験・入塾以外（getSequentialNextTarget の場合）はデフォルトのまま
+        } else {
+            // FRESH
+            if (statKey === 'satisfaction') {
+                // Aランク未到達なら始点=0
+                const aIndex = findGradeIndex('A');
+                if (aIndex >= 0 && currentIndex < aIndex) {
+                    startThreshold = 0;
+                }
+            } else if (statKey === 'accounting') {
+                // Sランク未到達なら始点=0
+                const sIndex = findGradeIndex('S');
+                if (sIndex >= 0 && currentIndex < sIndex) {
+                    startThreshold = 0;
+                }
+            }
+            // FRESH体験・入塾は逐次なのでデフォルト（currentThreshold）のまま
+        }
+
         const nextThreshold = target?.threshold ?? currentThreshold;
         const targetGrade = target?.grade ?? currentRow.grade;
         const deficit = target ? Math.max(nextThreshold - value, 0) : 0;
 
         return {
             grade: currentRow.grade,
+            startThreshold,
             currentThreshold,
             nextThreshold,
             deficit,
