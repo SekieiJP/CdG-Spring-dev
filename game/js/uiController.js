@@ -1253,15 +1253,17 @@ export class UIController {
             const finalRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
             if (!prevRank || !finalRank) break;
 
-            const hasUpwardRankChange = toValue > currentValue && prevRank.grade !== finalRank.grade;
-            if (!hasUpwardRankChange) {
+            // 終点（nextThreshold）を跨ぐ場合のみ演出を行う
+            const nextThr = prevRank.nextThreshold;
+            const hasThresholdCrossing = Number.isFinite(nextThr) && toValue >= nextThr;
+            if (!hasThresholdCrossing) {
                 if (labelElem) labelElem.textContent = finalRank.grade;
                 updateProgress(finalRank, toValue, true);
                 updateDeficit(finalRank);
                 break;
             }
 
-            // ランクアップ: 100%へアニメーション
+            // 終点を跨いだ: 100%へアニメーション
             fillElem.style.transition = 'width 0.35s ease';
             fillElem.style.width = '100%';
             await this._sleep(550); // 350ms遷移 + 200ms静止
