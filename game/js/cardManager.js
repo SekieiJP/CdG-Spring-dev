@@ -18,7 +18,8 @@ export class CardManager {
      */
     async loadCards(csvPath) {
         try {
-            const response = await fetch(csvPath);
+            const cb = (typeof window !== 'undefined' && window.BUILD_VERSION) ? '?v=' + window.BUILD_VERSION : '';
+            const response = await fetch(csvPath + cb);
             const csvText = await response.text();
 
             // 難易度切替時の混在防止
@@ -390,6 +391,18 @@ export class CardManager {
             };
         }
 
+        // 2ステータスの差条件（例: 体験と入塾の差が5以下）
+        const diffMatch = conditionText.match(/(体験|入塾|満足|経理)と(体験|入塾|満足|経理)の差が(\d+)(以上|以下)/);
+        if (diffMatch) {
+            return {
+                type: 'statDiff',
+                stat1: statusMap[diffMatch[1]],
+                stat2: statusMap[diffMatch[2]],
+                value: parseInt(diffMatch[3]),
+                comparison: diffMatch[4] === '以上' ? 'gte' : 'lte'
+            };
+        }
+
         // 不明な条件
         return { type: 'unknown', raw: conditionText };
     }
@@ -463,6 +476,13 @@ export class CardManager {
             } else {
                 return currentValue <= condition.value;
             }
+        }
+
+        if (condition.type === 'statDiff') {
+            const v1 = gameState.player[condition.stat1] ?? 0;
+            const v2 = gameState.player[condition.stat2] ?? 0;
+            const diff = Math.abs(v1 - v2);
+            return condition.comparison === 'gte' ? diff >= condition.value : diff <= condition.value;
         }
 
         // 不明な条件は適用しない

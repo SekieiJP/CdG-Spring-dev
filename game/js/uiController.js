@@ -1097,118 +1097,234 @@ export class UIController {
     /**
      * ステータス変動演出を表示
      */
-    showStatusAnimation(beforeStats, afterStats, actionInfo) {
+    async showStatusAnimation(beforeStats, afterStats, actionInfo) {
         const overlay = document.getElementById('status-animation-overlay');
         const header = document.getElementById('animation-header');
         const cards = document.getElementById('animation-cards');
 
-        if (!overlay) {
+        if (!overlay || !header || !cards) {
             // 演出要素がなければスキップして次へ進む
             this.finishActionPhase();
             return;
         }
 
-        // 現在のステータス（リアルタイム更新用）
-        const currentStats = { ...beforeStats };
+        try {
+            // 現在のステータス（リアルタイム更新用）
+            const currentStats = { ...beforeStats };
 
-        // ステータス表示を初期化
-        this.updateAnimationStats(currentStats, {});
+            // ステータス表示を初期化
+            this.updateAnimationStats(currentStats, {});
 
-        // オーバーレイ表示
-        overlay.classList.remove('hidden');
-        header.innerHTML = '';
-        cards.innerHTML = '';
+            // オーバーレイ表示
+            overlay.classList.remove('hidden');
+            header.innerHTML = '';
+            cards.innerHTML = '';
 
-        // 演出シーケンス
-        const config = this.turnManager.getCurrentTurnConfig();
-        const placed = this.gameState.player.placed;
+            // 演出シーケンス
+            const config = this.turnManager.getCurrentTurnConfig();
+            const placed = this.gameState.player.placed;
 
-        let delay = 300;
-
-        // ターン情報表示
-        setTimeout(() => {
+            // ターン情報表示
+            await this._sleep(300);
             header.innerHTML = `${this.gameState.turn + 1}/8ターン ${config.week}`;
-        }, delay);
-        delay += 500;
 
-        // おすすめ行動表示
-        if (config.recommended) {
-            setTimeout(() => {
+            // おすすめ行動表示
+            if (config.recommended) {
+                await this._sleep(500);
                 header.innerHTML += `<br>🎯 おすすめ行動: ${config.recommended}`;
-            }, delay);
-            delay += 800;
-        }
-
-        // カテゴリ色マップ（CSS変数と統一）
-        const categoryColors = {
-            '動員': '#3B82F6',  // --color-mobilization
-            '教務': '#10B981',  // --color-teaching
-            '庶務': '#EC4899',  // --color-affairs
-            '応対': '#F97316'   // --color-response
-        };
-
-        // ステータス日本語名マップ
-        const statusNames = {
-            'experience': '体験',
-            'enrollment': '入塾',
-            'satisfaction': '満足',
-            'accounting': '経理'
-        };
-
-        // 各カード効果をリアルタイムで表示
-        const staffOrder = ['leader', 'teacher', 'staff'];
-        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
-
-        // アニメーション表示: スタッフ×カード単位で順番に表示
-        let animStep = 0;
-        staffOrder.forEach(staff => {
-            const staffCards = placed[staff]; // 配列
-            const cardEffectInfo = actionInfo?.cardEffects?.[staff];
-            if (staffCards.length > 0 && cardEffectInfo) {
-                const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
-                staffCards.forEach((card, cardIdx) => {
-                    const perCardInfo = cardEffectInfo.cards?.[cardIdx];
-                    setTimeout(() => {
-                        const categoryColor = categoryColors[card.category] || '#9CA3AF';
-                        const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${card.category}</span>`;
-                        const isRecommended = perCardInfo?.isRecommended || false;
-                        const recommendedMark = isRecommended ? ' 🎯' : '';
-                        const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
-
-                        cards.innerHTML = `
-                            <div class="animation-card-item">
-                                <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
-                                <div class="anim-card-name">${card.cardName}${categoryBadge}${recommendedMark}</div>
-                                <div class="anim-card-effect">${card.effect}</div>
-                                ${bonusText}
-                            </div>
-                        `;
-
-                        if (perCardInfo) {
-                            const delta = this.calculateDelta(perCardInfo.beforeStats, perCardInfo.afterStats);
-                            Object.entries(delta).forEach(([key, value]) => {
-                                if (currentStats.hasOwnProperty(key)) currentStats[key] += value;
-                            });
-                            this.updateAnimationStats(currentStats, delta);
-                        }
-                    }, delay + animStep * 2000);
-                    animStep++;
-                });
+                await this._sleep(800);
             }
-        });
-        delay += animStep * 2000;
 
-        // 演出終了（📊行動結果ステップを除去）
-        setTimeout(() => {
+            // カテゴリ色マップ（CSS変数と統一）
+            const categoryColors = {
+                '動員': '#3B82F6',  // --color-mobilization
+                '教務': '#10B981',  // --color-teaching
+                '庶務': '#EC4899',  // --color-affairs
+                '応対': '#F97316'   // --color-response
+            };
+
+            // ステータス日本語名マップ
+            const statusNames = {
+                'experience': '体験',
+                'enrollment': '入塾',
+                'satisfaction': '満足',
+                'accounting': '経理'
+            };
+
+            // 各カード効果をリアルタイムで表示
+            const staffOrder = ['leader', 'teacher', 'staff'];
+            const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+
+            for (const staff of staffOrder) {
+                const staffCards = placed[staff]; // 配列
+                const cardEffectInfo = actionInfo?.cardEffects?.[staff];
+                if (staffCards.length === 0 || !cardEffectInfo) continue;
+
+                const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
+                for (let cardIdx = 0; cardIdx < staffCards.length; cardIdx += 1) {
+                    const card = staffCards[cardIdx];
+                    const perCardInfo = cardEffectInfo.cards?.[cardIdx];
+                    const categoryColor = categoryColors[card.category] || '#9CA3AF';
+                    const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${card.category}</span>`;
+                    const isRecommended = perCardInfo?.isRecommended || false;
+                    const recommendedMark = isRecommended ? ' 🎯' : '';
+                    const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
+
+                    cards.innerHTML = `
+                        <div class="animation-card-item">
+                            <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
+                            <div class="anim-card-name">${card.cardName}${categoryBadge}${recommendedMark}</div>
+                            <div class="anim-card-effect">${card.effect}</div>
+                            ${bonusText}
+                        </div>
+                    `;
+
+                    if (perCardInfo) {
+                        const beforeCardStats = { ...currentStats };
+                        const delta = this.calculateDelta(perCardInfo.beforeStats, perCardInfo.afterStats);
+                        Object.entries(delta).forEach(([key, value]) => {
+                            if (Object.prototype.hasOwnProperty.call(currentStats, key)) {
+                                currentStats[key] += value;
+                            }
+                        });
+                        this.updateAnimationStats(currentStats, delta, { skipRankDisplay: true });
+                        await this.animateRankUpsIfNeeded(beforeCardStats, { ...currentStats });
+                        await this._sleep(800);
+                    } else {
+                        await this._sleep(2000);
+                    }
+                }
+            }
+
+            // 演出終了（📊行動結果ステップを除去）
+            await this._sleep(500);
+        } finally {
             overlay.classList.add('hidden');
             this.finishActionPhase();
-        }, delay + 500);
+        }
+    }
+
+    /**
+     * 指定時間待機
+     */
+    _sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * ランクバーを段階的にアニメーション
+     */
+    async _animateStatBar(containerId, statKey, fromValue, toValue, difficulty) {
+        if (!this.scoreManager?.rankTable) return;
+
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        const fillElem = container.querySelector('.rank-progress-fill');
+        const labelElem = container.querySelector('.rank-label');
+        const deficitElem = container.querySelector('.rank-deficit');
+        if (!fillElem) return;
+
+        const updateDeficit = (rankInfo) => {
+            if (!deficitElem || !rankInfo) return;
+            if (rankInfo.deficit > 0) {
+                deficitElem.textContent = `${rankInfo.targetGrade}まであと${rankInfo.deficit}`;
+                deficitElem.classList.remove('hidden');
+            } else {
+                deficitElem.textContent = '';
+                deficitElem.classList.add('hidden');
+            }
+        };
+
+        const updateProgress = (rankInfo, value, withTransition = true) => {
+            if (!rankInfo) return;
+            const range = rankInfo.nextThreshold - rankInfo.startThreshold;
+            const progress = range > 0
+                ? Math.max(Math.min(((value - rankInfo.startThreshold) / range) * 100, 100), 0)
+                : 100;
+            fillElem.style.transition = withTransition ? 'width 0.35s ease' : 'none';
+            fillElem.style.width = `${progress}%`;
+        };
+
+        let currentValue = fromValue;
+
+        while (true) {
+            const prevRank = this.scoreManager.getStatusRank(statKey, currentValue, difficulty);
+            const finalRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
+            if (!prevRank || !finalRank) break;
+
+            const hasUpwardRankChange = toValue > currentValue && prevRank.grade !== finalRank.grade;
+            if (!hasUpwardRankChange) {
+                if (labelElem) labelElem.textContent = finalRank.grade;
+                updateProgress(finalRank, toValue, true);
+                updateDeficit(finalRank);
+                break;
+            }
+
+            // ランクアップ: 100%へアニメーション
+            fillElem.style.transition = 'width 0.35s ease';
+            fillElem.style.width = '100%';
+            await this._sleep(550); // 350ms遷移 + 200ms静止
+
+            // 0%にリセット（瞬時）
+            fillElem.style.transition = 'none';
+            fillElem.style.width = '0%';
+
+            // 次のランク閾値へ進める
+            const nextThreshold = prevRank.nextThreshold;
+            if (nextThreshold <= currentValue) break;
+            currentValue = nextThreshold;
+
+            const nextRank = this.scoreManager.getStatusRank(statKey, currentValue, difficulty);
+            if (nextRank && labelElem) {
+                labelElem.textContent = nextRank.grade;
+            }
+
+            await this._sleep(50); // transition: none を確定させる
+
+            // 最終値がこのランクに収まるかチェック
+            const afterNextRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
+            if (!afterNextRank || afterNextRank.grade === nextRank?.grade) {
+                // 最後のランク → 最終値に対応するバー位置まで伸ばす
+                if (afterNextRank && labelElem) {
+                    labelElem.textContent = afterNextRank.grade;
+                }
+                updateProgress(afterNextRank, toValue, true);
+                await this._sleep(400);
+                updateDeficit(afterNextRank);
+                break;
+            }
+            // まだランクアップが残っている → ループ継続
+        }
+    }
+
+    /**
+     * ランクアップが必要なステータスのバーを並列アニメーション
+     */
+    async animateRankUpsIfNeeded(prevStats, newStats) {
+        const difficulty = this.gameState.difficulty || 'fresh';
+        const statMap = {
+            experience: 'exp',
+            enrollment: 'enr',
+            satisfaction: 'sat',
+            accounting: 'acc'
+        };
+
+        await Promise.all(
+            Object.entries(statMap).map(([statKey, id]) => this._animateStatBar(
+                `anim-${id}-rank`,
+                statKey,
+                prevStats[statKey] ?? 0,
+                newStats[statKey] ?? 0,
+                difficulty
+            ))
+        );
     }
 
     /**
      * アニメーションステータス更新
      */
-    updateAnimationStats(stats, delta) {
+    updateAnimationStats(stats, delta, options = {}) {
         const statMap = {
             experience: 'exp',
             enrollment: 'enr',
@@ -1240,7 +1356,9 @@ export class UIController {
             }
         });
 
-        this.updateAnimationRankDisplay(stats);
+        if (!options.skipRankDisplay) {
+            this.updateAnimationRankDisplay(stats);
+        }
     }
 
     /**
