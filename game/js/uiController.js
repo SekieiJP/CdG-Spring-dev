@@ -30,6 +30,7 @@ export class UIController {
 
         // 文字サイズモードを適用
         this.applyFontMode();
+        this.applyCardDesc();
 
         // イベントリスナー設定
         this.setupEventListeners();
@@ -139,6 +140,23 @@ export class UIController {
      */
     isNormalMode() {
         return (localStorage.getItem('cdg_font_mode') || 'normal') === 'normal';
+    }
+
+    isShortCardDesc() {
+        return localStorage.getItem('cdg_card_desc') === 'short';
+    }
+
+    setCardDesc(mode) {
+        localStorage.setItem('cdg_card_desc', mode);
+        this.applyCardDesc();
+    }
+
+    applyCardDesc() {
+        if (this.isShortCardDesc()) {
+            document.documentElement.classList.add('card-desc-short');
+        } else {
+            document.documentElement.classList.remove('card-desc-short');
+        }
     }
 
     /**
@@ -326,8 +344,8 @@ export class UIController {
         const recommendedMark = isRecommended ? '🎯' : '';
 
         // 表示する効果テキスト
-        // 標準モードではcompactでもフル表示（topEffect不使用）
-        const useCompact = options.compact && !this.isNormalMode();
+        // カード説明設定が短縮時のみcompactでtopEffectを使用
+        const useCompact = options.compact && this.isShortCardDesc();
         const displayEffect = useCompact && card.topEffect ? card.topEffect : card.effect;
 
         cardDiv.innerHTML = `
@@ -341,8 +359,8 @@ export class UIController {
             <div class="card-effect">${displayEffect}</div>
         `;
 
-        // 長押しで詳細効果を表示（compactモード時のみ、標準モードでは無効）
-        if (!this.isNormalMode() && options.compact && card.topEffect && card.effect !== card.topEffect) {
+        // 長押しで詳細効果を表示（短縮表示時のみ）
+        if (this.isShortCardDesc() && options.compact && card.topEffect && card.effect !== card.topEffect) {
             let pressTimer;
             cardDiv.addEventListener('touchstart', (e) => {
                 pressTimer = setTimeout(() => {
@@ -480,7 +498,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = this.isShortCardDesc() ? '<span class="help-longpress">[長押しで詳細]</span>' : '';
             if (this.gameState.turn === 0) {
                 instruction.innerHTML = `初回研修: 4枚から2枚を選んで習得してください${helpText}`;
             } else {
@@ -1255,7 +1273,7 @@ export class UIController {
 
             // 終点（nextThreshold）を跨ぐ場合のみ演出を行う
             const nextThr = prevRank.nextThreshold;
-            const hasThresholdCrossing = Number.isFinite(nextThr) && toValue >= nextThr;
+            const hasThresholdCrossing = Number.isFinite(nextThr) && currentValue < nextThr && toValue >= nextThr;
             if (!hasThresholdCrossing) {
                 if (labelElem) labelElem.textContent = finalRank.grade;
                 updateProgress(finalRank, toValue, true);
@@ -1638,7 +1656,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = this.isShortCardDesc() ? '<span class="help-longpress">[長押しで詳細]</span>' : '';
             instruction.innerHTML = `3枚から1枚を選んで習得してください${helpText}`;
         }
     }
@@ -1818,7 +1836,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = this.isShortCardDesc() ? '<span class="help-longpress">[長押しで詳細]</span>' : '';
             instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
         }
 
@@ -1931,6 +1949,11 @@ export class UIController {
                                 <td>入退差 ${score.enrollmentDiff}</td>
                                 <td>${this.renderPointRange('enrollmentDiff', score.enrollmentDiff, score.breakdown.enrollmentDiffPoints)}</td>
                             </tr>
+                            ${score.splusBreakdown ? `
+                            <tr class="splus-breakdown-row">
+                                <td colspan="2">S+ 精度スコア内訳</td>
+                                <td>基礎8.0 + 体験+${score.splusBreakdown.expBonus}（体験${score.splusBreakdown.expUsed}）+ 入塾+${score.splusBreakdown.enrBonus}（入塾${score.splusBreakdown.enrUsed}）</td>
+                            </tr>` : ''}
                             <tr class="total-row">
                                 <td colspan="2">合計スコア</td>
                                 <td><strong>${score.displayScore}</strong></td>
@@ -2582,7 +2605,7 @@ export class UIController {
             if (confirmBtn) confirmBtn.disabled = true;
             const instruction = document.querySelector('#training-area .instruction');
             if (instruction) {
-                const helpText = this.isNormalMode() ? '' : '<span class="help-longpress">[長押しで詳細]</span>';
+                const helpText = this.isShortCardDesc() ? '<span class="help-longpress">[長押しで詳細]</span>' : '';
                 instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
             }
             this.updateTrainingRefreshUI('SR');
@@ -2642,6 +2665,7 @@ export class UIController {
 
         const buildVersion = window.BUILD_VERSION || 'unknown';
         const currentFontMode = localStorage.getItem('cdg_font_mode') || 'normal';
+        const currentCardDesc = localStorage.getItem('cdg_card_desc') || 'full';
 
         // バッジ表示判定
         const showTutorialBadge = !localStorage.getItem('cdg_visited');
@@ -2656,6 +2680,14 @@ export class UIController {
                         <button class="font-toggle-option${currentFontMode === 'normal' ? ' active' : ''}" data-mode="normal">標準</button>
                     </div>
                     <p class="font-toggle-note">変更した文字サイズは次回再読み込み時に適用されます</p>
+                </div>
+                <div class="settings-section">
+                    <h3>カード説明</h3>
+                    <div class="font-toggle">
+                        <button class="font-toggle-option${currentCardDesc === 'full' ? ' active' : ''}" data-card-desc="full">全文</button>
+                        <button class="font-toggle-option${currentCardDesc === 'short' ? ' active' : ''}" data-card-desc="short">短縮</button>
+                    </div>
+                    <p class="font-toggle-note">短縮表示時は長押しで全文を確認できます</p>
                 </div>
                 <div class="settings-section">
                     <h3>リンク</h3>
@@ -2702,14 +2734,29 @@ export class UIController {
             }
         });
 
-        // 文字サイズトグルのイベント
-        content.querySelectorAll('.font-toggle-option').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.setFontMode(btn.dataset.mode);
-                // トグルUI更新
-                content.querySelectorAll('.font-toggle-option').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-            });
+        // 設定トグルのイベント
+        content.addEventListener('click', (e) => {
+            const settingsElem = e.currentTarget;
+
+            // data-mode ボタン（文字サイズ）
+            const fontBtn = e.target.closest('[data-mode]');
+            if (fontBtn) {
+                const mode = fontBtn.dataset.mode;
+                this.setFontMode(mode);
+                settingsElem.querySelectorAll('[data-mode]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.mode === mode);
+                });
+            }
+
+            // data-card-desc ボタン（カード説明）
+            const cardDescBtn = e.target.closest('[data-card-desc]');
+            if (cardDescBtn) {
+                const mode = cardDescBtn.dataset.cardDesc;
+                this.setCardDesc(mode);
+                settingsElem.querySelectorAll('[data-card-desc]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cardDesc === mode);
+                });
+            }
         });
 
         document.body.appendChild(overlay);

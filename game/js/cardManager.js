@@ -515,8 +515,14 @@ export class CardManager {
         });
 
         // 条件付き効果を評価・適用
+        const statsSnapshot = {
+            experience: gameState.player.experience,
+            enrollment: gameState.player.enrollment,
+            satisfaction: gameState.player.satisfaction,
+            accounting: gameState.player.accounting
+        };
         parsed.conditionalBlocks.forEach(block => {
-            if (this.evaluateCondition(block.condition, staff, gameState)) {
+            if (this.evaluateCondition(block.condition, staff, { player: statsSnapshot })) {
                 const conditionName = this.getConditionName(block.condition);
                 this.logger?.log(`  条件成立: ${conditionName}`, 'info');
                 block.effects.forEach(effect => {
@@ -581,6 +587,16 @@ export class CardManager {
             };
             const comp = condition.comparison === 'gte' ? '以上' : '以下';
             return `${statusNames[condition.status]}${condition.value}${comp}`;
+        }
+        if (condition.type === 'statDiff') {
+            const statNames = {
+                experience: '体験',
+                enrollment: '入塾',
+                satisfaction: '満足',
+                accounting: '経理'
+            };
+            const compText = condition.comparison === 'gte' ? '以上' : '以下';
+            return `${statNames[condition.stat1] || condition.stat1}と${statNames[condition.stat2] || condition.stat2}の差が${condition.value}${compText}`;
         }
         return condition.raw || '不明';
     }

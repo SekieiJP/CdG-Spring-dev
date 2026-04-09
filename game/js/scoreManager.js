@@ -537,13 +537,24 @@ export class ScoreManager {
         // ランク計算
         const rank = this.calculateRank(points, withdrawal, mobilization, gameState.player.enrollment);
 
-        // S+かつFRESHのとき: 小数スコアを計算（満点10）
+        // S+かつFRESHのとき: 小数スコアを計算（満点10）し、内訳を保持
         let displayScore = points;
+        let splusBreakdown = null;
         if (rank.grade === 'S+' && (gameState.difficulty || 'fresh') === 'fresh') {
             const exp = Math.min(gameState.player.experience, 30);
             const enr = Math.min(gameState.player.enrollment, 30);
+            const expBonus = Math.round((0.5 * (exp - 15) / 15) * 10) / 10;
+            const enrBonus = Math.round((1.5 * (enr - 15) / 15) * 10) / 10;
             const splusScore = 8 + 0.5 * (exp - 15) / 15 + 1.5 * (enr - 15) / 15;
             displayScore = Math.round(splusScore * 10) / 10;
+
+            splusBreakdown = {
+                base: 8.0,
+                expUsed: exp,
+                enrUsed: enr,
+                expBonus,
+                enrBonus
+            };
         }
 
         return {
@@ -557,6 +568,7 @@ export class ScoreManager {
             satisfaction: gameState.player.satisfaction,
             accounting: gameState.player.accounting,
             rank,
+            splusBreakdown,
             breakdown: {
                 withdrawalPoints,
                 mobilizationPoints,

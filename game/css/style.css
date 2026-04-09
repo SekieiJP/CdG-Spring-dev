@@ -1534,9 +1534,13 @@ html.font-normal .compact-stats {
     white-space: nowrap;
 }
 
-/* 標準モードで長押しヘルプ非表示 */
-html.font-normal .help-longpress {
+/* 長押しヘルプは短縮説明モード時のみ表示 */
+.help-longpress {
     display: none;
+}
+
+html.card-desc-short .help-longpress {
+    display: block;
 }
 
 /* 文字サイズトグルスイッチ */
