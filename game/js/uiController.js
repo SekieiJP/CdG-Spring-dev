@@ -1277,6 +1277,7 @@ export class UIController {
             if (!hasThresholdCrossing) {
                 if (labelElem) labelElem.textContent = finalRank.grade;
                 updateProgress(finalRank, toValue, true);
+                await this._sleep(1000); // 跨ぎ1回分（550+50+400ms）と同程度の継続時間
                 updateDeficit(finalRank);
                 break;
             }
