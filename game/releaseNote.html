@@ -187,8 +187,22 @@
 
         <div class="slide-container" id="slide-container">
 
-            <!-- Slide 5: 難易度PRO新登場！[1/5] -->
+            <!-- Slide 0: 最新アップデート -->
             <div class="slide active">
+                <div class="slide-content">
+                    <h2>最新アップデート</h2>
+                    <p>FRESHスコア計算方法を変更しました。</p>
+                    <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
+                        <li>基本スコアは、<strong>退塾・動員・入退差</strong>の観点別得点を合計して計算します。</li>
+                        <li>観点別得点が満点 <strong>8点</strong> のとき、体験と入退差の実績に応じて追加得点を計算します。<br><code>8 + 0.5×(min{体験,30}-12)÷18 + 1.5×(min{入退差,30}-12)÷18</code></li>
+                        <li>加点は <strong>体験12以上・入退差12以上</strong> から発生し、各値は <strong>30</strong> が上限です（最大10.0）。</li>
+                        <li>合計スコアが <strong>9点以上</strong> でS+ランクになります。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 5: 難易度PRO新登場！[1/5] -->
+            <div class="slide">
                 <div class="slide-content">
                     <h2>難易度PRO新登場！[1/5]</h2>
                     <p>より高みを目指すプレイヤーのための難易度が追加されました。</p>
@@ -276,11 +290,11 @@
             <div class="slide">
                 <div class="slide-content">
                     <h2>追加機能[2/3]</h2>
-                    <p>FRESHでS+ランクに到達した場合のスコア表示が精細になりました。</p>
+                    <p>FRESHのS+精度スコアは、観点別得点が満点（8点）のときに次の式で計算します。</p>
                     <ul style="text-align: left; padding-left: 20px; line-height: 1.6;">
-                        <li>スコアの最大値が <strong>8 → 10</strong> に引き上げられました。</li>
-                        <li>体験・入塾の実績値に応じてスコアが細かく算出され、<strong>小数第1位</strong>まで表示されます（例: 9.3）。</li>
-                        <li>体験30・入塾30で満点 <strong>10.0</strong> となります。</li>
+                        <li><code>8 + 0.5×(min{体験,30}-12)÷18 + 1.5×(min{入退差,30}-12)÷18</code></li>
+                        <li>加点は <strong>体験12以上・入退差12以上</strong> から発生し、各値は <strong>30</strong> で上限になります。</li>
+                        <li>合計スコアは <strong>小数第1位</strong> まで表示され、<strong>9.0以上</strong>でS+です（最大10.0）。</li>
                     </ul>
                 </div>
             </div>

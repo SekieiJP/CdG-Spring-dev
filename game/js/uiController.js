@@ -1952,7 +1952,7 @@ export class UIController {
                             ${score.splusBreakdown ? `
                             <tr class="splus-breakdown-row">
                                 <td colspan="2">S+ 精度スコア内訳</td>
-                                <td>基礎8.0 + 体験+${score.splusBreakdown.expBonus}（体験${score.splusBreakdown.expUsed}）+ 入塾+${score.splusBreakdown.enrBonus}（入塾${score.splusBreakdown.enrUsed}）</td>
+                                <td>基礎8.0 + 体験+${score.splusBreakdown.expBonus}（体験${score.splusBreakdown.expUsed}）+ 入退差+${score.splusBreakdown.diffBonus}（入退差${score.splusBreakdown.diffUsed}）</td>
                             </tr>` : ''}
                             <tr class="total-row">
                                 <td colspan="2">合計スコア</td>
@@ -2350,7 +2350,7 @@ export class UIController {
         // S+条件ノート
         const note = document.createElement('div');
         note.className = 'score-note';
-        note.textContent = '★ S+条件: 退塾0 かつ 体験15以上 かつ 入塾15以上';
+        note.textContent = '★ S+条件: 観点別得点8点時の精度計算で合計9.0以上';
         content.appendChild(note);
     }
 

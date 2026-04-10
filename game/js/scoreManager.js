@@ -59,9 +59,10 @@ export class ScoreManager {
                 headerIndex[header] = index;
             });
 
-            const isPro = headers.includes('満足スコア') || headers.includes('ランク基準スコア');
-
             const getCell = (cells, headerName) => cells[headerIndex[headerName]];
+            const hasHeader = (headerName) => headerIndex[headerName] !== undefined;
+            const getNullableFromHeader = (cells, headerName) =>
+                hasHeader(headerName) ? toNullableInt(getCell(cells, headerName)) : null;
             const toNullableInt = (raw) => {
                 if (raw === undefined || raw === null) return null;
                 const trimmed = String(raw).trim();
@@ -85,33 +86,18 @@ export class ScoreManager {
                             satisfaction: toNullableInt(getCell(cells, '満足基準')),
                             accounting: toNullableInt(getCell(cells, '経理基準'))
                         },
-                        withdrawalThreshold: null,
-                        enrollmentDiffThreshold: null,
+                        withdrawalThreshold: getNullableFromHeader(cells, '退塾基準'),
+                        enrollmentDiffThreshold: getNullableFromHeader(cells, '入退差基準'),
                         scores: {
-                            mobilization: null,
-                            withdrawal: null,
-                            enrollmentDiff: null,
-                            satisfaction: null
+                            mobilization: getNullableFromHeader(cells, '動員スコア'),
+                            withdrawal: getNullableFromHeader(cells, '退塾スコア'),
+                            enrollmentDiff: getNullableFromHeader(cells, '入退差スコア'),
+                            satisfaction: getNullableFromHeader(cells, '満足スコア')
                         },
-                        rankThreshold: null
+                        rankThreshold: getNullableFromHeader(cells, 'ランク基準スコア')
                     };
 
-                    if (!isPro) {
-                        return baseRow;
-                    }
-
-                    return {
-                        ...baseRow,
-                        withdrawalThreshold: toNullableInt(getCell(cells, '退塾基準')),
-                        enrollmentDiffThreshold: toNullableInt(getCell(cells, '入退差基準')),
-                        scores: {
-                            mobilization: toNullableInt(getCell(cells, '動員スコア')),
-                            withdrawal: toNullableInt(getCell(cells, '退塾スコア')),
-                            enrollmentDiff: toNullableInt(getCell(cells, '入退差スコア')),
-                            satisfaction: toNullableInt(getCell(cells, '満足スコア'))
-                        },
-                        rankThreshold: toNullableInt(getCell(cells, 'ランク基準スコア'))
-                    };
+                    return baseRow;
                 })
                 .filter(Boolean);
 
@@ -151,6 +137,56 @@ export class ScoreManager {
         const currentRow = this.rankTable[currentIndex];
         const currentThreshold = currentRow?.thresholds?.[statKey] ?? 0;
         const findGradeIndex = (grade) => this.rankTable.findIndex((row) => row?.grade === grade);
+        const getScoreGroupStartThreshold = (scoreKey, thresholdGetter, currentScore) => {
+            for (let i = 0; i < this.rankTable.length; i += 1) {
+                const row = this.rankTable[i];
+                const threshold = thresholdGetter(row);
+                if (
+                    row?.scores?.[scoreKey] === currentScore &&
+                    threshold !== null &&
+                    threshold !== undefined
+                ) {
+                    return threshold;
+                }
+            }
+            return currentThreshold;
+        };
+        const getScoreGroupTarget = (scoreKey, thresholdGetter, currentScore) => {
+            for (let i = 0; i < this.rankTable.length; i += 1) {
+                const row = this.rankTable[i];
+                const threshold = thresholdGetter(row);
+                if (
+                    row?.scores?.[scoreKey] !== null &&
+                    row?.scores?.[scoreKey] > currentScore &&
+                    threshold !== null &&
+                    threshold !== undefined
+                ) {
+                    return {
+                        threshold,
+                        grade: row.grade
+                    };
+                }
+            }
+
+            let highestSameScoreRow = null;
+            for (let i = 0; i < this.rankTable.length; i += 1) {
+                const row = this.rankTable[i];
+                const threshold = thresholdGetter(row);
+                if (
+                    row?.scores?.[scoreKey] === currentScore &&
+                    threshold !== null &&
+                    threshold !== undefined
+                ) {
+                    highestSameScoreRow = row;
+                }
+            }
+
+            if (!highestSameScoreRow) return null;
+            return {
+                threshold: thresholdGetter(highestSameScoreRow),
+                grade: highestSameScoreRow.grade
+            };
+        };
         const getSequentialNextTarget = () => {
             if (currentIndex >= this.rankTable.length - 1) return null;
             const nextRow = this.rankTable[currentIndex + 1];
@@ -165,6 +201,7 @@ export class ScoreManager {
         let target = null;
         let currentMobilizationScore = 0;
         let currentEnrollmentDiffScore = 0;
+        let currentFreshDiffScore = 0;
 
         if (difficulty === 'pro') {
             if (statKey === 'experience') {
@@ -180,20 +217,11 @@ export class ScoreManager {
                     }
                 }
 
-                for (let i = 0; i < this.rankTable.length; i += 1) {
-                    const row = this.rankTable[i];
-                    if (
-                        row?.scores?.mobilization !== null &&
-                        row.scores.mobilization > currentMobilizationScore &&
-                        row?.thresholds?.experience !== null
-                    ) {
-                        target = {
-                            threshold: row.thresholds.experience,
-                            grade: row.grade
-                        };
-                        break;
-                    }
-                }
+                target = getScoreGroupTarget(
+                    'mobilization',
+                    (row) => row?.thresholds?.experience,
+                    currentMobilizationScore
+                );
             } else if (statKey === 'enrollment') {
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
@@ -207,32 +235,23 @@ export class ScoreManager {
                     }
                 }
 
-                for (let i = 0; i < this.rankTable.length; i += 1) {
-                    const row = this.rankTable[i];
-                    if (
-                        row?.scores?.enrollmentDiff !== null &&
-                        row.scores.enrollmentDiff > currentEnrollmentDiffScore &&
-                        row?.enrollmentDiffThreshold !== null
-                    ) {
-                        target = {
-                            threshold: row.enrollmentDiffThreshold,
-                            grade: row.grade
-                        };
-                        break;
-                    }
-                }
+                target = getScoreGroupTarget(
+                    'enrollmentDiff',
+                    (row) => row?.enrollmentDiffThreshold,
+                    currentEnrollmentDiffScore
+                );
             } else if (statKey === 'satisfaction' || statKey === 'accounting') {
-                const aIndex = findGradeIndex('A');
-                const aThreshold = aIndex >= 0 ? this.rankTable[aIndex]?.thresholds?.[statKey] : null;
+                const sIndex = findGradeIndex('S');
+                const sThreshold = sIndex >= 0 ? this.rankTable[sIndex]?.thresholds?.[statKey] : null;
                 if (
-                    aIndex >= 0 &&
-                    currentIndex < aIndex &&
-                    aThreshold !== null &&
-                    aThreshold !== undefined
+                    sIndex >= 0 &&
+                    currentIndex < sIndex &&
+                    sThreshold !== null &&
+                    sThreshold !== undefined
                 ) {
                     target = {
-                        threshold: aThreshold,
-                        grade: 'A'
+                        threshold: sThreshold,
+                        grade: 'S'
                     };
                 } else {
                     target = getSequentialNextTarget();
@@ -241,25 +260,29 @@ export class ScoreManager {
                 target = getSequentialNextTarget();
             }
         } else {
-            if (statKey === 'satisfaction') {
-                const aIndex = findGradeIndex('A');
-                const aThreshold = aIndex >= 0 ? this.rankTable[aIndex]?.thresholds?.satisfaction : null;
-                if (
-                    aIndex >= 0 &&
-                    currentIndex < aIndex &&
-                    aThreshold !== null &&
-                    aThreshold !== undefined
-                ) {
-                    target = {
-                        threshold: aThreshold,
-                        grade: 'A'
-                    };
-                } else {
-                    target = getSequentialNextTarget();
+            if (statKey === 'experience' || statKey === 'enrollment') {
+                for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
+                    const row = this.rankTable[i];
+                    const threshold = row?.thresholds?.[statKey];
+                    if (
+                        row?.scores?.enrollmentDiff !== null &&
+                        threshold !== null &&
+                        threshold !== undefined &&
+                        value >= threshold
+                    ) {
+                        currentFreshDiffScore = row.scores.enrollmentDiff;
+                        break;
+                    }
                 }
-            } else if (statKey === 'accounting') {
+
+                target = getScoreGroupTarget(
+                    'enrollmentDiff',
+                    (row) => row?.thresholds?.[statKey],
+                    currentFreshDiffScore
+                );
+            } else if (statKey === 'satisfaction' || statKey === 'accounting') {
                 const sIndex = findGradeIndex('S');
-                const sThreshold = sIndex >= 0 ? this.rankTable[sIndex]?.thresholds?.accounting : null;
+                const sThreshold = sIndex >= 0 ? this.rankTable[sIndex]?.thresholds?.[statKey] : null;
                 if (
                     sIndex >= 0 &&
                     currentIndex < sIndex &&
@@ -283,47 +306,21 @@ export class ScoreManager {
 
         if (difficulty === 'pro') {
             if (statKey === 'experience') {
-                // PRO体験: currentMobilizationScore が 0 なら 0、
-                // それ以外は rankTable を低→高で走査し、
-                // scores.mobilization === currentMobilizationScore の最初の行の thresholds.experience
-                if (currentMobilizationScore === 0) {
-                    startThreshold = 0;
-                } else {
-                    for (let i = 0; i < this.rankTable.length; i += 1) {
-                        const row = this.rankTable[i];
-                        if (
-                            row?.scores?.mobilization === currentMobilizationScore &&
-                            row?.thresholds?.experience !== null &&
-                            row?.thresholds?.experience !== undefined
-                        ) {
-                            startThreshold = row.thresholds.experience;
-                            break;
-                        }
-                    }
-                }
+                startThreshold = getScoreGroupStartThreshold(
+                    'mobilization',
+                    (row) => row?.thresholds?.experience,
+                    currentMobilizationScore
+                );
             } else if (statKey === 'enrollment') {
-                // PRO入塾: currentEnrollmentDiffScore が 0 なら 0、
-                // それ以外は rankTable を低→高で走査し、
-                // scores.enrollmentDiff === currentEnrollmentDiffScore の最初の行の enrollmentDiffThreshold
-                if (currentEnrollmentDiffScore === 0) {
-                    startThreshold = 0;
-                } else {
-                    for (let i = 0; i < this.rankTable.length; i += 1) {
-                        const row = this.rankTable[i];
-                        if (
-                            row?.scores?.enrollmentDiff === currentEnrollmentDiffScore &&
-                            row?.enrollmentDiffThreshold !== null &&
-                            row?.enrollmentDiffThreshold !== undefined
-                        ) {
-                            startThreshold = row.enrollmentDiffThreshold;
-                            break;
-                        }
-                    }
-                }
+                startThreshold = getScoreGroupStartThreshold(
+                    'enrollmentDiff',
+                    (row) => row?.enrollmentDiffThreshold,
+                    currentEnrollmentDiffScore
+                );
             } else if (statKey === 'satisfaction' || statKey === 'accounting') {
-                // PRO満足・経理: Aランク未到達なら始点=0、A以上は currentThreshold（逐次）
-                const aIndex = findGradeIndex('A');
-                if (aIndex >= 0 && currentIndex < aIndex) {
+                // PRO満足・経理: Sランク未到達なら始点=0、S以上は currentThreshold（逐次）
+                const sIndex = findGradeIndex('S');
+                if (sIndex >= 0 && currentIndex < sIndex) {
                     startThreshold = 0;
                 }
                 // else: startThreshold = currentThreshold (初期値のまま)
@@ -331,20 +328,19 @@ export class ScoreManager {
             // PRO体験・入塾以外（getSequentialNextTarget の場合）はデフォルトのまま
         } else {
             // FRESH
-            if (statKey === 'satisfaction') {
-                // Aランク未到達なら始点=0
-                const aIndex = findGradeIndex('A');
-                if (aIndex >= 0 && currentIndex < aIndex) {
-                    startThreshold = 0;
-                }
-            } else if (statKey === 'accounting') {
+            if (statKey === 'experience' || statKey === 'enrollment') {
+                startThreshold = getScoreGroupStartThreshold(
+                    'enrollmentDiff',
+                    (row) => row?.thresholds?.[statKey],
+                    currentFreshDiffScore
+                );
+            } else if (statKey === 'satisfaction' || statKey === 'accounting') {
                 // Sランク未到達なら始点=0
                 const sIndex = findGradeIndex('S');
                 if (sIndex >= 0 && currentIndex < sIndex) {
                     startThreshold = 0;
                 }
             }
-            // FRESH体験・入塾は逐次なのでデフォルト（currentThreshold）のまま
         }
 
         const nextThreshold = target?.threshold ?? currentThreshold;
@@ -534,28 +530,31 @@ export class ScoreManager {
         else if (enrollmentDiff >= 10) enrollmentDiffPoints = 4;
         else if (enrollmentDiff >= 8) enrollmentDiffPoints = 3;
 
-        // ランク計算
-        const rank = this.calculateRank(points, withdrawal, mobilization, gameState.player.enrollment);
-
-        // S+かつFRESHのとき: 小数スコアを計算（満点10）し、内訳を保持
+        // FRESHは観点別得点8点満点時のみ精度スコアを計算（満点10）
         let displayScore = points;
         let splusBreakdown = null;
-        if (rank.grade === 'S+' && (gameState.difficulty || 'fresh') === 'fresh') {
-            const exp = Math.min(gameState.player.experience, 30);
-            const enr = Math.min(gameState.player.enrollment, 30);
-            const expBonus = Math.round((0.5 * (exp - 15) / 15) * 10) / 10;
-            const enrBonus = Math.round((1.5 * (enr - 15) / 15) * 10) / 10;
-            const splusScore = 8 + 0.5 * (exp - 15) / 15 + 1.5 * (enr - 15) / 15;
-            displayScore = Math.round(splusScore * 10) / 10;
+        if (points === 8) {
+            const experience = gameState.player.experience;
+            const expUsed = Math.min(experience, 30);
+            const diffUsed = Math.min(enrollmentDiff, 30);
+            const rawExpBonus = 0.5 * (expUsed - 12) / 18;
+            const rawDiffBonus = 1.5 * (diffUsed - 12) / 18;
+            const expBonus = Math.round(rawExpBonus * 10) / 10;
+            const diffBonus = Math.round(rawDiffBonus * 10) / 10;
+            const totalScore = 8 + rawExpBonus + rawDiffBonus;
+            displayScore = Math.round(totalScore * 10) / 10;
 
             splusBreakdown = {
                 base: 8.0,
-                expUsed: exp,
-                enrUsed: enr,
+                expUsed,
+                diffUsed,
                 expBonus,
-                enrBonus
+                diffBonus
             };
         }
+
+        // ランク計算（S+はdisplayScore 9点以上）
+        const rank = this.calculateRank(points, displayScore);
 
         return {
             points,
@@ -580,9 +579,8 @@ export class ScoreManager {
     /**
      * ランク計算
      */
-    calculateRank(points, withdrawal, mobilization, enrollment) {
-        // S+条件: 退塾0 かつ 動員15以上 かつ 入塾15以上
-        if (withdrawal === 0 && mobilization >= 15 && enrollment >= 15) {
+    calculateRank(points, displayScore = points) {
+        if (displayScore >= 9) {
             return { grade: 'S+', name: '全社最優秀教室!!!' };
         }
 
