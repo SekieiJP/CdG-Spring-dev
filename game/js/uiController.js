@@ -2382,11 +2382,11 @@ export class UIController {
             }))
         ));
 
-        // 満足ポイント（scores.satisfaction: S=1, S+=2）
+        // 満足ポイント（rankPro.csv基準: SS=35以上→2pt, S+=25以上→1pt, それ以外→0pt）
         const satisfactionRows = [
-            { label: '40以上', min: 40, max: Infinity, pts: 2 },
-            { label: '30〜39', min: 30, max: 39, pts: 1 },
-            { label: '29以下', min: 0, max: 29, pts: 0 },
+            { label: '35以上', min: 35, max: Infinity, pts: 2 },
+            { label: '25〜34', min: 25, max: 34, pts: 1 },
+            { label: '24以下', min: 0, max: 24, pts: 0 },
         ];
         grid1.appendChild(this._buildScoreTable(
             '満足ポイント',
