@@ -9,7 +9,7 @@ function doPost(e) {
                 '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
                 '難易度', '体験', '入塾', '満足', '経理',
                 '総合スコア', 'ランク', '目標ポイント',
-                '退塾数', '動員合計', '入退差', '最終デッキ'
+                '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
             ]);
         }
 
@@ -20,7 +20,8 @@ function doPost(e) {
             data.experience, data.enrollment, data.satisfaction, data.accounting,
             data.displayScore, data.grade, data.points,
             data.withdrawal, data.mobilization, data.enrollmentDiff,
-            (data.finalDeck || []).join(', ')
+            (data.finalDeck || []).join(', '),
+            (data.discardedCards || []).join(', ')
         ]);
 
         return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
