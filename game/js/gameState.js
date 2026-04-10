@@ -63,8 +63,8 @@ export class GameState {
 
         // 境界値チェック
         if (type === 'accounting') {
-            // 経理は0-15の範囲
-            newValue = Math.max(0, Math.min(15, newValue));
+            // 経理は0以上（上限なし）
+            newValue = Math.max(0, newValue);
         } else {
             // その他は0以上
             newValue = Math.max(0, newValue);
