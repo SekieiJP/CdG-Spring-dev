@@ -43,6 +43,7 @@ export class GameState {
         this.trainingRefreshRemaining = diffConfig.trainingRefresh?.enabled
             ? diffConfig.trainingRefresh.maxCount : 0;
         this.startedAt = null;
+        this.discardedCards = [];  // 途中で削除したカード名の一覧
 
         this.logger?.log(`ゲーム状態を初期化しました (難易度: ${config.name})`, 'info');
     }
@@ -221,6 +222,7 @@ export class GameState {
         const index = this.player.deck.indexOf(card);
         if (index > -1) {
             this.player.deck.splice(index, 1);
+            this.discardedCards.push(card.cardName);
             this.logger?.log(`カード削除: ${card.cardName}`, 'action');
             return true;
         }

@@ -2403,15 +2403,14 @@ export class UIController {
         grid2.className = 'score-grid';
 
         // 退塾ポイント（withdrawal <= withdrawalThreshold → score）
-        // rankPro.csv: S+=0→+1, S=1→0, A=2→0, B=3→-1, C=4→-3, D=5→-4, E=6→-6, F=30→-8
+        // rankPro.csv: S+=0→+1, S=1→0, A=2→-1, B=3→-3, C=4→-5, F=30→-13（E行はscore空欄でスキップ→Fにフォールスルー）
         const withdrawalRows = [
             { label: '0', min: 0, max: 0, pts: 1 },
-            { label: '1〜2', min: 1, max: 2, pts: 0 },
-            { label: '3', min: 3, max: 3, pts: -1 },
-            { label: '4', min: 4, max: 4, pts: -3 },
-            { label: '5', min: 5, max: 5, pts: -4 },
-            { label: '6', min: 6, max: 6, pts: -6 },
-            { label: '7以上', min: 7, max: Infinity, pts: -8 },
+            { label: '1', min: 1, max: 1, pts: 0 },
+            { label: '2', min: 2, max: 2, pts: -1 },
+            { label: '3', min: 3, max: 3, pts: -3 },
+            { label: '4', min: 4, max: 4, pts: -5 },
+            { label: '5以上', min: 5, max: Infinity, pts: -13 },
         ];
         grid2.appendChild(this._buildScoreTable(
             '退塾ポイント',

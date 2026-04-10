@@ -24,7 +24,8 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         withdrawal: score.withdrawal,
         mobilization: score.mobilization,
         enrollmentDiff: score.enrollmentDiff,
-        finalDeck: finalDeck.map(c => c.cardName)
+        finalDeck: finalDeck.map(c => c.cardName),
+        discardedCards: gameState.discardedCards || []
     };
 
     try {
