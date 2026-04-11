@@ -414,6 +414,25 @@ body {
     opacity: 0.7;
 }
 
+.tooltip-tokens {
+    border-top: 1px solid var(--color-border, rgba(255,255,255,0.15));
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+}
+
+.tooltip-tokens-title {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--color-text-secondary);
+    margin-bottom: 4px;
+}
+
+.tooltip-token-item {
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+}
+
 /* ==================== カードリスト ==================== */
 .card-list {
     display: grid;
@@ -1534,13 +1553,9 @@ html.font-normal .compact-stats {
     white-space: nowrap;
 }
 
-/* 長押しヘルプは短縮説明モード時のみ表示 */
+/* 長押しヘルプは常時表示 */
 .help-longpress {
-    display: none;
-}
-
-html.card-desc-short .help-longpress {
-    display: block;
+    display: inline;
 }
 
 /* 文字サイズトグルスイッチ */
