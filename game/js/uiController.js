@@ -2705,7 +2705,6 @@ export class UIController {
                         <button class="font-toggle-option${currentFontMode === 'small' ? ' active' : ''}" data-mode="small">小さめ</button>
                         <button class="font-toggle-option${currentFontMode === 'normal' ? ' active' : ''}" data-mode="normal">標準</button>
                     </div>
-                    <p class="font-toggle-note">変更した文字サイズは次回再読み込み時に適用されます</p>
                 </div>
                 <div class="settings-section">
                     <h3>カード説明</h3>
@@ -2713,7 +2712,7 @@ export class UIController {
                         <button class="font-toggle-option${currentCardDesc === 'full' ? ' active' : ''}" data-card-desc="full">全文</button>
                         <button class="font-toggle-option${currentCardDesc === 'short' ? ' active' : ''}" data-card-desc="short">短縮</button>
                     </div>
-                    <p class="font-toggle-note">短縮表示時は長押しで全文を確認できます</p>
+                    <p class="font-toggle-note">短縮表示時は長押しで全文を確認できます。設定は次回再読み込み時に適用</p>
                 </div>
                 <div class="settings-section">
                     <h3>リンク</h3>
