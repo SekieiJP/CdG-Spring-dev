@@ -2,16 +2,16 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20260410-2320';
-import { GameState } from './gameState.js?v=20260410-2320';
-import { CardManager } from './cardManager.js?v=20260410-2320';
-import { TurnManager } from './turnManager.js?v=20260410-2320';
-import { ScoreManager } from './scoreManager.js?v=20260410-2320';
-import { UIController } from './uiController.js?v=20260410-2320';
-import { SaveManager } from './saveManager.js?v=20260410-2320';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260410-2320';
+import { Logger } from './logger.js?v=20260411-0900';
+import { GameState } from './gameState.js?v=20260411-0900';
+import { CardManager } from './cardManager.js?v=20260411-0900';
+import { TurnManager } from './turnManager.js?v=20260411-0900';
+import { ScoreManager } from './scoreManager.js?v=20260411-0900';
+import { UIController } from './uiController.js?v=20260411-0900';
+import { SaveManager } from './saveManager.js?v=20260411-0900';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260411-0900';
 
-const CACHE_BUSTER = 'v20260410-2320';
+const CACHE_BUSTER = 'v20260411-0900';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
@@ -162,9 +162,9 @@ class Game {
      * セーブデータからゲームを復元
      */
     restoreFromSave(saveData) {
-        console.log('[SAVE-DEBUG] restoreFromSave: 開始');
-        console.log('[SAVE-DEBUG] restoreFromSave: savedPhase=', saveData.gameState?.phase, ', savedTurn=', saveData.gameState?.turn);
-        console.log('[SAVE-DEBUG] restoreFromSave: currentTrainingCards=', saveData.gameState?.currentTrainingCards?.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: 開始');
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: savedPhase=', saveData.gameState?.phase, ', savedTurn=', saveData.gameState?.turn);
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: currentTrainingCards=', saveData.gameState?.currentTrainingCards?.map(c => c.cardName));
 
         this.logger.log('前回のゲームを復元しています...', 'info');
 
@@ -174,14 +174,14 @@ class Game {
         // ゲーム状態を復元
         this.saveManager.restoreGameState(this.gameState, saveData.gameState);
 
-        console.log('[SAVE-DEBUG] restoreFromSave: 復元後 phase=', this.gameState.phase, ', turn=', this.gameState.turn);
-        console.log('[SAVE-DEBUG] restoreFromSave: 復元後 currentTrainingCards=', this.gameState.currentTrainingCards?.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: 復元後 phase=', this.gameState.phase, ', turn=', this.gameState.turn);
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: 復元後 currentTrainingCards=', this.gameState.currentTrainingCards?.map(c => c.cardName));
 
         // UIを復元
         this.uiController.restoreUI();
 
         this.logger.log(`ゲームを復元しました (ターン${this.gameState.turn}, ${this.gameState.phase})`, 'info');
-        console.log('[SAVE-DEBUG] restoreFromSave: 完了');
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreFromSave: 完了');
     }
 
     showSharedScore(score) {
@@ -206,7 +206,9 @@ class Game {
 
 // ページ読み込み時に初期化
 document.addEventListener('DOMContentLoaded', async () => {
-    // デバッグモード: URLパラメータまたはコンソールから設定可能
+    // デバッグモード: URLに ?debug を付けるとデバッグログを有効化
+    window.CDG_DEBUG = new URLSearchParams(location.search).has('debug');
+
     const game = new Game();
     window.game = game;
     window.debugCards = {
@@ -217,13 +219,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     // デバッグ関数: 研修候補に特定のカードを出す
     window.setDebugTrainingCards = function (cardNames) {
         window.debugCards.training = Array.isArray(cardNames) ? cardNames : [cardNames];
-        console.log('[DEBUG] 研修候補設定:', window.debugCards.training);
+        window.CDG_DEBUG && console.log('[DEBUG] 研修候補設定:', window.debugCards.training);
     };
 
     // デバッグ関数: 手札に特定のカードを出す
     window.setDebugHandCards = function (cardNames) {
         window.debugCards.hand = Array.isArray(cardNames) ? cardNames : [cardNames];
-        console.log('[DEBUG] 手札候補設定:', window.debugCards.hand);
+        window.CDG_DEBUG && console.log('[DEBUG] 手札候補設定:', window.debugCards.hand);
     };
 
     // デバッグ関数: カード名で検索
@@ -242,11 +244,11 @@ document.addEventListener('DOMContentLoaded', async () => {
      */
     window.debugSkipToTurn = function (targetTurn) {
         if (targetTurn < 0 || targetTurn > 7) {
-            console.error('[DEBUG] ターン番号は0〜7で指定してください');
+            window.CDG_DEBUG && console.error('[DEBUG] ターン番号は0〜7で指定してください');
             return;
         }
 
-        console.log(`[DEBUG] ターン${targetTurn + 1}にスキップ中...`);
+        window.CDG_DEBUG && console.log(`[DEBUG] ターン${targetTurn + 1}にスキップ中...`);
 
         // ゲーム状態をリセット
         game.gameState.reset(game.gameState.difficulty);
@@ -288,8 +290,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         game.uiController.updateStatusDisplay();
 
         const config = game.turnManager.getCurrentTurnConfig();
-        console.log(`[DEBUG] ターン${targetTurn + 1} (${config.name}) にスキップ完了`);
-        console.log(`[DEBUG] デッキ: ${game.gameState.player.deck.length}枚, 研修: ${config.training}, 削除: ${config.delete}`);
+        window.CDG_DEBUG && console.log(`[DEBUG] ターン${targetTurn + 1} (${config.name}) にスキップ完了`);
+        window.CDG_DEBUG && console.log(`[DEBUG] デッキ: ${game.gameState.player.deck.length}枚, 研修: ${config.training}, 削除: ${config.delete}`);
 
         // 最終ターンの場合は教室行動フェーズから
         if (targetTurn === 7) {
@@ -305,11 +307,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const params = new URLSearchParams(window.location.search);
     if (params.has('debug_training')) {
         window.debugCards.training = params.get('debug_training').split(',');
-        console.log('[DEBUG] URL: 研修候補設定:', window.debugCards.training);
+        window.CDG_DEBUG && console.log('[DEBUG] URL: 研修候補設定:', window.debugCards.training);
     }
     if (params.has('debug_hand')) {
         window.debugCards.hand = params.get('debug_hand').split(',');
-        console.log('[DEBUG] URL: 手札候補設定:', window.debugCards.hand);
+        window.CDG_DEBUG && console.log('[DEBUG] URL: 手札候補設定:', window.debugCards.hand);
     }
 
     await game.initialize();

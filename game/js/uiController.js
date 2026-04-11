@@ -1,9 +1,19 @@
-import { submitScore } from './scoreSubmitter.js?v=20260406-1300';
+import { submitScore } from './scoreSubmitter.js?v=20260411-0900';
 
 /**
  * UIController - UI操作・表示制御
  */
 export class UIController {
+    _escapeHTML(str) {
+        if (typeof str !== 'string') return str;
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     constructor(gameState, cardManager, turnManager, scoreManager, logger, saveManager) {
         this.gameState = gameState;
         this.cardManager = cardManager;
@@ -337,7 +347,7 @@ export class UIController {
         }
 
         // カテゴリ色クラス
-        const categoryClass = `category-${card.category}`;
+        const categoryClass = `category-${this._escapeHTML(card.category)}`;
 
         // おすすめ行動合致チェック
         const isRecommended = options.recommendedCategory && card.category === options.recommendedCategory;
@@ -350,13 +360,13 @@ export class UIController {
 
         cardDiv.innerHTML = `
             <div class="card-header">
-                <span class="card-name">${card.cardName}</span>
+                <span class="card-name">${this._escapeHTML(card.cardName)}</span>
             </div>
             <div class="card-meta">
-                <span class="card-category-text ${categoryClass}">${card.category}</span>${recommendedMark}
+                <span class="card-category-text ${categoryClass}">${this._escapeHTML(card.category)}</span>${recommendedMark}
                 <span class="card-rarity rarity-${card.rarity}">${card.rarity}</span>
             </div>
-            <div class="card-effect">${displayEffect}</div>
+            <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
         `;
 
         // 長押しで詳細効果を表示（短縮表示時のみ）
@@ -385,8 +395,8 @@ export class UIController {
         const tooltip = document.createElement('div');
         tooltip.className = 'effect-tooltip';
         tooltip.innerHTML = `
-            <div class="tooltip-title">${card.cardName}</div>
-            <div class="tooltip-effect">${card.effect}</div>
+            <div class="tooltip-title">${this._escapeHTML(card.cardName)}</div>
+            <div class="tooltip-effect">${this._escapeHTML(card.effect)}</div>
             <div class="tooltip-close">タップで閉じる</div>
         `;
         tooltip.addEventListener('click', () => tooltip.remove());
@@ -438,13 +448,13 @@ export class UIController {
      * 初回研修表示
      */
     showInitialTraining() {
-        console.log('[SAVE-DEBUG] showInitialTraining: 開始');
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showInitialTraining: 開始');
 
         // フェーズを設定（保存前に必要）
         this.gameState.phase = 'training';
 
         const trainingCards = this.cardManager.drawTrainingCards('R', 4);
-        console.log('[SAVE-DEBUG] showInitialTraining: 抽選カード:', trainingCards.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showInitialTraining: 抽選カード:', trainingCards.map(c => c.cardName));
 
         // 抽選したカードをgameStateに保存（復元時に使用）
         this.gameState.currentTrainingCards = trainingCards.map(c => ({ ...c }));
@@ -540,7 +550,7 @@ export class UIController {
      * 研修確定
      */
     onConfirmTraining() {
-        console.log('[SAVE-DEBUG] onConfirmTraining: 開始, turn=', this.gameState.turn);
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] onConfirmTraining: 開始, turn=', this.gameState.turn);
 
         // 発想追加習得モードの確定処理
         if (this.trainingSelectionMode === 'inspiration') {
@@ -1183,7 +1193,7 @@ export class UIController {
                     const card = staffCards[cardIdx];
                     const perCardInfo = cardEffectInfo.cards?.[cardIdx];
                     const categoryColor = categoryColors[card.category] || '#9CA3AF';
-                    const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${card.category}</span>`;
+                    const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${this._escapeHTML(card.category)}</span>`;
                     const isRecommended = perCardInfo?.isRecommended || false;
                     const recommendedMark = isRecommended ? ' 🎯' : '';
                     const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
@@ -1191,8 +1201,8 @@ export class UIController {
                     cards.innerHTML = `
                         <div class="animation-card-item">
                             <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
-                            <div class="anim-card-name">${card.cardName}${categoryBadge}${recommendedMark}</div>
-                            <div class="anim-card-effect">${card.effect}</div>
+                            <div class="anim-card-name">${this._escapeHTML(card.cardName)}${categoryBadge}${recommendedMark}</div>
+                            <div class="anim-card-effect">${this._escapeHTML(card.effect)}</div>
                             ${bonusText}
                         </div>
                     `;
@@ -1616,13 +1626,13 @@ export class UIController {
         this.trainingSelectionMode = 'normal';
         this.inspirationRemaining = 0;
         const config = this.turnManager.getCurrentTurnConfig();
-        console.log('[SAVE-DEBUG] showTrainingPhase: 開始, turn=', this.gameState.turn, ', training=', config.training);
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showTrainingPhase: 開始, turn=', this.gameState.turn, ', training=', config.training);
 
         // ターン概要オーバーレイを表示
         this.showTurnOverlay(config);
 
         const trainingCards = this.cardManager.drawTrainingCards(config.training, 3);
-        console.log('[SAVE-DEBUG] showTrainingPhase: 抽選カード:', trainingCards.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showTrainingPhase: 抽選カード:', trainingCards.map(c => c.cardName));
 
         // 抽選したカードをgameStateに保存（復元時に使用）
         this.gameState.currentTrainingCards = trainingCards.map(c => ({ ...c }));
@@ -2525,11 +2535,11 @@ export class UIController {
      * ゲーム状態復元後のUI更新
      */
     restoreUI() {
-        console.log('[SAVE-DEBUG] restoreUI: 開始');
-        console.log('[SAVE-DEBUG] restoreUI: phase=', this.gameState.phase, ', turn=', this.gameState.turn);
-        console.log('[SAVE-DEBUG] restoreUI: currentTrainingCards=', this.gameState.currentTrainingCards?.map(c => c.cardName));
-        console.log('[SAVE-DEBUG] restoreUI: hand=', this.gameState.player.hand.map(c => c.cardName));
-        console.log('[SAVE-DEBUG] restoreUI: deck=', this.gameState.player.deck.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: 開始');
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: phase=', this.gameState.phase, ', turn=', this.gameState.turn);
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: currentTrainingCards=', this.gameState.currentTrainingCards?.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: hand=', this.gameState.player.hand.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: deck=', this.gameState.player.deck.map(c => c.cardName));
 
         // スタートオーバーレイを非表示
         const overlay = document.getElementById('start-overlay');
@@ -2565,7 +2575,7 @@ export class UIController {
         this.showFloatNotification('前回の続きから再開します', 'info');
 
         this.logger?.log('UIを復元しました', 'info');
-        console.log('[SAVE-DEBUG] restoreUI: 完了');
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: 完了');
     }
 
     /**
@@ -2574,10 +2584,10 @@ export class UIController {
     restoreTrainingUI() {
         // gameState.currentTrainingCards から復元
         const trainingCards = this.gameState.currentTrainingCards;
-        console.log('[SAVE-DEBUG] restoreTrainingUI: trainingCards=', trainingCards?.map(c => c.cardName));
+        window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreTrainingUI: trainingCards=', trainingCards?.map(c => c.cardName));
 
         if (!trainingCards || trainingCards.length === 0) {
-            console.error('[SAVE-DEBUG] restoreTrainingUI: 研修カードが見つかりません！');
+            window.CDG_DEBUG && console.error('[SAVE-DEBUG] restoreTrainingUI: 研修カードが見つかりません！');
             // フォールバック: 新規抽選（本来ありえない）
             this.showInitialTraining();
             return;

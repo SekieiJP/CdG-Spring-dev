@@ -47,7 +47,7 @@ export class TurnManager {
     advancePhase() {
         const currentPhase = this.gameState.phase;
         this.logger?.log(`[DEBUG] advancePhase呼び出し: currentPhase=${currentPhase}`, 'info');
-        console.log('[DEBUG] advancePhase: currentPhase=', currentPhase);
+        window.CDG_DEBUG && console.log('[DEBUG] advancePhase: currentPhase=', currentPhase);
 
         if (currentPhase === 'start') {
             this.gameState.phase = 'training';
@@ -56,7 +56,7 @@ export class TurnManager {
         } else if (currentPhase === 'training') {
             this.gameState.phase = 'action';
             this.logger?.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し', 'info');
-            console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
+            window.CDG_DEBUG && console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
             this.startActionPhase();
         } else if (currentPhase === 'action') {
             const maxDelete = this.getCurrentDeleteMax();
@@ -85,7 +85,7 @@ export class TurnManager {
             }
         } else {
             this.logger?.log(`[DEBUG] 未知のフェーズ: ${currentPhase}`, 'error');
-            console.error('[DEBUG] 未知のフェーズ:', currentPhase);
+            window.CDG_DEBUG && console.error('[DEBUG] 未知のフェーズ:', currentPhase);
         }
     }
 
@@ -102,9 +102,9 @@ export class TurnManager {
      */
     startActionPhase() {
         this.logger?.log('教室行動フェーズ開始', 'info');
-        console.log('[DEBUG] startActionPhase: 実行開始');
-        console.log('[DEBUG] デッキ枚数（シャッフル前）:', this.gameState.player.deck.length);
-        console.log('[DEBUG] 手札枚数（ドロー前）:', this.gameState.player.hand.length);
+        window.CDG_DEBUG && console.log('[DEBUG] startActionPhase: 実行開始');
+        window.CDG_DEBUG && console.log('[DEBUG] デッキ枚数（シャッフル前）:', this.gameState.player.deck.length);
+        window.CDG_DEBUG && console.log('[DEBUG] 手札枚数（ドロー前）:', this.gameState.player.hand.length);
 
         if (!this.gameState.tokens) {
             this.gameState.tokens = { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
@@ -132,12 +132,12 @@ export class TurnManager {
 
         // デッキをシャッフル
         this.gameState.shuffleDeck();
-        console.log('[DEBUG] デッキシャッフル完了');
+        window.CDG_DEBUG && console.log('[DEBUG] デッキシャッフル完了');
 
         // 手札を引く
         this.gameState.drawCards(drawCount);
-        console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
-        console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
+        window.CDG_DEBUG && console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
+        window.CDG_DEBUG && console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
     }
 
     /**

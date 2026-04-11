@@ -10,6 +10,25 @@ export class SaveManager {
     }
 
     /**
+     * セーブデータの整合性署名を計算（カジュアル改ざん検知用）
+     * @param {string} dataStr - JSON文字列化されたセーブデータ
+     * @returns {string} 署名文字列
+     */
+    _computeSignature(dataStr) {
+        const key = 'cdg-spring-2026-integrity';
+        const str = dataStr + key;
+        let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+        for (let i = 0; i < str.length; i++) {
+            const ch = str.charCodeAt(i);
+            h1 = Math.imul(h1 ^ ch, 2654435761);
+            h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 3266489909);
+        return ((h1 ^ h2) >>> 0).toString(36) + '-' + ((h2 ^ h1) >>> 0).toString(36);
+    }
+
+    /**
      * ビルドバージョンを取得
      * @returns {string} ビルドバージョン
      */
@@ -45,18 +64,20 @@ export class SaveManager {
                 trainingDecks: this.serializeTrainingDecks(cardManager)
             };
 
-            console.log('[SAVE-DEBUG] save: phase=', gameState.phase, ', turn=', gameState.turn);
-            console.log('[SAVE-DEBUG] save: currentTrainingCards=', gameState.currentTrainingCards?.map(c => c.cardName));
-            console.log('[SAVE-DEBUG] save: hand=', gameState.player.hand.map(c => c.cardName));
-            console.log('[SAVE-DEBUG] save: deck=', gameState.player.deck.map(c => c.cardName));
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: phase=', gameState.phase, ', turn=', gameState.turn);
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: currentTrainingCards=', gameState.currentTrainingCards?.map(c => c.cardName));
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: hand=', gameState.player.hand.map(c => c.cardName));
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: deck=', gameState.player.deck.map(c => c.cardName));
 
-            localStorage.setItem(SaveManager.SAVE_KEY, JSON.stringify(saveData));
+            const dataStr = JSON.stringify(saveData);
+            const sig = this._computeSignature(dataStr);
+            localStorage.setItem(SaveManager.SAVE_KEY, JSON.stringify({ data: dataStr, sig: sig }));
             this.logger?.log(`ゲーム状態を保存しました (ターン${gameState.turn}, ${gameState.phase})`, 'info');
-            console.log('[SAVE-DEBUG] save: 保存完了, データサイズ=', JSON.stringify(saveData).length);
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: 保存完了, データサイズ=', dataStr.length);
             return true;
         } catch (e) {
             this.logger?.log(`保存エラー: ${e.message}`, 'error');
-            console.error('[SAVE-DEBUG] save: エラー', e);
+            window.CDG_DEBUG && console.error('[SAVE-DEBUG] save: エラー', e);
             return false;
         }
     }
@@ -67,20 +88,36 @@ export class SaveManager {
      */
     load() {
         try {
-            const data = localStorage.getItem(SaveManager.SAVE_KEY);
-            if (!data) {
-                console.log('[SAVE-DEBUG] load: 保存データなし');
+            const raw = localStorage.getItem(SaveManager.SAVE_KEY);
+            if (!raw) {
+                window.CDG_DEBUG && console.log('[SAVE-DEBUG] load: 保存データなし');
                 return null;
             }
 
-            const saveData = JSON.parse(data);
-            console.log('[SAVE-DEBUG] load: 読み込み成功, phase=', saveData.gameState?.phase, ', turn=', saveData.gameState?.turn);
-            console.log('[SAVE-DEBUG] load: currentTrainingCards=', saveData.gameState?.currentTrainingCards?.map(c => c.cardName));
+            const parsed = JSON.parse(raw);
+
+            let saveData;
+            if (parsed.data && parsed.sig) {
+                // 新形式: 署名検証
+                if (this._computeSignature(parsed.data) !== parsed.sig) {
+                    this.logger?.log('セーブデータの整合性チェックに失敗しました。データが改ざんされた可能性があります。', 'error');
+                    window.CDG_DEBUG && console.error('[SAVE-DEBUG] load: 署名不一致 - 改ざん検知');
+                    return null;
+                }
+                saveData = JSON.parse(parsed.data);
+            } else {
+                // 旧形式: 署名なし（後方互換）
+                window.CDG_DEBUG && console.log('[SAVE-DEBUG] load: 旧形式データを検出（次回保存時に署名付き形式へ移行）');
+                saveData = parsed;
+            }
+
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] load: 読み込み成功, phase=', saveData.gameState?.phase, ', turn=', saveData.gameState?.turn);
+            window.CDG_DEBUG && console.log('[SAVE-DEBUG] load: currentTrainingCards=', saveData.gameState?.currentTrainingCards?.map(c => c.cardName));
             this.logger?.log(`保存データを読み込みました (${saveData.savedAt})`, 'info');
             return saveData;
         } catch (e) {
             this.logger?.log(`読み込みエラー: ${e.message}`, 'error');
-            console.error('[SAVE-DEBUG] load: エラー', e);
+            window.CDG_DEBUG && console.error('[SAVE-DEBUG] load: エラー', e);
             return null;
         }
     }
