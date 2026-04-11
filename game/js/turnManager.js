@@ -192,7 +192,7 @@ export class TurnManager {
                     };
 
                     const isRecommended = config.recommended && card.category === config.recommended;
-                    if (isRecommended && !recommendedApplied && config.recommendedStatus) {
+                    if (isRecommended && config.recommendedStatus) {
                         this.gameState.updateStatus(config.recommendedStatus, 1);
                         this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
                         recommendedApplied = true;
