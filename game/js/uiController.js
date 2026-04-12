@@ -369,12 +369,16 @@ export class UIController {
             <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
         `;
 
-        // スマホ長押し: 中央オーバーレイ（showEffectTooltip）
+        // スマホ長押し/PCホバー: カード直下フローティング（showHoverTooltip）
         let pressTimer;
         cardDiv.addEventListener('touchstart', (e) => {
-            pressTimer = setTimeout(() => { this.showEffectTooltip(card, e); }, 500);
+            pressTimer = setTimeout(() => { this.showHoverTooltip(card, cardDiv); }, 500);
         });
-        cardDiv.addEventListener('touchend', () => clearTimeout(pressTimer));
+        cardDiv.addEventListener('touchend', () => {
+            clearTimeout(pressTimer);
+            const hover = document.querySelector('.hover-tooltip');
+            if (hover) hover.remove();
+        });
         cardDiv.addEventListener('touchmove', () => clearTimeout(pressTimer));
 
         // PC向けマウスオーバー: フローティング表示（showHoverTooltip）
