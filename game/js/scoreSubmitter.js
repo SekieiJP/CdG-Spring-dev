@@ -3,6 +3,25 @@
  */
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 
+/**
+ * Cookieに永続化されたユーザーUUIDを返す（なければ生成して保存）
+ */
+function getOrCreateUserUUID() {
+    const cookieName = 'cdg_uuid';
+    const match = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
+    if (match) return decodeURIComponent(match[1]);
+
+    const uuid = (crypto.randomUUID
+        ? crypto.randomUUID()
+        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0;
+            return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        }));
+    const expires = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${cookieName}=${encodeURIComponent(uuid)}; expires=${expires}; path=/; SameSite=Strict`;
+    return uuid;
+}
+
 export async function submitScore(gameState, score, finalDeck, logger) {
     if (SCORE_ENDPOINT.includes('DEPLOY_ID')) {
         logger?.log('⚠️ スコア送信: エンドポイント未設定', 'info');
@@ -13,6 +32,7 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         startedAt: gameState.startedAt || null,
         completedAt: new Date().toISOString(),
         buildVersion: window.BUILD_VERSION || 'unknown',
+        userUUID: getOrCreateUserUUID(),
         difficulty: gameState.difficulty || 'fresh',
         experience: score.experience,
         enrollment: score.enrollment,

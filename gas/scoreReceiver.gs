@@ -50,6 +50,13 @@ function validatePayload(data) {
         return 'invalid field: difficulty';
     }
 
+    // userUUID: 文字列、40文字以内（任意項目）
+    if (data.userUUID != null) {
+        if (typeof data.userUUID !== 'string' || data.userUUID.length > 40) {
+            return 'invalid field: userUUID';
+        }
+    }
+
     // withdrawal, mobilization, enrollmentDiff: 数値 -100〜200
     var statFields = ['withdrawal', 'mobilization', 'enrollmentDiff'];
     for (var j = 0; j < statFields.length; j++) {
@@ -124,6 +131,7 @@ function doPost(e) {
             if (sheet.getLastRow() === 0) {
                 sheet.appendRow([
                     '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
+                    '利用者UUID',
                     '難易度', '体験', '入塾', '満足', '経理',
                     '総合スコア', 'ランク', '目標ポイント',
                     '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
@@ -136,6 +144,7 @@ function doPost(e) {
                 sanitizeForSheet(data.startedAt || ''),
                 sanitizeForSheet(data.completedAt || ''),
                 sanitizeForSheet(data.buildVersion || ''),
+                sanitizeForSheet(data.userUUID || ''),
                 sanitizeForSheet(data.difficulty || ''),
                 data.experience, data.enrollment, data.satisfaction, data.accounting,
                 data.displayScore,
