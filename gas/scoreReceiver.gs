@@ -96,6 +96,13 @@ function doPost(e) {
                 .setMimeType(ContentService.MimeType.JSON);
         }
 
+        // デバッグログ: 受信データの概要を記録
+        console.log('[scoreReceiver] received: difficulty=' + data.difficulty
+            + ', grade=' + data.grade
+            + ', displayScore=' + data.displayScore
+            + ', buildVersion=' + (data.buildVersion || '')
+            + ', startedAt=' + (data.startedAt || ''));
+
         // M2: レート制限（重複送信検出）
         var cache = CacheService.getScriptCache();
         var rawKey = String(data.startedAt || '') + String(data.completedAt || '') + String(data.displayScore);
@@ -110,33 +117,41 @@ function doPost(e) {
         cache.put(hashKey, '1', 60);
 
         // スプレッドシート書き込み
-        var ss = SpreadsheetApp.getActiveSpreadsheet();
-        var sheet = ss.getSheetByName('スコア記録') || ss.insertSheet('スコア記録');
+        try {
+            var ss = SpreadsheetApp.getActiveSpreadsheet();
+            var sheet = ss.getSheetByName('スコア記録') || ss.insertSheet('スコア記録');
 
-        if (sheet.getLastRow() === 0) {
+            if (sheet.getLastRow() === 0) {
+                sheet.appendRow([
+                    '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
+                    '難易度', '体験', '入塾', '満足', '経理',
+                    '総合スコア', 'ランク', '目標ポイント',
+                    '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
+                ]);
+            }
+
+            // M1: サニタイズしてから書き込み
             sheet.appendRow([
-                '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
-                '難易度', '体験', '入塾', '満足', '経理',
-                '総合スコア', 'ランク', '目標ポイント',
-                '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
+                new Date(),
+                sanitizeForSheet(data.startedAt || ''),
+                sanitizeForSheet(data.completedAt || ''),
+                sanitizeForSheet(data.buildVersion || ''),
+                sanitizeForSheet(data.difficulty || ''),
+                data.experience, data.enrollment, data.satisfaction, data.accounting,
+                data.displayScore,
+                sanitizeForSheet(data.grade),
+                data.points,
+                data.withdrawal, data.mobilization, data.enrollmentDiff,
+                sanitizeForSheet((data.finalDeck || []).join(', ')),
+                sanitizeForSheet((data.discardedCards || []).join(', '))
             ]);
-        }
 
-        // M1: サニタイズしてから書き込み
-        sheet.appendRow([
-            new Date(),
-            sanitizeForSheet(data.startedAt || ''),
-            sanitizeForSheet(data.completedAt || ''),
-            sanitizeForSheet(data.buildVersion || ''),
-            sanitizeForSheet(data.difficulty || ''),
-            data.experience, data.enrollment, data.satisfaction, data.accounting,
-            data.displayScore,
-            sanitizeForSheet(data.grade),
-            data.points,
-            data.withdrawal, data.mobilization, data.enrollmentDiff,
-            sanitizeForSheet((data.finalDeck || []).join(', ')),
-            sanitizeForSheet((data.discardedCards || []).join(', '))
-        ]);
+            console.log('[scoreReceiver] sheet write success');
+        } catch (sheetErr) {
+            console.error('[scoreReceiver] sheet write error:', sheetErr);
+            return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'sheet write failed' }))
+                .setMimeType(ContentService.MimeType.JSON);
+        }
 
         return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
             .setMimeType(ContentService.MimeType.JSON);

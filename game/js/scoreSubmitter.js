@@ -28,19 +28,33 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         discardedCards: gameState.discardedCards || []
     };
 
-    try {
-        const response = await fetch(SCORE_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain' },
-            body: JSON.stringify(payload)
-        });
-        if (response.ok) {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 2000;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            const response = await fetch(SCORE_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            const result = await response.json();
+            if (result.status !== 'ok') {
+                throw new Error(`server: ${result.message || 'unknown error'}`);
+            }
             logger?.log('📤 スコアを送信しました', 'info');
-        } else {
-            logger?.log('⚠️ スコア送信に失敗しました', 'error');
+            return;
+        } catch (e) {
+            console.warn(`[ScoreSubmit] 試行${attempt}/${MAX_RETRIES} 失敗:`, e.message);
+            if (attempt < MAX_RETRIES) {
+                logger?.log(`⚠️ スコア送信失敗 (${attempt}/${MAX_RETRIES}回目)、${RETRY_DELAY_MS / 1000}秒後にリトライします`, 'error');
+                await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+            } else {
+                logger?.log(`❌ スコア送信に失敗しました（${MAX_RETRIES}回試行）: ${e.message}`, 'error');
+            }
         }
-    } catch (e) {
-        logger?.log('⚠️ スコア送信に失敗しました', 'error');
-        console.warn('[ScoreSubmit] エラー:', e.message);
     }
 }
