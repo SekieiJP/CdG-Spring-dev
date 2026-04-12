@@ -372,9 +372,11 @@ export class UIController {
         // スマホ長押し/PCホバー: カード直下フローティング（showHoverTooltip）
         let pressTimer;
         cardDiv.addEventListener('touchstart', (e) => {
+            this._lastTouchTime = Date.now();
             pressTimer = setTimeout(() => { this.showHoverTooltip(card, cardDiv); }, 500);
         });
         cardDiv.addEventListener('touchend', () => {
+            this._lastTouchTime = Date.now();
             clearTimeout(pressTimer);
             const hover = document.querySelector('.hover-tooltip');
             if (hover) hover.remove();
@@ -382,8 +384,10 @@ export class UIController {
         cardDiv.addEventListener('touchmove', () => clearTimeout(pressTimer));
 
         // PC向けマウスオーバー: フローティング表示（showHoverTooltip）
+        // スマホでタッチ後に合成mouseenterが発火する問題を防ぐため、直近500ms以内のタッチ後は無視
         let hoverTimer;
         cardDiv.addEventListener('mouseenter', () => {
+            if (Date.now() - (this._lastTouchTime || 0) < 500) return;
             clearTimeout(this._hoverHideTimer);
             hoverTimer = setTimeout(() => { this.showHoverTooltip(card, cardDiv); }, 500);
         });
