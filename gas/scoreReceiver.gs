@@ -30,8 +30,8 @@ function validatePayload(data) {
         }
     }
 
-    // displayScore: 数値 0〜10
-    if (!isNumInRange(data.displayScore, 0, 10)) {
+    // displayScore: 数値 0〜20（PRO最高ランクSS=15を考慮）
+    if (!isNumInRange(data.displayScore, 0, 20)) {
         return 'invalid field: displayScore';
     }
 
