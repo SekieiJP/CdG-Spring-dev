@@ -1720,6 +1720,10 @@ export class UIController {
         const container = document.getElementById('training-cards');
         if (!container) return;
 
+        // 発想フロー以外では「取得しない」ボタンを非表示
+        const skipBtnTp = document.getElementById('btn-training-skip');
+        if (skipBtnTp) skipBtnTp.classList.add('hidden');
+
         container.innerHTML = '';
         this.selectedTrainingCard = null;
         // Spec2修正: 1枚選択するまで確定ボタンを無効化
