@@ -92,6 +92,8 @@ export class UIController {
         // 研修確定ボタン
         const confirmTrainingBtn = document.getElementById('confirm-training');
         confirmTrainingBtn?.addEventListener('click', () => this.onConfirmTraining());
+        const skipTrainingBtn = document.getElementById('btn-training-skip');
+        skipTrainingBtn?.addEventListener('click', () => this.skipInspirationTraining());
         const refreshTrainingBtn = document.getElementById('btn-training-refresh');
         refreshTrainingBtn?.addEventListener('click', () => this.onTrainingRefresh());
 
@@ -544,6 +546,8 @@ export class UIController {
     renderTrainingCards(trainingCards) {
         const container = document.getElementById('training-cards');
         if (!container) return;
+        const skipBtn = document.getElementById('btn-training-skip');
+        if (skipBtn) skipBtn.classList.add('hidden');
 
         container.innerHTML = '';
 
@@ -1925,6 +1929,8 @@ export class UIController {
         }
 
         this.updateTrainingRefreshUI('SR');
+        const skipBtn = document.getElementById('btn-training-skip');
+        if (skipBtn) skipBtn.classList.remove('hidden');
 
         this.showPhaseArea('training');
         this.updateTurnDisplay();
@@ -1957,6 +1963,24 @@ export class UIController {
             this.gameState.tokens.inspiration = 0;
             this.trainingSelectionMode = 'normal';
             this.gameState.currentTrainingCards = null;
+            this.finalizeTrainingToAction();
+        }
+    }
+
+    /**
+     * 発想追加習得のスキップ
+     */
+    skipInspirationTraining() {
+        this.inspirationRemaining -= 1;
+        const skipBtn = document.getElementById('btn-training-skip');
+        if (this.inspirationRemaining > 0) {
+            this.gameState.tokens.inspiration = this.inspirationRemaining;
+            this.showInspirationTrainingRound();
+        } else {
+            this.gameState.tokens.inspiration = 0;
+            this.trainingSelectionMode = 'normal';
+            this.gameState.currentTrainingCards = null;
+            if (skipBtn) skipBtn.classList.add('hidden');
             this.finalizeTrainingToAction();
         }
     }
@@ -2042,6 +2066,9 @@ export class UIController {
                                 <td colspan="2">合計スコア</td>
                                 <td><strong>${score.displayScore}</strong></td>
                             </tr>
+                            <tr class="result-build-info-row">
+                                <td colspan="3" class="result-build-info">${this._buildInfoText()}</td>
+                            </tr>
                         </tbody>
                     </table>
                 `;
@@ -2050,11 +2077,22 @@ export class UIController {
 
         // ハイスコア保存・表示
         const difficulty = this.gameState.difficulty || 'fresh';
-        this.scoreManager.saveHighScore(score, difficulty);
+        const isNewHighScore = this.scoreManager.saveHighScore(score, difficulty);
         const highScore = this.scoreManager.getHighScore(difficulty);
         const highScoreElem = document.getElementById('high-score');
         if (highScoreElem && highScore) {
             highScoreElem.textContent = `${highScore.displayScore ?? highScore.points}ポイント`;
+        }
+        // 前回のバッジを除去してから新記録時のみ表示
+        const prevBadge = document.getElementById('best-update-badge');
+        if (prevBadge) prevBadge.remove();
+        if (isNewHighScore) {
+            const badge = document.createElement('p');
+            badge.id = 'best-update-badge';
+            badge.className = 'best-update-badge';
+            badge.innerHTML = '<strong>ベスト更新!!</strong>';
+            const highScoreDiv = document.querySelector('.high-score');
+            if (highScoreDiv) highScoreDiv.appendChild(badge);
         }
 
         // スコア自動送信（fire-and-forget）
@@ -2137,6 +2175,15 @@ export class UIController {
     }
 
     /**
+     * ビルドバージョンとユーザーUUIDを返す（結果画面用）
+     */
+    _buildInfoText() {
+        const ver = window.BUILD_VERSION || 'unknown';
+        const uuid = document.cookie.match(/(?:^|; )cdg_uuid=([^;]*)/)?.[1] || '?';
+        return `${ver} / ${uuid}`;
+    }
+
+    /**
      * PRO難易度の結果内訳テーブルを生成
      * @param {Object} score - calculateScorePro() の戻り値
      * @returns {string} HTML文字列
@@ -2182,6 +2229,9 @@ export class UIController {
                     <tr class="total-row">
                         <td colspan="2">合計スコア</td>
                         <td><strong>${score.displayScore}</strong></td>
+                    </tr>
+                    <tr class="result-build-info-row">
+                        <td colspan="3" class="result-build-info">${this._buildInfoText()}</td>
                     </tr>
                 </tbody>
             </table>
@@ -2329,7 +2379,7 @@ export class UIController {
                 <td>${turn}/8</td>
                 <td>${config.week}</td>
                 <td>${config.training || '-'}</td>
-                <td>${config.delete || 0}枚</td>
+                <td>${config.delete > 0 ? config.delete + '枚' : 'なし'}</td>
                 <td class="recommended-cell">${config.recommended || '-'}</td>
             `;
             tbody.appendChild(tr);

@@ -1856,3 +1856,30 @@ html.font-normal .compact-stats {
 .rank-deficit.hidden {
     display: none;
 }
+
+/* ===== 研修フェーズ: 取得しない/リフレッシュ 横並びレイアウト ===== */
+.training-action-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+/* ===== 結果画面: ビルド情報行 ===== */
+.result-build-info-row td {
+    text-align: right;
+    padding-top: 6px;
+}
+.result-build-info {
+    color: #999;
+    font-size: 0.72em;
+    word-break: break-all;
+}
+
+/* ===== 結果画面: ベスト更新バッジ ===== */
+.best-update-badge {
+    color: #e63;
+    font-size: 1.1em;
+    margin-top: 4px;
+}

@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20260412-1932">
+    <link rel="stylesheet" href="css/style.css?v=20260421-0226">
 </head>
 
 <body>
@@ -106,9 +106,12 @@
                 <h2>研修: カード習得</h2>
                 <p class="instruction">3枚から1枚を選んで習得してください<span class="help-longpress">[長押しで詳細]</span></p>
                 <div id="training-cards" class="card-selection"></div>
-                <div id="training-refresh-row" class="hidden">
-                    <button id="btn-training-refresh" class="btn-secondary">🔄 リフレッシュ</button>
-                    <span id="training-refresh-count"></span>
+                <div class="training-action-row">
+                    <button id="btn-training-skip" class="btn-secondary hidden">取得しない</button>
+                    <div id="training-refresh-row" class="hidden">
+                        <button id="btn-training-refresh" class="btn-secondary">🔄 リフレッシュ</button>
+                        <span id="training-refresh-count"></span>
+                    </div>
                 </div>
                 <button id="confirm-training" class="btn-primary" disabled>習得を確定</button>
             </section>
@@ -173,7 +176,7 @@
                 <div id="result-rank" class="result-rank"></div>
                 <div id="result-breakdown" class="result-breakdown"></div>
                 <div class="high-score">
-                    <p>ハイスコア: <span id="high-score">-</span></p>
+                    <p>自己ベスト: <span id="high-score">-</span></p>
                 </div>
                 <div id="result-cards"></div>
                 <div class="result-actions">
@@ -281,8 +284,8 @@
         </div>
     </div>
 
-    <!-- JavaScriptモジュール（キャッシュバスター付き v20260412-0901） -->
-    <script type="module" src="js/main.js?v=20260412-1932"></script>
+    <!-- JavaScriptモジュール（キャッシュバスター付き v20260421-0226） -->
+    <script type="module" src="js/main.js?v=20260421-0226"></script>
 </body>
 
 </html>
