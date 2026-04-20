@@ -1811,18 +1811,18 @@ export class UIController {
      * 研修リフレッシュボタンの表示状態を更新
      */
     updateTrainingRefreshUI(rarity) {
-        const row = document.getElementById('training-refresh-row');
+        const btn = document.getElementById('btn-training-refresh');
         const countElem = document.getElementById('training-refresh-count');
-        if (!row) return;
+        if (!btn) return;
 
         const remaining = this.gameState.trainingRefreshRemaining ?? 0;
         const enabled = this.gameState.difficulty === 'pro' && remaining > 0 && rarity !== 'N';
 
         if (enabled) {
-            row.classList.remove('hidden');
+            btn.classList.remove('hidden');
             if (countElem) countElem.textContent = `残り${remaining}回`;
         } else {
-            row.classList.add('hidden');
+            btn.classList.add('hidden');
         }
     }
 

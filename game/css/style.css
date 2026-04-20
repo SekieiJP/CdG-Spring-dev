@@ -1716,27 +1716,15 @@ html.font-normal .compact-stats {
         transform: translateX(-50%) translateY(-4px);
     }
 }
-/* 研修リフレッシュ行 */
-#training-refresh-row {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 8px;
-    margin: 8px 0 4px;
-}
-
-#training-refresh-row.hidden {
+#btn-training-skip.hidden,
+#btn-training-refresh.hidden {
     display: none;
 }
 
-#training-refresh-count {
-    background-color: #6b1a2a;
-    color: #f5c6ce;
-    font-size: 0.78rem;
-    font-weight: bold;
-    padding: 3px 10px;
-    border-radius: 12px;
-    white-space: nowrap;
+.refresh-count-label {
+    font-size: 0.75em;
+    opacity: 0.85;
+    margin-top: 2px;
 }
 
 /* ===== ドロー変動通知 ===== */
@@ -1861,9 +1849,13 @@ html.font-normal .compact-stats {
 .training-action-row {
     display: flex;
     gap: 8px;
-    justify-content: center;
-    align-items: center;
     margin-bottom: 8px;
+}
+
+.training-action-row > button {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.3;
 }
 
 /* ===== 結果画面: ビルド情報行 ===== */
