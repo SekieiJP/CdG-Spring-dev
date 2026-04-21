@@ -63,6 +63,8 @@ export class TurnManager {
             // 最終ターン(turn===7)は会議スキップ。それ以外はmaxDelete>0なら開く
             if (maxDelete === 0 || this.gameState.turn === 7) {
                 this.logger?.log('[DEBUG] 会議フェーズをスキップして次ターンへ遷移', 'info');
+                this.gameState.returnAllToDeck(); // 手札・配置カードをデッキへ戻す
+                this.gameState.tokens.organize = 0; // 整理トークンをリセット（最終ターンで残存する可能性あり）
                 this.gameState.phase = 'meeting'; // 一時的にmeetingへ
                 this.advancePhase(); // 即座に次のターンへ
             } else {
