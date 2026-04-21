@@ -1,4 +1,4 @@
-import { submitScore } from './scoreSubmitter.js?v=20260411-0900';
+import { submitScore } from './scoreSubmitter.js?v=20260421-0924';
 
 /**
  * UIController - UI操作・表示制御
