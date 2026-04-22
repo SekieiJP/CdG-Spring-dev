@@ -6,7 +6,7 @@ const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQ
 /**
  * Cookieに永続化されたユーザーUUIDを返す（なければ生成して保存）
  */
-function getOrCreateUserUUID() {
+export function getOrCreateUserUUID() {
     const cookieName = 'cdg_uuid';
     const match = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
     if (match) return decodeURIComponent(match[1]);

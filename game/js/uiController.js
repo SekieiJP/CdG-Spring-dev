@@ -1,4 +1,4 @@
-import { submitScore } from './scoreSubmitter.js?v=20260423-0018';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260423-0034';
 
 /**
  * UIController - UI操作・表示制御
@@ -35,6 +35,7 @@ export class UIController {
      * UI初期化
      */
     init() {
+        getOrCreateUserUUID(); // 結果画面表示より前にCookieを確定
         this.updateStatusDisplay();
         this.updateTurnDisplay();
 
