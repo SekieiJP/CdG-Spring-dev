@@ -1,4 +1,4 @@
-import { submitScore } from './scoreSubmitter.js?v=20260421-0924';
+import { submitScore } from './scoreSubmitter.js?v=20260423-0018';
 
 /**
  * UIController - UI操作・表示制御
@@ -1808,6 +1808,39 @@ export class UIController {
     }
 
     /**
+     * 発想追加習得の4択（3枚+取得しない）を描画
+     * @param {HTMLElement} container
+     * @param {Array} cards
+     */
+    renderInspirationTrainingChoices(container, cards) {
+        if (!container) return;
+
+        container.innerHTML = '';
+        cards.forEach(card => {
+            const cardElem = this.createCardElement(card, {
+                clickable: true,
+                compact: true,
+                onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
+            });
+            container.appendChild(cardElem);
+        });
+
+        const skipOption = document.createElement('div');
+        skipOption.className = 'card compact-card skip-option';
+        skipOption.innerHTML = `
+            <div class="skip-option-label">取得しない</div>
+        `;
+        skipOption.addEventListener('click', () => {
+            container.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+            skipOption.classList.add('selected');
+            this.selectedTrainingCard = { __skip: true };
+            const confirmBtn = document.getElementById('confirm-training');
+            if (confirmBtn) confirmBtn.disabled = false;
+        });
+        container.appendChild(skipOption);
+    }
+
+    /**
      * 研修リフレッシュボタンの表示状態を更新
      */
     updateTrainingRefreshUI(rarity) {
@@ -1865,6 +1898,12 @@ export class UIController {
                 // 初回研修は selectedInitialCards が2枚になるまで確定ボタン無効
                 const confirmBtn = document.getElementById('confirm-training');
                 if (confirmBtn) confirmBtn.disabled = true;
+            } else if (isInspiration) {
+                // 発想追加習得: 3枚 + 「取得しない」
+                this.selectedTrainingCard = null;
+                this.renderInspirationTrainingChoices(container, newCards);
+                const confirmBtn = document.getElementById('confirm-training');
+                if (confirmBtn) confirmBtn.disabled = true;
             } else {
                 // 通常研修: 1枚選択モード
                 this.selectedTrainingCard = null;
@@ -1912,15 +1951,7 @@ export class UIController {
 
         const container = document.getElementById('training-cards');
         if (container) {
-            container.innerHTML = '';
-            candidates.forEach(card => {
-                const cardElem = this.createCardElement(card, {
-                    clickable: true,
-                    compact: true,
-                    onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
-                });
-                container.appendChild(cardElem);
-            });
+            this.renderInspirationTrainingChoices(container, candidates);
         }
 
         const confirmBtn = document.getElementById('confirm-training');
@@ -1933,8 +1964,6 @@ export class UIController {
         }
 
         this.updateTrainingRefreshUI('SR');
-        const skipBtn = document.getElementById('btn-training-skip');
-        if (skipBtn) skipBtn.classList.remove('hidden');
 
         this.showPhaseArea('training');
         this.updateTurnDisplay();
@@ -1956,7 +1985,9 @@ export class UIController {
     confirmInspirationTraining() {
         if (!this.selectedTrainingCard) return;
 
-        this.gameState.addToDeck({ ...this.selectedTrainingCard });
+        if (this.selectedTrainingCard.__skip !== true) {
+            this.gameState.addToDeck({ ...this.selectedTrainingCard });
+        }
         this.selectedTrainingCard = null;
         this.inspirationRemaining -= 1;
 
@@ -2728,15 +2759,8 @@ export class UIController {
             // 復元時はすでに保存済みのカードを使う
             const container = document.getElementById('training-cards');
             if (container) {
-                container.innerHTML = '';
-                trainingCards.forEach(card => {
-                    const cardElem = this.createCardElement(card, {
-                        clickable: true,
-                        compact: true,
-                        onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container)
-                    });
-                    container.appendChild(cardElem);
-                });
+                this.selectedTrainingCard = null;
+                this.renderInspirationTrainingChoices(container, trainingCards);
             }
             const confirmBtn = document.getElementById('confirm-training');
             if (confirmBtn) confirmBtn.disabled = true;

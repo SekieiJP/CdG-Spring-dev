@@ -298,6 +298,27 @@ body {
     opacity: 0.5;
 }
 
+.card.skip-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed var(--color-border);
+    background: transparent;
+    color: var(--color-text-secondary);
+}
+
+.card.skip-option.selected {
+    border-color: var(--color-primary);
+    background: var(--color-bg-light);
+    color: var(--color-text);
+}
+
+.skip-option-label {
+    font-size: 0.9em;
+    font-weight: bold;
+    text-align: center;
+}
+
 .card-header {
     display: flex;
     justify-content: space-between;

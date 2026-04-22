@@ -492,7 +492,7 @@ export class CardManager {
     /**
      * カード効果を適用
      */
-    applyCardEffect(card, staff, gameState) {
+    applyCardEffect(card, staff, gameState, preCardSnapshot = null) {
         if (!card || !card.effect) {
             this.logger?.log('カード効果が空です', 'error');
             return false;
@@ -509,18 +509,20 @@ export class CardManager {
 
         this.logger?.log(`カード効果発動: ${card.cardName} (${staffNames[staff]})`, 'action');
 
+        // カード処理開始前のステータス（〈〉条件判定専用）
+        const statsSnapshot = preCardSnapshot || {
+            experience: gameState.player.experience,
+            enrollment: gameState.player.enrollment,
+            satisfaction: gameState.player.satisfaction,
+            accounting: gameState.player.accounting
+        };
+
         // 基本効果を適用
         parsed.baseEffects.forEach(effect => {
             this.applyEffect(effect, gameState);
         });
 
         // 条件付き効果を評価・適用
-        const statsSnapshot = {
-            experience: gameState.player.experience,
-            enrollment: gameState.player.enrollment,
-            satisfaction: gameState.player.satisfaction,
-            accounting: gameState.player.accounting
-        };
         parsed.conditionalBlocks.forEach(block => {
             if (this.evaluateCondition(block.condition, staff, { player: statsSnapshot })) {
                 const conditionName = this.getConditionName(block.condition);
