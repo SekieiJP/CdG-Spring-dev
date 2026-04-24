@@ -1,4 +1,4 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260423-0034';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260425-0900';
 
 /**
  * UIController - UI操作・表示制御
@@ -555,6 +555,8 @@ export class UIController {
         if (this.gameState.turn === 0) {
             // 初回研修（4枚から2枚）
             this.selectedInitialCards = [];
+            const confirmBtnInit = document.getElementById('confirm-training');
+            if (confirmBtnInit) confirmBtnInit.disabled = true;
             trainingCards.forEach(card => {
                 const cardElem = this.createCardElement(card, {
                     clickable: true,
@@ -2724,7 +2726,12 @@ export class UIController {
             this.restoreActionUI();
         } else if (phase === 'meeting') {
             // 教室会議フェーズの場合
-            this.showMeetingPhase();
+            // 整理トークン消費後にdeleteMax=0になったケースは自動で次フェーズへ進む
+            if (this.turnManager.getCurrentDeleteMax() === 0) {
+                this.onConfirmMeeting();
+            } else {
+                this.showMeetingPhase();
+            }
         }
 
         // 復元中フラグを解除
