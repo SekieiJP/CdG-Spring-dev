@@ -161,6 +161,83 @@ test.describe('カード効果テスト - 条件付き効果', () => {
     });
 });
 
+test.describe('コスト不足時のUI表示', () => {
+    test.beforeEach(async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.evaluate(() => {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+        await page.reload();
+        await page.click('#btn-difficulty-fresh');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        const cards = page.locator('#training-cards .card');
+        await cards.nth(0).click();
+        await cards.nth(1).click();
+        await page.click('#confirm-training');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+    });
+
+    test('配置時にコスト不足予定のカードへ黄色フロート通知を出す', async ({ page }) => {
+        await page.evaluate(() => {
+            const card = {
+                category: '動員',
+                rarity: 'R',
+                cardName: '配置時コスト不足テスト',
+                topEffect: '満-1',
+                effect: '満足-1。'
+            };
+            window.game.gameState.player.satisfaction = 0;
+            window.game.gameState.player.hand = [card];
+            window.game.uiController.renderHand();
+            window.game.uiController.tryPlaceCardToSlot(card, 'leader');
+        });
+
+        const notification = page.locator('.float-notification');
+        await expect(notification).toBeVisible();
+        await expect(notification).toHaveClass(/float-warning/);
+        await expect(notification).toContainText('コスト不足');
+        await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+    });
+
+    test('実行時に無効化されたカードをアニメーションで表示する', async ({ page }) => {
+        await page.evaluate(() => {
+            window.game.gameState.player.experience = 0;
+            window.game.gameState.player.enrollment = 0;
+            window.game.gameState.player.satisfaction = 0;
+            window.game.gameState.player.accounting = 0;
+            window.game.gameState.player.hand = [];
+            window.game.gameState.player.placed = {
+                leader: [{
+                    category: '動員',
+                    rarity: 'R',
+                    cardName: '実行時コスト不足テスト',
+                    topEffect: '体1, 満-1',
+                    effect: '体験+1、満足-1。'
+                }],
+                teacher: [],
+                staff: []
+            };
+            window.game.uiController.renderStaffSlot('leader');
+            window.game.uiController.renderHand();
+            window.game.uiController.updateActionButtonState();
+        });
+
+        await page.click('#confirm-action');
+        await expect(page.locator('.anim-skip-text')).toContainText('コスト不足のため効果なし', { timeout: 10000 });
+
+        const stats = await page.evaluate(() => ({
+            experience: window.game.gameState.player.experience,
+            satisfaction: window.game.gameState.player.satisfaction
+        }));
+        expect(stats.experience).toBe(0);
+        expect(stats.satisfaction).toBe(0);
+    });
+});
+
 test.describe('全ターン通しテスト', () => {
     test('8ターン完走できる', async ({ page }) => {
         // アニメーション込みで8ターン完走するには長めのタイムアウトが必要

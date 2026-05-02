@@ -492,10 +492,10 @@ export class CardManager {
     /**
      * カード効果を適用
      */
-    applyCardEffect(card, staff, gameState, preCardSnapshot = null) {
+    applyCardEffect(card, staff, gameState, preCardSnapshot = null, options = {}) {
         if (!card || !card.effect) {
             this.logger?.log('カード効果が空です', 'error');
-            return false;
+            return { applied: false, skippedReason: 'empty_effect', shortageEffects: [] };
         }
 
         const parsed = this.parseEffect(card.effect);
@@ -504,7 +504,7 @@ export class CardManager {
         // スタッフ制限チェック
         if (parsed.staffRestrictions.length > 0 && !parsed.staffRestrictions.includes(staff)) {
             this.logger?.log(`${card.cardName}は${staffNames[staff]}に配置できません`, 'error');
-            return false;
+            return { applied: false, skippedReason: 'staff_restriction', shortageEffects: [] };
         }
 
         this.logger?.log(`カード効果発動: ${card.cardName} (${staffNames[staff]})`, 'action');
@@ -516,6 +516,14 @@ export class CardManager {
             satisfaction: gameState.player.satisfaction,
             accounting: gameState.player.accounting
         };
+
+        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot);
+        const costStats = options.costStats || gameState.player;
+        const shortageEffects = this.getCostShortageEffects(applicableEffects, costStats);
+        if (shortageEffects.length > 0) {
+            this.logger?.log(`  コスト不足: ${card.cardName}の効果は無効`, 'warning');
+            return { applied: false, skippedReason: 'cost_shortage', shortageEffects };
+        }
 
         // 基本効果を適用
         parsed.baseEffects.forEach(effect => {
@@ -533,7 +541,116 @@ export class CardManager {
             }
         });
 
-        return true;
+        return { applied: true, skippedReason: null, shortageEffects: [] };
+    }
+
+    /**
+     * 指定スタッフ・条件で実際に発揮予定の効果を取得
+     */
+    getApplicableEffects(parsed, staff, statsSnapshot) {
+        const effects = [...parsed.baseEffects];
+
+        parsed.conditionalBlocks.forEach(block => {
+            if (this.evaluateCondition(block.condition, staff, { player: statsSnapshot })) {
+                effects.push(...block.effects);
+            }
+        });
+
+        return effects;
+    }
+
+    /**
+     * 発揮予定効果のうち、ステータスを負にする減少効果を返す
+     */
+    getCostShortageEffects(effects, playerStats) {
+        const working = {
+            experience: playerStats.experience,
+            enrollment: playerStats.enrollment,
+            satisfaction: playerStats.satisfaction,
+            accounting: playerStats.accounting
+        };
+        const shortages = [];
+
+        effects.forEach(effect => {
+            if (effect.type === 'set') {
+                working[effect.status] = effect.value;
+                return;
+            }
+
+            if (effect.type !== 'change') return;
+
+            const before = working[effect.status] ?? 0;
+            const rawAfter = before + effect.value;
+            if (effect.value < 0 && rawAfter < 0) {
+                shortages.push({
+                    status: effect.status,
+                    value: effect.value,
+                    before,
+                    after: rawAfter
+                });
+                return;
+            }
+
+            working[effect.status] = this.calculateUpdatedStatus(working, effect.status, effect.value);
+        });
+
+        return shortages;
+    }
+
+    /**
+     * GameState.updateStatus と同じ境界ルールで、仮ステータスを更新する
+     */
+    calculateUpdatedStatus(stats, type, delta) {
+        let newValue = (stats[type] ?? 0) + delta;
+        newValue = Math.max(0, newValue);
+
+        if (type === 'enrollment') {
+            newValue = Math.min(newValue, stats.experience ?? 0);
+        }
+
+        return newValue;
+    }
+
+    /**
+     * 実ステータスを変えずに、カード1枚の適用結果を予測する
+     */
+    simulateCardEffect(card, staff, stats, recommendedStatus = null) {
+        const beforeStats = { ...stats };
+        const parsed = this.parseEffect(card.effect || '');
+        const statsSnapshot = { ...beforeStats };
+        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot);
+        const shortageEffects = this.getCostShortageEffects(applicableEffects, beforeStats);
+
+        if (shortageEffects.length > 0) {
+            return {
+                beforeStats,
+                afterStats: { ...beforeStats },
+                applied: false,
+                skippedReason: 'cost_shortage',
+                shortageEffects
+            };
+        }
+
+        const afterStats = { ...beforeStats };
+        if (recommendedStatus) {
+            afterStats[recommendedStatus] = this.calculateUpdatedStatus(afterStats, recommendedStatus, 1);
+        }
+
+        applicableEffects.forEach(effect => {
+            if (effect.type === 'set') {
+                afterStats[effect.status] = effect.value;
+            } else if (effect.type === 'change') {
+                afterStats[effect.status] = this.calculateUpdatedStatus(afterStats, effect.status, effect.value);
+            }
+        });
+
+        return {
+            beforeStats,
+            afterStats,
+            applied: true,
+            skippedReason: null,
+            shortageEffects: []
+        };
     }
 
     /**

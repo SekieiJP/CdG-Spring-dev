@@ -870,7 +870,48 @@ export class UIController {
             this.showFloatNotification(`一部の効果が発動しない可能性があります`, 'warning');
         }
 
+        if (this.willCardHaveCostShortage(card, staff)) {
+            this.showFloatNotification('コスト不足のため、このカードの効果は無効になる予定です', 'warning');
+        }
+
         this.placeCardToSlot(card, staff);
+    }
+
+    /**
+     * 配置済みカードを実行順に仮適用し、新規カードがコスト不足になるか判定
+     */
+    willCardHaveCostShortage(card, staff) {
+        const config = this.turnManager.getCurrentTurnConfig();
+        const staffOrder = ['leader', 'teacher', 'staff'];
+        const simulatedPlaced = {
+            leader: [...this.gameState.player.placed.leader],
+            teacher: [...this.gameState.player.placed.teacher],
+            staff: [...this.gameState.player.placed.staff]
+        };
+        simulatedPlaced[staff].push(card);
+
+        let stats = {
+            experience: this.gameState.player.experience,
+            enrollment: this.gameState.player.enrollment,
+            satisfaction: this.gameState.player.satisfaction,
+            accounting: this.gameState.player.accounting
+        };
+
+        for (const slot of staffOrder) {
+            for (const placedCard of simulatedPlaced[slot]) {
+                const isRecommended = !!(config?.recommended && placedCard.category === config.recommended);
+                const recommendedStatus = isRecommended ? config.recommendedStatus : null;
+                const result = this.cardManager.simulateCardEffect(placedCard, slot, stats, recommendedStatus);
+
+                if (placedCard === card) {
+                    return !result.applied && result.skippedReason === 'cost_shortage';
+                }
+
+                stats = result.afterStats;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1275,8 +1316,11 @@ export class UIController {
                     const categoryColor = categoryColors[card.category] || '#9CA3AF';
                     const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${this._escapeHTML(card.category)}</span>`;
                     const isRecommended = perCardInfo?.isRecommended || false;
+                    const recommendedApplied = perCardInfo?.recommendedApplied || false;
+                    const skippedByCost = perCardInfo?.skippedReason === 'cost_shortage';
                     const recommendedMark = isRecommended ? ' 🎯' : '';
-                    const bonusText = isRecommended ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
+                    const bonusText = recommendedApplied ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
+                    const skipText = skippedByCost ? '<div class="anim-skip-text">コスト不足のため効果なし</div>' : '';
 
                     cards.innerHTML = `
                         <div class="animation-card-item">
@@ -1284,6 +1328,7 @@ export class UIController {
                             <div class="anim-card-name">${this._escapeHTML(card.cardName)}${categoryBadge}${recommendedMark}</div>
                             <div class="anim-card-effect">${this._escapeHTML(card.effect)}</div>
                             ${bonusText}
+                            ${skipText}
                         </div>
                     `;
 

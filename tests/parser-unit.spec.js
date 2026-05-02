@@ -246,3 +246,129 @@ test.describe('条件評価テスト', () => {
         expect(result).toBe(true);
     });
 });
+
+test.describe('コスト不足によるカード効果無効化', () => {
+    let page;
+
+    test.beforeEach(async ({ page: p }) => {
+        page = p;
+        await page.goto('/');
+        await page.evaluate(async () => {
+            const { CardManager } = await import('./js/cardManager.js?v=test');
+            window.testCardManager = new CardManager();
+        });
+    });
+
+    test('無条件マイナス効果でステータスが負になる場合、カード効果全体が無効になる', async () => {
+        const result = await page.evaluate(() => {
+            const gameState = {
+                player: { experience: 0, enrollment: 0, satisfaction: 0, accounting: 0 },
+                tokens: { passion: 0, inspiration: 0, organize: 0, fatigue: 0 },
+                updateStatus(type, delta) {
+                    this.player[type] = Math.max(0, this.player[type] + delta);
+                    return delta;
+                }
+            };
+            const card = {
+                cardName: 'コスト不足テスト',
+                effect: '体験+2、満足-1。[情熱✊]'
+            };
+
+            const applied = window.testCardManager.applyCardEffect(card, 'leader', gameState);
+            return { applied, player: gameState.player, tokens: gameState.tokens };
+        });
+
+        expect(result.applied.applied).toBe(false);
+        expect(result.applied.skippedReason).toBe('cost_shortage');
+        expect(result.player.experience).toBe(0);
+        expect(result.player.satisfaction).toBe(0);
+        expect(result.tokens.passion).toBe(0);
+    });
+
+    test('条件未成立ブロック内のマイナス効果はコスト不足判定の対象外', async () => {
+        const result = await page.evaluate(() => {
+            const gameState = {
+                player: { experience: 0, enrollment: 0, satisfaction: 0, accounting: 0 },
+                tokens: { passion: 0, inspiration: 0, organize: 0, fatigue: 0 },
+                updateStatus(type, delta) {
+                    this.player[type] = Math.max(0, this.player[type] + delta);
+                    return delta;
+                }
+            };
+            const card = {
+                cardName: '条件未成立テスト',
+                effect: '体験+1。〈満足1以上〉満足-1。'
+            };
+
+            const applied = window.testCardManager.applyCardEffect(card, 'leader', gameState);
+            return { applied, player: gameState.player };
+        });
+
+        expect(result.applied.applied).toBe(true);
+        expect(result.player.experience).toBe(1);
+        expect(result.player.satisfaction).toBe(0);
+    });
+
+    test('条件成立ブロック内のマイナス効果が不足すると基本効果も無効になる', async () => {
+        const result = await page.evaluate(() => {
+            const gameState = {
+                player: { experience: 0, enrollment: 0, satisfaction: 0, accounting: 0 },
+                tokens: { passion: 0, inspiration: 0, organize: 0, fatigue: 0 },
+                updateStatus(type, delta) {
+                    this.player[type] = Math.max(0, this.player[type] + delta);
+                    return delta;
+                }
+            };
+            const card = {
+                cardName: '条件成立テスト',
+                effect: '体験+1。〈満足0以上〉満足-1。'
+            };
+
+            const applied = window.testCardManager.applyCardEffect(card, 'leader', gameState);
+            return { applied, player: gameState.player };
+        });
+
+        expect(result.applied.applied).toBe(false);
+        expect(result.player.experience).toBe(0);
+        expect(result.player.satisfaction).toBe(0);
+    });
+
+    test('おすすめカードがコスト不足の場合、おすすめボーナスも適用されない', async ({ page }) => {
+        await page.click('#btn-difficulty-fresh');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        const result = await page.evaluate(() => {
+            window.game.gameState.phase = 'action';
+            window.game.gameState.turn = 0; // おすすめ: 動員 / 体験
+            window.game.gameState.player.experience = 0;
+            window.game.gameState.player.enrollment = 0;
+            window.game.gameState.player.satisfaction = 0;
+            window.game.gameState.player.accounting = 0;
+            window.game.gameState.player.placed = {
+                leader: [{
+                    category: '動員',
+                    rarity: 'R',
+                    cardName: 'おすすめ不足テスト',
+                    topEffect: '体1, 満-1',
+                    effect: '体験+1、満足-1。'
+                }],
+                teacher: [],
+                staff: []
+            };
+
+            const actionInfo = window.game.turnManager.executeActions();
+            return {
+                player: { ...window.game.gameState.player },
+                perCard: actionInfo.cardEffects.leader.cards[0]
+            };
+        });
+
+        expect(result.perCard.applied).toBe(false);
+        expect(result.perCard.skippedReason).toBe('cost_shortage');
+        expect(result.perCard.isRecommended).toBe(true);
+        expect(result.perCard.recommendedApplied).toBe(false);
+        expect(result.player.experience).toBe(0);
+        expect(result.player.satisfaction).toBe(0);
+    });
+});

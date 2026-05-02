@@ -165,7 +165,7 @@ export class TurnManager {
         const placed = this.gameState.player.placed;
         const config = this.getCurrentTurnConfig();
         const actionInfo = {
-            cardEffects: {} // staff -> { beforeStats, afterStats, isRecommended }
+            cardEffects: {} // staff -> { beforeStats, afterStats, isRecommended, cards }
         };
 
         this.logger?.log('--- アクション実行開始 ---', 'info');
@@ -193,14 +193,25 @@ export class TurnManager {
                         accounting: this.gameState.player.accounting
                     };
 
-                    const isRecommended = config.recommended && card.category === config.recommended;
-                    if (isRecommended && config.recommendedStatus) {
+                    const isRecommended = !!(config.recommended && card.category === config.recommended);
+                    const costCheck = this.cardManager.simulateCardEffect(card, staff, beforeStats, null);
+                    let effectResult = costCheck;
+                    let recommendedAppliedForCard = false;
+
+                    if (costCheck.applied && isRecommended && config.recommendedStatus) {
                         this.gameState.updateStatus(config.recommendedStatus, 1);
                         this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
                         recommendedApplied = true;
+                        recommendedAppliedForCard = true;
                     }
 
-                    this.cardManager.applyCardEffect(card, staff, this.gameState, beforeStats);
+                    if (costCheck.applied) {
+                        effectResult = this.cardManager.applyCardEffect(card, staff, this.gameState, beforeStats, {
+                            costStats: beforeStats
+                        });
+                    } else {
+                        this.logger?.log(`コスト不足: ${card.cardName}の効果は無効`, 'warning');
+                    }
 
                     const afterStats = {
                         experience: this.gameState.player.experience,
@@ -213,7 +224,11 @@ export class TurnManager {
                         cardName: card.cardName,
                         beforeStats,
                         afterStats,
-                        isRecommended
+                        isRecommended,
+                        recommendedApplied: recommendedAppliedForCard,
+                        applied: effectResult.applied,
+                        skippedReason: effectResult.skippedReason,
+                        shortageEffects: effectResult.shortageEffects || []
                     });
                 });
 

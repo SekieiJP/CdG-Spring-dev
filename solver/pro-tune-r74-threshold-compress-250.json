@@ -1,0 +1,3744 @@
+{
+  "generatedAt": "2026-04-18T11:25:17.361Z",
+  "settings": {
+    "episodes": 250,
+    "difficulty": "pro",
+    "scoreTargets": {
+      "aPoints": 8,
+      "sClearPoints": 12,
+      "aPlusPoints": 10,
+      "sPlusPoints": 14
+    },
+    "policies": [
+      "pro_compress",
+      "pro_stable",
+      "pro_strategic1",
+      "pro_expand"
+    ]
+  },
+  "simulations": [
+    {
+      "policy": "pro_compress",
+      "effectivePolicy": "pro_compress",
+      "difficulty": "pro",
+      "scoreTargets": {
+        "aPoints": 8,
+        "sClearPoints": 12,
+        "aPlusPoints": 10,
+        "sPlusPoints": 14
+      },
+      "episodes": 250,
+      "scoreSummary": {
+        "mean": 7.708,
+        "min": -5,
+        "max": 13,
+        "p50": 9,
+        "p90": 11
+      },
+      "finalStatusAverages": {
+        "experience": 32.844,
+        "enrollment": 25.608,
+        "satisfaction": 26.992,
+        "accounting": 17.116
+      },
+      "finalExcessAverages": {
+        "satisfactionExcess": 11.992,
+        "accountingExcess": 2.956
+      },
+      "milestones": {
+        "exp10Rate": 0.992,
+        "exp12Rate": 0.976,
+        "exp25Rate": 0.816,
+        "exp40Rate": 0.212,
+        "exp50Rate": 0.036,
+        "diff8Rate": 0.992,
+        "diff10Rate": 0.98,
+        "diff12Rate": 0.96,
+        "diff20Rate": 0.756,
+        "diff32Rate": 0.176,
+        "diff40Rate": 0.02,
+        "withdrawal0Rate": 0.732,
+        "lowWithdrawalRate": 0.828,
+        "satOver15Rate": 0.996,
+        "satOver18Rate": 0.944,
+        "sat25Rate": 0.72,
+        "sat35Rate": 0.068,
+        "comboExp40Diff32Rate": 0.076,
+        "comboExp40Diff32Sat25Rate": 0.028,
+        "sClearRate": 0.024,
+        "sRankRate": 0.024,
+        "aRate": 0.68,
+        "aStrictRate": 0.68,
+        "aPlusRate": 0.312,
+        "aPlusLikeRate": 0.312,
+        "aPlusStrictRate": 0.312,
+        "sPlusLikeRate": 0.744,
+        "sPlusRate": 0,
+        "satOver15GivenSClearRate": 1,
+        "sClearSatControlledRate": 0,
+        "sClearGapTo50": 0.476
+      },
+      "rankDist": {
+        "A+": 72,
+        "A": 92,
+        "D": 7,
+        "C": 16,
+        "B": 29,
+        "B+": 18,
+        "S": 6,
+        "F": 10
+      },
+      "topCards": [
+        {
+          "cardName": "経理精算の基本",
+          "plays": 791,
+          "episodesPlayed": 246,
+          "avgEpisodeScoreWhenPlayed": 7.682926829268292,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.1744627054361567
+          }
+        },
+        {
+          "cardName": "生徒面談の基本",
+          "plays": 653,
+          "episodesPlayed": 244,
+          "avgEpisodeScoreWhenPlayed": 7.64344262295082,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.326186830015314,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "問合対応の基本",
+          "plays": 578,
+          "episodesPlayed": 228,
+          "avgEpisodeScoreWhenPlayed": 7.7368421052631575,
+          "avgDelta": {
+            "experience": 2.449826989619377,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "休み時間トーク",
+          "plays": 462,
+          "episodesPlayed": 130,
+          "avgEpisodeScoreWhenPlayed": 8.007692307692308,
+          "avgDelta": {
+            "experience": 1.5108225108225108,
+            "enrollment": 0,
+            "satisfaction": 0.9805194805194806,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者面談",
+          "plays": 443,
+          "episodesPlayed": 130,
+          "avgEpisodeScoreWhenPlayed": 7.961538461538462,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 2.255079006772009,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "校門前ビラ配り",
+          "plays": 308,
+          "episodesPlayed": 90,
+          "avgEpisodeScoreWhenPlayed": 7.766666666666667,
+          "avgDelta": {
+            "experience": 2.288961038961039,
+            "enrollment": 0,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "振込用紙印刷",
+          "plays": 306,
+          "episodesPlayed": 90,
+          "avgEpisodeScoreWhenPlayed": 8.177777777777777,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.6666666666666667,
+            "satisfaction": 0,
+            "accounting": 2.2679738562091503
+          }
+        },
+        {
+          "cardName": "学力確認＆向上 公開模試",
+          "plays": 294,
+          "episodesPlayed": 113,
+          "avgEpisodeScoreWhenPlayed": 7.867256637168142,
+          "avgDelta": {
+            "experience": 4.687074829931973,
+            "enrollment": 4.700680272108843,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "褒めて励ます授業",
+          "plays": 251,
+          "episodesPlayed": 86,
+          "avgEpisodeScoreWhenPlayed": 7.162790697674419,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.7131474103585658,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "できるまで居残り！",
+          "plays": 177,
+          "episodesPlayed": 102,
+          "avgEpisodeScoreWhenPlayed": 7.382352941176471,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 4.502824858757062,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "機材故障は本部に相談",
+          "plays": 161,
+          "episodesPlayed": 71,
+          "avgEpisodeScoreWhenPlayed": 8.971830985915492,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.3043478260869565,
+            "accounting": 4.24223602484472
+          }
+        },
+        {
+          "cardName": "備品注文",
+          "plays": 159,
+          "episodesPlayed": 71,
+          "avgEpisodeScoreWhenPlayed": 7.901408450704225,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1,
+            "accounting": 2.2264150943396226
+          }
+        },
+        {
+          "cardName": "事務リーダー1日派遣",
+          "plays": 132,
+          "episodesPlayed": 62,
+          "avgEpisodeScoreWhenPlayed": 7.370967741935484,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 1.0606060606060606
+          }
+        },
+        {
+          "cardName": "今だけ！体験生特典",
+          "plays": 131,
+          "episodesPlayed": 59,
+          "avgEpisodeScoreWhenPlayed": 8.23728813559322,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "入塾後の未来へ 進路説明会",
+          "plays": 124,
+          "episodesPlayed": 53,
+          "avgEpisodeScoreWhenPlayed": 7.528301886792453,
+          "avgDelta": {
+            "experience": 1,
+            "enrollment": 2.9193548387096775,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "プロジェクター授業",
+          "plays": 120,
+          "episodesPlayed": 62,
+          "avgEpisodeScoreWhenPlayed": 7.370967741935484,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 6.075,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "補習大会",
+          "plays": 120,
+          "episodesPlayed": 62,
+          "avgEpisodeScoreWhenPlayed": 7.306451612903226,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.841666666666667,
+            "satisfaction": 1.5166666666666666,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "入塾手続きのご案内",
+          "plays": 116,
+          "episodesPlayed": 44,
+          "avgEpisodeScoreWhenPlayed": 8.704545454545455,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.7413793103448276,
+            "satisfaction": 0,
+            "accounting": 3.3793103448275863
+          }
+        },
+        {
+          "cardName": "友人紹介",
+          "plays": 106,
+          "episodesPlayed": 62,
+          "avgEpisodeScoreWhenPlayed": 7.354838709677419,
+          "avgDelta": {
+            "experience": 3,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -0.9905660377358491
+          }
+        },
+        {
+          "cardName": "日々の出迎え",
+          "plays": 90,
+          "episodesPlayed": 36,
+          "avgEpisodeScoreWhenPlayed": 6.944444444444445,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.1777777777777776,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者説明会",
+          "plays": 86,
+          "episodesPlayed": 46,
+          "avgEpisodeScoreWhenPlayed": 7.8478260869565215,
+          "avgDelta": {
+            "experience": 5.023255813953488,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "締切間近の書類リマインド",
+          "plays": 83,
+          "episodesPlayed": 31,
+          "avgEpisodeScoreWhenPlayed": 7.645161290322581,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.8072289156626506,
+            "accounting": 2.253012048192771
+          }
+        },
+        {
+          "cardName": "テスト予想問題的中！",
+          "plays": 76,
+          "episodesPlayed": 47,
+          "avgEpisodeScoreWhenPlayed": 7.340425531914893,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 3.8421052631578947,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "努力の結晶 合格実績掲示",
+          "plays": 66,
+          "episodesPlayed": 30,
+          "avgEpisodeScoreWhenPlayed": 8.766666666666667,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "進学相談フェア出展",
+          "plays": 61,
+          "episodesPlayed": 38,
+          "avgEpisodeScoreWhenPlayed": 7.421052631578948,
+          "avgDelta": {
+            "experience": 3.0655737704918034,
+            "enrollment": 0.7868852459016393,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "設問の急所は？教材研究",
+          "plays": 59,
+          "episodesPlayed": 40,
+          "avgEpisodeScoreWhenPlayed": 8.825,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.610169491525424,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "兄弟紹介",
+          "plays": 59,
+          "episodesPlayed": 40,
+          "avgEpisodeScoreWhenPlayed": 7.925,
+          "avgDelta": {
+            "experience": 2.0338983050847457,
+            "enrollment": 2,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "元塾生に講習案内",
+          "plays": 53,
+          "episodesPlayed": 20,
+          "avgEpisodeScoreWhenPlayed": 7.35,
+          "avgDelta": {
+            "experience": 2.9622641509433962,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "スタンプ帳キャンペーン",
+          "plays": 51,
+          "episodesPlayed": 28,
+          "avgEpisodeScoreWhenPlayed": 6.321428571428571,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 1,
+            "satisfaction": 3.2941176470588234,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "教室清掃",
+          "plays": 42,
+          "episodesPlayed": 18,
+          "avgEpisodeScoreWhenPlayed": 8.444444444444445,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.2142857142857144,
+            "accounting": 2
+          }
+        }
+      ],
+      "decisionTelemetry": {
+        "training": {
+          "rounds": 2000,
+          "inspirationRounds": 63,
+          "refreshUsed": 500,
+          "refreshByPhase": {
+            "initial": 226,
+            "main": 274,
+            "inspiration": 0
+          },
+          "avgCandidatesPerRound": 6.242365487154629
+        },
+        "action": {
+          "phases": 2000,
+          "avgOptionsPerPhase": 10.326,
+          "avgPlacedPerPhase": 3.226,
+          "parallelPlacementRate": 0.11267823930564166
+        },
+        "meeting": {
+          "phases": 1750,
+          "avgOptionsPerPhase": 9.346285714285715,
+          "avgDeletedPerPhase": 1.3291428571428572
+        }
+      },
+      "sPlusHoldings": {
+        "episodes": 0,
+        "rate": 0,
+        "averageDisplayScore": 0,
+        "averageHeldCards": 0,
+        "topCards": [],
+        "rarityBalance": [
+          {
+            "key": "R",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "SR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0
+          },
+          {
+            "key": "SSR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0
+          },
+          {
+            "key": "N",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 0
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "動員",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "教務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "庶務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 0
+          },
+          {
+            "key": "応対",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0
+          }
+        ]
+      },
+      "lowHoldings": {
+        "episodes": 10,
+        "rate": 0.04,
+        "averageDisplayScore": -4.1,
+        "averageHeldCards": 8.1,
+        "topCards": [
+          {
+            "cardName": "学力確認＆向上 公開模試",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 10,
+            "presentEpisodes": 8,
+            "presentRate": 0.8,
+            "avgCopiesWhenPresent": 1.25
+          },
+          {
+            "cardName": "できるまで居残り！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 9,
+            "presentEpisodes": 6,
+            "presentRate": 0.6,
+            "avgCopiesWhenPresent": 1.5
+          },
+          {
+            "cardName": "経理精算の基本",
+            "rarity": "N",
+            "category": "庶務",
+            "heldCount": 9,
+            "presentEpisodes": 6,
+            "presentRate": 0.6,
+            "avgCopiesWhenPresent": 1.5
+          },
+          {
+            "cardName": "友人紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 6,
+            "presentEpisodes": 5,
+            "presentRate": 0.5,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "プロジェクター授業",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.5,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "テスト予想問題的中！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 5,
+            "presentEpisodes": 4,
+            "presentRate": 0.4,
+            "avgCopiesWhenPresent": 1.25
+          },
+          {
+            "cardName": "今だけ！体験生特典",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.3,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "校門前ビラ配り",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.3,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "褒めて励ます授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.3,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "機材故障は本部に相談",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "補習大会",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾後の未来へ 進路説明会",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾手続きのご案内",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "日々の授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "振込用紙印刷",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "進学相談フェア出展",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "スタンプ帳キャンペーン",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "ごほうび差し入れスイーツ",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.2,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "未入金家庭へ電話",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "元塾生に講習案内",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "提出書類ファイリング",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "人気の秘密は？他塾研究",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "苦手発見！質問対応",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "締切間近の書類リマインド",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "備品注文",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "休み時間トーク",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "保護者面談",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "兄弟紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.1,
+            "avgCopiesWhenPresent": 1
+          }
+        ],
+        "rarityBalance": [
+          {
+            "key": "N",
+            "observed": 9,
+            "observedShare": 0.1111111111111111,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 1.2499999999999998
+          },
+          {
+            "key": "SSR",
+            "observed": 20,
+            "observedShare": 0.24691358024691357,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 1.2345679012345678
+          },
+          {
+            "key": "SR",
+            "observed": 37,
+            "observedShare": 0.4567901234567901,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 1.0277777777777777
+          },
+          {
+            "key": "R",
+            "observed": 15,
+            "observedShare": 0.18518518518518517,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.6944444444444444
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "教務",
+            "observed": 39,
+            "observedShare": 0.48148148148148145,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.8055555555555556
+          },
+          {
+            "key": "庶務",
+            "observed": 21,
+            "observedShare": 0.25925925925925924,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 1.1666666666666667
+          },
+          {
+            "key": "動員",
+            "observed": 17,
+            "observedShare": 0.20987654320987653,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.787037037037037
+          },
+          {
+            "key": "応対",
+            "observed": 4,
+            "observedShare": 0.04938271604938271,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0.20202020202020202
+          }
+        ]
+      },
+      "episodeTraces": [],
+      "cardPool": {
+        "uniqueByRarity": {
+          "N": 4,
+          "R": 12,
+          "SR": 20,
+          "SSR": 9
+        },
+        "uniqueByCategory": {
+          "動員": 12,
+          "教務": 12,
+          "庶務": 10,
+          "応対": 11
+        },
+        "supplyByRarity": {
+          "R": 24,
+          "SR": 40,
+          "SSR": 18,
+          "N": 8
+        },
+        "supplyByCategory": {
+          "動員": 24,
+          "教務": 24,
+          "庶務": 20,
+          "応対": 22
+        }
+      }
+    },
+    {
+      "policy": "pro_stable",
+      "effectivePolicy": "pro_stable",
+      "difficulty": "pro",
+      "scoreTargets": {
+        "aPoints": 8,
+        "sClearPoints": 12,
+        "aPlusPoints": 10,
+        "sPlusPoints": 14
+      },
+      "episodes": 250,
+      "scoreSummary": {
+        "mean": 5.544,
+        "min": -11,
+        "max": 10,
+        "p50": 6,
+        "p90": 9
+      },
+      "finalStatusAverages": {
+        "experience": 24.3,
+        "enrollment": 19.936,
+        "satisfaction": 21.48,
+        "accounting": 19.428
+      },
+      "finalExcessAverages": {
+        "satisfactionExcess": 6.528,
+        "accountingExcess": 4.884
+      },
+      "milestones": {
+        "exp10Rate": 0.972,
+        "exp12Rate": 0.956,
+        "exp25Rate": 0.476,
+        "exp40Rate": 0.036,
+        "exp50Rate": 0.008,
+        "diff8Rate": 0.984,
+        "diff10Rate": 0.956,
+        "diff12Rate": 0.924,
+        "diff20Rate": 0.464,
+        "diff32Rate": 0.02,
+        "diff40Rate": 0,
+        "withdrawal0Rate": 0.828,
+        "lowWithdrawalRate": 0.908,
+        "satOver15Rate": 0.948,
+        "satOver18Rate": 0.732,
+        "sat25Rate": 0.236,
+        "sat35Rate": 0,
+        "comboExp40Diff32Rate": 0,
+        "comboExp40Diff32Sat25Rate": 0,
+        "sClearRate": 0,
+        "sRankRate": 0,
+        "aRate": 0.312,
+        "aStrictRate": 0.312,
+        "aPlusRate": 0.036,
+        "aPlusLikeRate": 0.036,
+        "aPlusStrictRate": 0.036,
+        "sPlusLikeRate": 0.716,
+        "sPlusRate": 0,
+        "satOver15GivenSClearRate": 0,
+        "sClearSatControlledRate": 0,
+        "sClearGapTo50": 0.5
+      },
+      "rankDist": {
+        "E": 13,
+        "B": 49,
+        "D": 12,
+        "A": 69,
+        "C": 45,
+        "A+": 9,
+        "B+": 43,
+        "F": 10
+      },
+      "topCards": [
+        {
+          "cardName": "問合対応の基本",
+          "plays": 1038,
+          "episodesPlayed": 249,
+          "avgEpisodeScoreWhenPlayed": 5.550200803212851,
+          "avgDelta": {
+            "experience": 2.2784200385356455,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "経理精算の基本",
+          "plays": 962,
+          "episodesPlayed": 247,
+          "avgEpisodeScoreWhenPlayed": 5.502024291497976,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.183991683991684
+          }
+        },
+        {
+          "cardName": "生徒面談の基本",
+          "plays": 618,
+          "episodesPlayed": 241,
+          "avgEpisodeScoreWhenPlayed": 5.5020746887966805,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.3268608414239482,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "質問対応の基本",
+          "plays": 445,
+          "episodesPlayed": 200,
+          "avgEpisodeScoreWhenPlayed": 5.645,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.2202247191011235,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "振込用紙印刷",
+          "plays": 418,
+          "episodesPlayed": 150,
+          "avgEpisodeScoreWhenPlayed": 5.706666666666667,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.5598086124401913,
+            "satisfaction": 0,
+            "accounting": 2.248803827751196
+          }
+        },
+        {
+          "cardName": "褒めて励ます授業",
+          "plays": 331,
+          "episodesPlayed": 122,
+          "avgEpisodeScoreWhenPlayed": 5.336065573770492,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.4924471299093656,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "休み時間トーク",
+          "plays": 298,
+          "episodesPlayed": 107,
+          "avgEpisodeScoreWhenPlayed": 5.934579439252336,
+          "avgDelta": {
+            "experience": 1.3825503355704698,
+            "enrollment": 0,
+            "satisfaction": 1.1543624161073827,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者面談",
+          "plays": 183,
+          "episodesPlayed": 75,
+          "avgEpisodeScoreWhenPlayed": 5.826666666666667,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 2.2349726775956285,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "機材故障は本部に相談",
+          "plays": 160,
+          "episodesPlayed": 78,
+          "avgEpisodeScoreWhenPlayed": 6.141025641025641,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.425,
+            "accounting": 4.33125
+          }
+        },
+        {
+          "cardName": "学力確認＆向上 公開模試",
+          "plays": 153,
+          "episodesPlayed": 79,
+          "avgEpisodeScoreWhenPlayed": 6.2784810126582276,
+          "avgDelta": {
+            "experience": 5.562091503267974,
+            "enrollment": 3.816993464052288,
+            "satisfaction": 0,
+            "accounting": -1.9934640522875817
+          }
+        },
+        {
+          "cardName": "備品注文",
+          "plays": 152,
+          "episodesPlayed": 63,
+          "avgEpisodeScoreWhenPlayed": 5.555555555555555,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1,
+            "accounting": 2.263157894736842
+          }
+        },
+        {
+          "cardName": "校門前ビラ配り",
+          "plays": 141,
+          "episodesPlayed": 57,
+          "avgEpisodeScoreWhenPlayed": 6.12280701754386,
+          "avgDelta": {
+            "experience": 2.25531914893617,
+            "enrollment": 0,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "プロジェクター授業",
+          "plays": 105,
+          "episodesPlayed": 78,
+          "avgEpisodeScoreWhenPlayed": 5.576923076923077,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 5.266666666666667,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "補習大会",
+          "plays": 84,
+          "episodesPlayed": 46,
+          "avgEpisodeScoreWhenPlayed": 5.5,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.3095238095238093,
+            "satisfaction": 1.880952380952381,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "今だけ！体験生特典",
+          "plays": 77,
+          "episodesPlayed": 51,
+          "avgEpisodeScoreWhenPlayed": 6.96078431372549,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "入塾手続きのご案内",
+          "plays": 73,
+          "episodesPlayed": 40,
+          "avgEpisodeScoreWhenPlayed": 6.15,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.6027397260273972,
+            "satisfaction": 0,
+            "accounting": 3.328767123287671
+          }
+        },
+        {
+          "cardName": "入塾後の未来へ 進路説明会",
+          "plays": 71,
+          "episodesPlayed": 40,
+          "avgEpisodeScoreWhenPlayed": 5.7,
+          "avgDelta": {
+            "experience": 1,
+            "enrollment": 2.5492957746478875,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "できるまで居残り！",
+          "plays": 70,
+          "episodesPlayed": 50,
+          "avgEpisodeScoreWhenPlayed": 5.28,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 4.4714285714285715,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者説明会",
+          "plays": 63,
+          "episodesPlayed": 45,
+          "avgEpisodeScoreWhenPlayed": 6.4222222222222225,
+          "avgDelta": {
+            "experience": 5.079365079365079,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "日々の授業",
+          "plays": 53,
+          "episodesPlayed": 29,
+          "avgEpisodeScoreWhenPlayed": 4.448275862068965,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.5849056603773586,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "未入金家庭へ電話",
+          "plays": 50,
+          "episodesPlayed": 33,
+          "avgEpisodeScoreWhenPlayed": 6.515151515151516,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": -0.16,
+            "accounting": 5.34
+          }
+        },
+        {
+          "cardName": "友人紹介",
+          "plays": 46,
+          "episodesPlayed": 35,
+          "avgEpisodeScoreWhenPlayed": 5.9714285714285715,
+          "avgDelta": {
+            "experience": 3,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -0.9782608695652174
+          }
+        },
+        {
+          "cardName": "赤字覚悟！？ 大抽選会",
+          "plays": 43,
+          "episodesPlayed": 31,
+          "avgEpisodeScoreWhenPlayed": 6.548387096774194,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 6.1395348837209305,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "テスト予想問題的中！",
+          "plays": 39,
+          "episodesPlayed": 27,
+          "avgEpisodeScoreWhenPlayed": 5.851851851851852,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.923076923076923,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "提出書類ファイリング",
+          "plays": 39,
+          "episodesPlayed": 15,
+          "avgEpisodeScoreWhenPlayed": 5,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.230769230769231
+          }
+        },
+        {
+          "cardName": "スタンプ帳キャンペーン",
+          "plays": 39,
+          "episodesPlayed": 20,
+          "avgEpisodeScoreWhenPlayed": 3.85,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 1,
+            "satisfaction": 3.41025641025641,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "締切間近の書類リマインド",
+          "plays": 38,
+          "episodesPlayed": 22,
+          "avgEpisodeScoreWhenPlayed": 5.590909090909091,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.8421052631578947,
+            "accounting": 2.3421052631578947
+          }
+        },
+        {
+          "cardName": "事務リーダー1日派遣",
+          "plays": 38,
+          "episodesPlayed": 25,
+          "avgEpisodeScoreWhenPlayed": 5.24,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 1.631578947368421
+          }
+        },
+        {
+          "cardName": "努力の結晶 合格実績掲示",
+          "plays": 35,
+          "episodesPlayed": 19,
+          "avgEpisodeScoreWhenPlayed": 5.631578947368421,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "教室清掃",
+          "plays": 32,
+          "episodesPlayed": 16,
+          "avgEpisodeScoreWhenPlayed": 6.125,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.375,
+            "accounting": 1.875
+          }
+        }
+      ],
+      "decisionTelemetry": {
+        "training": {
+          "rounds": 2000,
+          "inspirationRounds": 25,
+          "refreshUsed": 458,
+          "refreshByPhase": {
+            "initial": 208,
+            "main": 250,
+            "inspiration": 0
+          },
+          "avgCandidatesPerRound": 6.246913580246914
+        },
+        "action": {
+          "phases": 2000,
+          "avgOptionsPerPhase": 10.8675,
+          "avgPlacedPerPhase": 3.055,
+          "parallelPlacementRate": 0.06841243862520459
+        },
+        "meeting": {
+          "phases": 1750,
+          "avgOptionsPerPhase": 13.247428571428571,
+          "avgDeletedPerPhase": 0.3782857142857143
+        }
+      },
+      "sPlusHoldings": {
+        "episodes": 0,
+        "rate": 0,
+        "averageDisplayScore": 0,
+        "averageHeldCards": 0,
+        "topCards": [],
+        "rarityBalance": [
+          {
+            "key": "R",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "SR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0
+          },
+          {
+            "key": "SSR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0
+          },
+          {
+            "key": "N",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 0
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "動員",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "教務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "庶務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 0
+          },
+          {
+            "key": "応対",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0
+          }
+        ]
+      },
+      "lowHoldings": {
+        "episodes": 11,
+        "rate": 0.044,
+        "averageDisplayScore": -5.636363636363637,
+        "averageHeldCards": 15.363636363636363,
+        "topCards": [
+          {
+            "cardName": "経理精算の基本",
+            "rarity": "N",
+            "category": "庶務",
+            "heldCount": 22,
+            "presentEpisodes": 11,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "質問対応の基本",
+            "rarity": "N",
+            "category": "教務",
+            "heldCount": 22,
+            "presentEpisodes": 11,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "問合対応の基本",
+            "rarity": "N",
+            "category": "動員",
+            "heldCount": 22,
+            "presentEpisodes": 11,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "学力確認＆向上 公開模試",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 8,
+            "presentEpisodes": 7,
+            "presentRate": 0.6363636363636364,
+            "avgCopiesWhenPresent": 1.1428571428571428
+          },
+          {
+            "cardName": "褒めて励ます授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 9,
+            "presentEpisodes": 6,
+            "presentRate": 0.5454545454545454,
+            "avgCopiesWhenPresent": 1.5
+          },
+          {
+            "cardName": "プロジェクター授業",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 8,
+            "presentEpisodes": 6,
+            "presentRate": 0.5454545454545454,
+            "avgCopiesWhenPresent": 1.3333333333333333
+          },
+          {
+            "cardName": "振込用紙印刷",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 6,
+            "presentEpisodes": 5,
+            "presentRate": 0.45454545454545453,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "できるまで居残り！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 6,
+            "presentEpisodes": 5,
+            "presentRate": 0.45454545454545453,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "入塾手続きのご案内",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.45454545454545453,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "未入金家庭へ電話",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.45454545454545453,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "休み時間トーク",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.36363636363636365,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "保護者面談",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.36363636363636365,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "スタンプ帳キャンペーン",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.36363636363636365,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "兄弟紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.36363636363636365,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "友人紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.36363636363636365,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "苦手発見！質問対応",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.2727272727272727,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "日々の授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.2727272727272727,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "補習大会",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.2727272727272727,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "生徒面談の基本",
+            "rarity": "N",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "保護者説明会",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "備品注文",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "笑顔伝わる教室通信",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "努力の結晶 合格実績掲示",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "校門前ビラ配り",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾後の未来へ 進路説明会",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "機材故障は本部に相談",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "今だけ！体験生特典",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "宿題チェック",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "設問の急所は？教材研究",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.18181818181818182,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "教室清掃",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.09090909090909091,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "提出書類ファイリング",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.09090909090909091,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "締切間近の書類リマインド",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.09090909090909091,
+            "avgCopiesWhenPresent": 1
+          }
+        ],
+        "rarityBalance": [
+          {
+            "key": "N",
+            "observed": 70,
+            "observedShare": 0.41420118343195267,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 4.659763313609467
+          },
+          {
+            "key": "R",
+            "observed": 33,
+            "observedShare": 0.1952662721893491,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.7322485207100592
+          },
+          {
+            "key": "SSR",
+            "observed": 22,
+            "observedShare": 0.1301775147928994,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0.650887573964497
+          },
+          {
+            "key": "SR",
+            "observed": 44,
+            "observedShare": 0.2603550295857988,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0.5857988165680473
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "教務",
+            "observed": 68,
+            "observedShare": 0.40236686390532544,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.5088757396449703
+          },
+          {
+            "key": "庶務",
+            "observed": 44,
+            "observedShare": 0.2603550295857988,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 1.1715976331360947
+          },
+          {
+            "key": "動員",
+            "observed": 38,
+            "observedShare": 0.22485207100591717,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.8431952662721894
+          },
+          {
+            "key": "応対",
+            "observed": 19,
+            "observedShare": 0.11242603550295859,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0.4599246906939215
+          }
+        ]
+      },
+      "episodeTraces": [],
+      "cardPool": {
+        "uniqueByRarity": {
+          "N": 4,
+          "R": 12,
+          "SR": 20,
+          "SSR": 9
+        },
+        "uniqueByCategory": {
+          "動員": 12,
+          "教務": 12,
+          "庶務": 10,
+          "応対": 11
+        },
+        "supplyByRarity": {
+          "R": 24,
+          "SR": 40,
+          "SSR": 18,
+          "N": 8
+        },
+        "supplyByCategory": {
+          "動員": 24,
+          "教務": 24,
+          "庶務": 20,
+          "応対": 22
+        }
+      }
+    },
+    {
+      "policy": "pro_strategic1",
+      "effectivePolicy": "pro_strategic1",
+      "difficulty": "pro",
+      "scoreTargets": {
+        "aPoints": 8,
+        "sClearPoints": 12,
+        "aPlusPoints": 10,
+        "sPlusPoints": 14
+      },
+      "episodes": 250,
+      "scoreSummary": {
+        "mean": 6.24,
+        "min": -9,
+        "max": 11,
+        "p50": 7,
+        "p90": 9
+      },
+      "finalStatusAverages": {
+        "experience": 28.792,
+        "enrollment": 21.484,
+        "satisfaction": 21.776,
+        "accounting": 17.296
+      },
+      "finalExcessAverages": {
+        "satisfactionExcess": 6.836,
+        "accountingExcess": 2.952
+      },
+      "milestones": {
+        "exp10Rate": 1,
+        "exp12Rate": 0.996,
+        "exp25Rate": 0.708,
+        "exp40Rate": 0.08,
+        "exp50Rate": 0.012,
+        "diff8Rate": 0.98,
+        "diff10Rate": 0.968,
+        "diff12Rate": 0.944,
+        "diff20Rate": 0.612,
+        "diff32Rate": 0.028,
+        "diff40Rate": 0,
+        "withdrawal0Rate": 0.752,
+        "lowWithdrawalRate": 0.84,
+        "satOver15Rate": 0.948,
+        "satOver18Rate": 0.708,
+        "sat25Rate": 0.268,
+        "sat35Rate": 0.016,
+        "comboExp40Diff32Rate": 0.008,
+        "comboExp40Diff32Sat25Rate": 0,
+        "sClearRate": 0,
+        "sRankRate": 0,
+        "aRate": 0.46,
+        "aStrictRate": 0.46,
+        "aPlusRate": 0.044,
+        "aPlusLikeRate": 0.044,
+        "aPlusStrictRate": 0.044,
+        "sPlusLikeRate": 0.72,
+        "sPlusRate": 0,
+        "satOver15GivenSClearRate": 0,
+        "sClearSatControlledRate": 0,
+        "sClearGapTo50": 0.5
+      },
+      "rankDist": {
+        "A": 104,
+        "B+": 35,
+        "C": 32,
+        "D": 11,
+        "A+": 11,
+        "F": 11,
+        "B": 42,
+        "E": 4
+      },
+      "topCards": [
+        {
+          "cardName": "問合対応の基本",
+          "plays": 1118,
+          "episodesPlayed": 249,
+          "avgEpisodeScoreWhenPlayed": 6.220883534136546,
+          "avgDelta": {
+            "experience": 2.3014311270125223,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "経理精算の基本",
+          "plays": 930,
+          "episodesPlayed": 248,
+          "avgEpisodeScoreWhenPlayed": 6.217741935483871,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.1903225806451614
+          }
+        },
+        {
+          "cardName": "生徒面談の基本",
+          "plays": 637,
+          "episodesPlayed": 243,
+          "avgEpisodeScoreWhenPlayed": 6.176954732510288,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.2872841444270016,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "質問対応の基本",
+          "plays": 418,
+          "episodesPlayed": 201,
+          "avgEpisodeScoreWhenPlayed": 6.029850746268656,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.2583732057416266,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "休み時間トーク",
+          "plays": 367,
+          "episodesPlayed": 129,
+          "avgEpisodeScoreWhenPlayed": 6.108527131782946,
+          "avgDelta": {
+            "experience": 1.3297002724795641,
+            "enrollment": 0,
+            "satisfaction": 1.2452316076294279,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "振込用紙印刷",
+          "plays": 330,
+          "episodesPlayed": 121,
+          "avgEpisodeScoreWhenPlayed": 6.768595041322314,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.7303030303030302,
+            "satisfaction": 0,
+            "accounting": 2.275757575757576
+          }
+        },
+        {
+          "cardName": "校門前ビラ配り",
+          "plays": 294,
+          "episodesPlayed": 114,
+          "avgEpisodeScoreWhenPlayed": 6.359649122807017,
+          "avgDelta": {
+            "experience": 2.2653061224489797,
+            "enrollment": 0,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "学力確認＆向上 公開模試",
+          "plays": 187,
+          "episodesPlayed": 101,
+          "avgEpisodeScoreWhenPlayed": 6.762376237623762,
+          "avgDelta": {
+            "experience": 4.5133689839572195,
+            "enrollment": 4.877005347593583,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "保護者面談",
+          "plays": 179,
+          "episodesPlayed": 77,
+          "avgEpisodeScoreWhenPlayed": 6.35064935064935,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 2.2458100558659218,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "褒めて励ます授業",
+          "plays": 162,
+          "episodesPlayed": 67,
+          "avgEpisodeScoreWhenPlayed": 6.2835820895522385,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.8333333333333333,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "機材故障は本部に相談",
+          "plays": 153,
+          "episodesPlayed": 88,
+          "avgEpisodeScoreWhenPlayed": 7.25,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.6470588235294117,
+            "accounting": 4.228758169934641
+          }
+        },
+        {
+          "cardName": "元塾生に講習案内",
+          "plays": 112,
+          "episodesPlayed": 44,
+          "avgEpisodeScoreWhenPlayed": 5.454545454545454,
+          "avgDelta": {
+            "experience": 3.205357142857143,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "できるまで居残り！",
+          "plays": 106,
+          "episodesPlayed": 71,
+          "avgEpisodeScoreWhenPlayed": 6.267605633802817,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 5.018867924528302,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "補習大会",
+          "plays": 100,
+          "episodesPlayed": 52,
+          "avgEpisodeScoreWhenPlayed": 6.673076923076923,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 3.16,
+            "satisfaction": 1.82,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "備品注文",
+          "plays": 99,
+          "episodesPlayed": 51,
+          "avgEpisodeScoreWhenPlayed": 5.647058823529412,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1,
+            "accounting": 2.242424242424242
+          }
+        },
+        {
+          "cardName": "プロジェクター授業",
+          "plays": 86,
+          "episodesPlayed": 52,
+          "avgEpisodeScoreWhenPlayed": 6.846153846153846,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 6.290697674418604,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "入塾手続きのご案内",
+          "plays": 84,
+          "episodesPlayed": 49,
+          "avgEpisodeScoreWhenPlayed": 6.408163265306122,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.6666666666666667,
+            "satisfaction": 0,
+            "accounting": 3.4285714285714284
+          }
+        },
+        {
+          "cardName": "事務リーダー1日派遣",
+          "plays": 80,
+          "episodesPlayed": 44,
+          "avgEpisodeScoreWhenPlayed": 6.568181818181818,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 1.9125
+          }
+        },
+        {
+          "cardName": "今だけ！体験生特典",
+          "plays": 80,
+          "episodesPlayed": 46,
+          "avgEpisodeScoreWhenPlayed": 5.913043478260869,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "赤字覚悟！？ 大抽選会",
+          "plays": 57,
+          "episodesPlayed": 41,
+          "avgEpisodeScoreWhenPlayed": 6.317073170731708,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 6.245614035087719,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "提出書類ファイリング",
+          "plays": 51,
+          "episodesPlayed": 20,
+          "avgEpisodeScoreWhenPlayed": 5.4,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.176470588235294
+          }
+        },
+        {
+          "cardName": "進学相談フェア出展",
+          "plays": 50,
+          "episodesPlayed": 28,
+          "avgEpisodeScoreWhenPlayed": 5.392857142857143,
+          "avgDelta": {
+            "experience": 3.06,
+            "enrollment": 0.92,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "日々の授業",
+          "plays": 49,
+          "episodesPlayed": 23,
+          "avgEpisodeScoreWhenPlayed": 6.6521739130434785,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.9591836734693877,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者説明会",
+          "plays": 49,
+          "episodesPlayed": 30,
+          "avgEpisodeScoreWhenPlayed": 5.9,
+          "avgDelta": {
+            "experience": 5.122448979591836,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "努力の結晶 合格実績掲示",
+          "plays": 44,
+          "episodesPlayed": 19,
+          "avgEpisodeScoreWhenPlayed": 7.157894736842105,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "テスト予想問題的中！",
+          "plays": 43,
+          "episodesPlayed": 29,
+          "avgEpisodeScoreWhenPlayed": 6.413793103448276,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 3.558139534883721,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "友人紹介",
+          "plays": 43,
+          "episodesPlayed": 37,
+          "avgEpisodeScoreWhenPlayed": 6,
+          "avgDelta": {
+            "experience": 3,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "入塾後の未来へ 進路説明会",
+          "plays": 41,
+          "episodesPlayed": 26,
+          "avgEpisodeScoreWhenPlayed": 6.1923076923076925,
+          "avgDelta": {
+            "experience": 1,
+            "enrollment": 2.8536585365853657,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "設問の急所は？教材研究",
+          "plays": 40,
+          "episodesPlayed": 30,
+          "avgEpisodeScoreWhenPlayed": 5.433333333333334,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.575,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "スタンプ帳キャンペーン",
+          "plays": 39,
+          "episodesPlayed": 20,
+          "avgEpisodeScoreWhenPlayed": 6.2,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 1,
+            "satisfaction": 3.4358974358974357,
+            "accounting": -1
+          }
+        }
+      ],
+      "decisionTelemetry": {
+        "training": {
+          "rounds": 2000,
+          "inspirationRounds": 37,
+          "refreshUsed": 500,
+          "refreshByPhase": {
+            "initial": 201,
+            "main": 299,
+            "inspiration": 0
+          },
+          "avgCandidatesPerRound": 6.245459008345606
+        },
+        "action": {
+          "phases": 2000,
+          "avgOptionsPerPhase": 10.98,
+          "avgPlacedPerPhase": 3.1205,
+          "parallelPlacementRate": 0.08107675052074988
+        },
+        "meeting": {
+          "phases": 1750,
+          "avgOptionsPerPhase": 13.053142857142857,
+          "avgDeletedPerPhase": 0.5091428571428571
+        }
+      },
+      "sPlusHoldings": {
+        "episodes": 0,
+        "rate": 0,
+        "averageDisplayScore": 0,
+        "averageHeldCards": 0,
+        "topCards": [],
+        "rarityBalance": [
+          {
+            "key": "R",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "SR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0
+          },
+          {
+            "key": "SSR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0
+          },
+          {
+            "key": "N",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 0
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "動員",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "教務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "庶務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 0
+          },
+          {
+            "key": "応対",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0
+          }
+        ]
+      },
+      "lowHoldings": {
+        "episodes": 13,
+        "rate": 0.052,
+        "averageDisplayScore": -4.153846153846154,
+        "averageHeldCards": 15.076923076923077,
+        "topCards": [
+          {
+            "cardName": "問合対応の基本",
+            "rarity": "N",
+            "category": "動員",
+            "heldCount": 26,
+            "presentEpisodes": 13,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "経理精算の基本",
+            "rarity": "N",
+            "category": "庶務",
+            "heldCount": 24,
+            "presentEpisodes": 13,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 1.8461538461538463
+          },
+          {
+            "cardName": "質問対応の基本",
+            "rarity": "N",
+            "category": "教務",
+            "heldCount": 24,
+            "presentEpisodes": 13,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 1.8461538461538463
+          },
+          {
+            "cardName": "学力確認＆向上 公開模試",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 12,
+            "presentEpisodes": 9,
+            "presentRate": 0.6923076923076923,
+            "avgCopiesWhenPresent": 1.3333333333333333
+          },
+          {
+            "cardName": "休み時間トーク",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 9,
+            "presentEpisodes": 9,
+            "presentRate": 0.6923076923076923,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "できるまで居残り！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 9,
+            "presentEpisodes": 7,
+            "presentRate": 0.5384615384615384,
+            "avgCopiesWhenPresent": 1.2857142857142858
+          },
+          {
+            "cardName": "保護者面談",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 7,
+            "presentEpisodes": 7,
+            "presentRate": 0.5384615384615384,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "元塾生に講習案内",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 7,
+            "presentEpisodes": 6,
+            "presentRate": 0.46153846153846156,
+            "avgCopiesWhenPresent": 1.1666666666666667
+          },
+          {
+            "cardName": "校門前ビラ配り",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 6,
+            "presentEpisodes": 6,
+            "presentRate": 0.46153846153846156,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾手続きのご案内",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 6,
+            "presentEpisodes": 5,
+            "presentRate": 0.38461538461538464,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "テスト予想問題的中！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 6,
+            "presentEpisodes": 5,
+            "presentRate": 0.38461538461538464,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "今だけ！体験生特典",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.38461538461538464,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "褒めて励ます授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.38461538461538464,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "友人紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.38461538461538464,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "補習大会",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.3076923076923077,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "設問の急所は？教材研究",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 4,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1.3333333333333333
+          },
+          {
+            "cardName": "締切間近の書類リマインド",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "保護者説明会",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "未入金家庭へ電話",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "備品注文",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "事務リーダー1日派遣",
+            "rarity": "SSR",
+            "category": "庶務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "進学相談フェア出展",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "赤字覚悟！？ 大抽選会",
+            "rarity": "SSR",
+            "category": "応対",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.23076923076923078,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "生徒面談の基本",
+            "rarity": "N",
+            "category": "応対",
+            "heldCount": 3,
+            "presentEpisodes": 2,
+            "presentRate": 0.15384615384615385,
+            "avgCopiesWhenPresent": 1.5
+          },
+          {
+            "cardName": "スタンプ帳キャンペーン",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.15384615384615385,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "テレビCM放映",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.15384615384615385,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "機材故障は本部に相談",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.15384615384615385,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "提出書類ファイリング",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.15384615384615385,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "プロジェクター授業",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.07692307692307693,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "教室清掃",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.07692307692307693,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "兄弟紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.07692307692307693,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "苦手発見！質問対応",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.07692307692307693,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "人気の秘密は？他塾研究",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.07692307692307693,
+            "avgCopiesWhenPresent": 1
+          }
+        ],
+        "rarityBalance": [
+          {
+            "key": "N",
+            "observed": 77,
+            "observedShare": 0.39285714285714285,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 4.419642857142857
+          },
+          {
+            "key": "R",
+            "observed": 39,
+            "observedShare": 0.1989795918367347,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.7461734693877551
+          },
+          {
+            "key": "SSR",
+            "observed": 26,
+            "observedShare": 0.1326530612244898,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0.6632653061224489
+          },
+          {
+            "key": "SR",
+            "observed": 54,
+            "observedShare": 0.2755102040816326,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0.6198979591836734
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "教務",
+            "observed": 66,
+            "observedShare": 0.336734693877551,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.2627551020408163
+          },
+          {
+            "key": "動員",
+            "observed": 59,
+            "observedShare": 0.3010204081632653,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.128826530612245
+          },
+          {
+            "key": "庶務",
+            "observed": 46,
+            "observedShare": 0.23469387755102042,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 1.056122448979592
+          },
+          {
+            "key": "応対",
+            "observed": 25,
+            "observedShare": 0.12755102040816327,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0.5217996289424861
+          }
+        ]
+      },
+      "episodeTraces": [],
+      "cardPool": {
+        "uniqueByRarity": {
+          "N": 4,
+          "R": 12,
+          "SR": 20,
+          "SSR": 9
+        },
+        "uniqueByCategory": {
+          "動員": 12,
+          "教務": 12,
+          "庶務": 10,
+          "応対": 11
+        },
+        "supplyByRarity": {
+          "R": 24,
+          "SR": 40,
+          "SSR": 18,
+          "N": 8
+        },
+        "supplyByCategory": {
+          "動員": 24,
+          "教務": 24,
+          "庶務": 20,
+          "応対": 22
+        }
+      }
+    },
+    {
+      "policy": "pro_expand",
+      "effectivePolicy": "pro_expand",
+      "difficulty": "pro",
+      "scoreTargets": {
+        "aPoints": 8,
+        "sClearPoints": 12,
+        "aPlusPoints": 10,
+        "sPlusPoints": 14
+      },
+      "episodes": 250,
+      "scoreSummary": {
+        "mean": 5.528,
+        "min": -9,
+        "max": 10,
+        "p50": 7,
+        "p90": 9
+      },
+      "finalStatusAverages": {
+        "experience": 27.492,
+        "enrollment": 21.94,
+        "satisfaction": 20.976,
+        "accounting": 16.504
+      },
+      "finalExcessAverages": {
+        "satisfactionExcess": 6,
+        "accountingExcess": 2.536
+      },
+      "milestones": {
+        "exp10Rate": 0.992,
+        "exp12Rate": 0.976,
+        "exp25Rate": 0.632,
+        "exp40Rate": 0.076,
+        "exp50Rate": 0.016,
+        "diff8Rate": 0.992,
+        "diff10Rate": 0.988,
+        "diff12Rate": 0.956,
+        "diff20Rate": 0.632,
+        "diff32Rate": 0.004,
+        "diff40Rate": 0,
+        "withdrawal0Rate": 0.684,
+        "lowWithdrawalRate": 0.808,
+        "satOver15Rate": 0.936,
+        "satOver18Rate": 0.68,
+        "sat25Rate": 0.212,
+        "sat35Rate": 0,
+        "comboExp40Diff32Rate": 0,
+        "comboExp40Diff32Sat25Rate": 0,
+        "sClearRate": 0,
+        "sRankRate": 0,
+        "aRate": 0.392,
+        "aStrictRate": 0.392,
+        "aPlusRate": 0.02,
+        "aPlusLikeRate": 0.02,
+        "aPlusStrictRate": 0.02,
+        "sPlusLikeRate": 0.676,
+        "sPlusRate": 0,
+        "satOver15GivenSClearRate": 0,
+        "sClearSatControlledRate": 0,
+        "sClearGapTo50": 0.5
+      },
+      "rankDist": {
+        "A+": 5,
+        "A": 93,
+        "B+": 37,
+        "C": 29,
+        "B": 46,
+        "E": 6,
+        "F": 21,
+        "D": 13
+      },
+      "topCards": [
+        {
+          "cardName": "問合対応の基本",
+          "plays": 1082,
+          "episodesPlayed": 248,
+          "avgEpisodeScoreWhenPlayed": 5.516129032258065,
+          "avgDelta": {
+            "experience": 2.3327171903881703,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "経理精算の基本",
+          "plays": 950,
+          "episodesPlayed": 248,
+          "avgEpisodeScoreWhenPlayed": 5.504032258064516,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.2042105263157894
+          }
+        },
+        {
+          "cardName": "生徒面談の基本",
+          "plays": 656,
+          "episodesPlayed": 246,
+          "avgEpisodeScoreWhenPlayed": 5.520325203252033,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.332317073170732,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "質問対応の基本",
+          "plays": 374,
+          "episodesPlayed": 191,
+          "avgEpisodeScoreWhenPlayed": 5.460732984293194,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.2807486631016043,
+            "satisfaction": 0,
+            "accounting": -0.9973262032085561
+          }
+        },
+        {
+          "cardName": "振込用紙印刷",
+          "plays": 366,
+          "episodesPlayed": 135,
+          "avgEpisodeScoreWhenPlayed": 6.2444444444444445,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.5819672131147542,
+            "satisfaction": 0,
+            "accounting": 2.2459016393442623
+          }
+        },
+        {
+          "cardName": "休み時間トーク",
+          "plays": 287,
+          "episodesPlayed": 111,
+          "avgEpisodeScoreWhenPlayed": 5.585585585585585,
+          "avgDelta": {
+            "experience": 1.32404181184669,
+            "enrollment": 0,
+            "satisfaction": 1.2334494773519165,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "保護者面談",
+          "plays": 239,
+          "episodesPlayed": 85,
+          "avgEpisodeScoreWhenPlayed": 5.352941176470588,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 2.2677824267782425,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "褒めて励ます授業",
+          "plays": 207,
+          "episodesPlayed": 89,
+          "avgEpisodeScoreWhenPlayed": 5.168539325842697,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.6521739130434783,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "学力確認＆向上 公開模試",
+          "plays": 193,
+          "episodesPlayed": 100,
+          "avgEpisodeScoreWhenPlayed": 5.95,
+          "avgDelta": {
+            "experience": 5.082901554404145,
+            "enrollment": 4.233160621761658,
+            "satisfaction": 0,
+            "accounting": -1.994818652849741
+          }
+        },
+        {
+          "cardName": "校門前ビラ配り",
+          "plays": 189,
+          "episodesPlayed": 68,
+          "avgEpisodeScoreWhenPlayed": 5.220588235294118,
+          "avgDelta": {
+            "experience": 2.259259259259259,
+            "enrollment": 0,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "機材故障は本部に相談",
+          "plays": 143,
+          "episodesPlayed": 72,
+          "avgEpisodeScoreWhenPlayed": 7.055555555555555,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1.5734265734265733,
+            "accounting": 4.286713286713287
+          }
+        },
+        {
+          "cardName": "日々の授業",
+          "plays": 138,
+          "episodesPlayed": 68,
+          "avgEpisodeScoreWhenPlayed": 5.294117647058823,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.6739130434782608,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "できるまで居残り！",
+          "plays": 126,
+          "episodesPlayed": 81,
+          "avgEpisodeScoreWhenPlayed": 5.518518518518518,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 4.301587301587301,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "今だけ！体験生特典",
+          "plays": 108,
+          "episodesPlayed": 62,
+          "avgEpisodeScoreWhenPlayed": 6.290322580645161,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -2
+          }
+        },
+        {
+          "cardName": "プロジェクター授業",
+          "plays": 105,
+          "episodesPlayed": 78,
+          "avgEpisodeScoreWhenPlayed": 5.384615384615385,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 5.866666666666666,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "補習大会",
+          "plays": 97,
+          "episodesPlayed": 61,
+          "avgEpisodeScoreWhenPlayed": 5.852459016393443,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.484536082474227,
+            "satisfaction": 1.6701030927835052,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "備品注文",
+          "plays": 91,
+          "episodesPlayed": 39,
+          "avgEpisodeScoreWhenPlayed": 6.076923076923077,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 1,
+            "accounting": 2.1868131868131866
+          }
+        },
+        {
+          "cardName": "保護者説明会",
+          "plays": 59,
+          "episodesPlayed": 36,
+          "avgEpisodeScoreWhenPlayed": 5.194444444444445,
+          "avgDelta": {
+            "experience": 5.067796610169491,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "入塾後の未来へ 進路説明会",
+          "plays": 50,
+          "episodesPlayed": 30,
+          "avgEpisodeScoreWhenPlayed": 5.3,
+          "avgDelta": {
+            "experience": 1,
+            "enrollment": 2.72,
+            "satisfaction": 2,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "スタンプ帳キャンペーン",
+          "plays": 49,
+          "episodesPlayed": 23,
+          "avgEpisodeScoreWhenPlayed": 4.173913043478261,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 1,
+            "satisfaction": 3.2448979591836733,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "設問の急所は？教材研究",
+          "plays": 46,
+          "episodesPlayed": 33,
+          "avgEpisodeScoreWhenPlayed": 5.9393939393939394,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 2.282608695652174,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "テスト予想問題的中！",
+          "plays": 46,
+          "episodesPlayed": 35,
+          "avgEpisodeScoreWhenPlayed": 4.571428571428571,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 3.0217391304347827,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "元塾生に講習案内",
+          "plays": 44,
+          "episodesPlayed": 21,
+          "avgEpisodeScoreWhenPlayed": 4.761904761904762,
+          "avgDelta": {
+            "experience": 3.0681818181818183,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "事務リーダー1日派遣",
+          "plays": 41,
+          "episodesPlayed": 25,
+          "avgEpisodeScoreWhenPlayed": 6.32,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 2.975609756097561
+          }
+        },
+        {
+          "cardName": "友人紹介",
+          "plays": 40,
+          "episodesPlayed": 29,
+          "avgEpisodeScoreWhenPlayed": 5.793103448275862,
+          "avgDelta": {
+            "experience": 3.025,
+            "enrollment": 3,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "入塾手続きのご案内",
+          "plays": 39,
+          "episodesPlayed": 24,
+          "avgEpisodeScoreWhenPlayed": 6.5,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 1.6666666666666667,
+            "satisfaction": 0,
+            "accounting": 3.358974358974359
+          }
+        },
+        {
+          "cardName": "兄弟紹介",
+          "plays": 34,
+          "episodesPlayed": 26,
+          "avgEpisodeScoreWhenPlayed": 7.115384615384615,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 1.9411764705882353,
+            "satisfaction": 0,
+            "accounting": 0
+          }
+        },
+        {
+          "cardName": "努力の結晶 合格実績掲示",
+          "plays": 34,
+          "episodesPlayed": 19,
+          "avgEpisodeScoreWhenPlayed": 6,
+          "avgDelta": {
+            "experience": 7,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": -1
+          }
+        },
+        {
+          "cardName": "教室清掃",
+          "plays": 32,
+          "episodesPlayed": 19,
+          "avgEpisodeScoreWhenPlayed": 6.578947368421052,
+          "avgDelta": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 2.34375,
+            "accounting": 2
+          }
+        },
+        {
+          "cardName": "赤字覚悟！？ 大抽選会",
+          "plays": 30,
+          "episodesPlayed": 21,
+          "avgEpisodeScoreWhenPlayed": 5.238095238095238,
+          "avgDelta": {
+            "experience": 2,
+            "enrollment": 0,
+            "satisfaction": 6.166666666666667,
+            "accounting": -1
+          }
+        }
+      ],
+      "decisionTelemetry": {
+        "training": {
+          "rounds": 2000,
+          "inspirationRounds": 44,
+          "refreshUsed": 500,
+          "refreshByPhase": {
+            "initial": 220,
+            "main": 280,
+            "inspiration": 0
+          },
+          "avgCandidatesPerRound": 6.244618395303327
+        },
+        "action": {
+          "phases": 2000,
+          "avgOptionsPerPhase": 10.9285,
+          "avgPlacedPerPhase": 3.05,
+          "parallelPlacementRate": 0.062459016393442625
+        },
+        "meeting": {
+          "phases": 1750,
+          "avgOptionsPerPhase": 13.28057142857143,
+          "avgDeletedPerPhase": 0.43142857142857144
+        }
+      },
+      "sPlusHoldings": {
+        "episodes": 0,
+        "rate": 0,
+        "averageDisplayScore": 0,
+        "averageHeldCards": 0,
+        "topCards": [],
+        "rarityBalance": [
+          {
+            "key": "R",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "SR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0
+          },
+          {
+            "key": "SSR",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0
+          },
+          {
+            "key": "N",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 0
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "動員",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "教務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0
+          },
+          {
+            "key": "庶務",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 0
+          },
+          {
+            "key": "応対",
+            "observed": 0,
+            "observedShare": 0,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0
+          }
+        ]
+      },
+      "lowHoldings": {
+        "episodes": 21,
+        "rate": 0.084,
+        "averageDisplayScore": -5.380952380952381,
+        "averageHeldCards": 15.095238095238095,
+        "topCards": [
+          {
+            "cardName": "問合対応の基本",
+            "rarity": "N",
+            "category": "動員",
+            "heldCount": 42,
+            "presentEpisodes": 21,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "経理精算の基本",
+            "rarity": "N",
+            "category": "庶務",
+            "heldCount": 42,
+            "presentEpisodes": 21,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 2
+          },
+          {
+            "cardName": "質問対応の基本",
+            "rarity": "N",
+            "category": "教務",
+            "heldCount": 39,
+            "presentEpisodes": 21,
+            "presentRate": 1,
+            "avgCopiesWhenPresent": 1.8571428571428572
+          },
+          {
+            "cardName": "学力確認＆向上 公開模試",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 15,
+            "presentEpisodes": 12,
+            "presentRate": 0.5714285714285714,
+            "avgCopiesWhenPresent": 1.25
+          },
+          {
+            "cardName": "休み時間トーク",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 12,
+            "presentEpisodes": 12,
+            "presentRate": 0.5714285714285714,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "プロジェクター授業",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 12,
+            "presentEpisodes": 11,
+            "presentRate": 0.5238095238095238,
+            "avgCopiesWhenPresent": 1.0909090909090908
+          },
+          {
+            "cardName": "褒めて励ます授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 11,
+            "presentEpisodes": 11,
+            "presentRate": 0.5238095238095238,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "できるまで居残り！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 14,
+            "presentEpisodes": 10,
+            "presentRate": 0.47619047619047616,
+            "avgCopiesWhenPresent": 1.4
+          },
+          {
+            "cardName": "テスト予想問題的中！",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 12,
+            "presentEpisodes": 10,
+            "presentRate": 0.47619047619047616,
+            "avgCopiesWhenPresent": 1.2
+          },
+          {
+            "cardName": "校門前ビラ配り",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 10,
+            "presentEpisodes": 10,
+            "presentRate": 0.47619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "今だけ！体験生特典",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 9,
+            "presentEpisodes": 8,
+            "presentRate": 0.38095238095238093,
+            "avgCopiesWhenPresent": 1.125
+          },
+          {
+            "cardName": "保護者面談",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 8,
+            "presentEpisodes": 7,
+            "presentRate": 0.3333333333333333,
+            "avgCopiesWhenPresent": 1.1428571428571428
+          },
+          {
+            "cardName": "スタンプ帳キャンペーン",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 7,
+            "presentEpisodes": 7,
+            "presentRate": 0.3333333333333333,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "機材故障は本部に相談",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 7,
+            "presentEpisodes": 7,
+            "presentRate": 0.3333333333333333,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "振込用紙印刷",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 7,
+            "presentEpisodes": 7,
+            "presentRate": 0.3333333333333333,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "日々の授業",
+            "rarity": "R",
+            "category": "教務",
+            "heldCount": 7,
+            "presentEpisodes": 6,
+            "presentRate": 0.2857142857142857,
+            "avgCopiesWhenPresent": 1.1666666666666667
+          },
+          {
+            "cardName": "補習大会",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 6,
+            "presentEpisodes": 6,
+            "presentRate": 0.2857142857142857,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "保護者説明会",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.23809523809523808,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "友人紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.23809523809523808,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "進学相談フェア出展",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 5,
+            "presentEpisodes": 5,
+            "presentRate": 0.23809523809523808,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "兄弟紹介",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.19047619047619047,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "日々の出迎え",
+            "rarity": "R",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.19047619047619047,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "締切間近の書類リマインド",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.19047619047619047,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "未入金家庭へ電話",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 4,
+            "presentEpisodes": 4,
+            "presentRate": 0.19047619047619047,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "生徒面談の基本",
+            "rarity": "N",
+            "category": "応対",
+            "heldCount": 4,
+            "presentEpisodes": 3,
+            "presentRate": 0.14285714285714285,
+            "avgCopiesWhenPresent": 1.3333333333333333
+          },
+          {
+            "cardName": "元塾生に講習案内",
+            "rarity": "R",
+            "category": "動員",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.14285714285714285,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "設問の急所は？教材研究",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 3,
+            "presentEpisodes": 3,
+            "presentRate": 0.14285714285714285,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "苦手発見！質問対応",
+            "rarity": "SR",
+            "category": "教務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.09523809523809523,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "教室清掃",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.09523809523809523,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾手続きのご案内",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.09523809523809523,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "努力の結晶 合格実績掲示",
+            "rarity": "SSR",
+            "category": "動員",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.09523809523809523,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "事務リーダー1日派遣",
+            "rarity": "SSR",
+            "category": "庶務",
+            "heldCount": 2,
+            "presentEpisodes": 2,
+            "presentRate": 0.09523809523809523,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "人気の秘密は？他塾研究",
+            "rarity": "SR",
+            "category": "動員",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "備品注文",
+            "rarity": "R",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "赤字覚悟！？ 大抽選会",
+            "rarity": "SSR",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "入塾後の未来へ 進路説明会",
+            "rarity": "SSR",
+            "category": "教務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "ごほうび差し入れスイーツ",
+            "rarity": "SR",
+            "category": "庶務",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          },
+          {
+            "cardName": "私も載ったよ！成績UP掲示",
+            "rarity": "SR",
+            "category": "応対",
+            "heldCount": 1,
+            "presentEpisodes": 1,
+            "presentRate": 0.047619047619047616,
+            "avgCopiesWhenPresent": 1
+          }
+        ],
+        "rarityBalance": [
+          {
+            "key": "N",
+            "observed": 127,
+            "observedShare": 0.40063091482649843,
+            "baseline": 8,
+            "baselineShare": 0.08888888888888889,
+            "lift": 4.507097791798107
+          },
+          {
+            "key": "R",
+            "observed": 63,
+            "observedShare": 0.19873817034700317,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 0.7452681388012619
+          },
+          {
+            "key": "SSR",
+            "observed": 42,
+            "observedShare": 0.13249211356466878,
+            "baseline": 18,
+            "baselineShare": 0.2,
+            "lift": 0.6624605678233438
+          },
+          {
+            "key": "SR",
+            "observed": 85,
+            "observedShare": 0.26813880126182965,
+            "baseline": 40,
+            "baselineShare": 0.4444444444444444,
+            "lift": 0.6033123028391167
+          }
+        ],
+        "categoryBalance": [
+          {
+            "key": "教務",
+            "observed": 122,
+            "observedShare": 0.38485804416403785,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.4432176656151419
+          },
+          {
+            "key": "動員",
+            "observed": 86,
+            "observedShare": 0.27129337539432175,
+            "baseline": 24,
+            "baselineShare": 0.26666666666666666,
+            "lift": 1.0173501577287065
+          },
+          {
+            "key": "庶務",
+            "observed": 70,
+            "observedShare": 0.22082018927444794,
+            "baseline": 20,
+            "baselineShare": 0.2222222222222222,
+            "lift": 0.9936908517350158
+          },
+          {
+            "key": "応対",
+            "observed": 39,
+            "observedShare": 0.12302839116719243,
+            "baseline": 22,
+            "baselineShare": 0.24444444444444444,
+            "lift": 0.5032979638657872
+          }
+        ]
+      },
+      "episodeTraces": [],
+      "cardPool": {
+        "uniqueByRarity": {
+          "N": 4,
+          "R": 12,
+          "SR": 20,
+          "SSR": 9
+        },
+        "uniqueByCategory": {
+          "動員": 12,
+          "教務": 12,
+          "庶務": 10,
+          "応対": 11
+        },
+        "supplyByRarity": {
+          "R": 24,
+          "SR": 40,
+          "SSR": 18,
+          "N": 8
+        },
+        "supplyByCategory": {
+          "動員": 24,
+          "教務": 24,
+          "庶務": 20,
+          "応対": 22
+        }
+      }
+    }
+  ]
+}
