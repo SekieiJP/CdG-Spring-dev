@@ -1073,6 +1073,37 @@ body {
     }
 }
 
+@media (max-width: 480px) {
+    .staff-area {
+        grid-template-columns: 1fr;
+    }
+
+    .staff-label {
+        text-align: left;
+        padding-left: 2px;
+    }
+
+    .card-slot {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+        min-height: 88px;
+        gap: var(--spacing-xs);
+    }
+
+    .card-slot .card {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .card-slot .slot-placeholder {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 72px;
+        flex: none;
+    }
+}
+
 @media (min-width: 481px) {
     #app {
         max-width: 600px;
