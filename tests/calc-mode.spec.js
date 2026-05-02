@@ -58,6 +58,33 @@ test.describe('計算機モード', () => {
         await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
     });
 
+    test('研修入力で99を入力すると直前までを採用して即時確定する', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('060799');
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        const deckNos = await page.evaluate(() =>
+            window.game.gameState.player.deck.map(card => String(card.cardNo).padStart(2, '0'))
+        );
+        expect(deckNos.filter(no => no === '06')).toHaveLength(1);
+        expect(deckNos.filter(no => no === '07')).toHaveLength(1);
+    });
+
+    test('研修入力で99直前までが不備なら確定せずエラーを表示する', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0699');
+
+        await expect(page.locator('#training-area')).not.toHaveClass(/hidden/);
+        await expect(page.locator('#calc-training-input')).toHaveValue('06');
+        await expect(page.locator('#calc-training-msg')).toContainText('Rカードを2枚入力してください');
+    });
+
     test('スタッフ配置入力では既存の非並行重ね配置ルールを適用する', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#calc-mode-row .toggle-slider').click();
@@ -72,6 +99,37 @@ test.describe('計算機モード', () => {
 
         await expect(page.locator('#calc-action-msg-leader')).toContainText('重ね配置できません');
         await expect(page.locator('#slot-leader .card')).toHaveCount(0);
+    });
+
+    test('スタッフ配置入力で99を入力すると直前までを採用して次の入力欄へ進む', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-action-leader').fill('0699');
+
+        await expect(page.locator('#calc-action-leader')).toHaveValue('06');
+        await expect(page.locator('#slot-leader .card')).toContainText('チラシ折り');
+        await expect(page.locator('#calc-action-teacher')).toBeFocused();
+    });
+
+    test('最後のスタッフ入力欄で99を入力すると空欄扱いで行動確定する', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-action-staff').fill('99');
+
+        await expect(page.locator('#calc-action-staff')).toHaveValue('');
+        await expect(page.locator('#status-animation-overlay')).not.toHaveClass(/hidden/, { timeout: 10000 });
     });
 
     test('最後のスタッフ入力欄でEnterすると行動確定ボタン相当になる', async ({ page }) => {

@@ -42,6 +42,7 @@ export class UIController {
         // 文字サイズモードを適用
         this.applyFontMode();
         this.applyCardDesc();
+        this.applyCardIcon();
 
         // イベントリスナー設定
         this.setupEventListeners();
@@ -175,9 +176,18 @@ export class UIController {
         return localStorage.getItem('cdg_card_desc') === 'short';
     }
 
+    isCardIconShown() {
+        return localStorage.getItem('cdg_card_icon') !== 'hide';
+    }
+
     setCardDesc(mode) {
         localStorage.setItem('cdg_card_desc', mode);
         this.applyCardDesc();
+    }
+
+    setCardIcon(mode) {
+        localStorage.setItem('cdg_card_icon', mode);
+        this.applyCardIcon();
     }
 
     applyCardDesc() {
@@ -186,6 +196,10 @@ export class UIController {
         } else {
             document.documentElement.classList.remove('card-desc-short');
         }
+    }
+
+    applyCardIcon() {
+        document.documentElement.classList.toggle('card-icon-hide', !this.isCardIconShown());
     }
 
     /**
@@ -376,17 +390,22 @@ export class UIController {
         // カード説明設定が短縮時のみcompactでtopEffectを使用
         const useCompact = options.compact && this.isShortCardDesc();
         const displayEffect = useCompact && card.topEffect ? card.topEffect : card.effect;
+        const thumbnailHTML = this.buildCardThumbnailHTML(card, 'card-thumbnail');
 
         cardDiv.innerHTML = `
             <div class="card-header">
                 <span class="card-name">${this._escapeHTML(card.cardName)}</span>
+                <span class="card-meta">
+                    <span class="card-category-text ${categoryClass}">${this._escapeHTML(card.category)}</span>${recommendedMark}
+                    <span class="card-rarity rarity-${this._escapeHTML(card.rarity)}">${this._escapeHTML(card.rarity)}</span>
+                </span>
             </div>
-            <div class="card-meta">
-                <span class="card-category-text ${categoryClass}">${this._escapeHTML(card.category)}</span>${recommendedMark}
-                <span class="card-rarity rarity-${card.rarity}">${card.rarity}</span>
+            <div class="card-body">
+                <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
+                ${thumbnailHTML}
             </div>
-            <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
         `;
+        this.setupCardThumbnailFallback(cardDiv);
 
         // スマホ長押し/PCホバー: カード直下フローティング（showHoverTooltip）
         let pressTimer;
@@ -419,6 +438,28 @@ export class UIController {
         });
 
         return cardDiv;
+    }
+
+    getCardIconPath(card) {
+        const normalized = this.cardManager?.normalizeCardNo(card?.cardNo);
+        if (!normalized) return null;
+        const iconNo = String(normalized).padStart(2, '0');
+        const version = window.BUILD_VERSION ? `?v=${encodeURIComponent(window.BUILD_VERSION)}` : '';
+        return `data/cardIcon/icon${iconNo}.png${version}`;
+    }
+
+    buildCardThumbnailHTML(card, className) {
+        const src = this.getCardIconPath(card);
+        if (!src) return '';
+        return `<img class="${className}" src="${this._escapeHTML(src)}" alt="" loading="lazy" decoding="async">`;
+    }
+
+    setupCardThumbnailFallback(root) {
+        root.querySelectorAll('.card-thumbnail, .anim-card-thumbnail').forEach(img => {
+            img.addEventListener('error', () => {
+                img.remove();
+            }, { once: true });
+        });
     }
 
     /**
@@ -1366,16 +1407,21 @@ export class UIController {
                     const recommendedMark = isRecommended ? ' 🎯' : '';
                     const bonusText = recommendedApplied ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
                     const skipText = skippedByCost ? '<div class="anim-skip-text">コスト不足のため効果なし</div>' : '';
+                    const thumbnailHTML = this.buildCardThumbnailHTML(card, 'anim-card-thumbnail');
 
                     cards.innerHTML = `
                         <div class="animation-card-item">
-                            <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
-                            <div class="anim-card-name">${this._escapeHTML(card.cardName)}${categoryBadge}${recommendedMark}</div>
-                            <div class="anim-card-effect">${this._escapeHTML(card.effect)}</div>
-                            ${bonusText}
-                            ${skipText}
+                            <div class="anim-card-copy">
+                                <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
+                                <div class="anim-card-name">${this._escapeHTML(card.cardName)}${categoryBadge}${recommendedMark}</div>
+                                <div class="anim-card-effect">${this._escapeHTML(card.effect)}</div>
+                                ${bonusText}
+                                ${skipText}
+                            </div>
+                            ${thumbnailHTML}
                         </div>
                     `;
+                    this.setupCardThumbnailFallback(cards);
 
                     if (perCardInfo) {
                         const beforeCardStats = { ...currentStats };
@@ -2995,7 +3041,14 @@ export class UIController {
         this.calcTrainingRequirement = { rarity, minCount, maxCount };
 
         const input = document.getElementById('calc-training-input');
-        input?.addEventListener('input', () => this.updateCalcTrainingPreview());
+        input?.addEventListener('input', () => {
+            if (this.handleCalcTerminatorInput(input, () => {
+                document.getElementById('confirm-training')?.click();
+            })) {
+                return;
+            }
+            this.updateCalcTrainingPreview();
+        });
         input?.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -3096,15 +3149,16 @@ export class UIController {
 
         ['leader', 'teacher', 'staff'].forEach(staff => {
             const input = document.getElementById(`calc-action-${staff}`);
-            input?.addEventListener('input', () => this.updateCalcActionPreview(staff));
+            input?.addEventListener('input', () => {
+                if (this.handleCalcTerminatorInput(input, () => this.confirmCalcActionByStaff(staff))) {
+                    return;
+                }
+                this.updateCalcActionPreview(staff);
+            });
             input?.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    if (staff === 'staff') {
-                        document.getElementById('confirm-action')?.click();
-                    } else if (this.confirmCalcStaffInput(staff)) {
-                        this.focusNextCalcActionInput(staff);
-                    }
+                    this.confirmCalcActionByStaff(staff);
                 }
             });
         });
@@ -3144,6 +3198,35 @@ export class UIController {
         if (next) {
             document.getElementById(`calc-action-${next}`)?.focus();
         }
+    }
+
+    confirmCalcActionByStaff(staff) {
+        if (staff === 'staff') {
+            document.getElementById('confirm-action')?.click();
+            return;
+        }
+        if (this.confirmCalcStaffInput(staff)) {
+            this.focusNextCalcActionInput(staff);
+        }
+    }
+
+    handleCalcTerminatorInput(input, onConfirm) {
+        const result = this.extractCalcInputBeforeTerminator(input?.value);
+        if (!result.found) return false;
+
+        input.value = result.value;
+        onConfirm();
+        return true;
+    }
+
+    extractCalcInputBeforeTerminator(rawInput) {
+        const raw = String(rawInput ?? '').trim();
+        for (let i = 0; i + 1 < raw.length; i += 2) {
+            if (raw.slice(i, i + 2) === '99') {
+                return { found: true, value: raw.slice(0, i) };
+            }
+        }
+        return { found: false, value: raw };
     }
 
     validateCalcCardNos(rawInput) {
@@ -3411,6 +3494,7 @@ export class UIController {
         const buildVersion = window.BUILD_VERSION || 'unknown';
         const currentFontMode = localStorage.getItem('cdg_font_mode') || 'normal';
         const currentCardDesc = localStorage.getItem('cdg_card_desc') || 'full';
+        const currentCardIcon = localStorage.getItem('cdg_card_icon') || 'show';
 
         // バッジ表示判定
         const showTutorialBadge = !localStorage.getItem('cdg_visited');
@@ -3432,6 +3516,13 @@ export class UIController {
                         <button class="font-toggle-option${currentCardDesc === 'short' ? ' active' : ''}" data-card-desc="short">短縮</button>
                     </div>
                     <p class="font-toggle-note">短縮表示時は長押しで全文を確認できます。設定は次回再読み込み時に適用</p>
+                </div>
+                <div class="settings-section">
+                    <h3>カード画像</h3>
+                    <div class="font-toggle">
+                        <button class="font-toggle-option${currentCardIcon !== 'hide' ? ' active' : ''}" data-card-icon="show">表示</button>
+                        <button class="font-toggle-option${currentCardIcon === 'hide' ? ' active' : ''}" data-card-icon="hide">非表示</button>
+                    </div>
                 </div>
                 <div class="settings-section">
                     <h3>リンク</h3>
@@ -3499,6 +3590,16 @@ export class UIController {
                 this.setCardDesc(mode);
                 settingsElem.querySelectorAll('[data-card-desc]').forEach(btn => {
                     btn.classList.toggle('active', btn.dataset.cardDesc === mode);
+                });
+            }
+
+            // data-card-icon ボタン（カード画像）
+            const cardIconBtn = e.target.closest('[data-card-icon]');
+            if (cardIconBtn) {
+                const mode = cardIconBtn.dataset.cardIcon;
+                this.setCardIcon(mode);
+                settingsElem.querySelectorAll('[data-card-icon]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.cardIcon === mode);
                 });
             }
         });
