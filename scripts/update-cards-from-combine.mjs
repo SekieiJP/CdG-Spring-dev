@@ -225,7 +225,11 @@ function rowsByCardNameOccurrence(rows) {
 }
 
 function hasCardChanged(before, after) {
-  return before.effect !== after.effect;
+  return normalizeEffectForDiff(before.effect) !== normalizeEffectForDiff(after.effect);
+}
+
+function normalizeEffectForDiff(effect) {
+  return String(effect ?? '').replaceAll(/\r?\n/g, '').trim();
 }
 
 async function prependReleaseNoteSlide(freshChanges, proChanges) {
