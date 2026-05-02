@@ -213,9 +213,24 @@ S+スコア = 8 + 0.5×(体験-15)÷15 + 1.5×(入塾-15)÷15
 
 **PRO 満足・経理**: Aランク未到達 → Aランク閾値、A以上 → 次のランク閾値
 
+### プログレスバー始点ロジック（`startThreshold`）
+
+**始点**は「現在スコア段階の旅の始まり」で統一:
+
+| ケース | startThreshold |
+|---|---|
+| FRESH 満足（Aランク未到達） | 0（Aが固定目標なので旅の始まりは常に0） |
+| FRESH 経理（Sランク未到達） | 0（Sが固定目標なので旅の始まりは常に0） |
+| PRO 満足・経理（Aランク未到達） | 0（同上） |
+| PRO 体験 | 現在動員スコア段階に対応するthresholds.experience（スコアが上がったとき始点リセット） |
+| PRO 入塾 | 現在入退差スコア段階に対応するenrollmentDiffThreshold（同上） |
+| FRESH 体験・入塾（逐次） | currentThreshold（従来どおり1つ前のランク閾値） |
+| 満足・経理がA以上（目標達成後） | currentThreshold |
+
 ### 戻り値
 ```js
-{ grade, currentThreshold, nextThreshold, deficit, targetGrade }
+{ grade, startThreshold, currentThreshold, nextThreshold, deficit, targetGrade }
+// startThreshold: プログレスバーの始点（0%位置）
 // targetGrade: 「Xまであと」のX（例: 'A', 'S'）
 ```
 
@@ -397,17 +412,15 @@ getHighScoreKey(difficulty) {
 
 ---
 
-## 9. 後日提供が必要なデータ
+## 9. データ提供状況（すべて提供済み）
 
-以下のデータは後日提供を待って実装する:
-
-| 項目 | 内容 |
-|---|---|
-| PRO目標値 | 退塾/体験/入退差の各閾値と配点 |
-| PROランク閾値 | 各ランク（E〜S+）に必要なポイント数 |
-| FRESH目標ランクアルファベット | ステータス画面で表示する項目別ランク名 |
-| PRO目標ランクアルファベット | 同上（PRO版） |
-| PROターン設定 | ターンごとの研修レアリティ・おすすめ行動・削除枚数 |
+| 項目 | 状態 | ファイル |
+|---|---|---|
+| PRO目標値（退塾/体験/入退差/満足の閾値・配点） | ✅ 提供済み | `data/rankPro.csv` |
+| PROランク閾値（F〜SSの11段階） | ✅ 提供済み | `data/rankPro.csv` |
+| FRESHランク閾値・目標ランクアルファベット | ✅ 提供済み | `data/rankFresh.csv` |
+| PRO目標ランクアルファベット | ✅ 提供済み | `data/rankPro.csv` |
+| PROターン設定（研修レアリティ・おすすめ行動・削除枚数） | ✅ 実装済み | `difficultyConfig.js` |
 
 ---
 
@@ -448,6 +461,21 @@ getHighScoreKey(difficulty) {
 16. `data/cards_fresh.csv` 作成（旧`cardsV2.csv`からリネーム） ✅
 17. `cardManager.js` でCSVパスの動的切替対応 ✅（Phase 1で実装済み）
 
-### Phase 6: PROスコア＆ランク（データ提供後）
-18. `scoreManager.js` にPROの閾値・配点を設定 ⬜ ブロック中（データ未提供）
-19. 結果画面のPROスコア表示対応 ⬜ ブロック中（データ未提供）
+### Phase 6: PROスコア＆ランク — ✅完了
+18. `scoreManager.js` にPROの閾値・配点を設定 ✅（rankPro.csv から動的読込）
+19. 結果画面のPROスコア表示対応 ✅（F〜SS 11段階ランク表示）
+
+### Phase 7: UI改善・スコア可視化 — ✅完了
+20. ステータス画面の目標表示実装 ✅（ランクラベル・プログレスバー・「Xまであと N」）
+    - `getStatusRank()` に `startThreshold` 追加（始点を「旅の始まり」で統一）
+    - 満足・経理の`<span class="rank-label">`をindex.htmlに追加
+21. アニメーション画面ランク表示 ✅（カード配置完了アニメーション中にも4ステータスのランク情報を表示）
+22. スコア換算表をスケジュール一覧画面に追加 ✅（FRESH/PRO別テーブル、現在値の行をハイライト）
+    - `renderScoreSection()`, `_renderFreshScoreTable()`, `_renderProScoreTable()`, `_buildScoreTable()`, `_fmtPts()` 追加
+23. tutorial.htmlにFRESH/PROスコア基準ページを追加 ✅（ページ8: FRESH、ページ9: PRO）
+24. 発想トークン追加習得画面でリフレッシュ使用可能に ✅（通常研修と共通カウンタ）
+
+### Phase 8: バグ修正 — ✅完了
+25. 整理トークンメッセージが次ターンも表示される問題を修正 ✅（`showMeetingPhase()`でトークン消費後に`= 0`代入）
+26. 整理トークンなし時の緑枠が表示されたままになる問題を修正 ✅（`.organize-bonus-info.hidden { display: none }` を追加）
+27. ステータス変動ログが2回重複する問題を修正 ✅（`cardManager.applyEffect()`の重複ログ行を削除）
