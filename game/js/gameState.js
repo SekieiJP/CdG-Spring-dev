@@ -7,6 +7,7 @@ export class GameState {
     constructor(logger) {
         this.logger = logger;
         this.difficulty = 'fresh';
+        this.calcMode = false;
         this.reset();
     }
 

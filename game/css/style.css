@@ -1912,3 +1912,114 @@ html.font-normal .compact-stats {
     font-size: 1.1em;
     margin-top: 4px;
 }
+
+/* ===== 計算機モード ===== */
+.calc-mode-row {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0 6px;
+}
+
+.calc-mode-row.hidden,
+.hand-area.hidden,
+.slot-mode-row.hidden {
+    display: none;
+}
+
+.calc-mode-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text);
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    cursor: pointer;
+    background: var(--color-bg-light);
+    border: 1px solid var(--color-border);
+    border-radius: 26px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 2px;
+    top: 2px;
+    background: #fff;
+    border-radius: 50%;
+    transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.calc-input-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.calc-slot-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.calc-slot-row label {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+}
+
+.calc-card-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border: 2px solid var(--color-primary);
+    border-radius: 8px;
+    background: var(--color-bg-card);
+    color: var(--color-text);
+    font-size: 1.45rem;
+    letter-spacing: 0.15em;
+    text-align: center;
+}
+
+.calc-card-input:focus {
+    outline: none;
+    border-color: var(--color-primary-light);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.calc-validate-msg {
+    min-height: 1.2em;
+    color: var(--color-danger, #e53935);
+    font-size: 0.8rem;
+}
+
+.calc-action-inputs {
+    margin: 14px 0;
+}

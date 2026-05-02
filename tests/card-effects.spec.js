@@ -285,9 +285,13 @@ test.describe('全ターン通しテスト', () => {
                 break;
             }
 
-            // 会議フェーズ
-            await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 10000 });
-            await page.click('#confirm-meeting');
+            // 会議フェーズ（削除上限0のターンは自動スキップされる）
+            const meetingVisible = await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 3000 })
+                .then(() => true)
+                .catch(() => false);
+            if (meetingVisible) {
+                await page.click('#confirm-meeting');
+            }
 
             // 研修フェーズ
             await page.waitForSelector('#training-area:not(.hidden)', { timeout: 10000 });
@@ -401,9 +405,8 @@ test.describe('発想トークン追加習得フロー', () => {
         expect(instruction).toContain('発想追加習得');
         expect(instruction).toContain('残り2回');
 
-        // リフレッシュボタンが非表示であることを確認
-        const refreshRow = page.locator('#training-refresh-row');
-        await expect(refreshRow).toHaveClass(/hidden/);
+        // PROでは発想追加習得中もリフレッシュボタンが利用できる
+        await expect(page.locator('#btn-training-refresh')).not.toHaveClass(/hidden/);
     });
 
     test('発想追加習得で1枚選択して確定するとデッキに追加される', async ({ page }) => {
@@ -680,18 +683,19 @@ test.describe('[整理🗑️] トークン効果テスト', () => {
         await page.click('#confirm-action');
         await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 20000 });
         await expect(page.locator('#meeting-area:not(.hidden)')).toBeVisible();
-        await expect(page.locator('#max-delete')).toHaveText('3');
+        await expect(page.locator('#max-delete')).toHaveText('2');
 
         const deleteMax = await page.evaluate(() => {
             return window.game.turnManager.getCurrentDeleteMax();
         });
-        expect(deleteMax).toBe(3);
+        // 会議画面表示時に整理トークンは消費済みになるため、以後の算出値は基本値に戻る
+        expect(deleteMax).toBe(1);
     });
 
     test('整理カード効果でトークンが付与され会議フェーズで削除枚数が増える（E2E）', async ({ page }) => {
         // 整理トークンを持つカードを手札に注入し、アクション確定後の会議フェーズを検証
 
-        // turn=0, PRO: config.delete=2 → organize+1で3になるはず
+        // turn=0, PRO: config.delete=1 → organize+1で2になるはず
         // 手札に整理効果カードを注入（整理キーワードを含む効果テキストを持つカードを作成）
         await page.evaluate(() => {
             const organizeCard = {
@@ -719,10 +723,10 @@ test.describe('[整理🗑️] トークン効果テスト', () => {
         // 会議フェーズへ
         await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 20000 });
 
-        // max-deleteが規定値+1になっていること（PRO turn1: 2+1=3）
+        // max-deleteが規定値+1になっていること（PRO turn1: 1+1=2）
         const maxDeleteText = await page.locator('#max-delete').textContent();
         const maxDelete = parseInt(maxDeleteText, 10);
-        expect(maxDelete).toBeGreaterThanOrEqual(3);
+        expect(maxDelete).toBeGreaterThanOrEqual(2);
 
         // 整理ボーナス説明が表示されていること
         await expect(page.locator('#organize-bonus-info')).not.toHaveClass(/hidden/);
@@ -765,7 +769,9 @@ test.describe('初回研修リフレッシュ', () => {
         const deckSize = await page.evaluate(() =>
             window.game.gameState.player.deck.length + window.game.gameState.player.hand.length
         );
-        // 初期デッキ8枚 + 習得2枚 = 10枚
-        expect(deckSize).toBe(10);
+        const expectedDeckSize = await page.evaluate(() =>
+            window.game.cardManager.allCards.filter(card => card.rarity === 'N').length + 2
+        );
+        expect(deckSize).toBe(expectedDeckSize);
     });
 });

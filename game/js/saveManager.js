@@ -155,6 +155,7 @@ export class SaveManager {
     serializeGameState(gameState) {
         return {
             difficulty: gameState.difficulty || 'fresh',
+            calcMode: gameState.calcMode || false,
             turn: gameState.turn,
             phase: gameState.phase,
             player: {
@@ -191,6 +192,7 @@ export class SaveManager {
             cardName: card.cardName,
             topEffect: card.topEffect,
             effect: card.effect,
+            cardNo: card.cardNo || null,
             acquiredTurn: card.acquiredTurn
         };
     }
@@ -215,6 +217,7 @@ export class SaveManager {
      */
     restoreGameState(gameState, savedState) {
         gameState.difficulty = savedState.difficulty || 'fresh';
+        gameState.calcMode = savedState.calcMode || false;
         gameState.turn = savedState.turn;
         gameState.phase = savedState.phase;
         gameState.player.experience = savedState.player.experience;

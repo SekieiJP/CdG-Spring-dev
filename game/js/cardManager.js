@@ -52,7 +52,8 @@ export class CardManager {
                     rarity: parts[1],
                     cardName: parts[2],
                     topEffect: parts[3],
-                    effect: parts[4]
+                    effect: parts[4],
+                    cardNo: parts[5] || null
                 };
 
                 this.allCards.push(card);
@@ -63,12 +64,30 @@ export class CardManager {
                     rarity: parts[1],
                     cardName: parts[2],
                     topEffect: '',
-                    effect: parts[3]
+                    effect: parts[3],
+                    cardNo: null
                 };
 
                 this.allCards.push(card);
             }
         }
+    }
+
+    /**
+     * カードNoからカード定義を取得（先頭ゼロは無視）
+     */
+    getCardByNo(cardNo) {
+        const normalized = this.normalizeCardNo(cardNo);
+        if (!normalized) return null;
+        return this.allCards.find(card => this.normalizeCardNo(card.cardNo) === normalized) || null;
+    }
+
+    /**
+     * カードNo比較用に正規化
+     */
+    normalizeCardNo(cardNo) {
+        const no = parseInt(String(cardNo ?? '').trim(), 10);
+        return Number.isNaN(no) ? null : String(no);
     }
 
     /**
