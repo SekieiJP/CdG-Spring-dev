@@ -2979,6 +2979,7 @@ export class UIController {
                     <input id="calc-training-input" class="calc-card-input" type="text"
                            inputmode="numeric" autocomplete="off" placeholder="例: 0106">
                     <span id="calc-training-msg" class="calc-validate-msg"></span>
+                    <div id="calc-training-preview" class="calc-preview"></div>
                 </div>
             </div>
         `;
@@ -2994,12 +2995,14 @@ export class UIController {
         this.calcTrainingRequirement = { rarity, minCount, maxCount };
 
         const input = document.getElementById('calc-training-input');
+        input?.addEventListener('input', () => this.updateCalcTrainingPreview());
         input?.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
-                this.confirmCalcTraining();
+                document.getElementById('confirm-training')?.click();
             }
         });
+        this.updateCalcTrainingPreview();
         this.focusFirstCalcInput();
     }
 
@@ -3087,16 +3090,21 @@ export class UIController {
                 <input id="calc-action-${staff}" class="calc-card-input" type="text"
                        inputmode="numeric" autocomplete="off" placeholder="例: 0102">
                 <span id="calc-action-msg-${staff}" class="calc-validate-msg"></span>
+                <div id="calc-action-preview-${staff}" class="calc-preview"></div>
             </div>
         `).join('');
 
         ['leader', 'teacher', 'staff'].forEach(staff => {
             const input = document.getElementById(`calc-action-${staff}`);
+            input?.addEventListener('input', () => this.updateCalcActionPreview(staff));
             input?.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter') {
                     event.preventDefault();
-                    this.confirmCalcStaffInput(staff);
-                    this.focusNextCalcActionInput(staff);
+                    if (staff === 'staff') {
+                        document.getElementById('confirm-action')?.click();
+                    } else if (this.confirmCalcStaffInput(staff)) {
+                        this.focusNextCalcActionInput(staff);
+                    }
                 }
             });
         });
@@ -3107,6 +3115,7 @@ export class UIController {
         }
 
         this.updateActionButtonState();
+        ['leader', 'teacher', 'staff'].forEach(staff => this.updateCalcActionPreview(staff));
         this.focusFirstCalcInput();
     }
 
@@ -3159,6 +3168,117 @@ export class UIController {
             cards.push(card);
         }
         return { valid: true, cards };
+    }
+
+    updateCalcTrainingPreview() {
+        const input = document.getElementById('calc-training-input');
+        const msg = document.getElementById('calc-training-msg');
+        const preview = document.getElementById('calc-training-preview');
+        if (!input || !msg || !preview) return;
+
+        const raw = input.value.trim();
+        if (raw === '' || raw.length % 2 !== 0) {
+            msg.textContent = '';
+            preview.innerHTML = '';
+            return;
+        }
+
+        const result = this.validateCalcCardNos(raw);
+        if (!result.valid) {
+            msg.textContent = result.reason;
+            preview.innerHTML = '';
+            return;
+        }
+
+        const requirement = this.calcTrainingRequirement;
+        const invalidRarity = result.cards.find(card => requirement && card.rarity !== requirement.rarity);
+        if (invalidRarity) {
+            msg.textContent = `${invalidRarity.cardName}は${requirement.rarity}カードではありません`;
+            preview.innerHTML = '';
+            return;
+        }
+
+        msg.textContent = '';
+        preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
+    }
+
+    updateCalcActionPreview(staff) {
+        const input = document.getElementById(`calc-action-${staff}`);
+        const msg = document.getElementById(`calc-action-msg-${staff}`);
+        const preview = document.getElementById(`calc-action-preview-${staff}`);
+        if (!input || !msg || !preview) return;
+
+        const raw = input.value.trim();
+        if (raw === '' || raw.length % 2 !== 0) {
+            msg.textContent = '';
+            preview.innerHTML = '';
+            return;
+        }
+
+        const result = this.validateCalcCardNos(raw);
+        if (!result.valid) {
+            msg.textContent = result.reason;
+            preview.innerHTML = '';
+            return;
+        }
+
+        const validation = this.validateCalcActionCards(staff, result.cards);
+        if (!validation.valid) {
+            msg.textContent = validation.reason;
+            preview.innerHTML = '';
+            return;
+        }
+
+        msg.textContent = '';
+        preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
+    }
+
+    validateCalcActionCards(staff, cards) {
+        const staffLabel = { leader: '室長', teacher: '講師', staff: '事務' }[staff];
+        const simulatedPlacedCount = this.gameState.player.placed[staff]?.length || 0;
+        const deckCounts = this.countDeckCardsByNo();
+        const usedCounts = new Map();
+        let placedCount = simulatedPlacedCount;
+
+        for (const card of cards) {
+            const normalized = this.cardManager.normalizeCardNo(card.cardNo);
+            const used = (usedCounts.get(normalized) || 0) + 1;
+            usedCounts.set(normalized, used);
+            if (used > (deckCounts.get(normalized) || 0)) {
+                return { valid: false, reason: `${card.cardName} はデッキ内枚数が不足しています` };
+            }
+
+            const allowedStaff = this.parseStaffRestriction(card.effect);
+            if (allowedStaff && !allowedStaff.includes(staffLabel)) {
+                return { valid: false, reason: `${card.cardName}は ${allowedStaff.join('・')} 専用です` };
+            }
+
+            if (!this.hasParallelEffect(card) && placedCount > 0) {
+                return { valid: false, reason: `${card.cardName}は重ね配置できません` };
+            }
+
+            placedCount++;
+        }
+
+        return { valid: true };
+    }
+
+    countDeckCardsByNo() {
+        const counts = new Map();
+        this.gameState.player.deck.forEach(card => {
+            const normalized = this.cardManager.normalizeCardNo(card.cardNo);
+            if (!normalized) return;
+            counts.set(normalized, (counts.get(normalized) || 0) + 1);
+        });
+        return counts;
+    }
+
+    buildCalcPreviewHTML(cards) {
+        if (cards.length === 0) return '';
+        return cards.map(card => {
+            const no = String(card.cardNo || '').padStart(2, '0');
+            return `<div class="calc-preview-card">No.${this._escapeHTML(no)} ${this._escapeHTML(card.cardName)} <span>${this._escapeHTML(card.rarity)} / ${this._escapeHTML(card.category)}</span></div>`;
+        }).join('');
     }
 
     /**

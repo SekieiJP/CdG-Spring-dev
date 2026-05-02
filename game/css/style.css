@@ -2020,6 +2020,28 @@ html.font-normal .compact-stats {
     font-size: 0.8rem;
 }
 
+.calc-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 1.2em;
+}
+
+.calc-preview-card {
+    padding: 6px 8px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-light);
+    color: var(--color-text);
+    font-size: 0.85rem;
+    line-height: 1.35;
+}
+
+.calc-preview-card span {
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+}
+
 .calc-action-inputs {
     margin: 14px 0;
 }
