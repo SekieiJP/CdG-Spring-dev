@@ -629,6 +629,28 @@ test.describe('[情熱✊] トークン効果テスト', () => {
         await expect(page.locator('#hand-cards .card')).toHaveCount(6);
     });
 
+    test('ドロー変動通知はスタッフスロット下・手札上に表示される', async ({ page }) => {
+        await page.evaluate(() => {
+            const game = window.game;
+            game.gameState.tokens.passion = 2;
+            game.gameState.tokens.fatigue = 0;
+            game.gameState.player.hand = [];
+            game.gameState.player.deck = [...(game.cardManager.allCards.slice(0, 10))];
+            game.turnManager.startActionPhase();
+            game.uiController.showActionPhase();
+        });
+
+        await expect(page.locator('#draw-notification')).toContainText('✊情熱 +2');
+        const order = await page.evaluate(() => {
+            const staffArea = document.querySelector('.staff-area');
+            const drawNotification = document.querySelector('#draw-notification');
+            const handArea = document.querySelector('.hand-area');
+            return staffArea.compareDocumentPosition(drawNotification) === Node.DOCUMENT_POSITION_FOLLOWING &&
+                drawNotification.compareDocumentPosition(handArea) === Node.DOCUMENT_POSITION_FOLLOWING;
+        });
+        expect(order).toBe(true);
+    });
+
     test('疲労トークン1つで手札が3枚になる', async ({ page }) => {
         await page.evaluate(() => {
             const game = window.game;

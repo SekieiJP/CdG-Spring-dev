@@ -462,6 +462,15 @@ export class CardManager {
             };
         }
 
+        // 残りターン条件（例: 残り2ターン以上）
+        const remainingTurnMatch = conditionText.match(/残り(\d+)ターン以上/);
+        if (remainingTurnMatch) {
+            return {
+                type: 'remainingTurns',
+                value: parseInt(remainingTurnMatch[1], 10)
+            };
+        }
+
         // 不明な条件
         return { type: 'unknown', raw: conditionText };
     }
@@ -544,6 +553,12 @@ export class CardManager {
             return condition.comparison === 'gte' ? diff >= condition.value : diff <= condition.value;
         }
 
+        if (condition.type === 'remainingTurns') {
+            const currentTurn = Number.isInteger(gameState.turn) ? gameState.turn : 0;
+            const totalTurns = Number.isInteger(gameState.totalTurns) ? gameState.totalTurns : 8;
+            return totalTurns - currentTurn >= condition.value;
+        }
+
         // 不明な条件は適用しない
         return false;
     }
@@ -576,7 +591,7 @@ export class CardManager {
             accounting: gameState.player.accounting
         };
 
-        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot);
+        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot, gameState);
         const costStats = options.costStats || gameState.player;
         const shortageEffects = this.getCostShortageEffects(applicableEffects, costStats);
         if (shortageEffects.length > 0) {
@@ -590,8 +605,13 @@ export class CardManager {
         });
 
         // 条件付き効果を評価・適用
+        const conditionContext = {
+            player: statsSnapshot,
+            turn: gameState?.turn,
+            totalTurns: gameState?.totalTurns
+        };
         parsed.conditionalBlocks.forEach(block => {
-            if (this.evaluateCondition(block.condition, staff, { player: statsSnapshot })) {
+            if (this.evaluateCondition(block.condition, staff, conditionContext)) {
                 const conditionName = this.getConditionName(block.condition);
                 this.logger?.log(`  条件成立: ${conditionName}`, 'info');
                 block.effects.forEach(effect => {
@@ -606,11 +626,16 @@ export class CardManager {
     /**
      * 指定スタッフ・条件で実際に発揮予定の効果を取得
      */
-    getApplicableEffects(parsed, staff, statsSnapshot) {
+    getApplicableEffects(parsed, staff, statsSnapshot, gameState = null) {
         const effects = [...parsed.baseEffects];
+        const conditionContext = {
+            player: statsSnapshot,
+            turn: gameState?.turn,
+            totalTurns: gameState?.totalTurns
+        };
 
         parsed.conditionalBlocks.forEach(block => {
-            if (this.evaluateCondition(block.condition, staff, { player: statsSnapshot })) {
+            if (this.evaluateCondition(block.condition, staff, conditionContext)) {
                 effects.push(...block.effects);
             }
         });
@@ -673,11 +698,11 @@ export class CardManager {
     /**
      * 実ステータスを変えずに、カード1枚の適用結果を予測する
      */
-    simulateCardEffect(card, staff, stats, recommendedStatus = null) {
+    simulateCardEffect(card, staff, stats, recommendedStatus = null, gameState = null) {
         const beforeStats = { ...stats };
         const parsed = this.parseEffect(card.effect || '');
         const statsSnapshot = { ...beforeStats };
-        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot);
+        const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot, gameState);
         const shortageEffects = this.getCostShortageEffects(applicableEffects, beforeStats);
 
         if (shortageEffects.length > 0) {
@@ -775,6 +800,9 @@ export class CardManager {
             };
             const compText = condition.comparison === 'gte' ? '以上' : '以下';
             return `${statNames[condition.stat1] || condition.stat1}と${statNames[condition.stat2] || condition.stat2}の差が${condition.value}${compText}`;
+        }
+        if (condition.type === 'remainingTurns') {
+            return `残り${condition.value}ターン以上`;
         }
         return condition.raw || '不明';
     }

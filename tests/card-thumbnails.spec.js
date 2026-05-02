@@ -44,4 +44,27 @@ test.describe('カード画像サムネイル', () => {
         await expect(animationItem.locator('.anim-card-thumbnail')).toBeVisible();
         await expect(animationItem.locator('.anim-card-thumbnail')).toHaveAttribute('src', /data\/cardIcon\/icon06\.png/);
     });
+
+    test('スロット指定モードのカード選択では手札サムネイルDOMを再生成しない', async ({ page }) => {
+        await page.locator('#start-game').click();
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+        await page.locator('#training-cards .card').nth(0).click();
+        await page.locator('#training-cards .card').nth(1).click();
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+        await page.waitForSelector('#hand-cards .card-thumbnail', { timeout: 10000 });
+
+        await page.evaluate(() => {
+            window.__firstHandThumbnail = document.querySelector('#hand-cards .card-thumbnail');
+        });
+
+        await page.locator('#btn-slot-manual').click();
+        await page.locator('#hand-cards .card').first().click();
+
+        const sameNode = await page.evaluate(() =>
+            window.__firstHandThumbnail === document.querySelector('#hand-cards .card-thumbnail')
+        );
+        expect(sameNode).toBe(true);
+        await expect(page.locator('#hand-cards .card').first()).toHaveClass(/selected-for-placement/);
+    });
 });

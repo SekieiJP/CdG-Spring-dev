@@ -117,6 +117,77 @@ test.describe('計算機モード', () => {
         await expect(page.locator('#calc-action-teacher')).toBeFocused();
     });
 
+    test('スタッフ配置入力からフォーカスが外れるとプレビューを配置に反映する', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-action-leader').fill('06');
+        await expect(page.locator('#calc-action-preview-leader')).toContainText('チラシ折り');
+        await page.locator('#calc-action-teacher').focus();
+
+        await expect(page.locator('#slot-leader .card')).toContainText('チラシ折り');
+        await expect(page.locator('#calc-action-preview-leader')).toBeEmpty();
+        await expect(page.locator('#action-area')).not.toHaveClass(/hidden/);
+    });
+
+    test('事務入力欄のblurは配置反映のみで行動確定しない', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-action-staff').fill('06');
+        await page.locator('#confirm-action').focus();
+
+        await expect(page.locator('#slot-staff .card')).toContainText('チラシ折り');
+        await expect(page.locator('#status-animation-overlay')).toHaveClass(/hidden/);
+        await expect(page.locator('#action-area')).not.toHaveClass(/hidden/);
+    });
+
+    test('計算機モードで配置済みカードをタップ取消すると入力欄からNoを消し、デッキに戻す', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-action-leader').fill('06');
+        await page.locator('#calc-action-leader').press('Enter');
+        await expect(page.locator('#slot-leader .card')).toContainText('チラシ折り');
+
+        await page.locator('#slot-leader .card').click();
+
+        await expect(page.locator('#calc-action-leader')).toHaveValue('');
+        await expect(page.locator('#slot-leader .card')).toHaveCount(0);
+        const cardLocation = await page.evaluate(() => {
+            const game = window.game;
+            return {
+                deckCount: game.gameState.player.deck
+                    .filter(card => game.cardManager.normalizeCardNo(card.cardNo) === '6').length,
+                handCount: game.gameState.player.hand
+                    .filter(card => game.cardManager.normalizeCardNo(card.cardNo) === '6').length
+            };
+        });
+        expect(cardLocation.deckCount).toBe(1);
+        expect(cardLocation.handCount).toBe(0);
+
+        await page.locator('#calc-action-leader').fill('06');
+        await page.locator('#calc-action-leader').press('Enter');
+
+        await expect(page.locator('#calc-action-msg-leader')).toBeEmpty();
+        await expect(page.locator('#slot-leader .card')).toContainText('チラシ折り');
+    });
+
     test('最後のスタッフ入力欄で99を入力すると空欄扱いで行動確定する', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#calc-mode-row .toggle-slider').click();

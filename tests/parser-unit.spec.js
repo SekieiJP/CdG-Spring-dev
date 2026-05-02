@@ -309,6 +309,22 @@ test.describe('条件評価テスト', () => {
         });
         expect(result).toBe(true);
     });
+
+    test('残りターン条件「残り2ターン以上」が正しく評価される', async () => {
+        const result = await page.evaluate(() => {
+            const parsed = window.testCardManager.parseEffect('【室長】〈残り2ターン以上〉体験+3、入塾+3、満足+7、経理-4。');
+            const condition = parsed.conditionalBlocks[0].condition;
+            return {
+                condition,
+                turn6: window.testCardManager.evaluateCondition(condition, 'leader', { player: {}, turn: 6 }),
+                turn7: window.testCardManager.evaluateCondition(condition, 'leader', { player: {}, turn: 7 })
+            };
+        });
+
+        expect(result.condition).toEqual({ type: 'remainingTurns', value: 2 });
+        expect(result.turn6).toBe(true);
+        expect(result.turn7).toBe(false);
+    });
 });
 
 test.describe('コスト不足によるカード効果無効化', () => {
@@ -434,5 +450,40 @@ test.describe('コスト不足によるカード効果無効化', () => {
         expect(result.perCard.recommendedApplied).toBe(false);
         expect(result.player.experience).toBe(0);
         expect(result.player.satisfaction).toBe(0);
+    });
+
+    test('PROリフォームの残りターン条件成立時に条件効果が適用される', async () => {
+        const result = await page.evaluate(() => {
+            const gameState = {
+                turn: 6,
+                player: { experience: 1, enrollment: 1, satisfaction: 1, accounting: 4 },
+                tokens: { passion: 0, inspiration: 0, organize: 0, fatigue: 0 },
+                updateStatus(type, delta) {
+                    const oldValue = this.player[type];
+                    let newValue = Math.max(0, oldValue + delta);
+                    if (type === 'enrollment') {
+                        newValue = Math.min(newValue, this.player.experience);
+                    }
+                    this.player[type] = newValue;
+                    return newValue - oldValue;
+                }
+            };
+            const card = {
+                cardName: '明るく広く！教室リフォーム',
+                effect: '【室長】〈残り2ターン以上〉[疲労💤][疲労💤][発想💡][整理🗑️][整理🗑️]体験+3、入塾+3、満足+7、経理-4。'
+            };
+
+            const applied = window.testCardManager.applyCardEffect(card, 'leader', gameState);
+            return { applied, player: gameState.player, tokens: gameState.tokens };
+        });
+
+        expect(result.applied.applied).toBe(true);
+        expect(result.player.experience).toBe(4);
+        expect(result.player.enrollment).toBe(4);
+        expect(result.player.satisfaction).toBe(8);
+        expect(result.player.accounting).toBe(0);
+        expect(result.tokens.fatigue).toBe(2);
+        expect(result.tokens.inspiration).toBe(1);
+        expect(result.tokens.organize).toBe(2);
     });
 });

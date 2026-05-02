@@ -901,7 +901,7 @@ export class UIController {
                 // 別のカードをタップ → 選択切り替え
                 this.selectedCardForPlacement = card;
             }
-            this.renderHand(); // ハイライト更新
+            this.updateHandSelectionHighlight();
             return;
         }
         // 自動配置モード（既存挙動）
@@ -923,7 +923,17 @@ export class UIController {
                 : 'スロット手動指定: OFF（タップで自動配置）';
         }
         // 選択中ハイライトを解除
-        this.renderHand();
+        this.updateHandSelectionHighlight();
+    }
+
+    updateHandSelectionHighlight() {
+        const cardElems = document.querySelectorAll('#hand-cards .card');
+        cardElems.forEach((cardElem, index) => {
+            cardElem.classList.toggle(
+                'selected-for-placement',
+                this.slotSelectionMode && this.gameState.player.hand[index] === this.selectedCardForPlacement
+            );
+        });
     }
 
     /**
@@ -983,7 +993,7 @@ export class UIController {
             for (const placedCard of simulatedPlaced[slot]) {
                 const isRecommended = !!(config?.recommended && placedCard.category === config.recommended);
                 const recommendedStatus = isRecommended ? config.recommendedStatus : null;
-                const result = this.cardManager.simulateCardEffect(placedCard, slot, stats, recommendedStatus);
+                const result = this.cardManager.simulateCardEffect(placedCard, slot, stats, recommendedStatus, this.gameState);
 
                 if (placedCard === card) {
                     return !result.applied && result.skippedReason === 'cost_shortage';
@@ -1106,6 +1116,16 @@ export class UIController {
                 }
                 continue;
             }
+
+            const remainingTurnMatch = condition.match(/残り(\d+)ターン以上/);
+            if (remainingTurnMatch) {
+                const required = parseInt(remainingTurnMatch[1], 10);
+                const remaining = 8 - (this.gameState.turn || 0);
+                if (remaining < required) {
+                    unmetConditions.push(condition);
+                }
+                continue;
+            }
         }
 
         return unmetConditions;
@@ -1180,7 +1200,12 @@ export class UIController {
         }
 
         this.gameState.removePlacedCard(card, staff);
-        this.gameState.addToHand(card);
+        if (this.gameState.calcMode) {
+            this.removeCalcActionInputCard(staff, card);
+            this.gameState.player.deck.push(card);
+        } else {
+            this.gameState.addToHand(card);
+        }
 
         const slot = document.getElementById(`slot-${staff}`);
         if (slot) {
@@ -1195,6 +1220,23 @@ export class UIController {
 
         this.renderHand();
         this.updateActionButtonState();
+    }
+
+    removeCalcActionInputCard(staff, card) {
+        const input = document.getElementById(`calc-action-${staff}`);
+        if (!input) return;
+
+        const targetNo = this.cardManager.normalizeCardNo(card?.cardNo);
+        if (!targetNo) return;
+        const raw = input.value || '';
+        const pairs = raw.match(/\d{1,2}/g) || [];
+        const removeIndex = pairs.findIndex(pair => this.cardManager.normalizeCardNo(pair) === targetNo);
+        if (removeIndex === -1) return;
+
+        pairs.splice(removeIndex, 1);
+        input.value = pairs.join('');
+        document.getElementById(`calc-action-msg-${staff}`)?.replaceChildren();
+        this.updateCalcActionPreview(staff);
     }
 
     /**
@@ -1232,7 +1274,6 @@ export class UIController {
                 // クリックが子要素（配置済みカード）由来でも親スロットのstaffを使う
                 const card = this.selectedCardForPlacement;
                 this.selectedCardForPlacement = null;
-                this.renderHand(); // ハイライト解除
                 this.tryPlaceCardToSlot(card, staff);
             };
         });
@@ -3161,6 +3202,9 @@ export class UIController {
                     this.confirmCalcActionByStaff(staff);
                 }
             });
+            input?.addEventListener('blur', () => {
+                window.setTimeout(() => this.confirmCalcStaffInput(staff), 0);
+            });
         });
 
         const instruction = document.querySelector('#action-area .instruction');
@@ -3425,6 +3469,7 @@ export class UIController {
         this.renderStaffSlot(staff);
         this.updateActionButtonState();
         if (msg) msg.textContent = '';
+        document.getElementById(`calc-action-preview-${staff}`)?.replaceChildren();
         return true;
     }
 

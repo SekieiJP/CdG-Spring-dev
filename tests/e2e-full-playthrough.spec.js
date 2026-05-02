@@ -89,6 +89,7 @@ function assertScorePayload(capturedPayload, expectedDifficulty = 'fresh') {
     // ビルド・難易度
     expect(capturedPayload.buildVersion).toBeTruthy();
     expect(capturedPayload.difficulty).toBe(expectedDifficulty);
+    expect(capturedPayload.mode).toBe('通常');
 
     // スコア数値フィールド
     expect(typeof capturedPayload.experience).toBe('number');

@@ -34,6 +34,7 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         buildVersion: window.BUILD_VERSION || 'unknown',
         userUUID: getOrCreateUserUUID(),
         difficulty: gameState.difficulty || 'fresh',
+        mode: gameState.calcMode ? '計算機' : '通常',
         experience: score.experience,
         enrollment: score.enrollment,
         satisfaction: score.satisfaction,

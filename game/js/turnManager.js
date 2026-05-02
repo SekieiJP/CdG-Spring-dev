@@ -194,7 +194,7 @@ export class TurnManager {
                     };
 
                     const isRecommended = !!(config.recommended && card.category === config.recommended);
-                    const costCheck = this.cardManager.simulateCardEffect(card, staff, beforeStats, null);
+                    const costCheck = this.cardManager.simulateCardEffect(card, staff, beforeStats, null, this.gameState);
                     let effectResult = costCheck;
                     let recommendedAppliedForCard = false;
 

@@ -50,6 +50,11 @@ function validatePayload(data) {
         return 'invalid field: difficulty';
     }
 
+    // mode: '通常' または '計算機' のみ（古いクライアントは未送信を許容）
+    if (data.mode != null && data.mode !== '通常' && data.mode !== '計算機') {
+        return 'invalid field: mode';
+    }
+
     // userUUID: 文字列、40文字以内（任意項目）
     if (data.userUUID != null) {
         if (typeof data.userUUID !== 'string' || data.userUUID.length > 40) {
@@ -105,6 +110,7 @@ function doPost(e) {
 
         // デバッグログ: 受信データの概要を記録
         console.log('[scoreReceiver] received: difficulty=' + data.difficulty
+            + ', mode=' + (data.mode || '通常')
             + ', grade=' + data.grade
             + ', displayScore=' + data.displayScore
             + ', buildVersion=' + (data.buildVersion || '')
@@ -132,7 +138,7 @@ function doPost(e) {
                 sheet.appendRow([
                     '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
                     '利用者UUID',
-                    '難易度', '体験', '入塾', '満足', '経理',
+                    '難易度', 'モード', '体験', '入塾', '満足', '経理',
                     '総合スコア', 'ランク', '目標ポイント',
                     '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
                 ]);
@@ -146,6 +152,7 @@ function doPost(e) {
                 sanitizeForSheet(data.buildVersion || ''),
                 sanitizeForSheet(data.userUUID || ''),
                 sanitizeForSheet(data.difficulty || ''),
+                sanitizeForSheet(data.mode || '通常'),
                 data.experience, data.enrollment, data.satisfaction, data.accounting,
                 data.displayScore,
                 sanitizeForSheet(data.grade),

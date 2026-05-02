@@ -75,6 +75,59 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         expect(startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
 
+    test('スコア送信payloadに通常/計算機モードを含める', async ({ page }) => {
+        await page.goto('/');
+
+        const payloads = await page.evaluate(async () => {
+            const captured = [];
+            const originalFetch = window.fetch;
+            window.fetch = async (_url, options) => {
+                captured.push(JSON.parse(options.body));
+                return {
+                    ok: true,
+                    json: async () => ({ status: 'ok' })
+                };
+            };
+
+            try {
+                const { submitScore } = await import('./js/scoreSubmitter.js?v=test');
+                const baseScore = {
+                    experience: 1,
+                    enrollment: 1,
+                    satisfaction: 3,
+                    accounting: 3,
+                    displayScore: 0,
+                    rank: { grade: 'D' },
+                    points: 0,
+                    withdrawal: 0,
+                    mobilization: 1,
+                    enrollmentDiff: 1
+                };
+                const finalDeck = [{ cardName: 'チラシ折り' }];
+                const logger = { log() {} };
+
+                await submitScore({
+                    startedAt: '2026-05-03T00:00:00.000Z',
+                    difficulty: 'fresh',
+                    calcMode: false,
+                    discardedCards: []
+                }, baseScore, finalDeck, logger);
+                await submitScore({
+                    startedAt: '2026-05-03T00:01:00.000Z',
+                    difficulty: 'fresh',
+                    calcMode: true,
+                    discardedCards: []
+                }, baseScore, finalDeck, logger);
+            } finally {
+                window.fetch = originalFetch;
+            }
+
+            return captured.map(payload => payload.mode);
+        });
+
+        expect(payloads).toEqual(['通常', '計算機']);
+    });
+
     test('ゲーム終了時にスコア送信ログが出る（エンドポイント未設定 → 設定済みのためfetch試行）', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
 
