@@ -38,40 +38,80 @@ export class CardManager {
      * CSVテキストをパース（quoted fields対応）
      */
     parseCSV(csvText) {
-        const lines = csvText.trim().split('\n');
+        const rows = this.parseCSVRows(csvText.trim());
 
         // ヘッダー行をスキップ
-        for (let i = 1; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-
-            // quoted fields対応のCSVパース
-            const parts = this.parseCSVLine(line);
+        for (let i = 1; i < rows.length; i++) {
+            const parts = rows[i].map(part => part.trim());
+            if (parts.length === 0 || parts.every(part => !part)) continue;
 
             if (parts.length >= 5) {
                 // cardsV2.csv形式: category, rarity, cardName, topEffect, effect
                 const card = {
-                    category: parts[0].trim(),
-                    rarity: parts[1].trim(),
-                    cardName: parts[2].trim(),
-                    topEffect: parts[3].trim(),
-                    effect: parts[4].trim()
+                    category: parts[0],
+                    rarity: parts[1],
+                    cardName: parts[2],
+                    topEffect: parts[3],
+                    effect: parts[4]
                 };
 
                 this.allCards.push(card);
             } else if (parts.length >= 4) {
                 // 旧形式（互換性維持）: category, rarity, cardName, effect
                 const card = {
-                    category: parts[0].trim(),
-                    rarity: parts[1].trim(),
-                    cardName: parts[2].trim(),
+                    category: parts[0],
+                    rarity: parts[1],
+                    cardName: parts[2],
                     topEffect: '',
-                    effect: parts[3].trim()
+                    effect: parts[3]
                 };
 
                 this.allCards.push(card);
             }
         }
+    }
+
+    /**
+     * CSV全体をパース（quoted multiline fields対応）
+     */
+    parseCSVRows(csvText) {
+        const rows = [];
+        let row = [];
+        let current = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < csvText.length; i++) {
+            const char = csvText[i];
+
+            if (char === '"') {
+                if (inQuotes && csvText[i + 1] === '"') {
+                    current += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                row.push(current);
+                current = '';
+            } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                if (char === '\r' && csvText[i + 1] === '\n') {
+                    i++;
+                }
+                row.push(current);
+                rows.push(row);
+                row = [];
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+
+        if (current !== '' || row.length > 0) {
+            row.push(current);
+            rows.push(row);
+        }
+
+        return rows;
     }
 
     /**

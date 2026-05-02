@@ -25,6 +25,8 @@ async function main() {
 
   const oldFreshText = await readFile(paths.fresh, 'utf8');
   const oldProText = await readFile(paths.pro, 'utf8');
+  const releaseFreshBaseText = await readOptionalFile(paths.freshOld) ?? oldFreshText;
+  const releaseProBaseText = await readOptionalFile(paths.proOld) ?? oldProText;
 
   await copyFile(paths.fresh, paths.freshOld);
   await copyFile(paths.pro, paths.proOld);
@@ -64,11 +66,11 @@ async function main() {
   await writeFile(paths.pro, newProText, 'utf8');
 
   const freshChanges = diffCards(
-    normalizeDifficultyRows(parseCsvWithHeader(oldFreshText, paths.fresh).records, 'fresh'),
+    normalizeDifficultyRows(parseCsvWithHeader(releaseFreshBaseText, paths.freshOld).records, 'fresh'),
     normalizeDifficultyRows(parseCsvWithHeader(newFreshText, paths.fresh).records, 'fresh'),
   );
   const proChanges = diffCards(
-    normalizeDifficultyRows(parseCsvWithHeader(oldProText, paths.pro).records, 'pro'),
+    normalizeDifficultyRows(parseCsvWithHeader(releaseProBaseText, paths.proOld).records, 'pro'),
     normalizeDifficultyRows(parseCsvWithHeader(newProText, paths.pro).records, 'pro'),
   );
 
@@ -77,7 +79,18 @@ async function main() {
   console.log(`Updated ${path.relative(repoRoot, paths.fresh)} (${freshRows.length} rows)`);
   console.log(`Updated ${path.relative(repoRoot, paths.pro)} (${proRows.length} rows)`);
   console.log(`Backed up previous CSVs to ${path.relative(repoRoot, paths.freshOld)} and ${path.relative(repoRoot, paths.proOld)}`);
-  console.log(`Prepended release note slide with ${freshChanges.length + proChanges.length} change rows`);
+  console.log(`Updated release note slides with ${freshChanges.length + proChanges.length} change rows`);
+}
+
+async function readOptionalFile(filePath) {
+  try {
+    return await readFile(filePath, 'utf8');
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      return null;
+    }
+    throw error;
+  }
 }
 
 function parseCsvWithHeader(csvText, sourceName) {
@@ -212,8 +225,7 @@ function rowsByCardNameOccurrence(rows) {
 }
 
 function hasCardChanged(before, after) {
-  return ['category', 'rarity', 'topEffect', 'effect', 'cardNo']
-    .some((key) => before[key] !== after[key]);
+  return before.effect !== after.effect;
 }
 
 async function prependReleaseNoteSlide(freshChanges, proChanges) {
@@ -225,24 +237,75 @@ async function prependReleaseNoteSlide(freshChanges, proChanges) {
     throw new Error('Could not find slide-container in releaseNote.html');
   }
 
+  const title = `${formatJapaneseDate(new Date())} アップデート`;
   const activeRemoved = releaseNoteText.replaceAll(/<div class="slide active">/g, '<div class="slide">');
-  const updatedMatch = activeRemoved.match(slideContainerStart);
+  const replaced = removeAutoUpdateSlides(activeRemoved, title);
+  const updatedMatch = replaced.match(slideContainerStart);
   const insertAt = updatedMatch.index + updatedMatch[0].length;
-  const nextText = `${activeRemoved.slice(0, insertAt)}\n${buildReleaseNoteSlide(freshChanges, proChanges)}${activeRemoved.slice(insertAt)}`;
+  const nextText = `${replaced.slice(0, insertAt)}\n${buildReleaseNoteSlides(title, freshChanges, proChanges)}${replaced.slice(insertAt)}`;
 
   await writeFile(paths.releaseNote, nextText, 'utf8');
 }
 
-function buildReleaseNoteSlide(freshChanges, proChanges) {
-  const title = `${formatJapaneseDate(new Date())} アップデート`;
+function removeAutoUpdateSlides(html, title) {
+  let result = html;
+  const commentPrefix = `<!-- Slide: ${title}`;
 
-  return `            <!-- Slide: ${escapeHtml(title)} カード自動更新 -->\n` +
-    `            <div class="slide active">\n` +
+  while (true) {
+    const commentStart = result.indexOf(commentPrefix);
+    if (commentStart === -1) return result;
+
+    const commentEnd = result.indexOf('-->', commentStart);
+    if (commentEnd === -1 || !result.slice(commentStart, commentEnd).includes('カード自動更新')) {
+      return result;
+    }
+
+    const slideStart = result.indexOf('<div class="slide', commentEnd);
+    if (slideStart === -1) return result;
+
+    const slideEnd = findMatchingDivEnd(result, slideStart);
+    if (slideEnd === -1) return result;
+
+    let removeEnd = slideEnd;
+    while (removeEnd < result.length && /\s/.test(result[removeEnd])) {
+      removeEnd++;
+    }
+    result = `${result.slice(0, commentStart)}${result.slice(removeEnd)}`;
+  }
+}
+
+function findMatchingDivEnd(html, divStart) {
+  const divRegex = /<\/?div\b[^>]*>/g;
+  divRegex.lastIndex = divStart;
+  let depth = 0;
+  let match;
+
+  while ((match = divRegex.exec(html)) !== null) {
+    if (match[0].startsWith('</div')) {
+      depth--;
+      if (depth === 0) {
+        return divRegex.lastIndex;
+      }
+    } else {
+      depth++;
+    }
+  }
+
+  return -1;
+}
+
+function buildReleaseNoteSlides(title, freshChanges, proChanges) {
+  return buildReleaseNoteSlide(title, 'FRESH', freshChanges, true) +
+    buildReleaseNoteSlide(title, 'PRO', proChanges, false);
+}
+
+function buildReleaseNoteSlide(title, label, changes, active) {
+  return `            <!-- Slide: ${escapeHtml(title)} ${escapeHtml(label)} カード自動更新 -->\n` +
+    `            <div class="slide${active ? ' active' : ''}">\n` +
     `                <div class="slide-content" style="justify-content: flex-start;">\n` +
-    `                    <h2>${escapeHtml(title)}</h2>\n` +
+    `                    <h2>${escapeHtml(title)} [${escapeHtml(label)}]</h2>\n` +
     `                    <p style="margin-bottom: 10px;">カード改訂一覧</p>\n` +
-    buildChangeSection('FRESH', freshChanges) +
-    buildChangeSection('PRO', proChanges) +
+    buildChangeTable(changes) +
     `                </div>\n` +
     `            </div>\n`;
 }
@@ -261,18 +324,16 @@ function formatJapaneseDate(date) {
   return `${month}/${day}(${weekday})`;
 }
 
-function buildChangeSection(label, changes) {
+function buildChangeTable(changes) {
   const body = changes.length > 0
     ? changes.map(buildChangeRow).join('')
-    : `                                <tr><td colspan="4" style="padding: 6px 4px; color: var(--color-text-secondary);">変更なし</td></tr>\n`;
+    : `                                <tr><td colspan="3" style="padding: 6px 4px; color: var(--color-text-secondary);">変更なし</td></tr>\n`;
 
-  return `                    <h3 style="margin: 16px 0 8px; text-align: left;">${escapeHtml(label)}</h3>\n` +
-    `                    <div style="overflow-x: auto; margin-bottom: 12px;">\n` +
+  return `                    <div style="overflow-x: auto; margin-bottom: 12px;">\n` +
     `                        <table style="width: 100%; border-collapse: collapse; font-size: 0.78rem; text-align: left;">\n` +
     `                            <thead>\n` +
     `                                <tr style="border-bottom: 2px solid var(--color-border);">\n` +
     `                                    <th style="padding: 6px 4px; min-width: 7em;">カード名</th>\n` +
-    `                                    <th style="padding: 6px 4px; min-width: 4em;">変更種別</th>\n` +
     `                                    <th style="padding: 6px 4px; min-width: 12em;">改訂前</th>\n` +
     `                                    <th style="padding: 6px 4px; min-width: 12em;">改訂後</th>\n` +
     `                                </tr>\n` +
@@ -286,7 +347,6 @@ function buildChangeSection(label, changes) {
 function buildChangeRow(change) {
   return `                                <tr style="border-bottom: 1px solid var(--color-border);">\n` +
     `                                    <td style="padding: 6px 4px; vertical-align: top;">${escapeHtml(change.cardName)}</td>\n` +
-    `                                    <td style="padding: 6px 4px; vertical-align: top;">${escapeHtml(change.type)}</td>\n` +
     `                                    <td style="padding: 6px 4px; vertical-align: top; color: var(--color-text-secondary);">${formatChangeValue(change.before)}</td>\n` +
     `                                    <td style="padding: 6px 4px; vertical-align: top;">${formatChangeValue(change.after)}</td>\n` +
     `                                </tr>\n`;
@@ -297,15 +357,7 @@ function formatChangeValue(value) {
     return '-';
   }
 
-  return [
-    `${value.category}${value.rarity}`,
-    value.topEffect,
-    value.effect,
-    value.cardNo ? `No.${value.cardNo}` : '',
-  ]
-    .filter(Boolean)
-    .map(escapeHtml)
-    .join('<br>');
+  return escapeHtml(value.effect || '-').replaceAll(/\r?\n/g, '<br>');
 }
 
 function escapeHtml(value) {

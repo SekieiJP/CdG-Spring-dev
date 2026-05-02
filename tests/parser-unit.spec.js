@@ -154,37 +154,19 @@ test.describe('効果テキストパーサー単体テスト', () => {
         const results = await page.evaluate(async () => {
             const response = await fetch('./data/cards_pro.csv');
             const csvText = await response.text();
-            const lines = csvText.trim().split('\n').slice(1); // ヘッダースキップ
+            window.testCardManager.allCards = [];
+            window.testCardManager.parseCSV(csvText);
 
             const parseResults = [];
-            for (const line of lines) {
-                const parts = [];
-                let current = '';
-                let inQuotes = false;
-                for (const char of line) {
-                    if (char === '"') {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        parts.push(current);
-                        current = '';
-                    } else {
-                        current += char;
-                    }
-                }
-                parts.push(current);
-
-                if (parts.length >= 5) {
-                    const cardName = parts[2].trim();
-                    const effectText = parts[4].trim(); // effectPro列
-                    try {
-                        const parsed = window.testCardManager.parseEffect(effectText);
-                        const hasContent = parsed.baseEffects.length > 0
-                            || parsed.conditionalBlocks.length > 0
-                            || parsed.staffRestrictions.length > 0;
-                        parseResults.push({ cardName, effect: effectText, parsed, success: true, hasContent });
-                    } catch (e) {
-                        parseResults.push({ cardName, effect: effectText, error: e.message, success: false, hasContent: false });
-                    }
+            for (const card of window.testCardManager.allCards) {
+                try {
+                    const parsed = window.testCardManager.parseEffect(card.effect);
+                    const hasContent = parsed.baseEffects.length > 0
+                        || parsed.conditionalBlocks.length > 0
+                        || parsed.staffRestrictions.length > 0;
+                    parseResults.push({ cardName: card.cardName, effect: card.effect, parsed, success: true, hasContent });
+                } catch (e) {
+                    parseResults.push({ cardName: card.cardName, effect: card.effect, error: e.message, success: false, hasContent: false });
                 }
             }
             return parseResults;
@@ -195,6 +177,88 @@ test.describe('効果テキストパーサー単体テスト', () => {
             console.log('PRO パース失敗カード:', failures);
         }
         expect(failures).toHaveLength(0);
+    });
+
+    test('実PRO CSVのごほうび差し入れスイーツ効果を最後まで読み込める', async () => {
+        const result = await page.evaluate(async () => {
+            const response = await fetch('./data/cards_pro.csv');
+            const csvText = await response.text();
+            window.testCardManager.allCards = [];
+            window.testCardManager.parseCSV(csvText);
+
+            const card = window.testCardManager.allCards
+                .find(card => card.cardName === 'ごほうび差し入れスイーツ');
+            const parsed = window.testCardManager.parseEffect(card.effect);
+
+            return {
+                effect: card.effect,
+                changes: parsed.baseEffects.filter(effect => effect.type === 'change')
+                    .map(effect => `${effect.status}:${effect.value}`),
+                tokens: parsed.baseEffects.filter(effect => effect.type === 'token')
+                    .map(effect => effect.token)
+            };
+        });
+
+        expect(result.effect).toContain('体験+1、入塾+1、満足+1。');
+        expect(result.changes).toEqual(expect.arrayContaining([
+            'experience:1',
+            'enrollment:1',
+            'satisfaction:1'
+        ]));
+        expect(result.tokens.filter(token => token === 'passion')).toHaveLength(2);
+    });
+
+    test('複数行CSVフィールドのカード効果を最後まで読み込める', async () => {
+        const result = await page.evaluate(() => {
+            const csv = [
+                'category,rarity,cardName,topEffect,effect,cardNo',
+                '庶務,SR,ごほうび差し入れスイーツ,"[長]✊, ✊, 体1, 入1, 満1","【室長】[情熱✊][情熱✊]',
+                '体験+1、入塾+1、満足+1。",40'
+            ].join('\n');
+
+            window.testCardManager.allCards = [];
+            window.testCardManager.parseCSV(csv);
+            const card = window.testCardManager.allCards[0];
+            const parsed = window.testCardManager.parseEffect(card.effect);
+            const gameState = {
+                player: { experience: 0, enrollment: 0, satisfaction: 0, accounting: 5 },
+                tokens: { passion: 0, inspiration: 0, organize: 0, fatigue: 0 },
+                updateStatus(type, delta) {
+                    const oldValue = this.player[type];
+                    let newValue = Math.max(0, oldValue + delta);
+                    if (type === 'enrollment') {
+                        newValue = Math.min(newValue, this.player.experience);
+                    }
+                    this.player[type] = newValue;
+                    return newValue - oldValue;
+                }
+            };
+            window.testCardManager.applyCardEffect(card, 'leader', gameState);
+
+            return {
+                count: window.testCardManager.allCards.length,
+                effect: card.effect,
+                changes: parsed.baseEffects.filter(effect => effect.type === 'change')
+                    .map(effect => `${effect.status}:${effect.value}`),
+                tokens: parsed.baseEffects.filter(effect => effect.type === 'token')
+                    .map(effect => effect.token),
+                player: gameState.player,
+                appliedTokens: gameState.tokens
+            };
+        });
+
+        expect(result.count).toBe(1);
+        expect(result.effect).toContain('体験+1、入塾+1、満足+1。');
+        expect(result.changes).toEqual(expect.arrayContaining([
+            'experience:1',
+            'enrollment:1',
+            'satisfaction:1'
+        ]));
+        expect(result.tokens.filter(token => token === 'passion')).toHaveLength(2);
+        expect(result.player.experience).toBe(1);
+        expect(result.player.enrollment).toBe(1);
+        expect(result.player.satisfaction).toBe(1);
+        expect(result.appliedTokens.passion).toBe(2);
     });
 });
 
