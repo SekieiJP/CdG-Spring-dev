@@ -64,6 +64,22 @@ test.describe('スロット指定モード: 並行カード重ね配置', () => 
 });
 
 test.describe('startedAt 記録とスコア送信ログ', () => {
+    test('PROのスケジュール一覧はrankPro.csvの換算表レンジを表示する', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#btn-difficulty-pro');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        await page.click('#btn-schedule-full');
+
+        const overlay = page.locator('.info-overlay');
+        await expect(overlay).toContainText('📊 スコア換算表');
+        await expect(overlay).toContainText('30〜39');
+        await expect(overlay).toContainText('20〜29');
+        await expect(overlay).not.toContainText('25〜39');
+    });
+
     test('ゲーム開始時に startedAt が記録される', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
         await page.goto('/');
