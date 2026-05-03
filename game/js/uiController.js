@@ -587,6 +587,7 @@ export class UIController {
 
         // フェーズを設定（保存前に必要）
         this.gameState.phase = 'training';
+        this.markTrainingRefreshPhaseStart();
 
         if (this.gameState.calcMode) {
             this.gameState.currentTrainingCards = null;
@@ -611,6 +612,7 @@ export class UIController {
      * 研修カード描画（共通処理）
      */
     renderTrainingCards(trainingCards) {
+        this.markTrainingRefreshPhaseStart();
         const container = document.getElementById('training-cards');
         if (!container) return;
         const skipBtn = document.getElementById('btn-training-skip');
@@ -2046,6 +2048,28 @@ export class UIController {
         }
     }
 
+    markTrainingRefreshPhaseStart() {
+        this.gameState.trainingRefreshPhaseStartRemaining = this.gameState.trainingRefreshRemaining ?? 0;
+    }
+
+    getTrainingRefreshUsedInPhase() {
+        const start = this.gameState.trainingRefreshPhaseStartRemaining;
+        if (start === null || start === undefined) return 0;
+        return Math.max(0, start - (this.gameState.trainingRefreshRemaining ?? 0));
+    }
+
+    updateCalcTrainingInstruction(rarity) {
+        const instruction = document.querySelector('#training-area .instruction');
+        if (!instruction) return;
+
+        let text = `計算機モード: ${rarity}カードNoを入力してください`;
+        const usedRefresh = this.getTrainingRefreshUsedInPhase();
+        if (usedRefresh > 0) {
+            text += `【リフレッシュ${usedRefresh}回実行済み】`;
+        }
+        instruction.textContent = text;
+    }
+
     /**
      * 研修リフレッシュ実行
      */
@@ -2053,6 +2077,27 @@ export class UIController {
         const config = this.turnManager.getCurrentTurnConfig();
         const remaining = this.gameState.trainingRefreshRemaining ?? 0;
         if (remaining <= 0) return;
+
+        if (this.gameState.calcMode) {
+            this.gameState.trainingRefreshRemaining = remaining - 1;
+            this.gameState.currentTrainingCards = null;
+
+            const rarity = this.trainingSelectionMode === 'inspiration'
+                ? 'SR'
+                : (this.gameState.turn === 0 ? 'R' : config.training);
+            const input = document.getElementById('calc-training-input');
+            const msg = document.getElementById('calc-training-msg');
+            const preview = document.getElementById('calc-training-preview');
+            if (input) input.value = '';
+            if (msg) msg.textContent = '';
+            if (preview) preview.innerHTML = '';
+
+            this.updateTrainingRefreshUI(rarity);
+            this.updateCalcTrainingInstruction(rarity);
+            this.saveGameState();
+            this.logger?.log(`研修リフレッシュ実行: 残り${this.gameState.trainingRefreshRemaining}回`, 'action');
+            return;
+        }
 
         // 現在の候補カードを取得してリフレッシュ
         const currentCards = this.gameState.currentTrainingCards || [];
@@ -3032,10 +3077,12 @@ export class UIController {
             if ((this.gameState.tokens?.inspiration ?? 0) > 0) {
                 this.trainingSelectionMode = 'inspiration';
                 this.inspirationRemaining = this.gameState.tokens.inspiration;
+                this.markTrainingRefreshPhaseStart();
                 this.showCalcTrainingUI('SR', 0, this.inspirationRemaining);
             } else {
                 const rarity = this.gameState.turn === 0 ? 'R' : this.turnManager.getCurrentTurnConfig()?.training;
                 const count = this.gameState.turn === 0 ? 2 : 1;
+                this.markTrainingRefreshPhaseStart();
                 this.showCalcTrainingUI(rarity, count, count);
             }
             return;
@@ -3141,7 +3188,7 @@ export class UIController {
         this.renderTokenDisplay();
 
         document.getElementById('btn-training-skip')?.classList.add('hidden');
-        document.getElementById('btn-training-refresh')?.classList.add('hidden');
+        this.updateTrainingRefreshUI(rarity);
 
         const container = document.getElementById('training-cards');
         if (!container) return;
@@ -3163,10 +3210,7 @@ export class UIController {
             </div>
         `;
 
-        const instruction = document.querySelector('#training-area .instruction');
-        if (instruction) {
-            instruction.textContent = `計算機モード: ${rarity}カードNoを入力してください`;
-        }
+        this.updateCalcTrainingInstruction(rarity);
 
         const confirmBtn = document.getElementById('confirm-training');
         if (confirmBtn) confirmBtn.disabled = false;

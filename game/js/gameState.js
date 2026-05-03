@@ -43,6 +43,7 @@ export class GameState {
         const diffConfig = getDifficultyConfig(difficultyId || 'fresh');
         this.trainingRefreshRemaining = diffConfig.trainingRefresh?.enabled
             ? diffConfig.trainingRefresh.maxCount : 0;
+        this.trainingRefreshPhaseStartRemaining = this.trainingRefreshRemaining;
         this.startedAt = null;
         this.discardedCards = [];  // 途中で削除したカード名の一覧
 

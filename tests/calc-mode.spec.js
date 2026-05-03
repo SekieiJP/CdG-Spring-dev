@@ -23,6 +23,28 @@ test.describe('計算機モード', () => {
         await expect(page.locator('#training-area .instruction')).toContainText('計算機モード');
     });
 
+    test('PRO計算機モードの研修画面でリフレッシュ回数を表示し、2回でボタンが消える', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#btn-difficulty-pro').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await expect(page.locator('#btn-training-refresh')).toBeVisible();
+        await expect(page.locator('#training-refresh-count')).toContainText('残り2回');
+        await expect(page.locator('#training-cards .card')).toHaveCount(0);
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#btn-training-refresh').click();
+
+        await expect(page.locator('#calc-training-input')).toHaveValue('');
+        await expect(page.locator('#training-refresh-count')).toContainText('残り1回');
+        await expect(page.locator('#training-area .instruction')).toContainText('【リフレッシュ1回実行済み】');
+
+        await page.locator('#btn-training-refresh').click();
+        await expect(page.locator('#btn-training-refresh')).toBeHidden();
+        await expect(page.locator('#training-area .instruction')).toContainText('【リフレッシュ2回実行済み】');
+    });
+
     test('研修入力では同一Noを複数入力しても重複枚数理由で拒否しない', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#calc-mode-row .toggle-slider').click();
@@ -217,5 +239,29 @@ test.describe('計算機モード', () => {
         await page.locator('#calc-action-staff').press('Enter');
 
         await expect(page.locator('#status-animation-overlay')).not.toHaveClass(/hidden/, { timeout: 10000 });
+    });
+
+    test('ドロー枚数通知はヘルプ文の下、室長入力欄より前に表示される', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#btn-difficulty-pro').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+
+        const order = await page.evaluate(() => {
+            const instruction = document.querySelector('#action-area .instruction');
+            const draw = document.getElementById('draw-notification');
+            const leaderInput = document.getElementById('calc-action-leader');
+            return {
+                afterInstruction: !!(instruction.compareDocumentPosition(draw) & Node.DOCUMENT_POSITION_FOLLOWING),
+                beforeLeaderInput: !!(draw.compareDocumentPosition(leaderInput) & Node.DOCUMENT_POSITION_FOLLOWING)
+            };
+        });
+
+        expect(order.afterInstruction).toBe(true);
+        expect(order.beforeLeaderInput).toBe(true);
     });
 });
