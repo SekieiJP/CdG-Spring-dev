@@ -241,7 +241,7 @@ test.describe('計算機モード', () => {
         await expect(page.locator('#status-animation-overlay')).not.toHaveClass(/hidden/, { timeout: 10000 });
     });
 
-    test('ドロー枚数通知はヘルプ文の下、室長入力欄より前に表示される', async ({ page }) => {
+    test('ドロー枚数通知はスタッフエリア直後と実行ボタン直前の2箇所に表示される', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#btn-difficulty-pro').click();
         await page.locator('#calc-mode-row .toggle-slider').click();
@@ -251,17 +251,28 @@ test.describe('計算機モード', () => {
         await page.locator('#confirm-training').click();
         await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
 
+        await page.evaluate(() => {
+            window.game.gameState.lastDrawNotification = { passion: 2, fatigue: 0, drawCount: 6 };
+            window.game.uiController.renderDrawNotification();
+        });
+
         const order = await page.evaluate(() => {
-            const instruction = document.querySelector('#action-area .instruction');
-            const draw = document.getElementById('draw-notification');
+            const staffArea = document.querySelector('#action-area .staff-area');
+            const topDraw = document.getElementById('draw-notification-top');
             const leaderInput = document.getElementById('calc-action-leader');
+            const bottomDraw = document.getElementById('draw-notification-bottom');
+            const confirmAction = document.getElementById('confirm-action');
             return {
-                afterInstruction: !!(instruction.compareDocumentPosition(draw) & Node.DOCUMENT_POSITION_FOLLOWING),
-                beforeLeaderInput: !!(draw.compareDocumentPosition(leaderInput) & Node.DOCUMENT_POSITION_FOLLOWING)
+                topAfterStaffArea: !!(staffArea.compareDocumentPosition(topDraw) & Node.DOCUMENT_POSITION_FOLLOWING),
+                topBeforeLeaderInput: !!(topDraw.compareDocumentPosition(leaderInput) & Node.DOCUMENT_POSITION_FOLLOWING),
+                bottomBeforeConfirm: !!(bottomDraw.compareDocumentPosition(confirmAction) & Node.DOCUMENT_POSITION_FOLLOWING)
             };
         });
 
-        expect(order.afterInstruction).toBe(true);
-        expect(order.beforeLeaderInput).toBe(true);
+        expect(order.topAfterStaffArea).toBe(true);
+        expect(order.topBeforeLeaderInput).toBe(true);
+        expect(order.bottomBeforeConfirm).toBe(true);
+        await expect(page.locator('#draw-notification-top')).toContainText('枚ドロー');
+        await expect(page.locator('#draw-notification-bottom')).toContainText('枚ドロー');
     });
 });

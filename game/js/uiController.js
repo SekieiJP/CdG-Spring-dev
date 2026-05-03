@@ -1,4 +1,4 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260503-2049';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260503-2222';
 
 /**
  * UIController - UI操作・表示制御
@@ -795,13 +795,17 @@ export class UIController {
      * ドロー変動通知を表示
      */
     renderDrawNotification() {
-        const container = document.getElementById('draw-notification');
-        if (!container) return;
+        const containers = ['draw-notification-top', 'draw-notification-bottom']
+            .map((id) => document.getElementById(id))
+            .filter(Boolean);
+        if (containers.length === 0) return;
 
         const notif = this.gameState.lastDrawNotification;
         if (!notif) {
-            container.innerHTML = '';
-            container.classList.add('hidden');
+            containers.forEach((container) => {
+                container.innerHTML = '';
+                container.classList.add('hidden');
+            });
             this.gameState.lastDrawNotification = null;
             return;
         }
@@ -810,8 +814,11 @@ export class UIController {
         if (notif.passion > 0) parts.push(`✊情熱 +${notif.passion}`);
         if (notif.fatigue > 0) parts.push(`💤疲労 -${notif.fatigue}`);
 
-        container.innerHTML = `<span class="draw-notif-text">${parts.join(' / ')} → ${notif.drawCount}枚ドロー</span>`;
-        container.classList.remove('hidden');
+        const html = `<span class="draw-notif-text">${parts.join(' / ')} → ${notif.drawCount}枚ドロー</span>`;
+        containers.forEach((container) => {
+            container.innerHTML = html;
+            container.classList.remove('hidden');
+        });
         this.gameState.lastDrawNotification = null;
     }
 
@@ -3306,11 +3313,12 @@ export class UIController {
 
         let container = document.getElementById('calc-action-inputs');
         if (!container) {
-            const staffArea = document.querySelector('#action-area .staff-area');
+            const anchor = document.getElementById('draw-notification-top')
+                || document.querySelector('#action-area .staff-area');
             container = document.createElement('div');
             container.id = 'calc-action-inputs';
             container.className = 'calc-input-group calc-action-inputs';
-            staffArea?.after(container);
+            anchor?.after(container);
         }
 
         const staffLabels = { leader: '室長', teacher: '講師', staff: '事務' };
