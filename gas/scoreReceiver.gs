@@ -68,8 +68,8 @@ function validatePayload(data) {
         return 'invalid field: displayScore';
     }
 
-    // points: 数値 -50〜50
-    if (!isNumInRange(data.points, -50, 50)) {
+    // points: 数値 -15〜16
+    if (!isNumInRange(data.points, -15, 16)) {
         return 'invalid field: points';
     }
 
