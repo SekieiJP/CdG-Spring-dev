@@ -22,6 +22,22 @@ export function getOrCreateUserUUID() {
     return uuid;
 }
 
+export function buildVersionNumber(version) {
+    const digits = String(version || '').replace(/\D/g, '');
+    if (!digits) return null;
+    const num = Number(digits);
+    return Number.isFinite(num) ? num : null;
+}
+
+export function isClientVersionCurrent(clientVersion, currentVersion) {
+    const clientNum = buildVersionNumber(clientVersion);
+    const currentNum = buildVersionNumber(currentVersion);
+    if (clientNum === null || currentNum === null) {
+        return clientVersion === currentVersion;
+    }
+    return clientNum >= currentNum;
+}
+
 export async function submitScore(gameState, score, finalDeck, logger) {
     if (SCORE_ENDPOINT.includes('DEPLOY_ID')) {
         logger?.log('⚠️ スコア送信: エンドポイント未設定', 'info');
@@ -67,11 +83,15 @@ export async function submitScore(gameState, score, finalDeck, logger) {
                 throw new Error(`server: ${result.message || 'unknown error'}`);
             }
             logger?.log('📤 スコアを送信しました', 'info');
+            const currentVersion = result.currentVersion || null;
+            const clientVersion = result.clientVersion || payload.buildVersion;
             return {
                 ok: true,
-                currentVersion: result.currentVersion || null,
-                clientVersion: result.clientVersion || payload.buildVersion,
-                versionMatch: result.versionMatch !== false
+                currentVersion,
+                clientVersion,
+                versionMatch: currentVersion
+                    ? isClientVersionCurrent(clientVersion, currentVersion)
+                    : result.versionMatch !== false
             };
         } catch (e) {
             console.warn(`[ScoreSubmit] 試行${attempt}/${MAX_RETRIES} 失敗:`, e.message);

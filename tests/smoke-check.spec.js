@@ -139,6 +139,65 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         expect(result.versionMatches).toEqual([true, true]);
     });
 
+    test('スコア送信のバージョン判定はハイフンなし数値で比較する', async ({ page }) => {
+        await page.goto('/');
+
+        const versionResults = await page.evaluate(async () => {
+            const originalFetch = window.fetch;
+            const { submitScore, buildVersionNumber, isClientVersionCurrent } = await import('./js/scoreSubmitter.js?v=test');
+            const baseScore = {
+                experience: 1,
+                enrollment: 1,
+                satisfaction: 3,
+                accounting: 3,
+                displayScore: 0,
+                rank: { grade: 'D' },
+                points: 0,
+                withdrawal: 0,
+                mobilization: 1,
+                enrollmentDiff: 1
+            };
+            const finalDeck = [{ cardName: 'チラシ折り' }];
+            const logger = { log() {} };
+
+            async function submitWithVersions(clientVersion, currentVersion) {
+                window.BUILD_VERSION = clientVersion;
+                window.fetch = async () => ({
+                    ok: true,
+                    json: async () => ({
+                        status: 'ok',
+                        currentVersion,
+                        clientVersion,
+                        versionMatch: clientVersion === currentVersion
+                    })
+                });
+                const result = await submitScore({
+                    startedAt: '2026-05-03T00:00:00.000Z',
+                    difficulty: 'fresh',
+                    calcMode: false,
+                    discardedCards: []
+                }, baseScore, finalDeck, logger);
+                return result.versionMatch;
+            }
+
+            try {
+                return {
+                    parsed: buildVersionNumber('v20260503-1130'),
+                    equal: isClientVersionCurrent('v20260503-1130', 'v20260503-1130'),
+                    clientNewer: await submitWithVersions('v20260503-1130', 'v20260503-0030'),
+                    clientOlder: await submitWithVersions('v20260502-2100', 'v20260503-0030')
+                };
+            } finally {
+                window.fetch = originalFetch;
+            }
+        });
+
+        expect(versionResults.parsed).toBe(202605031130);
+        expect(versionResults.equal).toBe(true);
+        expect(versionResults.clientNewer).toBe(true);
+        expect(versionResults.clientOlder).toBe(false);
+    });
+
     test('スコア送信中はもう一度プレイを無効化し、完了後に戻す', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
         await page.goto('/');

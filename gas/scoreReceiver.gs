@@ -2,6 +2,37 @@ var CURRENT_BUILD_VERSION = 'v20260503-1130';
 
 /* ===== ヘルパー関数 ===== */
 
+function buildVersionNumber(version) {
+    var digits = String(version || '').replace(/\D/g, '');
+    if (!digits) return null;
+    var num = Number(digits);
+    return isFinite(num) ? num : null;
+}
+
+function isClientVersionCurrent(clientVersion, currentVersion) {
+    var clientNum = buildVersionNumber(clientVersion);
+    var currentNum = buildVersionNumber(currentVersion);
+    if (clientNum == null || currentNum == null) {
+        return clientVersion === currentVersion;
+    }
+    return clientNum >= currentNum;
+}
+
+function logServerError(message, data) {
+    var summary = '';
+    if (data) {
+        summary = ' difficulty=' + (data.difficulty || '')
+            + ', mode=' + (data.mode || '')
+            + ', grade=' + (data.grade || '')
+            + ', displayScore=' + data.displayScore
+            + ', points=' + data.points
+            + ', buildVersion=' + (data.buildVersion || '')
+            + ', startedAt=' + (data.startedAt || '')
+            + ', completedAt=' + (data.completedAt || '');
+    }
+    console.error('[scoreReceiver] ' + message + summary);
+}
+
 /**
  * スプレッドシートインジェクション対策
  * 先頭が危険文字の場合、シングルクォートをプレフィックスする
@@ -32,8 +63,8 @@ function validatePayload(data) {
         }
     }
 
-    // displayScore: 数値 0〜20（PRO最高ランクSS=15を考慮）
-    if (!isNumInRange(data.displayScore, 0, 20)) {
+    // displayScore: 数値 -15〜16（PRO/FRESHの低スコアと上限を許容）
+    if (!isNumInRange(data.displayScore, -15, 16)) {
         return 'invalid field: displayScore';
     }
 
@@ -97,6 +128,7 @@ function doPost(e) {
     try {
         // M1: ペイロードサイズ制限
         if (e.postData.contents.length > 5000) {
+            console.error('[scoreReceiver] payload too large: length=' + e.postData.contents.length);
             return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'payload too large' }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
@@ -106,6 +138,7 @@ function doPost(e) {
         // M1: 型・範囲チェック
         var validationError = validatePayload(data);
         if (validationError) {
+            logServerError('validation error: ' + validationError, data);
             return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: validationError }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
@@ -126,6 +159,7 @@ function doPost(e) {
             .map(function(b) { return ('0' + (b & 0xFF).toString(16)).slice(-2); })
             .join('');
         if (cache.get(hashKey)) {
+            logServerError('duplicate request', data);
             return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'duplicate request' }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
@@ -167,6 +201,7 @@ function doPost(e) {
             console.log('[scoreReceiver] sheet write success');
         } catch (sheetErr) {
             console.error('[scoreReceiver] sheet write error:', sheetErr);
+            logServerError('sheet write failed', data);
             return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'sheet write failed' }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
@@ -176,12 +211,12 @@ function doPost(e) {
             status: 'ok',
             currentVersion: CURRENT_BUILD_VERSION,
             clientVersion: clientVersion,
-            versionMatch: clientVersion === CURRENT_BUILD_VERSION
+            versionMatch: isClientVersionCurrent(clientVersion, CURRENT_BUILD_VERSION)
         }))
             .setMimeType(ContentService.MimeType.JSON);
     } catch (err) {
         // M9: エラーメッセージ抑制（GASログにのみ記録）
-        console.error(err);
+        console.error('[scoreReceiver] unexpected error:', err);
         return ContentService.createTextOutput(JSON.stringify({ status: 'error' }))
             .setMimeType(ContentService.MimeType.JSON);
     }
