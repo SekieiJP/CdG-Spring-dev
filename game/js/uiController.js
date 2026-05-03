@@ -2317,14 +2317,31 @@ export class UIController {
             if (highScoreDiv) highScoreDiv.appendChild(badge);
         }
 
-        // スコア自動送信（fire-and-forget）
-        submitScore(this.gameState, score, finalDeck, this.logger);
+        // スコア自動送信中は、二重送信を避けるためリスタートを一時的に止める
+        this.sendScoreAndHandleVersion(score, finalDeck);
 
         // セーブデータクリア（ゲーム終了）
         this.saveManager?.clear();
 
         // 最終ターンのカード一覧表示
         this.renderFinalCards(finalDeck);
+    }
+
+    async sendScoreAndHandleVersion(score, finalDeck) {
+        const restartBtn = document.getElementById('restart-game');
+        if (restartBtn) restartBtn.disabled = true;
+
+        try {
+            const result = await submitScore(this.gameState, score, finalDeck, this.logger);
+            if (result?.ok && result.versionMatch === false) {
+                localStorage.setItem('cdg_version_updated', 'true');
+                const current = result.currentVersion || '最新';
+                this.logger?.log(`⚠️ 新しいバージョンがあります（現在: ${window.BUILD_VERSION || 'unknown'} / 最新: ${current}）`, 'info');
+                this.showFloatNotification('新しいバージョンがあります。再読み込みをおすすめします', 'warning');
+            }
+        } finally {
+            if (restartBtn) restartBtn.disabled = false;
+        }
     }
 
     /**

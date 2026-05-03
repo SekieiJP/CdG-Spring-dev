@@ -1,3 +1,5 @@
+var CURRENT_BUILD_VERSION = 'v20260503-1130';
+
 /* ===== ヘルパー関数 ===== */
 
 /**
@@ -169,7 +171,13 @@ function doPost(e) {
                 .setMimeType(ContentService.MimeType.JSON);
         }
 
-        return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+        var clientVersion = data.buildVersion || '';
+        return ContentService.createTextOutput(JSON.stringify({
+            status: 'ok',
+            currentVersion: CURRENT_BUILD_VERSION,
+            clientVersion: clientVersion,
+            versionMatch: clientVersion === CURRENT_BUILD_VERSION
+        }))
             .setMimeType(ContentService.MimeType.JSON);
     } catch (err) {
         // M9: エラーメッセージ抑制（GASログにのみ記録）
@@ -180,6 +188,10 @@ function doPost(e) {
 }
 
 function doGet(e) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'ok', message: 'Score receiver is running' }))
+    return ContentService.createTextOutput(JSON.stringify({
+        status: 'ok',
+        message: 'Score receiver is running',
+        currentVersion: CURRENT_BUILD_VERSION
+    }))
         .setMimeType(ContentService.MimeType.JSON);
 }

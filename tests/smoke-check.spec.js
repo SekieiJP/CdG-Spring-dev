@@ -78,14 +78,21 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
     test('スコア送信payloadに通常/計算機モードを含める', async ({ page }) => {
         await page.goto('/');
 
-        const payloads = await page.evaluate(async () => {
+        const result = await page.evaluate(async () => {
             const captured = [];
+            const results = [];
             const originalFetch = window.fetch;
             window.fetch = async (_url, options) => {
-                captured.push(JSON.parse(options.body));
+                const payload = JSON.parse(options.body);
+                captured.push(payload);
                 return {
                     ok: true,
-                    json: async () => ({ status: 'ok' })
+                    json: async () => ({
+                        status: 'ok',
+                        currentVersion: window.BUILD_VERSION,
+                        clientVersion: payload.buildVersion,
+                        versionMatch: true
+                    })
                 };
             };
 
@@ -106,26 +113,83 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 const finalDeck = [{ cardName: 'チラシ折り' }];
                 const logger = { log() {} };
 
-                await submitScore({
+                results.push(await submitScore({
                     startedAt: '2026-05-03T00:00:00.000Z',
                     difficulty: 'fresh',
                     calcMode: false,
                     discardedCards: []
-                }, baseScore, finalDeck, logger);
-                await submitScore({
+                }, baseScore, finalDeck, logger));
+                results.push(await submitScore({
                     startedAt: '2026-05-03T00:01:00.000Z',
                     difficulty: 'fresh',
                     calcMode: true,
                     discardedCards: []
-                }, baseScore, finalDeck, logger);
+                }, baseScore, finalDeck, logger));
             } finally {
                 window.fetch = originalFetch;
             }
 
-            return captured.map(payload => payload.mode);
+            return {
+                modes: captured.map(payload => payload.mode),
+                versionMatches: results.map(result => result.versionMatch)
+            };
         });
 
-        expect(payloads).toEqual(['通常', '計算機']);
+        expect(result.modes).toEqual(['通常', '計算機']);
+        expect(result.versionMatches).toEqual([true, true]);
+    });
+
+    test('スコア送信中はもう一度プレイを無効化し、完了後に戻す', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        await page.evaluate(() => {
+            window.fetch = async () => new Promise(resolve => {
+                window.__resolveScoreSubmit = () => resolve({
+                    ok: true,
+                    json: async () => ({
+                        status: 'ok',
+                        currentVersion: window.BUILD_VERSION,
+                        clientVersion: window.BUILD_VERSION,
+                        versionMatch: true
+                    })
+                });
+            });
+            window.game.gameState.phase = 'end';
+            window.game.uiController.showResultPhase();
+        });
+
+        await expect(page.locator('#restart-game')).toBeDisabled();
+        await page.evaluate(() => window.__resolveScoreSubmit());
+        await expect(page.locator('#restart-game')).toBeEnabled();
+    });
+
+    test('スコア送信レスポンスが旧バージョン判定なら警告フラグを立てる', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        await page.evaluate(() => {
+            window.fetch = async () => ({
+                ok: true,
+                json: async () => ({
+                    status: 'ok',
+                    currentVersion: 'v99999999-9999',
+                    clientVersion: window.BUILD_VERSION,
+                    versionMatch: false
+                })
+            });
+            localStorage.removeItem('cdg_version_updated');
+            window.game.gameState.phase = 'end';
+            window.game.uiController.showResultPhase();
+        });
+
+        await expect(page.locator('#restart-game')).toBeEnabled();
+        await page.waitForFunction(() => localStorage.getItem('cdg_version_updated') === 'true');
+        await expect(page.locator('.float-notification')).toContainText('新しいバージョン');
     });
 
     test('ゲーム終了時にスコア送信ログが出る（エンドポイント未設定 → 設定済みのためfetch試行）', async ({ page }) => {
