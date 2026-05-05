@@ -139,6 +139,34 @@ test.describe('計算機モード', () => {
         await expect(page.locator('#calc-action-teacher')).toBeFocused();
     });
 
+    test('配置済みスタッフ欄を加筆訂正しても旧入力由来の在庫不足警告を出さない', async ({ page }) => {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#btn-difficulty-pro').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+        await page.evaluate(() => {
+            const game = window.game;
+            const card01 = game.cardManager.getCardByNo('01');
+            const card06 = game.cardManager.getCardByNo('06');
+            game.gameState.player.deck = [{ ...card01 }, { ...card06 }];
+            game.gameState.player.placed = { leader: [], teacher: [], staff: [] };
+            game.uiController.showCalcActionUI();
+        });
+
+        await page.locator('#calc-action-leader').fill('01');
+        await page.locator('#calc-action-leader').press('Enter');
+        await expect(page.locator('#slot-leader .card')).toContainText('問合対応の基本');
+
+        await page.locator('#calc-action-leader').fill('0106');
+        await expect(page.locator('#calc-action-msg-leader')).toBeEmpty();
+        await expect(page.locator('#calc-action-preview-leader')).toContainText('問合対応の基本');
+        await expect(page.locator('#calc-action-preview-leader')).toContainText('チラシ折り');
+    });
+
     test('スタッフ配置入力からフォーカスが外れるとプレビューを配置に反映する', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#calc-mode-row .toggle-slider').click();

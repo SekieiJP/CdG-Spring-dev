@@ -1,4 +1,4 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260503-2222';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260506-0030';
 
 /**
  * UIController - UI操作・表示制御
@@ -3564,15 +3564,15 @@ export class UIController {
             return;
         }
 
-        const validation = this.validateCalcActionCards(staff, result.cards);
-        if (!validation.valid) {
-            msg.textContent = validation.reason;
+        const simulation = this.simulateCalcActionAssignment(staff, result.cards);
+        if (!simulation.valid) {
+            msg.textContent = simulation.reason;
             preview.innerHTML = '';
             return;
         }
 
         msg.textContent = '';
-        preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
+        preview.innerHTML = this.buildCalcPreviewHTML(simulation.cards);
     }
 
     updateCalcMeetingPreview(maxDelete) {
@@ -3606,34 +3606,48 @@ export class UIController {
         preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
     }
 
-    validateCalcActionCards(staff, cards) {
+    simulateCalcActionAssignment(staff, cards) {
         const staffLabel = { leader: '室長', teacher: '講師', staff: '事務' }[staff];
-        const simulatedPlacedCount = this.gameState.player.placed[staff]?.length || 0;
-        const deckCounts = this.countDeckCardsByNo();
-        const usedCounts = new Map();
-        let placedCount = simulatedPlacedCount;
+        const workingDeck = [
+            ...this.gameState.player.deck,
+            ...(this.gameState.player.placed[staff] || [])
+        ];
+        const workingPlaced = {
+            leader: [...(this.gameState.player.placed.leader || [])],
+            teacher: [...(this.gameState.player.placed.teacher || [])],
+            staff: [...(this.gameState.player.placed.staff || [])]
+        };
+        workingPlaced[staff] = [];
 
-        for (const card of cards) {
-            const normalized = this.cardManager.normalizeCardNo(card.cardNo);
-            const used = (usedCounts.get(normalized) || 0) + 1;
-            usedCounts.set(normalized, used);
-            if (used > (deckCounts.get(normalized) || 0)) {
-                return { valid: false, reason: `${card.cardName} はデッキ内枚数が不足しています` };
+        const resolvedCards = [];
+        for (const cardDef of cards) {
+            const normalized = this.cardManager.normalizeCardNo(cardDef.cardNo);
+            const deckIndex = workingDeck.findIndex((card) =>
+                this.cardManager.normalizeCardNo(card.cardNo) === normalized
+            );
+            if (deckIndex === -1) {
+                return { valid: false, reason: `${cardDef.cardName} はデッキ内枚数が不足しています` };
             }
 
-            const allowedStaff = this.parseStaffRestriction(card.effect);
+            const deckCard = workingDeck.splice(deckIndex, 1)[0];
+            const allowedStaff = this.parseStaffRestriction(deckCard.effect);
             if (allowedStaff && !allowedStaff.includes(staffLabel)) {
-                return { valid: false, reason: `${card.cardName}は ${allowedStaff.join('・')} 専用です` };
+                return { valid: false, reason: `${deckCard.cardName}は ${allowedStaff.join('・')} 専用です` };
             }
 
-            if (!this.hasParallelEffect(card) && placedCount > 0) {
-                return { valid: false, reason: `${card.cardName}は重ね配置できません` };
+            if (!this.hasParallelEffect(deckCard) && workingPlaced[staff].length > 0) {
+                return { valid: false, reason: `${deckCard.cardName}は重ね配置できません` };
             }
 
-            placedCount++;
+            workingPlaced[staff].push(deckCard);
+            resolvedCards.push(deckCard);
         }
 
-        return { valid: true };
+        return {
+            valid: true,
+            cards: resolvedCards,
+            placedAfter: workingPlaced
+        };
     }
 
     validateCalcMeetingCards(cards, maxDelete) {
@@ -3734,33 +3748,20 @@ export class UIController {
             return false;
         }
 
+        const simulation = this.simulateCalcActionAssignment(staff, result.cards);
+        if (!simulation.valid) {
+            if (msg) msg.textContent = simulation.reason;
+            if (!options.silent) this.showFloatNotification(simulation.reason, 'error');
+            return false;
+        }
+
         const snapshot = this.createCalcPlacementSnapshot();
         this.returnPlacedStaffToDeck(staff);
 
-        const staffLabel = { leader: '室長', teacher: '講師', staff: '事務' }[staff];
-        for (const cardDef of result.cards) {
-            const deckCard = this.takeDeckCardByNo(cardDef.cardNo);
+        for (const deckCardTemplate of simulation.cards) {
+            const deckCard = this.takeSpecificDeckCard(deckCardTemplate) || this.takeDeckCardByNo(deckCardTemplate.cardNo);
             if (!deckCard) {
-                const reason = `${cardDef.cardName} はデッキ内枚数が不足しています`;
-                this.restoreCalcPlacementSnapshot(snapshot);
-                if (msg) msg.textContent = reason;
-                if (!options.silent) this.showFloatNotification(reason, 'error');
-                return false;
-            }
-
-            const allowedStaff = this.parseStaffRestriction(deckCard.effect);
-            if (allowedStaff && !allowedStaff.includes(staffLabel)) {
-                const reason = `${deckCard.cardName}は ${allowedStaff.join('・')} 専用です`;
-                this.gameState.player.deck.push(deckCard);
-                this.restoreCalcPlacementSnapshot(snapshot);
-                if (msg) msg.textContent = reason;
-                if (!options.silent) this.showFloatNotification(reason, 'error');
-                return false;
-            }
-
-            if (!this.hasParallelEffect(deckCard) && this.gameState.player.placed[staff].length > 0) {
-                const reason = `${deckCard.cardName}は重ね配置できません`;
-                this.gameState.player.deck.push(deckCard);
+                const reason = `${deckCardTemplate.cardName} はデッキ内枚数が不足しています`;
                 this.restoreCalcPlacementSnapshot(snapshot);
                 if (msg) msg.textContent = reason;
                 if (!options.silent) this.showFloatNotification(reason, 'error');
@@ -3837,6 +3838,12 @@ export class UIController {
         const index = this.gameState.player.deck.findIndex(card =>
             this.cardManager.normalizeCardNo(card.cardNo) === normalized
         );
+        if (index === -1) return null;
+        return this.gameState.player.deck.splice(index, 1)[0];
+    }
+
+    takeSpecificDeckCard(targetCard) {
+        const index = this.gameState.player.deck.findIndex((card) => card === targetCard);
         if (index === -1) return null;
         return this.gameState.player.deck.splice(index, 1)[0];
     }
