@@ -1795,7 +1795,12 @@ export class UIController {
         // Bug3修正: 選択済み枚数の表示を0にリセット
         const selectedCountElem = document.getElementById('selected-count');
         if (selectedCountElem) selectedCountElem.textContent = '0';
-        this.renderDeck(maxDelete);
+        if (this.gameState.calcMode) {
+            this.showCalcMeetingUI(maxDelete);
+        } else {
+            this.setNormalMeetingUIVisibility();
+            this.renderDeck(maxDelete);
+        }
 
         // フェーズ開始時に保存（思考場面の維持）
         this.saveGameState();
@@ -1853,6 +1858,12 @@ export class UIController {
      * 会議確定
      */
     onConfirmMeeting() {
+        if (this.gameState.calcMode) {
+            if (!this.confirmCalcMeetingSelection()) {
+                return;
+            }
+        }
+
         // Spec1修正: 最大枚数未満の場合は確認ダイアログを表示
         const maxDelete = this.turnManager.getCurrentDeleteMax();
         if (maxDelete > 0 && this.selectedCardsForDeletion.length < maxDelete) {
@@ -1882,6 +1893,66 @@ export class UIController {
             this.showResultPhase();
         } else {
             this.showTrainingPhase();
+        }
+    }
+
+    showCalcMeetingUI(maxDelete) {
+        this.setCalcMeetingUIVisibility();
+
+        const container = document.getElementById('calc-meeting-inputs');
+        if (!container) return;
+
+        container.className = 'calc-input-group calc-meeting-inputs';
+        container.innerHTML = `
+            <div class="calc-slot-row">
+                <label>削除するカードNo（空欄=削除なし、最大${maxDelete}枚）</label>
+                <input id="calc-meeting-input" class="calc-card-input" type="text"
+                       inputmode="numeric" autocomplete="off" placeholder="例: 0102">
+                <span id="calc-meeting-msg" class="calc-validate-msg"></span>
+                <div id="calc-meeting-preview" class="calc-preview"></div>
+            </div>
+        `;
+
+        const instruction = document.querySelector('#meeting-area .instruction');
+        if (instruction) {
+            instruction.textContent = `計算機モード: 削除するカードNoを入力してください（最大${maxDelete}枚）`;
+        }
+
+        const input = document.getElementById('calc-meeting-input');
+        input?.addEventListener('input', () => {
+            if (this.handleCalcTerminatorInput(input, () => {
+                document.getElementById('confirm-meeting')?.click();
+            })) {
+                return;
+            }
+            this.updateCalcMeetingPreview(maxDelete);
+        });
+        input?.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('confirm-meeting')?.click();
+            }
+        });
+
+        this.updateCalcMeetingPreview(maxDelete);
+        this.focusFirstCalcInput();
+    }
+
+    setCalcMeetingUIVisibility() {
+        const deckCards = document.getElementById('deck-cards');
+        if (deckCards) deckCards.innerHTML = '';
+        deckCards?.classList.add('hidden');
+        document.querySelector('#meeting-area .selected-info')?.classList.add('hidden');
+        document.getElementById('calc-meeting-inputs')?.classList.remove('hidden');
+    }
+
+    setNormalMeetingUIVisibility() {
+        document.getElementById('deck-cards')?.classList.remove('hidden');
+        document.querySelector('#meeting-area .selected-info')?.classList.remove('hidden');
+        const container = document.getElementById('calc-meeting-inputs');
+        if (container) {
+            container.innerHTML = '';
+            container.classList.add('hidden');
         }
     }
 
@@ -3504,6 +3575,37 @@ export class UIController {
         preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
     }
 
+    updateCalcMeetingPreview(maxDelete) {
+        const input = document.getElementById('calc-meeting-input');
+        const msg = document.getElementById('calc-meeting-msg');
+        const preview = document.getElementById('calc-meeting-preview');
+        if (!input || !msg || !preview) return;
+
+        const raw = input.value.trim();
+        if (raw === '' || raw.length % 2 !== 0) {
+            msg.textContent = '';
+            preview.innerHTML = '';
+            return;
+        }
+
+        const result = this.validateCalcCardNos(raw);
+        if (!result.valid) {
+            msg.textContent = result.reason;
+            preview.innerHTML = '';
+            return;
+        }
+
+        const validation = this.validateCalcMeetingCards(result.cards, maxDelete);
+        if (!validation.valid) {
+            msg.textContent = validation.reason;
+            preview.innerHTML = '';
+            return;
+        }
+
+        msg.textContent = '';
+        preview.innerHTML = this.buildCalcPreviewHTML(result.cards);
+    }
+
     validateCalcActionCards(staff, cards) {
         const staffLabel = { leader: '室長', teacher: '講師', staff: '事務' }[staff];
         const simulatedPlacedCount = this.gameState.player.placed[staff]?.length || 0;
@@ -3534,6 +3636,25 @@ export class UIController {
         return { valid: true };
     }
 
+    validateCalcMeetingCards(cards, maxDelete) {
+        if (cards.length > maxDelete) {
+            return { valid: false, reason: `削除できるのは最大${maxDelete}枚です` };
+        }
+
+        const deckCounts = this.countDeckCardsByNo();
+        const usedCounts = new Map();
+        for (const card of cards) {
+            const normalized = this.cardManager.normalizeCardNo(card.cardNo);
+            const used = (usedCounts.get(normalized) || 0) + 1;
+            usedCounts.set(normalized, used);
+            if (used > (deckCounts.get(normalized) || 0)) {
+                return { valid: false, reason: `${card.cardName} はデッキ内枚数が不足しています` };
+            }
+        }
+
+        return { valid: true };
+    }
+
     countDeckCardsByNo() {
         const counts = new Map();
         this.gameState.player.deck.forEach(card => {
@@ -3544,12 +3665,59 @@ export class UIController {
         return counts;
     }
 
+    takeDeckCardsByNos(cards) {
+        const removedCards = [];
+        for (const cardDef of cards) {
+            const deckCard = this.takeDeckCardByNo(cardDef.cardNo);
+            if (!deckCard) {
+                removedCards.forEach((card) => this.gameState.player.deck.push(card));
+                return null;
+            }
+            removedCards.push(deckCard);
+        }
+        return removedCards;
+    }
+
     buildCalcPreviewHTML(cards) {
         if (cards.length === 0) return '';
         return cards.map(card => {
             const no = String(card.cardNo || '').padStart(2, '0');
             return `<div class="calc-preview-card">No.${this._escapeHTML(no)} ${this._escapeHTML(card.cardName)} <span>${this._escapeHTML(card.rarity)} / ${this._escapeHTML(card.category)}</span></div>`;
         }).join('');
+    }
+
+    confirmCalcMeetingSelection() {
+        const maxDelete = this.turnManager.getCurrentDeleteMax();
+        this.selectedCardsForDeletion = [];
+        const input = document.getElementById('calc-meeting-input');
+        const msg = document.getElementById('calc-meeting-msg');
+        const raw = input?.value || '';
+        const result = this.validateCalcCardNos(raw);
+        if (!result.valid) {
+            if (msg) msg.textContent = result.reason;
+            this.showFloatNotification(result.reason, 'error');
+            return false;
+        }
+
+        const validation = this.validateCalcMeetingCards(result.cards, maxDelete);
+        if (!validation.valid) {
+            if (msg) msg.textContent = validation.reason;
+            this.showFloatNotification(validation.reason, 'error');
+            return false;
+        }
+
+        const selected = this.takeDeckCardsByNos(result.cards);
+        if (!selected) {
+            const reason = 'デッキ内枚数が不足しています';
+            if (msg) msg.textContent = reason;
+            this.showFloatNotification(reason, 'error');
+            return false;
+        }
+
+        selected.forEach((card) => this.gameState.player.deck.push(card));
+        this.selectedCardsForDeletion = selected;
+        if (msg) msg.textContent = '';
+        return true;
     }
 
     /**

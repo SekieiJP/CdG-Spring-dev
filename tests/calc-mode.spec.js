@@ -241,6 +241,55 @@ test.describe('計算機モード', () => {
         await expect(page.locator('#status-animation-overlay')).not.toHaveClass(/hidden/, { timeout: 10000 });
     });
 
+    test('会議フェーズでもカード一覧を出さずに番号入力で削除カードを指定できる', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+        await page.locator('#confirm-action').click();
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 10000 });
+
+        await expect(page.locator('#deck-cards')).toBeHidden();
+        await expect(page.locator('#meeting-area .selected-info')).toBeHidden();
+        await expect(page.locator('#calc-meeting-input')).toBeFocused();
+
+        await page.locator('#calc-meeting-input').fill('06');
+        await expect(page.locator('#calc-meeting-preview')).toContainText('チラシ折り');
+        await page.locator('#calc-meeting-input').press('Enter');
+        await page.waitForSelector('#training-area:not(.hidden)', { timeout: 10000 });
+
+        const deckNos = await page.evaluate(() =>
+            window.game.gameState.player.deck.map(card =>
+                window.game.cardManager.normalizeCardNo(card.cardNo)
+            )
+        );
+        expect(deckNos.filter(no => no === '6')).toHaveLength(0);
+        expect(deckNos.filter(no => no === '7')).toHaveLength(1);
+    });
+
+    test('会議フェーズの削除入力は上限超過をエラーにする', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-row .toggle-slider').click();
+        await page.locator('#start-game').click();
+
+        await page.locator('#calc-training-input').fill('0607');
+        await page.locator('#confirm-training').click();
+        await page.waitForSelector('#action-area:not(.hidden)', { timeout: 10000 });
+        await page.locator('#confirm-action').click();
+        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 10000 });
+
+        await page.locator('#calc-meeting-input').fill('0607');
+        await page.locator('#confirm-meeting').click();
+
+        await expect(page.locator('#meeting-area')).toBeVisible();
+        await expect(page.locator('#calc-meeting-msg')).toContainText('最大1枚');
+    });
+
     test('ドロー枚数通知はスタッフエリア直後と実行ボタン直前の2箇所に表示される', async ({ page }) => {
         await page.locator('#start-overlay h1').click();
         await page.locator('#btn-difficulty-pro').click();
