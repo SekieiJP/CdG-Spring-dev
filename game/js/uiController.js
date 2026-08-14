@@ -1,5 +1,5 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0003';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0003';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0004';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0004';
 
 /**
  * UIController - UI操作・表示制御
@@ -1467,6 +1467,7 @@ export class UIController {
             return;
         }
 
+        let eventEffectsResolved = false;
         try {
             // 現在のステータス（リアルタイム更新用）
             const currentStats = { ...beforeStats };
@@ -1564,11 +1565,15 @@ export class UIController {
                 }
             }
 
+            // カード効果に続けて、同じ画面・同じ体裁で塾アイテム効果を表示する。
+            await this.resolveEventActionEffects({ overlay, header, cards, currentStats });
+            eventEffectsResolved = true;
+
             // 演出終了（📊行動結果ステップを除去）
             await this._sleep(500);
         } finally {
             overlay.classList.add('hidden');
-            await this.finishActionPhase();
+            await this.finishActionPhase({ eventEffectsResolved });
         }
     }
 
@@ -1822,8 +1827,8 @@ export class UIController {
     /**
      * アクションフェーズ終了処理
      */
-    async finishActionPhase() {
-        await this.resolveEventActionEffects();
+    async finishActionPhase(options = {}) {
+        if (!options.eventEffectsResolved) await this.resolveEventActionEffects();
         this.updateStatusDisplay();
         this.turnManager.advancePhase();
         // advancePhase は同期処理なので、完了状態を保存してから次フェーズへ一度だけ進める。
@@ -1843,7 +1848,7 @@ export class UIController {
         }
     }
 
-    async resolveEventActionEffects() {
+    async resolveEventActionEffects(animationContext = null) {
         if (!isEventActive(this.gameState)) return;
         if (!this.gameState.event.actionCompletion) {
             this.gameState.event.actionCompletion = { turn: this.gameState.turn, status: 'resolving' };
@@ -1854,7 +1859,7 @@ export class UIController {
         const press = states['press-coverage'];
         if (press?.acquired && press.triggerCountThisTurn < 1 && (usage['動員'] || 0) >= 3) {
             press.triggerCountThisTurn += 1;
-            await this.resolveEventStatusEffect('press-coverage', press, null);
+            await this.resolveEventStatusEffect('press-coverage', press, null, animationContext);
         }
         const homework = states['spring-homework'];
         if (homework?.acquired && homework.triggerCountThisTurn < 1 && (usage['教務'] || 0) >= 3) {
@@ -1867,7 +1872,7 @@ export class UIController {
         if (this.gameState.turn === 7 && homework?.acquired) {
             for (const reservation of homework.activationReservations.filter(r => r.status === 'pending').sort((a, b) => a.creationOrder - b.creationOrder)) {
                 reservation.status = 'resolving'; this.saveGameState();
-                await this.resolveEventStatusEffect('spring-homework', homework, reservation);
+                await this.resolveEventStatusEffect('spring-homework', homework, reservation, animationContext);
                 reservation.effectApplied = true; reservation.status = 'resolved'; homework.resolvedActivationCount += 1; this.saveGameState();
             }
         }
@@ -1875,8 +1880,14 @@ export class UIController {
         this.saveGameState();
     }
 
-    async resolveEventStatusEffect(itemId, state, reservation) {
+    async resolveEventStatusEffect(itemId, state, reservation, animationContext = null) {
         const item = getEventItem(itemId);
+        const beforeStats = {
+            experience: this.gameState.player.experience,
+            enrollment: this.gameState.player.enrollment,
+            satisfaction: this.gameState.player.satisfaction,
+            accounting: this.gameState.player.accounting
+        };
         // 使用回数は効果開始時に消費する。上限により0増分でも消費される。
         state.usageTotal += 1; state.usageThisTurn += 1; this.saveGameState();
         const actual = this.gameState.updateStatus(item.effect.status, item.effect.amount);
@@ -1885,9 +1896,54 @@ export class UIController {
         this.saveGameState();
         this.gameState.event.presentation = { type: 'activation', itemId, detail: `${item.description}\n実際の変化量: ${actual >= 0 ? '+' : ''}${actual}` };
         this.saveGameState();
-        await this.showEventPresentation(itemId, '効果発動', this.gameState.event.presentation.detail);
+        const afterStats = {
+            experience: this.gameState.player.experience,
+            enrollment: this.gameState.player.enrollment,
+            satisfaction: this.gameState.player.satisfaction,
+            accounting: this.gameState.player.accounting
+        };
+        if (animationContext) {
+            await this.showEventStatusAnimation(itemId, beforeStats, afterStats, actual, animationContext);
+        } else {
+            await this.showEventPresentation(itemId, '効果発動', this.gameState.event.presentation.detail);
+        }
         this.gameState.event.presentation = null;
         this.saveGameState();
+    }
+
+    /**
+     * 教室行動のカード演出に続けて、塾アイテム効果を同じ体裁で表示する。
+     */
+    async showEventStatusAnimation(itemId, beforeStats, afterStats, actual, animationContext) {
+        const item = getEventItem(itemId);
+        const { overlay, cards, currentStats } = animationContext;
+        if (!item || !overlay || !cards || !currentStats) {
+            await this.showEventPresentation(itemId, '効果発動', `${item?.description || ''}\n実際の変化量: ${actual >= 0 ? '+' : ''}${actual}`);
+            return;
+        }
+
+        const itemName = this._eventItemName(item);
+        cards.innerHTML = `
+            <div class="animation-card-item">
+                <div class="anim-card-copy">
+                    <div class="anim-staff-name">塾アイテム</div>
+                    <div class="anim-card-name">${this._escapeHTML(itemName)}</div>
+                    <div class="anim-card-effect">${this._escapeHTML(item.description)}</div>
+                    <div class="anim-bonus-text">実際の変化量: ${actual >= 0 ? '+' : ''}${actual}</div>
+                </div>
+                <img class="anim-card-thumbnail" src="${item.image}" alt="${this._escapeHTML(itemName)}">
+            </div>
+        `;
+        cards.querySelector('img')?.addEventListener('error', event => event.currentTarget.classList.add('hidden'), { once: true });
+
+        const animationBeforeStats = { ...currentStats };
+        const delta = this.calculateDelta(beforeStats, afterStats);
+        Object.entries(delta).forEach(([key, value]) => {
+            if (Object.prototype.hasOwnProperty.call(currentStats, key)) currentStats[key] += value;
+        });
+        this.updateAnimationStats(currentStats, delta, { skipRankDisplay: true });
+        await this.animateRankUpsIfNeeded(animationBeforeStats, { ...currentStats });
+        await this._sleep(800);
     }
 
     /**
