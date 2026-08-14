@@ -12,7 +12,7 @@ import { SaveManager } from './saveManager.js?v=20260814-0002';
 import { getDifficultyConfig } from './difficultyConfig.js?v=20260814-0002';
 import { getEventDefinition } from './eventManager.js?v=20260814-0002';
 
-const CACHE_BUSTER = 'v20260814-0001';
+const CACHE_BUSTER = 'v20260814-0002';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
