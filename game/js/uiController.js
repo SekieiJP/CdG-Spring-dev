@@ -1,5 +1,5 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0001';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0001';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0002';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0002';
 
 /**
  * UIController - UI操作・表示制御
