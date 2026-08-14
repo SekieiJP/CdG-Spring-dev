@@ -1,5 +1,5 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0002';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0002';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0003';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0003';
 
 /**
  * UIController - UI操作・表示制御
@@ -3337,6 +3337,11 @@ export class UIController {
         window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: hand=', this.gameState.player.hand.map(c => c.cardName));
         window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: deck=', this.gameState.player.deck.map(c => c.cardName));
 
+        // 保存済みのイベント演出を復元する場合も、ゲーム画面として再開する。
+        // 演出分岐より先にタイトルを閉じないと、再読み込み時に両者が重なって表示される。
+        const overlay = document.getElementById('start-overlay');
+        overlay?.classList.add('hidden');
+
         // 中断時に効果適用済みなら二重適用せず、演出だけ再表示する。
         if (this.gameState.event?.items) {
             Object.values(this.gameState.event.items).forEach(state => state.activationReservations.forEach(reservation => {
@@ -3365,9 +3370,6 @@ export class UIController {
                 return;
             }
         }
-        // スタートオーバーレイを非表示
-        const overlay = document.getElementById('start-overlay');
-        overlay?.classList.add('hidden');
         const calcToggle = document.getElementById('calc-mode-toggle');
         if (calcToggle) {
             calcToggle.checked = !!this.gameState.calcMode;
