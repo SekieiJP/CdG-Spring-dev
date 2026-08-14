@@ -2,6 +2,7 @@
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
+let userUUIDMemory = null;
 
 /**
  * Cookieに永続化されたユーザーUUIDを返す（なければ生成して保存）
@@ -9,9 +10,14 @@ const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQ
 export function getOrCreateUserUUID() {
     const cookieName = 'cdg_uuid';
     const match = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
-    if (match) return decodeURIComponent(match[1]);
+    if (match) {
+        userUUIDMemory = decodeURIComponent(match[1]);
+        return userUUIDMemory;
+    }
+    // file: URLなどでCookieが読み戻せない場合も、同一ページ内では表示と送信で同じUUIDを使う。
+    if (userUUIDMemory) return userUUIDMemory;
 
-    const uuid = (crypto.randomUUID
+    const uuid = userUUIDMemory = (crypto.randomUUID
         ? crypto.randomUUID()
         : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
             const r = Math.random() * 16 | 0;
@@ -50,7 +56,9 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         buildVersion: window.BUILD_VERSION || 'unknown',
         userUUID: getOrCreateUserUUID(),
         difficulty: gameState.difficulty || 'fresh',
-        mode: gameState.calcMode ? '計算機' : '通常',
+        mode: gameState.event?.enabled
+            ? `イベント:(${gameState.event.eventName})${gameState.calcMode ? '/計算機' : ''}`
+            : (gameState.calcMode ? '計算機' : '通常'),
         experience: score.experience,
         enrollment: score.enrollment,
         satisfaction: score.satisfaction,

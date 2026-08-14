@@ -222,6 +222,7 @@ export class TurnManager {
 
                     perCard.push({
                         cardName: card.cardName,
+                        category: card.category,
                         beforeStats,
                         afterStats,
                         isRecommended,
@@ -249,6 +250,15 @@ export class TurnManager {
         });
 
         this.logger?.log('--- アクション実行完了 ---', 'info');
+        // アイテム条件に用いるのは、実際に有効解決されたカードだけ。
+        const usage = {};
+        Object.values(actionInfo.cardEffects).forEach(info => info.cards.forEach(card => {
+            if (!card.applied) return;
+            const category = card.category;
+            if (category) usage[category] = (usage[category] || 0) + 1;
+        }));
+        this.gameState.eventCardUsage = usage;
+        this.logger?.log(`イベント用有効カード枚数: ${JSON.stringify(usage)}`, 'info');
         return actionInfo;
     }
 
