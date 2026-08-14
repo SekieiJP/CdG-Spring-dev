@@ -1,4 +1,4 @@
-var CURRENT_BUILD_VERSION = 'v20260503-1130';
+var CURRENT_BUILD_VERSION = 'v20260814-0001';
 
 /* ===== ヘルパー関数 ===== */
 
@@ -63,13 +63,13 @@ function validatePayload(data) {
         }
     }
 
-    // displayScore: 数値 -15〜16（PRO/FRESHの低スコアと上限を許容）
-    if (!isNumInRange(data.displayScore, -15, 16)) {
+    // displayScore: イベントの上限開放後も受け付ける
+    if (!isNumInRange(data.displayScore, -15, 100)) {
         return 'invalid field: displayScore';
     }
 
-    // points: 数値 -15〜16
-    if (!isNumInRange(data.points, -15, 16)) {
+    // points: イベントの上限開放後も受け付ける
+    if (!isNumInRange(data.points, -15, 100)) {
         return 'invalid field: points';
     }
 
@@ -83,9 +83,13 @@ function validatePayload(data) {
         return 'invalid field: difficulty';
     }
 
-    // mode: '通常' または '計算機' のみ（古いクライアントは未送信を許容）
-    if (data.mode != null && data.mode !== '通常' && data.mode !== '計算機') {
-        return 'invalid field: mode';
+    // mode: 通常・計算機、またはイベント名を含むイベントモード（古いクライアントは未送信を許容）
+    if (data.mode != null) {
+        var validEventMode = typeof data.mode === 'string'
+            && /^イベント:\([^()\r\n]{1,80}\)(\/計算機)?$/.test(data.mode);
+        if (data.mode !== '通常' && data.mode !== '計算機' && !validEventMode) {
+            return 'invalid field: mode';
+        }
     }
 
     // userUUID: 文字列、40文字以内（任意項目）

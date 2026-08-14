@@ -46,6 +46,9 @@ export class GameState {
         this.trainingRefreshPhaseStartRemaining = this.trainingRefreshRemaining;
         this.startedAt = null;
         this.discardedCards = [];  // 途中で削除したカード名の一覧
+        // イベントは開始時に固定され、カードとは完全に別管理する。
+        this.event = null;
+        this.eventCardUsage = {};
 
         this.logger?.log(`ゲーム状態を初期化しました (難易度: ${config.name})`, 'info');
     }

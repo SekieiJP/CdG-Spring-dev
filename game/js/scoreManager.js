@@ -2,6 +2,7 @@
  * ScoreManager - スコア計算・記録・共有
  */
 import { getHighScoreKey } from './difficultyConfig.js';
+import { isEventActive } from './eventManager.js';
 
 export class ScoreManager {
     constructor(logger) {
@@ -419,7 +420,14 @@ export class ScoreManager {
             'satisfaction'
         );
 
-        const points = mobilizationPoints + withdrawalPoints + enrollmentDiffPoints + satisfactionPoints;
+        const basePoints = mobilizationPoints + withdrawalPoints + enrollmentDiffPoints + satisfactionPoints;
+        const eventMode = isEventActive(gameState);
+        const overflow = eventMode ? {
+            experience: Math.max(mobilization - 50, 0) / 10,
+            enrollmentDiff: Math.max(enrollmentDiff - 48, 0) / 8,
+            satisfaction: Math.max(gameState.player.satisfaction - 35, 0) / 10
+        } : { experience: 0, enrollmentDiff: 0, satisfaction: 0 };
+        const points = eventMode ? Math.round((basePoints + overflow.experience + overflow.enrollmentDiff + overflow.satisfaction) * 10) / 10 : basePoints;
 
         let rankGrade = this.rankTable[0]?.grade || 'F';
         for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
@@ -455,7 +463,9 @@ export class ScoreManager {
                 withdrawalPoints,
                 enrollmentDiffPoints,
                 satisfactionPoints
-            }
+            },
+            basePoints,
+            overflow
         };
     }
 
@@ -537,8 +547,12 @@ export class ScoreManager {
             const experience = gameState.player.experience;
             const expUsed = Math.min(experience, 30);
             const diffUsed = Math.min(enrollmentDiff, 30);
-            const rawExpBonus = 0.5 * (expUsed - 12) / 18;
-            const rawDiffBonus = 1.5 * (diffUsed - 12) / 18;
+            const expPrecision = 0.5 * (expUsed - 12) / 18;
+            const diffPrecision = 1.5 * (diffUsed - 12) / 18;
+            const expOverflow = isEventActive(gameState) ? Math.max(experience - 30, 0) / 72 : 0;
+            const diffOverflow = isEventActive(gameState) ? Math.max(enrollmentDiff - 30, 0) / 24 : 0;
+            const rawExpBonus = expPrecision + expOverflow;
+            const rawDiffBonus = diffPrecision + diffOverflow;
             const expBonus = Math.round(rawExpBonus * 10) / 10;
             const diffBonus = Math.round(rawDiffBonus * 10) / 10;
             const totalScore = 8 + rawExpBonus + rawDiffBonus;
@@ -549,7 +563,11 @@ export class ScoreManager {
                 expUsed,
                 diffUsed,
                 expBonus,
-                diffBonus
+                diffBonus,
+                expPrecision,
+                diffPrecision,
+                expOverflow,
+                diffOverflow
             };
         }
 
@@ -596,9 +614,9 @@ export class ScoreManager {
      * ハイスコアを取得
      * @param {string} [difficulty='fresh'] - 難易度ID
      */
-    getHighScore(difficulty = 'fresh') {
+    getHighScore(difficulty = 'fresh', gameState = null) {
         try {
-            const key = getHighScoreKey(difficulty);
+            const key = this.getHighScoreStorageKey(difficulty, gameState);
             const saved = localStorage.getItem(key);
             if (saved) {
                 return JSON.parse(saved);
@@ -614,14 +632,14 @@ export class ScoreManager {
      * @param {Object} score - スコアデータ
      * @param {string} [difficulty='fresh'] - 難易度ID
      */
-    saveHighScore(score, difficulty = 'fresh') {
+    saveHighScore(score, difficulty = 'fresh', gameState = null) {
         try {
-            const current = this.getHighScore(difficulty);
+            const current = this.getHighScore(difficulty, gameState);
 
             // 現在のスコアがハイスコアより高い場合のみ保存
             const currentBest = current ? (current.displayScore ?? current.points) : -Infinity;
             if (!current || score.displayScore > currentBest) {
-                const key = getHighScoreKey(difficulty);
+                const key = this.getHighScoreStorageKey(difficulty, gameState);
                 localStorage.setItem(key, JSON.stringify({
                     points: score.points,
                     displayScore: score.displayScore,
@@ -636,6 +654,10 @@ export class ScoreManager {
             this.logger?.log(`ハイスコア保存エラー: ${error.message}`, 'error');
         }
         return false;
+    }
+
+    getHighScoreStorageKey(difficulty, gameState = null) {
+        return isEventActive(gameState) ? `${getHighScoreKey(difficulty)}_event_${gameState.event.eventId}` : getHighScoreKey(difficulty);
     }
 
     /**

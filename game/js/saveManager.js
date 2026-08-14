@@ -176,7 +176,9 @@ export class SaveManager {
             trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
             // 研修フェーズ中の抽選カード
             currentTrainingCards: gameState.currentTrainingCards ?
-                gameState.currentTrainingCards.map(card => this.serializeCard(card)) : null
+                gameState.currentTrainingCards.map(card => this.serializeCard(card)) : null,
+            event: gameState.event ? JSON.parse(JSON.stringify(gameState.event)) : null,
+            eventCardUsage: { ...(gameState.eventCardUsage || {}) }
         };
     }
 
@@ -242,6 +244,8 @@ export class SaveManager {
         if (savedState.currentTrainingCards) {
             gameState.currentTrainingCards = savedState.currentTrainingCards.map(card => ({ ...card }));
         }
+        gameState.event = savedState.event ? JSON.parse(JSON.stringify(savedState.event)) : null;
+        gameState.eventCardUsage = { ...(savedState.eventCardUsage || {}) };
         this.logger?.log('ゲーム状態を復元しました', 'info');
     }
 

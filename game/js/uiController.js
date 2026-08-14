@@ -1,4 +1,5 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260506-0030';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0001';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0001';
 
 /**
  * UIController - UI操作・表示制御
@@ -12,6 +13,10 @@ export class UIController {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;');
+    }
+
+    _eventItemName(item) {
+        return `🏆${item.name}`;
     }
 
     constructor(gameState, cardManager, turnManager, scoreManager, logger, saveManager) {
@@ -143,6 +148,8 @@ export class UIController {
             });
         }
 
+        this.renderEventStartControls();
+
         const title = document.querySelector('#start-overlay h1');
         if (title) {
             title.style.cursor = 'pointer';
@@ -163,6 +170,7 @@ export class UIController {
         document.querySelectorAll('.difficulty-btn').forEach(btn => {
             btn.classList.toggle('selected', btn.dataset.difficulty === difficultyId);
         });
+        this.renderEventStartControls();
     }
 
     /**
@@ -561,6 +569,11 @@ export class UIController {
         this.gameState.difficulty = difficulty;
         this.turnManager.initializeGame();
         this.gameState.calcMode = document.getElementById('calc-mode-toggle')?.checked || false;
+        const event = getCurrentEvent();
+        const eventEnabled = !!document.getElementById('event-mode-toggle')?.checked;
+        this.gameState.event = event && eventEnabled ? createEventState(event, difficulty) : null;
+        // 入手演出中の再読み込みでも研修へ戻れるよう、先に復元対象フェーズを固定する。
+        if (this.gameState.event) this.gameState.phase = 'training';
         localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
         this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
         this.slotSelectionMode = false;
@@ -575,8 +588,56 @@ export class UIController {
         this.updateStatusDisplay();
         this.updateTurnDisplay();
 
+        if (isEventActive(this.gameState)) {
+            this.logger?.log(`イベント開始: ${this.gameState.event.eventId} / ${this.gameState.event.eventName} / ${difficulty} / 計算機=${this.gameState.calcMode}`, 'info');
+            await this.prepareEventTurn();
+        }
         // 初回研修（Rカード4枚から2枚選択）
-        this.showInitialTraining();
+        if (this.gameState.event?.eventTraining) this.showEventTraining();
+        else this.showInitialTraining();
+    }
+
+    renderEventStartControls() {
+        const host = document.getElementById('event-mode-panel');
+        const event = getCurrentEvent();
+        if (!host) return;
+        if (!event) { host.innerHTML = ''; host.classList.add('hidden'); return; }
+        const difficulty = this.selectedDifficulty || 'fresh';
+        const checked = localStorage.getItem('cdg_event_mode') === 'true';
+        const itemHtml = event.items.map(id => {
+            const item = getEventItem(id);
+            if (!item?.difficulties.includes(difficulty)) return '';
+            return `<li><strong>${this._escapeHTML(this._eventItemName(item))}</strong>（${item.acquisitionTiming}）<br>${this._escapeHTML(item.description)}</li>`;
+        }).join('');
+        host.innerHTML = `<div class="event-title">🏆 ${this._escapeHTML(event.name)}</div><div class="event-end">開催終了: 2026年9月24日 0:00</div><label class="event-toggle-label"><input id="event-mode-toggle" type="checkbox" ${checked ? 'checked' : ''}> イベントモードで遊ぶ</label><details><summary>イベント詳細</summary><ul>${itemHtml}</ul></details>`;
+        host.classList.remove('hidden');
+        host.querySelector('#event-mode-toggle')?.addEventListener('change', e => localStorage.setItem('cdg_event_mode', e.target.checked ? 'true' : 'false'));
+    }
+
+    async acquireEventItemsForTurn() {
+        if (!isEventActive(this.gameState)) return;
+        const event = this.gameState.event;
+        for (const [id, state] of Object.entries(event.items).sort((a, b) => a[1].acquisitionOrder - b[1].acquisitionOrder)) {
+            const due = (this.gameState.turn === 0 && (id === 'press-coverage' || id === 'idea-chemistry')) || (this.gameState.turn === 4 && id === 'spring-homework');
+            if (!due || state.acquired) continue;
+            state.acquired = true; state.acquiredTurn = this.gameState.turn;
+            event.presentation = { type: 'acquisition', itemId: id, index: 0 };
+            this.saveGameState();
+            this.logger?.log(`イベントアイテム入手: ${id}`, 'action');
+            await this.showEventPresentation(id, '入手', getEventItem(id).description);
+            event.presentation = null; this.saveGameState();
+        }
+    }
+
+    showEventPresentation(itemId, title, detail) {
+        const item = getEventItem(itemId);
+        return new Promise(resolve => {
+            const overlay = document.createElement('div'); overlay.className = 'event-presentation-overlay'; overlay.tabIndex = -1;
+            overlay.innerHTML = `<div class="event-presentation" role="dialog" aria-modal="true"><img src="${item.image}" alt="${this._escapeHTML(this._eventItemName(item))}"><h2>${title}: ${this._escapeHTML(this._eventItemName(item))}</h2><p>${this._escapeHTML(detail)}</p><button class="btn-primary">次へ</button></div>`;
+            const close = () => { overlay.remove(); resolve(); };
+            overlay.querySelector('button').addEventListener('click', close);
+            document.body.appendChild(overlay); overlay.querySelector('button').focus();
+        });
     }
 
     /**
@@ -702,6 +763,19 @@ export class UIController {
 
         if (this.gameState.calcMode) {
             this.confirmCalcTraining();
+            return;
+        }
+
+        if (this.gameState.event?.eventTraining?.itemId === 'idea-chemistry') {
+            if (!this.selectedTrainingCard) return;
+            this.gameState.addToDeck(this.selectedTrainingCard);
+            const state = this.gameState.event.items['idea-chemistry'];
+            state.usageTotal += 1; state.usageThisTurn += 1;
+            this.gameState.event.eventTraining = null;
+            this.gameState.currentTrainingCards = null;
+            this.logger?.log(`イベント効果発動: idea-chemistry 取得=${this.selectedTrainingCard.cardName}`, 'action');
+            this.saveGameState();
+            this.showTrainingPhase();
             return;
         }
 
@@ -1389,7 +1463,7 @@ export class UIController {
 
         if (!overlay || !header || !cards) {
             // 演出要素がなければスキップして次へ進む
-            this.finishActionPhase();
+            await this.finishActionPhase();
             return;
         }
 
@@ -1494,7 +1568,7 @@ export class UIController {
             await this._sleep(500);
         } finally {
             overlay.classList.add('hidden');
-            this.finishActionPhase();
+            await this.finishActionPhase();
         }
     }
 
@@ -1748,9 +1822,15 @@ export class UIController {
     /**
      * アクションフェーズ終了処理
      */
-    finishActionPhase() {
+    async finishActionPhase() {
+        await this.resolveEventActionEffects();
         this.updateStatusDisplay();
         this.turnManager.advancePhase();
+        // advancePhase は同期処理なので、完了状態を保存してから次フェーズへ一度だけ進める。
+        if (this.gameState.event?.actionCompletion) {
+            this.gameState.event.actionCompletion = null;
+            this.saveGameState();
+        }
 
         // advancePhaseの結果に応じてUIを切り替え
         if (this.gameState.phase === 'end') {
@@ -1761,6 +1841,53 @@ export class UIController {
             // delete=0でmeetingがスキップされた場合
             this.showTrainingPhase();
         }
+    }
+
+    async resolveEventActionEffects() {
+        if (!isEventActive(this.gameState)) return;
+        if (!this.gameState.event.actionCompletion) {
+            this.gameState.event.actionCompletion = { turn: this.gameState.turn, status: 'resolving' };
+            this.saveGameState();
+        }
+        const states = this.gameState.event.items;
+        const usage = this.gameState.eventCardUsage || {};
+        const press = states['press-coverage'];
+        if (press?.acquired && press.triggerCountThisTurn < 1 && (usage['動員'] || 0) >= 3) {
+            press.triggerCountThisTurn += 1;
+            await this.resolveEventStatusEffect('press-coverage', press, null);
+        }
+        const homework = states['spring-homework'];
+        if (homework?.acquired && homework.triggerCountThisTurn < 1 && (usage['教務'] || 0) >= 3) {
+            homework.triggerCountThisTurn += 1;
+            const reservation = { reservationId: `spring-homework-${this.gameState.turn}-${homework.activationReservations.length}`, conditionTurn: this.gameState.turn, creationOrder: homework.activationReservations.length, activationTiming: 'final-action-end', status: 'pending' };
+            homework.activationReservations.push(reservation);
+            this.logger?.log(`イベント発動予約追加: ${reservation.reservationId}`, 'action');
+            this.saveGameState();
+        }
+        if (this.gameState.turn === 7 && homework?.acquired) {
+            for (const reservation of homework.activationReservations.filter(r => r.status === 'pending').sort((a, b) => a.creationOrder - b.creationOrder)) {
+                reservation.status = 'resolving'; this.saveGameState();
+                await this.resolveEventStatusEffect('spring-homework', homework, reservation);
+                reservation.effectApplied = true; reservation.status = 'resolved'; homework.resolvedActivationCount += 1; this.saveGameState();
+            }
+        }
+        this.gameState.event.actionCompletion.status = 'ready';
+        this.saveGameState();
+    }
+
+    async resolveEventStatusEffect(itemId, state, reservation) {
+        const item = getEventItem(itemId);
+        // 使用回数は効果開始時に消費する。上限により0増分でも消費される。
+        state.usageTotal += 1; state.usageThisTurn += 1; this.saveGameState();
+        const actual = this.gameState.updateStatus(item.effect.status, item.effect.amount);
+        if (reservation) reservation.effectApplied = true;
+        this.logger?.log(`イベント効果発動: ${itemId} 実変化=${actual} 使用=${state.usageTotal}`, 'action');
+        this.saveGameState();
+        this.gameState.event.presentation = { type: 'activation', itemId, detail: `${item.description}\n実際の変化量: ${actual >= 0 ? '+' : ''}${actual}` };
+        this.saveGameState();
+        await this.showEventPresentation(itemId, '効果発動', this.gameState.event.presentation.detail);
+        this.gameState.event.presentation = null;
+        this.saveGameState();
     }
 
     /**
@@ -1960,6 +2087,14 @@ export class UIController {
      * 研修フェーズ表示（2ターン目以降）
      */
     showTrainingPhase() {
+        if (isEventActive(this.gameState) && (this.gameState.event.preparing || this.gameState.event.preparedTurn !== this.gameState.turn)) {
+            this.prepareEventTurn().then(() => this.showTrainingPhase());
+            return;
+        }
+        if (isEventActive(this.gameState) && this.gameState.event.eventTraining) {
+            this.showEventTraining();
+            return;
+        }
         this.trainingSelectionMode = 'normal';
         this.inspirationRemaining = 0;
         const config = this.turnManager.getCurrentTurnConfig();
@@ -2018,6 +2153,50 @@ export class UIController {
             const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
             instruction.innerHTML = `3枚から1枚を選んで習得してください${helpText}`;
         }
+    }
+
+    async prepareEventTurn() {
+        const event = this.gameState.event;
+        event.preparing = true;
+        Object.values(event.items).forEach(state => { state.usageThisTurn = 0; state.triggerCountThisTurn = 0; });
+        event.preparedTurn = this.gameState.turn;
+        this.saveGameState();
+        await this.acquireEventItemsForTurn();
+        const idea = event.items['idea-chemistry'];
+        if (!idea?.acquired || idea.usageTotal >= 1 || getOwnedCardCount(this.gameState) < 10) {
+            event.preparing = false; this.saveGameState(); return;
+        }
+        if (this.gameState.calcMode) {
+            event.eventTraining = { itemId: 'idea-chemistry', calc: true };
+            event.preparing = false; this.saveGameState();
+            return;
+        }
+        const cards = this.cardManager.drawTrainingCards('SSR', 3);
+        if (new Set(cards.map(card => card.cardName)).size !== 3) {
+            this.logger?.log('アイデアの化学反応: 異なるSSRカード3枚を用意できません', 'error');
+            this.showFloatNotification('SSRカード候補を用意できませんでした。次のターンに再試行します。', 'error');
+            event.preparing = false; this.saveGameState();
+            return;
+        }
+        event.eventTraining = { itemId: 'idea-chemistry', cards: cards.map(card => ({ ...card })), selectedCardName: null };
+        event.preparing = false; this.saveGameState();
+    }
+
+    showEventTraining() {
+        const training = this.gameState.event.eventTraining;
+        if (training.calc) {
+            this.showCalcTrainingUI('SSR', 1, 1);
+            return;
+        }
+        const container = document.getElementById('training-cards');
+        if (!container) return;
+        container.innerHTML = ''; this.selectedTrainingCard = null;
+        training.cards.forEach(card => container.appendChild(this.createCardElement(card, { clickable: true, compact: true, onClick: (c, elem) => this.onTrainingCardSelect(c, elem, container) })));
+        document.getElementById('btn-training-skip')?.classList.add('hidden');
+        const confirm = document.getElementById('confirm-training'); if (confirm) confirm.disabled = true;
+        const instruction = document.querySelector('#training-area .instruction');
+        if (instruction) instruction.textContent = '🏆アイデアの化学反応: SSRカード3枚から必ず1枚を選んで習得してください';
+        this.showPhaseArea('training'); this.updateTurnDisplay(); this.updateStatusDisplay();
     }
 
     /**
@@ -2405,7 +2584,9 @@ export class UIController {
                             ${score.splusBreakdown ? `
                             <tr class="splus-breakdown-row">
                                 <td colspan="2">S+ 精度スコア内訳</td>
-                                <td>基礎8.0 + 体験+${score.splusBreakdown.expBonus}（体験${score.splusBreakdown.expUsed}）+ 入退差+${score.splusBreakdown.diffBonus}（入退差${score.splusBreakdown.diffUsed}）</td>
+                                <td>${this.gameState.event?.enabled
+                                    ? `基礎8.0 + 精度（体験+${score.splusBreakdown.expPrecision.toFixed(2)} / 入退差+${score.splusBreakdown.diffPrecision.toFixed(2)}） + 上限超過（体験+${score.splusBreakdown.expOverflow.toFixed(2)} / 入退差+${score.splusBreakdown.diffOverflow.toFixed(2)}）`
+                                    : `基礎8.0 + 体験+${score.splusBreakdown.expBonus}（体験${score.splusBreakdown.expUsed}）+ 入退差+${score.splusBreakdown.diffBonus}（入退差${score.splusBreakdown.diffUsed}）`}</td>
                             </tr>` : ''}
                             <tr class="total-row">
                                 <td colspan="2">合計スコア</td>
@@ -2422,8 +2603,8 @@ export class UIController {
 
         // ハイスコア保存・表示
         const difficulty = this.gameState.difficulty || 'fresh';
-        const isNewHighScore = this.scoreManager.saveHighScore(score, difficulty);
-        const highScore = this.scoreManager.getHighScore(difficulty);
+        const isNewHighScore = this.scoreManager.saveHighScore(score, difficulty, this.gameState);
+        const highScore = this.scoreManager.getHighScore(difficulty, this.gameState);
         const highScoreElem = document.getElementById('high-score');
         if (highScoreElem && highScore) {
             highScoreElem.textContent = `${highScore.displayScore ?? highScore.points}ポイント`;
@@ -2447,6 +2628,7 @@ export class UIController {
         this.saveManager?.clear();
 
         // 最終ターンのカード一覧表示
+        this.renderResultEventItems();
         this.renderFinalCards(finalDeck);
     }
 
@@ -2503,6 +2685,35 @@ export class UIController {
         container.appendChild(grid);
     }
 
+    /** 結果画面に、入手済み塾アイテムと効果発動回数を表示する。 */
+    renderResultEventItems() {
+        const container = document.getElementById('result-event-items');
+        if (!container) return;
+        container.innerHTML = '';
+        if (!isEventActive(this.gameState)) return;
+
+        const acquired = Object.entries(this.gameState.event.items)
+            .filter(([, state]) => state.acquired)
+            .sort(([, a], [, b]) => a.acquisitionOrder - b.acquisitionOrder);
+        if (acquired.length === 0) return;
+
+        const heading = document.createElement('h3');
+        heading.className = 'result-event-items-heading';
+        heading.textContent = '🏆 入手したイベントアイテム';
+        container.appendChild(heading);
+
+        const list = document.createElement('div');
+        list.className = 'result-event-items-list';
+        acquired.forEach(([itemId, state]) => {
+            const item = getEventItem(itemId);
+            const row = document.createElement('div');
+            row.className = 'result-event-item-row';
+            row.innerHTML = `<img src="${item.image}" alt="${this._escapeHTML(this._eventItemName(item))}"><span class="result-event-item-name">${this._escapeHTML(this._eventItemName(item))}</span><span class="result-event-item-usage">効果発動 ${state.usageTotal}回</span>`;
+            list.appendChild(row);
+        });
+        container.appendChild(list);
+    }
+
     /**
      * ポイントレンジを表示（該当ポイントを強調）
      */
@@ -2541,8 +2752,10 @@ export class UIController {
      */
     _buildInfoText() {
         const ver = window.BUILD_VERSION || 'unknown';
-        const uuid = document.cookie.match(/(?:^|; )cdg_uuid=([^;]*)/)?.[1] || '?';
-        return `${ver} / ${uuid}`;
+        // Cookieが即時反映されない初回表示でも、送信に使うUUIDと同じ値を必ず表示する。
+        const uuid = getOrCreateUserUUID();
+        const safeUuid = this._escapeHTML(uuid);
+        return this.gameState.event?.enabled ? `${ver} / ${this._escapeHTML(this.gameState.event.eventName)} / ${safeUuid}` : `${ver} / ${safeUuid}`;
     }
 
     /**
@@ -2571,7 +2784,7 @@ export class UIController {
                     <tr>
                         <td>動員</td>
                         <td>体験 ${score.experience}</td>
-                        <td>${formatPoints(b.mobilizationPoints)}</td>
+                        <td>${formatPoints(b.mobilizationPoints)}${score.overflow?.experience ? `<br><small>上限超過 +${score.overflow.experience.toFixed(1)}</small>` : ''}</td>
                     </tr>
                     <tr>
                         <td>退塾</td>
@@ -2581,15 +2794,15 @@ export class UIController {
                     <tr>
                         <td>入退差</td>
                         <td>入退差 ${score.enrollmentDiff}</td>
-                        <td>${formatPoints(b.enrollmentDiffPoints)}</td>
+                        <td>${formatPoints(b.enrollmentDiffPoints)}${score.overflow?.enrollmentDiff ? `<br><small>上限超過 +${score.overflow.enrollmentDiff.toFixed(1)}</small>` : ''}</td>
                     </tr>
                     <tr>
                         <td>満足</td>
                         <td>満足 ${score.satisfaction}</td>
-                        <td>${formatPoints(b.satisfactionPoints)}</td>
+                        <td>${formatPoints(b.satisfactionPoints)}${score.overflow?.satisfaction ? `<br><small>上限超過 +${score.overflow.satisfaction.toFixed(1)}</small>` : ''}</td>
                     </tr>
                     <tr class="total-row">
-                        <td colspan="2">合計スコア</td>
+                        <td colspan="2">合計スコア（基礎 ${score.basePoints ?? score.points} / 上限超過 +${((score.overflow?.experience || 0) + (score.overflow?.enrollmentDiff || 0) + (score.overflow?.satisfaction || 0)).toFixed(1)}）</td>
                         <td><strong>${score.displayScore}</strong></td>
                     </tr>
                     <tr class="result-build-info-row">
@@ -2748,6 +2961,7 @@ export class UIController {
         });
 
         content.appendChild(table);
+        this.renderEventItemsSection(content);
         this.renderScoreSection(content);
         document.body.appendChild(overlay);
     }
@@ -2779,11 +2993,33 @@ export class UIController {
         }
         content.appendChild(summary);
 
+        if (this.gameState.event?.enabled) {
+            const note = document.createElement('div'); note.className = 'score-note';
+            note.textContent = difficulty === 'fresh' ? 'イベント中はS+基礎8点時、体験・入退差の上限超過分もスコアに加算されます。' : 'イベント中は体験50超・入退差48超・満足35超の分が上限超過加点になります。';
+            content.appendChild(note);
+        }
+
         if (difficulty === 'fresh') {
             this._renderFreshScoreTable(content, withdrawal, mobilization, enrollmentDiff);
         } else {
             this._renderProScoreTable(content, withdrawal, mobilization, enrollmentDiff, satisfaction);
         }
+    }
+
+    renderEventItemsSection(content) {
+        if (!isEventActive(this.gameState)) return;
+        const section = document.createElement('section'); section.className = 'event-items-section';
+        section.innerHTML = '<h3>🏆 塾アイテム</h3>';
+        Object.entries(this.gameState.event.items).sort((a, b) => a[1].acquisitionOrder - b[1].acquisitionOrder).forEach(([id, state]) => {
+            const item = getEventItem(id);
+            const pending = state.activationReservations.filter(r => r.status === 'pending').length;
+            let status = !state.acquired ? '未入手' : item.limitType === 'turn' ? (state.usageThisTurn ? `今ターン${state.usageThisTurn}回使用済み` : '今ターン未使用') : (state.usageTotal ? `${state.usageTotal}回使用済み` : '未使用');
+            if (pending) status += ` / 発動予約済み（${pending}回）`;
+            const row = document.createElement('div'); row.className = 'event-item-row';
+            row.innerHTML = `<img src="${item.image}" alt="${this._escapeHTML(this._eventItemName(item))}"><div><strong>${this._escapeHTML(this._eventItemName(item))}</strong>（${item.acquisitionTiming}）<br>${this._escapeHTML(item.description)}<br><b>${status}</b></div>`;
+            section.appendChild(row);
+        });
+        content.appendChild(section);
     }
 
     /**
@@ -3101,6 +3337,34 @@ export class UIController {
         window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: hand=', this.gameState.player.hand.map(c => c.cardName));
         window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: deck=', this.gameState.player.deck.map(c => c.cardName));
 
+        // 中断時に効果適用済みなら二重適用せず、演出だけ再表示する。
+        if (this.gameState.event?.items) {
+            Object.values(this.gameState.event.items).forEach(state => state.activationReservations.forEach(reservation => {
+                if (reservation.status === 'resolving') {
+                    if (reservation.effectApplied) {
+                        reservation.status = 'resolved';
+                        state.resolvedActivationCount = Math.max(state.resolvedActivationCount || 0, state.activationReservations.filter(r => r.status === 'resolved').length);
+                    } else {
+                        reservation.status = 'pending';
+                    }
+                }
+            }));
+            const presentation = this.gameState.event.presentation;
+            if (presentation) {
+                this.showEventPresentation(presentation.itemId, presentation.type === 'acquisition' ? '入手' : '効果発動', presentation.detail || getEventItem(presentation.itemId)?.description || '').then(() => {
+                    this.gameState.event.presentation = null; this.saveGameState(); this.restoreUI();
+                });
+                return;
+            }
+            if (this.gameState.event.preparing) {
+                this.resumeEventTurnPreparation();
+                return;
+            }
+            if (this.gameState.phase === 'action' && this.gameState.event.actionCompletion) {
+                this.resumeEventActionCompletion();
+                return;
+            }
+        }
         // スタートオーバーレイを非表示
         const overlay = document.getElementById('start-overlay');
         overlay?.classList.add('hidden');
@@ -3123,7 +3387,8 @@ export class UIController {
 
         if (phase === 'training') {
             // 研修フェーズの場合は保存された研修カードを描画
-            this.restoreTrainingUI();
+            if (this.gameState.event?.eventTraining) this.showEventTraining();
+            else this.restoreTrainingUI();
         } else if (phase === 'action') {
             // 教室行動フェーズの場合
             this.restoreActionUI();
@@ -3145,6 +3410,22 @@ export class UIController {
 
         this.logger?.log('UIを復元しました', 'info');
         window.CDG_DEBUG && console.log('[SAVE-DEBUG] restoreUI: 完了');
+    }
+
+    async resumeEventTurnPreparation() {
+        await this.prepareEventTurn();
+        if (this.gameState.event?.eventTraining) {
+            this.showEventTraining();
+        } else if (this.gameState.turn === 0) {
+            this.showInitialTraining();
+        } else {
+            this.showTrainingPhase();
+        }
+    }
+
+    async resumeEventActionCompletion() {
+        // actionCompletion がある保存はカード効果解決済み。イベント効果の残りだけを冪等に完了する。
+        await this.finishActionPhase();
     }
 
     /**
@@ -3352,6 +3633,16 @@ export class UIController {
 
         cards.forEach(card => this.gameState.addToDeck({ ...card }));
         this.gameState.currentTrainingCards = null;
+
+        if (this.gameState.event?.eventTraining?.itemId === 'idea-chemistry') {
+            const state = this.gameState.event.items['idea-chemistry'];
+            state.usageTotal += 1; state.usageThisTurn += 1;
+            this.gameState.event.eventTraining = null;
+            this.logger?.log(`イベント効果発動: idea-chemistry 計算機入力=${cards[0]?.cardName || ''}`, 'action');
+            this.saveGameState();
+            this.showTrainingPhase();
+            return;
+        }
 
         if (this.trainingSelectionMode === 'inspiration') {
             this.gameState.tokens.inspiration = 0;

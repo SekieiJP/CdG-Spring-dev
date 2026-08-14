@@ -2,16 +2,17 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20260506-0030';
-import { GameState } from './gameState.js?v=20260506-0030';
-import { CardManager } from './cardManager.js?v=20260506-0030';
-import { TurnManager } from './turnManager.js?v=20260506-0030';
-import { ScoreManager } from './scoreManager.js?v=20260506-0030';
-import { UIController } from './uiController.js?v=20260506-0030';
-import { SaveManager } from './saveManager.js?v=20260506-0030';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260506-0030';
+import { Logger } from './logger.js?v=20260814-0001';
+import { GameState } from './gameState.js?v=20260814-0001';
+import { CardManager } from './cardManager.js?v=20260814-0001';
+import { TurnManager } from './turnManager.js?v=20260814-0001';
+import { ScoreManager } from './scoreManager.js?v=20260814-0001';
+import { UIController } from './uiController.js?v=20260814-0001';
+import { SaveManager } from './saveManager.js?v=20260814-0001';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260814-0001';
+import { getEventDefinition } from './eventManager.js?v=20260814-0001';
 
-const CACHE_BUSTER = 'v20260506-0030';
+const CACHE_BUSTER = 'v20260814-0001';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
@@ -62,6 +63,11 @@ class Game {
                     alert(`ゲームが更新されました。\n\n保存時: ${saveData.buildVersion}\n現在: ${CACHE_BUSTER}\n\n新しいゲームを開始してください。`);
                     this.saveManager.clear();
                 } else {
+                    const savedEventId = saveData.gameState?.event?.eventId;
+                    if (saveData.gameState?.event?.enabled && !getEventDefinition(savedEventId)) {
+                        this.showMissingEventSaveError(saveData);
+                        return;
+                    }
                     // セーブデータから難易度を取得してカードを読み込み
                     const savedDifficulty = saveData.gameState?.difficulty || 'fresh';
                     if (savedDifficulty !== this.difficulty) {
@@ -201,6 +207,14 @@ class Game {
 
         alert(message);
         this.logger.log('共有スコアを表示しました', 'info');
+    }
+
+    showMissingEventSaveError(saveData) {
+        const savedAt = saveData.savedAt ? new Intl.DateTimeFormat('ja-JP', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Tokyo' }).format(new Date(saveData.savedAt)) : '不明';
+        const overlay = document.createElement('div'); overlay.className = 'event-presentation-overlay';
+        overlay.innerHTML = `<div class="event-presentation" role="alertdialog"><p>イベント開催期間終了（または、開発者のミス！）のため、一部の情報が読み込めませんでした。不具合と思われる場合は、画面はこのままにして、開発者にご相談ください。\nイベントモードで前回遊んだ情報をリセットして、新たに始める場合は、下のボタンを押してください。\n中断日時: ${savedAt}</p><button class="btn-primary">新しくゲームを始める</button></div>`;
+        overlay.querySelector('button').addEventListener('click', () => { if (confirm('中断データを削除して新しく始めますか？')) { this.saveManager.clear(); location.reload(); } });
+        document.body.appendChild(overlay);
     }
 }
 
