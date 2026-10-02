@@ -47,10 +47,40 @@ node solver/card-evaluation.mjs solver/local-runs/pro-replaced.json --compare-be
 
 ## 再現に必要な情報
 
-記録は全ビルド番号、ルール版、カード／ランクCSVのSHA-256、戦略ファイルのSHA-256、コード全体のSHA-256、Gitコミット・未コミット変更の有無、乱数アルゴリズムとseed／系列の位置を含む。これらは保存の再開可否を制限せず、再計測条件の照合に用いる。
+全記録にビルド番号、ルール版、カード／ランクCSVの指紋、乱数アルゴリズムとseed／系列の位置を含む。ブラウザの人間プレイではコードをビルド番号で識別し、自動プレイには追加で戦略・エンジンコードのSHA-256、Gitコミットと未コミット変更の有無を記録する。CSVの指紋はSHA-256を基本とし、ブラウザで利用できない場合は識別可能な接頭辞付きの代替値を使う。これらは保存の再開可否を制限せず、再計測条件の照合に用いる。
 
 再開時は乱数系列の位置と評価ログを復元する。予測用の状態は実プレイの乱数・ログを消費しない。版・データ・seed・戦略を揃えて再計測する。
 
 ## 検証
 
 単体16件通過。評価ログ・保存・追加難易度の関連ブラウザ24件中23件通過後、開始完了を待つテストに修正し、該当Android1件を再検証して通過。同seedの2戦略・各2ゲームで得点分布が一致。差し替えと対比較、51カードのHTML表示・検索も確認した。少数試行の確認結果をバランスの結論には使用しない。
+
+## 2026-10-02の基準計測
+
+コミット`fc0d9ba8a137ac7dc667b29e014f4031941f1370`、未コミット変更なし、ビルド`v20260815-0052`、seed=`baseline-20261002`で計測した。FRESH・PROのカード数値とランク閾値は共通改修で変更していない。UI・通信の0053更新後も、この0052の環境を比較基準として保存する。
+
+| 難易度・戦略 | ゲーム数 | 平均得点 | p50 | p90 | 最小〜最大 |
+|---|---:|---:|---:|---:|---|
+| PRO / pro_stable | 100 | 8.280 | 9 | 11 | -6〜12 |
+| PRO / pro_expand | 100 | 6.210 | 9 | 11 | -6〜12 |
+| PRO / pro_upside | 100 | 3.340 | 5 | 11 | -8〜13 |
+| FRESH / fresh_stable | 50 | 5.582 | 6 | 8.9 | -1〜9.4 |
+| FRESH / beam | 50 | 1.732 | 2 | 4 | -2〜9.6 |
+| FRESH / random | 50 | -1.180 | -1 | 0 | -3〜6 |
+
+MASTERのパラメータ目標を比較するためのPRO平均値：
+
+| 戦略 | 体験 | 入塾 | 満足 | 経理 |
+|---|---:|---:|---:|---:|
+| pro_stable | 32.92 | 27.63 | 25.69 | 20.69 |
+| pro_expand | 40.11 | 31.09 | 24.36 | 15.26 |
+| pro_upside | 37.37 | 32.09 | 24.11 | 12.22 |
+
+取得・使用・条件成立・増分は各カードについて、6つの測定環境を切り替えて確認する。戦略間で平均や下振れが異なるため、戦略名だけで構築の強弱を確定しない。核の完成率約70%やMASTERの出力0〜35%増は、MASTER固有の成立条件・戦略を定義してから別スレッドで評価する。
+
+生成物は`solver/local-runs/pro.json`、`fresh.json`と`solver/local-evaluation/index.html`、`cards.csv`、`cards.json`。Gitには含めず、端末内で保持する。両難易度をまとめる場合：
+
+```sh
+node solver/autoplay-agent.mjs --difficulty fresh --episodes 50 --policies fresh_stable,beam,random --seed baseline-20261002 --output solver/local-runs/fresh.json --no-report
+node solver/card-evaluation.mjs solver/local-runs/pro.json solver/local-runs/fresh.json --output-dir solver/local-evaluation
+```

@@ -17,6 +17,13 @@ test('390×844で8枚の通常手札とステータス・配置・実行ボタ�
     await expect.poll(() => page.locator('#hand-cards').evaluate(el => el.scrollHeight <= el.clientHeight + 2)).toBe(true);
     const bounds = await page.locator('#confirm-action').boundingBox(); expect(bounds.y + bounds.height).toBeLessThanOrEqual(844);
     expect((await page.locator('#full-status-panel').boundingBox()).y).toBeGreaterThanOrEqual(0);
+    for (let i = 0; i < 3; i++) {
+        const card = page.locator('#hand-cards .card').first();
+        if (test.info().project.name === 'chromium') await card.click(); else await card.tap();
+    }
+    await page.clock.fastForward(100);
+    expect((await page.locator('#full-status-panel').boundingBox()).y).toBeGreaterThanOrEqual(0);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
 });
 
 test('360×740の多数手札は手札内をスクロールし実行ボタンを隠さない', async ({ page }) => {
@@ -42,6 +49,16 @@ test('配置済みの短縮表示に目印があり長押し後のclickで取り
     await page.clock.fastForward(550);
     await card.dispatchEvent('pointerup', { pointerType: 'touch', isPrimary: true }); await card.dispatchEvent('click');
     await expect(page.locator('.effect-tooltip')).toContainText('〈室長〉体験+3');
+    await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+});
+
+test('カード中央は配置、目印の文字部分は詳細としてタップを区別する', async ({ page }) => {
+    await startAction(page);
+    await page.locator('#hand-cards .card').first().click();
+    await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+    await expect(page.locator('.effect-tooltip')).toHaveCount(0);
+    await page.locator('#slot-leader .card-detail-hint').click();
+    await expect(page.locator('.effect-tooltip')).toBeVisible();
     await expect(page.locator('#slot-leader .card')).toHaveCount(1);
 });
 

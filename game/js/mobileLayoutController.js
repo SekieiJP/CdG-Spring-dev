@@ -9,13 +9,21 @@ export class MobileLayoutController {
             for (const element of document.querySelectorAll('#full-header, #full-status-panel, .staff-area')) this.observer.observe(element);
         }
     }
-    schedule() { cancelAnimationFrame(this.frame); this.frame = requestAnimationFrame(() => this.update()); }
+    schedule({ resetScroll = false } = {}) {
+        this.resetScroll ||= resetScroll;
+        cancelAnimationFrame(this.frame);
+        this.frame = requestAnimationFrame(() => this.update());
+    }
     update() {
         const hand = document.getElementById('hand-cards');
         if (!hand) return;
         if (!matchMedia('(max-width: 480px)').matches || this.state.phase !== 'action' || this.state.calcMode) {
+            this.resetScroll = false;
             hand.style.maxHeight = ''; return;
         }
+        // 配置によるDOMの差し替えでブラウザが画面を自動スクロールしても、判断材料を上端に戻す。
+        if (this.resetScroll) window.scrollTo(0, 0);
+        this.resetScroll = false;
         const height = window.visualViewport?.height || window.innerHeight;
         const buttonHeight = document.getElementById('confirm-action')?.offsetHeight || 44;
         const safeBottom = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
@@ -24,6 +32,7 @@ export class MobileLayoutController {
         const noteStyle = note && getComputedStyle(note);
         const bottomNote = note?.offsetHeight ? note.offsetHeight + parseFloat(noteStyle.marginTop) + parseFloat(noteStyle.marginBottom) : 0;
         const belowHand = parseFloat(areaStyle.paddingBottom) + parseFloat(areaStyle.marginBottom) + bottomNote + buttonHeight + safeBottom + 10;
-        hand.style.maxHeight = `${Math.max(100, Math.floor(height - hand.getBoundingClientRect().top - belowHand))}px`;
+        const handTop = hand.getBoundingClientRect().top + window.scrollY;
+        hand.style.maxHeight = `${Math.max(100, Math.floor(height - handTop - belowHand))}px`;
     }
 }

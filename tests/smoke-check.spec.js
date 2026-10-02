@@ -306,14 +306,18 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         expect(versionResults.clientOlder).toBe(false);
     });
 
-    test('スコア送信中はもう一度プレイを無効化し、完了後に戻す', async ({ page }) => {
+    test('スコア送信中も再プレイでき、次のゲームに前回の送信内容が混ざらない', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
         await page.goto('/');
         await page.click('#start-game');
         await page.waitForSelector('#training-cards .card', { timeout: 10000 });
 
         await page.evaluate(() => {
-            window.fetch = async () => new Promise(resolve => {
+            const originalFetch = window.fetch;
+            window.fetch = async (...args) => {
+                if (!String(args[0]).includes('script.google.com')) return originalFetch(...args);
+                window.__submittedPayload = JSON.parse(args[1].body);
+                return new Promise(resolve => {
                 window.__resolveScoreSubmit = () => resolve({
                     ok: true,
                     json: async () => ({
@@ -323,21 +327,26 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                         versionMatch: true
                     })
                 });
-            });
+                });
+            };
             window.game.gameState.phase = 'end';
             window.game.uiController.showResultPhase();
         });
 
-        await expect(page.locator('#restart-game')).toBeDisabled();
-        await expect(page.locator('#restart-game')).toHaveText('スコア送信中…');
-        await expect(page.locator('#restart-game')).toHaveAttribute('aria-busy', 'true');
-        await page.evaluate(() => window.__resolveScoreSubmit());
         await expect(page.locator('#restart-game')).toBeEnabled();
-        await expect(page.locator('#restart-game')).toHaveText('もう一度プレイ');
-        await expect(page.locator('#restart-game')).not.toHaveAttribute('aria-busy');
+        await expect(page.locator('#result-submission-status')).toContainText('スコア送信中');
+        const original = await page.evaluate(() => structuredClone(window.__submittedPayload));
+        await page.click('#restart-game'); await page.click('#start-game');
+        await expect(page.locator('#training-area')).toBeVisible();
+        await expect(page.locator('#training-cards .card').first()).toBeVisible();
+        expect(await page.evaluate(() => window.game.gameState.runId)).not.toBe(original.resultId);
+        await page.evaluate(() => window.__resolveScoreSubmit());
+        await expect.poll(() => page.evaluate(id => window.game.uiController.resultController.repository.find(id).submission, original.resultId)).toBe('sent');
+        expect(await page.evaluate(() => window.__submittedPayload)).toEqual(original);
+        await expect(page.locator('#training-area')).toBeVisible();
     });
 
-    test('スコア送信リトライ中は再プレイを無効化し、3回失敗確定後に戻す', async ({ page }) => {
+    test('スコア送信は3回失敗後も保留し、再プレイを待たせない', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
         await page.goto('/');
         await page.click('#start-game');
@@ -358,11 +367,11 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         });
 
         const restartBtn = page.locator('#restart-game');
-        await expect(restartBtn).toBeDisabled();
-        await expect(restartBtn).toHaveText('スコア送信中…');
-        await expect(restartBtn).toBeEnabled({ timeout: 7000 });
+        await expect(restartBtn).toBeEnabled();
         await expect(restartBtn).toHaveText('もう一度プレイ');
-        await expect.poll(() => page.evaluate(() => window.__scoreSubmitAttempts)).toBe(3);
+        await expect.poll(() => page.evaluate(() => window.__scoreSubmitAttempts), { timeout: 7000 }).toBe(3);
+        const pending = await page.evaluate(() => window.game.uiController.resultController.repository.pending());
+        expect(pending).toHaveLength(1); expect(pending[0].attempts).toBe(3);
     });
 
     test('スコア送信レスポンスが旧バージョン判定なら警告フラグを立てる', async ({ page }) => {

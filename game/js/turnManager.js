@@ -1,8 +1,8 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20260815-0052';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0052';
+import { resolveCardAction } from './actionResolver.js?v=20260815-0053';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0053';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;

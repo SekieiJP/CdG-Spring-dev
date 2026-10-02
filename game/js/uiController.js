@@ -1,10 +1,11 @@
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0052';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0052';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0052';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0052';
-import { getPlacementError } from './placementRules.js?v=20260815-0052';
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0052';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0052';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0053';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0053';
+import { ResultController } from './resultController.js?v=20260815-0053';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0053';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0053';
+import { getPlacementError } from './placementRules.js?v=20260815-0053';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0053';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0053';
 
 /**
  * UIController - UI操作・表示制御
@@ -71,7 +72,7 @@ export class UIController {
         this.tapMode = true; // タップ順配置モード
         this.trainingSelectionMode = 'normal'; // 'normal' | 'inspiration'
         this.inspirationRemaining = 0;
-        this.pendingScoreSubmissions = 0;
+        this.resultController = new ResultController(this);
         this.actionAnimation = new ActionAnimationController(this);
         this.mobileLayout = new MobileLayoutController(gameState);
     }
@@ -96,6 +97,7 @@ export class UIController {
 
         // スクロール検知設定
         this.setupScrollListener();
+        this.resultController.init();
     }
 
     /**
@@ -160,6 +162,7 @@ export class UIController {
         // リスタートボタン
         const restartBtn = document.getElementById('restart-game');
         restartBtn?.addEventListener('click', () => this.onRestart());
+        for (const id of ['view-result-history', 'start-result-history']) document.getElementById(id)?.addEventListener('click', () => this.resultController.showHistory());
 
         // スコア共有ボタン
         const shareBtn = document.getElementById('share-score');
@@ -403,7 +406,7 @@ export class UIController {
     showPhaseArea(phase) {
         document.body.dataset.phase = phase;
         document.body.dataset.calcMode = String(this.gameState.calcMode);
-        this.mobileLayout.schedule();
+        this.mobileLayout.schedule({ resetScroll: phase === 'action' });
         const areas = ['training-area', 'action-area', 'meeting-area', 'result-area'];
         areas.forEach(areaId => {
             const elem = document.getElementById(areaId);
@@ -972,7 +975,7 @@ export class UIController {
      * 手札表示
      */
     renderHand() {
-        this.mobileLayout.schedule();
+        this.mobileLayout.schedule({ resetScroll: true });
         const handContainer = document.getElementById('hand-cards');
         if (!handContainer) return;
 
@@ -2368,8 +2371,8 @@ export class UIController {
             if (highScoreDiv) highScoreDiv.appendChild(badge);
         }
 
-        // スコア自動送信中は、二重送信を避けるためリスタートを一時的に止める
-        this.sendScoreAndHandleVersion(score, finalDeck);
+        // 不変の結果を保存してから、ゲーム進行と独立したキューで送信する。
+        this.resultController.record(score, finalDeck);
 
         // セーブデータクリア（ゲーム終了）
         this.saveManager?.clear();
@@ -2377,50 +2380,6 @@ export class UIController {
         // 最終ターンのカード一覧表示
         this.renderResultEventItems();
         this.renderFinalCards(finalDeck);
-    }
-
-    async sendScoreAndHandleVersion(score, finalDeck) {
-        this.pendingScoreSubmissions += 1;
-        this.setResultRestartButtonSubmitting(true);
-
-        try {
-            const result = await submitScore(this.gameState, score, finalDeck, this.logger);
-            if (result?.ok && result.versionMatch === false) {
-                localStorage.setItem('cdg_version_updated', 'true');
-                const current = result.currentVersion || '最新';
-                this.logger?.log(`⚠️ 新しいバージョンがあります（現在: ${window.BUILD_VERSION || 'unknown'} / 最新: ${current}）`, 'info');
-                this.showFloatNotification('新しいバージョンがあります。再読み込みをおすすめします', 'warning');
-            }
-        } finally {
-            this.pendingScoreSubmissions = Math.max(0, this.pendingScoreSubmissions - 1);
-            if (this.pendingScoreSubmissions === 0) {
-                this.setResultRestartButtonSubmitting(false);
-            }
-        }
-    }
-
-    /**
-     * 結果画面の再プレイボタンを、スコア送信の進行状況に合わせて更新する。
-     * @param {boolean} isSubmitting
-     */
-    setResultRestartButtonSubmitting(isSubmitting) {
-        const restartBtn = document.getElementById('restart-game');
-        if (!restartBtn) return;
-
-        if (isSubmitting) {
-            if (!restartBtn.dataset.readyText) {
-                restartBtn.dataset.readyText = restartBtn.textContent.trim();
-            }
-            restartBtn.disabled = true;
-            restartBtn.textContent = 'スコア送信中…';
-            restartBtn.setAttribute('aria-busy', 'true');
-            return;
-        }
-
-        restartBtn.disabled = false;
-        restartBtn.textContent = restartBtn.dataset.readyText || 'もう一度プレイ';
-        delete restartBtn.dataset.readyText;
-        restartBtn.removeAttribute('aria-busy');
     }
 
     /**
@@ -2617,9 +2576,7 @@ export class UIController {
      * リスタート
      */
     onRestart() {
-        // disabled属性を回避した操作でも、送信完了前には次のゲームを開始させない。
-        if (this.pendingScoreSubmissions > 0) return;
-
+        this.resultController.currentId = null;
         this.logger.clear();
 
         // 全フェーズエリアを非表示
@@ -3150,6 +3107,10 @@ export class UIController {
         if (this.gameState.phase === 'action' && this.gameState.pendingAction) {
             this.actionBusy = true;
             this.finishActionPhase();
+            return;
+        }
+        if (this.gameState.phase === 'end') {
+            this.showResultPhase();
             return;
         }
         const calcToggle = document.getElementById('calc-mode-toggle');
@@ -3993,6 +3954,12 @@ export class UIController {
         exportButton.textContent = 'プレイ記録をJSONで保存';
         exportButton.addEventListener('click', () => this.downloadPlayRecord());
         content.querySelector('.settings-content')?.appendChild(exportButton);
+        const historyButton = document.createElement('button');
+        historyButton.id = 'settings-result-history';
+        historyButton.className = 'btn-secondary';
+        historyButton.textContent = 'プレイ履歴（直近50ゲーム）';
+        historyButton.addEventListener('click', () => { overlay.remove(); this.resultController.showHistory(); });
+        content.querySelector('.settings-content')?.appendChild(historyButton);
 
         // リンククリック時にバッジフラグ更新
         const tutorialLink = content.querySelector('#settings-link-tutorial');

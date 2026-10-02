@@ -1,7 +1,8 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20260815-0052';
+import { getEventItem } from './eventManager.js?v=20260815-0053';
+import { makeRunId } from './defaultRules.js?v=20260815-0053';
 
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;
@@ -60,7 +61,7 @@ export function buildSchoolItemsPayload(gameState) {
         .sort(([, a], [, b]) => (a.acquisitionOrder ?? 0) - (b.acquisitionOrder ?? 0))
         .map(([itemId, state]) => {
             const turns = Array.isArray(state.conditionMetTurns)
-                ? state.conditionMetTurns.filter(turn => Number.isInteger(turn) && turn >= 1 && turn <= 8)
+                ? state.conditionMetTurns.filter(turn => Number.isInteger(turn) && turn >= 1 && turn <= (gameState.totalTurns || 8))
                 : [];
             const conditionMetTurns = [...new Set(turns)].sort((a, b) => a - b);
             return {
@@ -70,16 +71,19 @@ export function buildSchoolItemsPayload(gameState) {
         });
 }
 
-export async function submitScore(gameState, score, finalDeck, logger) {
-    if (SCORE_ENDPOINT.includes('DEPLOY_ID')) {
-        logger?.log('⚠️ スコア送信: エンドポイント未設定', 'info');
-        return { ok: false, skipped: true, reason: 'endpoint_unset' };
-    }
-
-    const payload = {
+/** 完了時に一度確定し、次のゲームを始めても内容・ID・完了時刻を変えない。 */
+export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
+    gameState.runId ||= makeRunId();
+    const record = gameState.playRecord?.metadata || {};
+    return structuredClone({
+        resultId: gameState.runId,
+        totalTurns: gameState.totalTurns || 8,
         startedAt: gameState.startedAt || null,
         completedAt: new Date().toISOString(),
-        buildVersion: window.BUILD_VERSION || 'unknown',
+        buildVersion: globalThis.window?.BUILD_VERSION || 'unknown',
+        rulesVersion: record.rulesVersion || metadata.rulesVersion || String(globalThis.window?.BUILD_VERSION || '').replace(/\D/g, '').slice(0, 8),
+        cardVersion: record.cardVersion || metadata.cardVersion || 'unknown',
+        rankVersion: record.rankVersion || metadata.rankVersion || 'unknown',
         userUUID: getOrCreateUserUUID(),
         difficulty: gameState.difficulty || 'fresh',
         mode: gameState.event?.enabled
@@ -98,45 +102,54 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         finalDeck: finalDeck.map(c => c.cardName),
         discardedCards: gameState.discardedCards || [],
         schoolItems: buildSchoolItemsPayload(gameState)
-    };
+    });
+}
 
-    const MAX_RETRIES = 3;
-    const RETRY_DELAY_MS = 2000;
-
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-        try {
-            const response = await fetch(SCORE_ENDPOINT, {
+/** 1回の送信。JSON応答の読み込みまで含め、通信を8秒で打ち切る。 */
+export async function submitPayload(payload, logger, { timeoutMs = 8000, signal, fetchImpl = globalThis.fetch } = {}) {
+    const controller = new AbortController();
+    let timer, onAbort;
+    const stop = new Promise((_, reject) => {
+        onAbort = () => { controller.abort(); reject(new Error('送信を中断しました')); };
+        signal?.addEventListener('abort', onAbort, { once: true });
+        if (signal?.aborted) onAbort();
+        timer = setTimeout(() => { controller.abort(); reject(new Error('通信がタイムアウトしました')); }, timeoutMs);
+    });
+    try {
+        const request = async () => {
+            if (signal?.aborted) throw new Error('送信を中断しました');
+            const response = await fetchImpl(SCORE_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: controller.signal
             });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const result = await response.json();
-            if (result.status !== 'ok') {
-                throw new Error(`server: ${result.message || 'unknown error'}`);
-            }
-            logger?.log('📤 スコアを送信しました', 'info');
-            const currentVersion = result.currentVersion || null;
-            const clientVersion = result.clientVersion || payload.buildVersion;
-            return {
-                ok: true,
-                currentVersion,
-                clientVersion,
-                versionMatch: currentVersion
-                    ? isClientVersionCurrent(clientVersion, currentVersion)
-                    : result.versionMatch !== false
-            };
-        } catch (e) {
-            console.warn(`[ScoreSubmit] 試行${attempt}/${MAX_RETRIES} 失敗:`, e.message);
-            if (attempt < MAX_RETRIES) {
-                logger?.log(`⚠️ スコア送信失敗 (${attempt}/${MAX_RETRIES}回目)、${RETRY_DELAY_MS / 1000}秒後にリトライします`, 'error');
-                await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
-            } else {
-                logger?.log(`❌ スコア送信に失敗しました（${MAX_RETRIES}回試行）: ${e.message}`, 'error');
-                return { ok: false, error: e.message };
-            }
-        }
+            if (result.status !== 'ok') throw new Error(`server: ${result.message || 'unknown error'}`);
+            if (result.resultId && result.resultId !== payload.resultId) throw new Error('結果IDが応答と一致しません');
+            return result;
+        };
+        const result = await Promise.race([request(), stop]);
+        logger?.log('📤 スコアを送信しました', 'info');
+        const currentVersion = result.currentVersion || null;
+        const clientVersion = result.clientVersion || payload.buildVersion;
+        return { ok: true, duplicate: !!result.duplicate, currentVersion, clientVersion,
+            versionMatch: currentVersion ? isClientVersionCurrent(clientVersion, currentVersion) : result.versionMatch !== false };
+    } catch (error) {
+        return { ok: false, error: error.message };
+    } finally {
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+    }
+}
+
+/** 旧呼び出し口。ゲーム画面は保存済み結果のSubmissionQueueを利用する。 */
+export async function submitScore(gameState, score, finalDeck, logger) {
+    const payload = buildScorePayload(gameState, score, finalDeck);
+    for (let attempt = 0; attempt < 3; attempt++) {
+        const result = await submitPayload(payload, logger);
+        if (result.ok || attempt === 2) return result;
+        await new Promise(resolve => setTimeout(resolve, 2000));
     }
 }

@@ -22,7 +22,7 @@
     <link rel="icon" type="image/svg+xml" href="pwa/icon.svg">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20260815-0052">
+    <link rel="stylesheet" href="css/style.css?v=20260815-0053">
 </head>
 
 <body>
@@ -187,8 +187,11 @@
                 </div>
                 <div id="result-event-items" class="result-event-items"></div>
                 <div id="result-cards"></div>
+                <p id="result-comparison" class="result-note"></p>
+                <p id="result-submission-status" class="result-note" role="status" aria-live="polite"></p>
                 <div class="result-actions">
                     <button id="restart-game" class="btn-primary">もう一度プレイ</button>
+                    <button id="view-result-history" class="btn-secondary">プレイ履歴</button>
                 </div>
             </section>
         </main>
@@ -249,6 +252,7 @@
                         📢 アップデート情報
                         <span id="badge-release-note" class="notify-badge hidden">！</span>
                     </a>
+                    <button id="start-result-history" class="title-link-btn" type="button">📚 履歴</button>
                 </div>
             </div>
         </div>
@@ -307,7 +311,7 @@
     </div>
 
     <!-- JavaScriptモジュール（配信資産キャッシュバスター付き v20260815-0050） -->
-    <script type="module" src="js/main.js?v=20260815-0052"></script>
+    <script type="module" src="js/main.js?v=20260815-0053"></script>
 </body>
 
 </html>

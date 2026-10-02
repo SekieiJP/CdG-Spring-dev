@@ -50,8 +50,12 @@ registerDifficulty({
 
 版を更新する際は`node scripts/set-build-version.mjs vYYYYMMDD-NNNN`を使用する。互換な更新は上8桁を維持する。ゲーム内の相対importを同じ版に統一し、別URLで設定レジストリが二重に生成されることを防ぐ。新しいimportを追加した場合もこのスクリプトで参照を揃える。
 
+計測は`state.rng`の名前付き系列と`state.record`／`state.exportPlayRecord`を使う。新たな取得・ドロー方式も、offer・acquire・draw・resolveの共通記録へ接続する。実装と指標は[カード評価手順](CdG-Card-Evaluation.md)を参照する。
+
+結果・履歴は`ResultController`、永続保存は`ResultRepository`、送信は`SubmissionQueue`／`submitPayload`に分離した。完了時の`runId`と版情報を維持し、固有ルールの詳細ログを送信ペイロードへ混ぜない。追加難易度の得点結果は、既存の`rank.grade`・`displayScore`・4パラメータなどを返す結果形式を守る。詳細は[結果・送信仕様](CdG-Results-Submission.md)に記録する。
+
 ## 検証と残る範囲
 
-追加配置先・追加所在・持続配置・6ターン・未登録ID・行動の二重適用を単体／ブラウザで検証した。カード演出分割後の関連ブラウザ47件、単体12件が通過した。
+追加配置先・追加所在・持続配置・6ターン・未登録ID・行動の二重適用を単体／ブラウザで検証した。カード演出分割後の関連ブラウザ47件、単体12件が通過した。評価・画面・通信を含む共通初版の最終確認と、未確認の環境は[共通開発手順](CdG-Common-Development.md)を参照する。取り込み先・コミットは[共通改修の引き継ぎ](CdG-Shared-Handoff.md)に記録する。
 
 研修の取得ルール・選択ドロー・独自効果文の解析・専用solver戦略は、固有仕様が定まってから拡張する。現在の3／4候補と取得枚数はFRESH・PROの仕様を維持している。新しい得点方式の内訳表示は、その方式の表示モジュールも用意する。

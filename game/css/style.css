@@ -60,7 +60,7 @@ body {
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.card-detail-hint { display: block; color: #d9e5fb; font-size: 10px; line-height: 14px; text-align: right; }
+.card-detail-hint { display: block; width: fit-content; margin-left: auto; color: #d9e5fb; font-size: 10px; line-height: 14px; text-align: right; }
 .card { -webkit-touch-callout: none; touch-action: pan-y; }
 .effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
 .animation-skip-hint { font-size: 12px; text-align: center; color: var(--color-text-secondary); margin: 6px 0; }
@@ -796,6 +796,7 @@ body {
 /* タイトル画面リンクボタン */
 .title-links {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-md);
     justify-content: center;
     margin-top: var(--spacing-lg);
@@ -1078,6 +1079,12 @@ body {
     display: grid;
     gap: var(--spacing-md);
 }
+.result-note { font-size: .8rem; color: var(--color-text-secondary); margin: 8px 0; line-height: 1.5; }
+#result-history-overlay { background: var(--color-bg); }
+.result-history-entry { margin: 12px 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; }
+.result-history-entry summary { cursor: pointer; min-height: 44px; }
+.result-history-entry p { margin: 8px 0; font-size: .8rem; line-height: 1.5; }
+.history-versions { overflow-wrap: anywhere; }
 
 .selected-info {
     text-align: center;
@@ -1132,6 +1139,7 @@ body {
 }
 
 @media (max-width: 480px) {
+    body[data-phase="action"][data-calc-mode="false"] .game-main { overflow-anchor: none; }
     .game-header { padding: 4px 8px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 6px; }
     .game-header h1 { font-size: 16px; margin-bottom: 0; text-align: left; }
     .game-header .turn-info { grid-column: 1 / -1; font-size: 12px; gap: 10px; }

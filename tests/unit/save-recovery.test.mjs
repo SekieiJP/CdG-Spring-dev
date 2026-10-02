@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0052';
-import { CardManager } from '../../game/js/cardManager.js?v=20260815-0052';
-import { SaveManager } from '../../game/js/saveManager.js?v=20260815-0052';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0053';
+import { CardManager } from '../../game/js/cardManager.js?v=20260815-0053';
+import { SaveManager } from '../../game/js/saveManager.js?v=20260815-0053';
 
 const card = (no, name) => ({ category: '動員', rarity: 'R', cardNo: String(no), cardName: name, effect: '体験+1', topEffect: '' });
 const roundTrip = value => JSON.parse(JSON.stringify(value));
