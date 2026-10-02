@@ -1,8 +1,10 @@
 /**
  * GameState - ゲーム状態管理
  */
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0051';
-import { makeRunId } from './defaultRules.js?v=20260815-0051';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0052';
+import { makeRunId } from './defaultRules.js?v=20260815-0052';
+import { RandomSource } from './randomSource.js?v=20260815-0052';
+import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20260815-0052';
 
 export class GameState {
     get config() { return getDifficultyConfig(this.difficulty); }
@@ -21,7 +23,7 @@ export class GameState {
      * ゲーム状態をリセット
      * @param {string} [difficulty] - 難易度ID ('fresh' or 'pro')。省略時は現在の難易度を維持
      */
-    reset(difficulty) {
+    reset(difficulty, options = {}) {
         if (difficulty) {
             this.difficulty = difficulty;
         }
@@ -42,6 +44,9 @@ export class GameState {
         this.nextInstanceId = 1;
         this.ruleState = {};
         this.pendingAction = null;
+        this.rng = new RandomSource(options.seed ?? globalThis.window?.CDG_GAME_SEED ?? this.runId);
+        this.recordingMetadata = options;
+        this.playRecord = null;
 
         this.turn = 0;  // 0-7 (1月下旬〜5月上旬)
         this.phase = 'start';  // start, training, action, meeting, end
@@ -65,6 +70,15 @@ export class GameState {
 
     recordStartTime() {
         this.startedAt = new Date().toISOString();
+    }
+
+    startRecording(metadata = {}) { this.playRecord = createPlayRecord(this, { ...this.recordingMetadata, ...metadata }); }
+    record(type, data) { recordPlayEvent(this, type, data); }
+    exportPlayRecord() {
+        if (!this.playRecord) return null;
+        return { ...structuredClone(this.playRecord), metadata: { ...this.playRecord.metadata,
+            calcMode: this.calcMode, eventId: this.event?.enabled ? this.event.eventId : null,
+            startedAt: this.startedAt, randomState: this.rng.snapshot() } };
     }
 
     /**
@@ -122,6 +136,7 @@ export class GameState {
             card.acquiredTurn = this.turn;
         }
         this.player.deck.push(card);
+        this.record('acquire', { card: cardIdentity(card) });
         this.logger?.log(`デッキに追加: ${card.cardName} (${card.rarity})`, 'action');
     }
 
@@ -160,7 +175,7 @@ export class GameState {
     shuffleDeck() {
         const deck = this.player.deck;
         for (let i = deck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(this.rng.next(`deck:${this.turn}`) * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
         this.logger?.log('デッキをシャッフルしました', 'info');
@@ -211,6 +226,7 @@ export class GameState {
         }
 
         if (drawn.length > 0) {
+            this.record('draw', { cards: drawn.map(cardIdentity), requested: count });
             this.logger?.log(`手札を${drawn.length}枚引きました`, 'action');
         }
 
@@ -223,6 +239,7 @@ export class GameState {
     placeCard(card, staff) {
         this.identifyCard(card);
         this.player.placed[staff].push(card);
+        this.record('place', { card: cardIdentity(card), staff });
         const staffNames = this.staffNames;
         this.logger?.log(`${staffNames[staff]}に配置: ${card.cardName}`, 'action');
     }
@@ -243,6 +260,7 @@ export class GameState {
         const idx = this.player.placed[staff].indexOf(card);
         if (idx > -1) {
             this.player.placed[staff].splice(idx, 1);
+            this.record('unplace', { card: cardIdentity(card), staff });
         }
     }
 
@@ -264,6 +282,7 @@ export class GameState {
         if (index > -1) {
             this.player.deck.splice(index, 1);
             this.discardedCards.push(card.cardName);
+            this.record('delete', { card: cardIdentity(card) });
             this.logger?.log(`カード削除: ${card.cardName}`, 'action');
             return true;
         }

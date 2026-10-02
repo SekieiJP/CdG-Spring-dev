@@ -1,3 +1,4 @@
+import { fingerprint, cardIdentity } from './playRecord.js?v=20260815-0052';
 /**
  * CardManager - カード管理と効果処理
  */
@@ -22,6 +23,7 @@ export class CardManager {
             const response = await fetch(csvPath + cb);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const csvText = await response.text();
+            this.dataVersion = await fingerprint(csvText);
 
             // 難易度切替時の混在防止
             this.allCards = [];
@@ -210,10 +212,12 @@ export class CardManager {
     shuffleTrainingDeck(rarity) {
         const deck = this.trainingDecks[rarity];
         for (let i = deck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(this.random(`training-pool:${rarity}`) * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
     }
+
+    random(key) { return this.gameState?.rng.next(key) ?? Math.random(); }
 
     /**
      * 研修カードを引く
@@ -277,7 +281,7 @@ export class CardManager {
         // シャッフル（Fisher-Yates）
         const shuffleNames = () => {
             for (let i = availableNames.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(this.random(`offers:${this.gameState?.turn || 0}:${this.gameState?.trainingSelectionMode || 'normal'}:${rarity}`) * (i + 1));
                 [availableNames[i], availableNames[j]] = [availableNames[j], availableNames[i]];
             }
         };
@@ -312,6 +316,7 @@ export class CardManager {
         }
 
         this.logger?.log(`研修カード提示: ${drawn.map(c => c.cardName).join(', ')} (${rarity}プール残: ${deck.length}枚)`, 'info');
+        this.gameState?.record('offer', { rarity, cards: drawn.map(cardIdentity) });
         return drawn;
     }
 

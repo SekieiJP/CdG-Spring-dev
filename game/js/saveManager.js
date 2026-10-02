@@ -1,3 +1,4 @@
+import { RandomSource } from './randomSource.js?v=20260815-0052';
 /**
  * SaveManager - ゲーム状態の保存・復元管理
  * v20260208-1200: 中断・再開機能実装
@@ -184,6 +185,8 @@ export class SaveManager {
             nextInstanceId: gameState.nextInstanceId,
             ruleState: structuredClone(gameState.ruleState || {}),
             pendingAction: structuredClone(gameState.pendingAction || null),
+            randomState: gameState.rng.snapshot(),
+            playRecord: gameState.exportPlayRecord(),
             discardedCards: [...(gameState.discardedCards || [])],
             trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
             trainingRefreshPhaseStartRemaining: gameState.trainingRefreshPhaseStartRemaining ?? gameState.trainingRefreshRemaining ?? 0,
@@ -252,6 +255,8 @@ export class SaveManager {
         gameState.nextInstanceId = savedState.nextInstanceId || 1;
         gameState.ruleState = structuredClone(savedState.ruleState || {});
         gameState.pendingAction = structuredClone(savedState.pendingAction || null);
+        if (savedState.randomState) gameState.rng = RandomSource.restore(savedState.randomState);
+        gameState.playRecord = structuredClone(savedState.playRecord || null);
         gameState.ensureCardIdentities();
         // 旧形式（ルート直下tokens）と新形式（player.tokens）の両方に対応
         const savedTokens = savedState.player?.tokens || savedState.tokens;

@@ -31,7 +31,7 @@ export function resolveCardAction(cardManager, gameState, card, staff, config = 
         logger?.log(`コスト不足: ${card.cardName}の効果は無効`, 'warning');
     }
 
-    return {
+    const resolved = {
         cardName: card.cardName,
         cardNo: card.cardNo,
         definitionId: card.definitionId,
@@ -50,4 +50,6 @@ export function resolveCardAction(cardManager, gameState, card, staff, config = 
         skippedReason: result.skippedReason,
         shortageEffects: result.shortageEffects || []
     };
+    gameState.record?.('resolve', resolved);
+    return resolved;
 }

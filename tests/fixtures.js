@@ -3,6 +3,7 @@ import { test as base, expect } from '@playwright/test';
 export { expect };
 export const test = base.extend({
     testDate: ['2026-08-20T03:00:00Z', { option: true }],
+    gameSeed: ['browser-test-20261002', { option: true }],
     scoreSubmissions: async ({}, use) => { await use([]); },
     _isolatedServices: [async ({ context, baseURL, scoreSubmissions }, use) => {
         await context.route('**/*', async route => {
@@ -22,7 +23,8 @@ export const test = base.extend({
         });
         await use();
     }, { auto: true }],
-    _testClock: [async ({ page, testDate }, use) => {
+    _testClock: [async ({ page, testDate, gameSeed }, use) => {
+        await page.addInitScript(seed => { window.CDG_GAME_SEED = seed; }, gameSeed);
         if (testDate) await page.clock.install({ time: new Date(testDate) });
         await use();
     }, { auto: true }]

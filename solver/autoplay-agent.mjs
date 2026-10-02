@@ -4,6 +4,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFile, writeFile } from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { readdir } from 'node:fs/promises';
 import { buildNaturalLanguageReport } from './reportBuilder.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -105,6 +108,8 @@ function parseArgs(argv) {
         report: 'solver/latest-report.md',
         traceSamples: 0,
         headful: false,
+        seed: 'cdg-evaluation-1',
+        replacement: null,
         port: 4173
     };
 
@@ -116,7 +121,7 @@ function parseArgs(argv) {
             args.episodes = Math.max(1, Number.parseInt(next, 10) || args.episodes);
             i += 1;
         } else if (key === '--difficulty' && next) {
-            args.difficulty = next.toLowerCase() === 'pro' ? 'pro' : 'fresh';
+            args.difficulty = next.toLowerCase();
             i += 1;
         } else if (key === '--policies' && next) {
             args.policies = next
@@ -133,6 +138,11 @@ function parseArgs(argv) {
         } else if (key === '--trace-samples' && next) {
             args.traceSamples = Math.max(0, Number.parseInt(next, 10) || 0);
             i += 1;
+        } else if (key === '--seed' && next) {
+            args.seed = next; i++;
+        } else if (key === '--replace-card' && next) {
+            if (!/^\d{1,2}:\d{1,2}$/.test(next)) throw new Error('--replace-card は元No:差替Noです');
+            args.replacement = next; i++;
         } else if (key === '--no-report') {
             args.report = null;
         } else if (key === '--port' && next) {
@@ -198,8 +208,8 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
@@ -215,6 +225,14 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         await game.setDifficulty(diff);
+        if (game.cardLoadFailed) throw new Error(`難易度データを読み込めません: ${diff}`);
+        if (replacement) {
+            const [from, to] = replacement.split(':');
+            const target = game.cardManager.getCardByNo(to);
+            if (!target || !game.cardManager.getCardByNo(from)) throw new Error('差し替えるカードNoがありません');
+            game.cardManager.allCards = game.cardManager.allCards.map(card => game.cardManager.normalizeCardNo(card.cardNo) === game.cardManager.normalizeCardNo(from)
+                ? { ...target, cardNo: card.cardNo, definitionId: `card:${card.cardNo}->${to}` } : card);
+        }
 
         const freshOnlyPolicies = new Set(['fresh_adaptive', 'deep_beam', 'deep_beam_satcap', 'fresh_rule_nonly', 'fresh_s50', 'fresh_stable', 'fresh_stable_classic', 'fresh_stable_push', 'fresh_upside']);
         const proPolicies = new Set(['pro_foundation', 'pro_stable', 'pro_stable_refreshless', 'pro_stable_refresh_init', 'pro_nonly', 'pro_nonly_refreshless', 'pro_adaptive', 'pro_adaptive_nonly', 'pro_smax', 'pro_hybrid', 'pro_upside', 'pro_strategic1', 'pro_strategic1_stable', 'pro_strategic1_upside', 'pro_compress', 'pro_spike12', 'pro_expand']);
@@ -259,7 +277,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             : { aPoints: 7, sClearPoints: 8, aPlusPoints: 7, sPlusPoints: 9 };
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
-        const SLOT_KEYS = ['leader', 'teacher', 'staff'];
+        const SLOT_KEYS = game.gameState.slotIds;
         const statusWeights = {
             experience: 2.0,
             enrollment: 2.8,
@@ -1669,7 +1687,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         function randomPick(cards, count = 1) {
             const shuffled = [...cards];
             for (let i = shuffled.length - 1; i > 0; i -= 1) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(game.gameState.rng.next(`policy:${game.gameState.turn}`) * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
             return shuffled.slice(0, Math.min(count, shuffled.length));
@@ -2559,13 +2577,13 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                         .map((opt) => ({ card: opt.card, slot: opt.slot }));
 
                     if (options.length === 0) break;
-                    const selected = options[Math.floor(Math.random() * options.length)];
+                    const selected = options[Math.floor(game.gameState.rng.next(`policy:${game.gameState.turn}`) * options.length)];
                     game.gameState.placeCard(selected.card, selected.slot);
                     game.gameState.removeFromHand(selected.card);
                     placements.push({ cardName: selected.card.cardName, slot: selected.slot });
                     if (hasParallelEffect(selected.card)) decisionTelemetry.action.parallelPlacements += 1;
 
-                    if (Math.random() < 0.35) break;
+                    if (game.gameState.rng.next(`policy:${game.gameState.turn}`) < 0.35) break;
                 }
                 decisionTelemetry.action.placedCards += placements.length;
                 return placements;
@@ -2988,6 +3006,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             }
         };
         const episodeTraces = [];
+        const playRecords = [];
 
         function listCardNames(cards) {
             return (cards || []).map((card) => card?.cardName || 'UNKNOWN');
@@ -3005,7 +3024,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 }
                 : null;
             episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
-            game.gameState.reset(diff);
+            game.gameState.reset(diff, { seed: `${seedBase}:${episode}`, source: 'autoplay', strategy: strategyPolicy });
+            game.gameState.startRecording({ cardVersion: game.cardManager.dataVersion, rankVersion: game.cardManager.rankVersion,
+                catalog: game.cardManager.allCards, provenance, replacement });
             game.cardManager.initTrainingPool();
             game.gameState.phase = 'start';
             game.gameState.turn = 0;
@@ -3016,7 +3037,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             // 初期デッキ
             const basicCards = game.cardManager.getBasicCards();
             basicCards.forEach((card) => {
-                game.gameState.player.deck.push({ ...card });
+                game.gameState.addToDeck({ ...card });
             });
             game.gameState.recordStartTime();
 
@@ -3187,6 +3208,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             }
 
             const score = game.scoreManager.calculateScore(game.gameState);
+            game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
+            playRecords.push(game.gameState.exportPlayRecord());
             const displayScore = Number(score.displayScore ?? score.points ?? 0);
             const scorePoints = Number(score.points ?? 0);
             const thresholdMetric = diff === 'pro' ? scorePoints : displayScore;
@@ -3496,6 +3519,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 categoryBalance: lowCategoryBalance
             },
             episodeTraces,
+            playRecords,
             cardPool: {
                 uniqueByRarity: poolUniqueByRarity,
                 uniqueByCategory: poolUniqueByCategory,
@@ -3503,11 +3527,17 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0 });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement });
 }
 
 async function main() {
     const args = parseArgs(process.argv.slice(2));
+    const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
+        .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
+    const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).digest('hex'),
+        gitCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim(),
+        workingTreeDirty: !!execFileSync('git', ['status', '--porcelain'], { cwd: repoRoot, encoding: 'utf8' }).trim() };
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
@@ -3526,7 +3556,7 @@ async function main() {
                 episodes: args.episodes,
                 difficulty: args.difficulty,
                 policyName: normalized,
-                traceSamples: args.traceSamples
+                traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement
             });
             simulations.push(result);
         }
@@ -3536,6 +3566,7 @@ async function main() {
             generatedAt: new Date().toISOString(),
             settings: {
                 episodes: args.episodes,
+                seed: args.seed, provenance, replacement: args.replacement,
                 difficulty: args.difficulty,
                 scoreTargets: getScoreTargets(args.difficulty),
                 policies: args.policies.map(normalizePolicyName)

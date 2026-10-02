@@ -1,8 +1,8 @@
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0051';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0051';
-import { getPlacementError } from './placementRules.js?v=20260815-0051';
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0051';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0051';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0052';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0052';
+import { getPlacementError } from './placementRules.js?v=20260815-0052';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0052';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0052';
 
 /**
  * UIController - UI操作・表示制御
@@ -2285,15 +2285,14 @@ export class UIController {
      */
     showResultPhase() {
         // Bug1修正: 最終ターンのカード情報を保存（deck + hand + placed を含める）
-        const placedCards = Object.values(this.gameState.player.placed)
-            .flatMap(cards => cards.map(c => ({ ...c })));
-        const finalDeck = [
-            ...this.gameState.player.deck.map(c => ({ ...c })),
-            ...this.gameState.player.hand.map(c => ({ ...c })),
-            ...placedCards
-        ];
+        const finalDeck = this.gameState.getOwnedCards().map(card => ({ ...card }));
 
         const score = this.scoreManager.calculateScore(this.gameState);
+        if (this.gameState.playRecord) {
+            this.gameState.playRecord.result = { score: structuredClone(score), finalDeck: structuredClone(finalDeck) };
+            try { localStorage.setItem('cdg_last_play_record', JSON.stringify(this.gameState.exportPlayRecord())); }
+            catch (error) { this.logger?.log(`プレイ記録の保存に失敗: ${error.message}`, 'warning'); }
+        }
 
         this.showPhaseArea('result');
         this.updateStatusDisplay();
@@ -3930,6 +3929,15 @@ export class UIController {
     /**
      * 設定オーバーレイを表示
      */
+    downloadPlayRecord() {
+        const record = this.gameState.exportPlayRecord() || JSON.parse(localStorage.getItem('cdg_last_play_record') || 'null');
+        if (!record) { this.showFloatNotification('まだプレイ記録がありません', 'info'); return; }
+        const url = URL.createObjectURL(new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' }));
+        const link = document.createElement('a'); link.href = url;
+        link.download = `cdg-play-${record.metadata.difficulty}-${new Date().toISOString().slice(0, 10)}.json`;
+        link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
     showSettingsOverlay() {
         const overlay = this.createInfoOverlay('⚙️ 設定');
         const content = overlay.querySelector('.info-overlay-content');
@@ -3991,6 +3999,12 @@ export class UIController {
                 </div>
             </div>
         `;
+
+        const exportButton = document.createElement('button');
+        exportButton.className = 'btn-secondary';
+        exportButton.textContent = 'プレイ記録をJSONで保存';
+        exportButton.addEventListener('click', () => this.downloadPlayRecord());
+        content.querySelector('.settings-content')?.appendChild(exportButton);
 
         // リンククリック時にバッジフラグ更新
         const tutorialLink = content.querySelector('#settings-link-tutorial');

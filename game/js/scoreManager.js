@@ -1,8 +1,9 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20260815-0051';
-import { isEventActive } from './eventManager.js?v=20260815-0051';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20260815-0052';
+import { isEventActive } from './eventManager.js?v=20260815-0052';
+import { fingerprint } from './playRecord.js?v=20260815-0052';
 
 export class ScoreManager {
     constructor(logger) {
@@ -43,6 +44,7 @@ export class ScoreManager {
             }
 
             const text = await response.text();
+            this.dataVersion = await fingerprint(text);
             const lines = text
                 .split(/\r?\n/)
                 .map((line) => line.trim())

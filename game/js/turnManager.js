@@ -1,8 +1,8 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20260815-0051';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0051';
+import { resolveCardAction } from './actionResolver.js?v=20260815-0052';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0052';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -10,6 +10,7 @@ export class TurnManager {
     constructor(gameState, cardManager, logger) {
         this.gameState = gameState;
         this.cardManager = cardManager;
+        this.cardManager.gameState = gameState;
         this.logger = logger;
     }
 
@@ -53,6 +54,7 @@ export class TurnManager {
             globalThis.window?.CDG_DEBUG && console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
             this.startActionPhase();
         } else if (currentPhase === 'action') {
+            this.gameState.pendingAction = null;
             const maxDelete = this.getCurrentDeleteMax();
             // 最終ターン(turn===7)は会議スキップ。それ以外はmaxDelete>0なら開く
             if (maxDelete === 0 || this.gameState.turn === this.gameState.totalTurns - 1) {
@@ -221,7 +223,11 @@ export class TurnManager {
     resolveCardAction(card, staff, state = this.gameState) {
         const isSimulation = state !== this.gameState;
         const manager = isSimulation
-            ? Object.assign(Object.create(this.cardManager), { logger: null })
+            ? Object.assign(Object.create(this.cardManager), { logger: null, gameState: state,
+                ...(this.gameState.config.rules.resolveCard ? {
+                    trainingDecks: structuredClone(this.cardManager.trainingDecks),
+                    trainingDiscards: structuredClone(this.cardManager.trainingDiscards)
+                } : {}) })
             : this.cardManager;
         const resolver = this.gameState.config.rules.resolveCard || resolveCardAction;
         return resolver(manager, state, card, staff, this.getTurnConfigs()[state.turn], isSimulation ? null : this.logger);
@@ -231,7 +237,8 @@ export class TurnManager {
         const state = this.gameState;
         return Object.assign(Object.create(Object.getPrototypeOf(state)), state, {
             player: structuredClone(state.player), tokens: { ...state.tokens },
-            ruleState: structuredClone(state.ruleState), pendingAction: null, logger: null, recorder: null
+            ruleState: structuredClone(state.ruleState), pendingAction: null, logger: null, playRecord: null,
+            rng: state.rng.constructor.restore(state.rng.snapshot())
         });
     }
 
@@ -259,6 +266,8 @@ export class TurnManager {
 
         // 研修候補プールを初期化（各カード2枚ずつ）
         this.cardManager.initTrainingPool();
+        this.gameState.startRecording({ cardVersion: this.cardManager.dataVersion, rankVersion: this.cardManager.rankVersion,
+            catalog: this.cardManager.allCards.map(card => ({ ...card })) });
 
         // 基本カード（N）を取得
         const basicCards = this.cardManager.getBasicCards();
