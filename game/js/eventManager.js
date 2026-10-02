@@ -51,7 +51,9 @@ export function createEventState(event, difficulty) {
         items[itemId] = {
             acquired: false, acquiredTurn: null, acquisitionOrder, usageTotal: 0,
             usageThisTurn: 0, triggerCountThisTurn: 0, conditionState: {},
-            activationReservations: [], resolvedActivationCount: 0
+            activationReservations: [], resolvedActivationCount: 0,
+            // 表示用ではなく、GAS送信で使う条件成立履歴（1〜8ターン表記）。
+            conditionMetTurns: []
         };
     });
     return { enabled: true, eventId: event.eventId, eventName: event.name, items, eventTraining: null, presentation: null };
@@ -59,6 +61,25 @@ export function createEventState(event, difficulty) {
 
 export function isEventActive(gameState) { return !!gameState?.event?.enabled && !!getEventDefinition(gameState.event.eventId); }
 export function getItemState(gameState, itemId) { return gameState.event?.items?.[itemId] || null; }
+
+/**
+ * 塾アイテムの発動条件を満たしたターンを、要件どおり1〜8の表記で記録する。
+ * 同一ターンに再開・再実行されても重複させない。
+ * @param {Object} itemState
+ * @param {number} zeroBasedTurn
+ */
+export function recordItemConditionMetTurn(itemState, zeroBasedTurn) {
+    const turn = zeroBasedTurn + 1;
+    if (!itemState || !Number.isInteger(turn) || turn < 1 || turn > 8) return;
+    if (!Array.isArray(itemState.conditionMetTurns)) {
+        itemState.conditionMetTurns = [];
+    }
+    if (!itemState.conditionMetTurns.includes(turn)) {
+        itemState.conditionMetTurns.push(turn);
+        itemState.conditionMetTurns.sort((a, b) => a - b);
+    }
+}
+
 export function getOwnedCardCount(gameState) {
     const placed = Object.values(gameState.player.placed || {}).flatMap(v => Array.isArray(v) ? v : (v ? [v] : []));
     return gameState.player.deck.length + gameState.player.hand.length + placed.length;

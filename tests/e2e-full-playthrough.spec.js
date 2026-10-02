@@ -111,6 +111,9 @@ function assertScorePayload(capturedPayload, expectedDifficulty = 'fresh') {
     capturedPayload.finalDeck.forEach(name => {
         expect(typeof name).toBe('string');
     });
+
+    // 通常モードでは塾アイテムは空配列として送信される
+    expect(capturedPayload.schoolItems).toEqual([]);
 }
 
 test.describe('8ターン完走 + スコア送信', () => {

@@ -1,4 +1,4 @@
-var CURRENT_BUILD_VERSION = 'v20260814-0004';
+var CURRENT_BUILD_VERSION = 'v20260815-0050';
 
 /* ===== ヘルパー関数 ===== */
 
@@ -43,6 +43,74 @@ function sanitizeForSheet(val) {
         return "'" + val;
     }
     return val;
+}
+
+/** 塾アイテムの構造化データを、スプレッドシート一セル用に整形する。 */
+function formatSchoolItemsForSheet(schoolItems) {
+    return (schoolItems || []).map(function(item) {
+        var turns = item.conditionMetTurns || [];
+        var turnText = turns.length ? turns.join(', ') + 'ターン' : '条件成立なし';
+        return item.name + '（条件成立: ' + turnText + '）';
+    }).join(' / ');
+}
+
+/**
+ * 既存のシートにも追加列を安全に追加し、現在のヘッダー列を返す。
+ * @param {GoogleAppsScript.Spreadsheet.Sheet} sheet
+ * @returns {string[]}
+ */
+function ensureScoreRecordHeaders(sheet) {
+    var requiredHeaders = [
+        '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
+        '利用者UUID',
+        '難易度', 'モード', '体験', '入塾', '満足', '経理',
+        '総合スコア', 'ランク', '目標ポイント',
+        '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード', '塾アイテム'
+    ];
+
+    if (sheet.getLastRow() === 0) {
+        sheet.appendRow(requiredHeaders);
+        return requiredHeaders;
+    }
+
+    var lastColumn = Math.max(1, sheet.getLastColumn());
+    var headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+    requiredHeaders.forEach(function(header) {
+        if (headers.indexOf(header) === -1) {
+            headers.push(header);
+            sheet.getRange(1, headers.length).setValue(header);
+        }
+    });
+    return headers;
+}
+
+/** ヘッダー順にスコア記録行を構築する。 */
+function buildScoreRecordRow(headers, data) {
+    var valuesByHeader = {
+        '受信日時': new Date(),
+        'ゲーム開始日時': sanitizeForSheet(data.startedAt || ''),
+        'ゲーム完了日時': sanitizeForSheet(data.completedAt || ''),
+        'ビルドバージョン': sanitizeForSheet(data.buildVersion || ''),
+        '利用者UUID': sanitizeForSheet(data.userUUID || ''),
+        '難易度': sanitizeForSheet(data.difficulty || ''),
+        'モード': sanitizeForSheet(data.mode || '通常'),
+        '体験': data.experience,
+        '入塾': data.enrollment,
+        '満足': data.satisfaction,
+        '経理': data.accounting,
+        '総合スコア': data.displayScore,
+        'ランク': sanitizeForSheet(data.grade),
+        '目標ポイント': data.points,
+        '退塾数': data.withdrawal,
+        '動員合計': data.mobilization,
+        '入退差': data.enrollmentDiff,
+        '最終デッキ': sanitizeForSheet((data.finalDeck || []).join(', ')),
+        '削除カード': sanitizeForSheet((data.discardedCards || []).join(', ')),
+        '塾アイテム': sanitizeForSheet(formatSchoolItemsForSheet(data.schoolItems))
+    };
+    return headers.map(function(header) {
+        return Object.prototype.hasOwnProperty.call(valuesByHeader, header) ? valuesByHeader[header] : '';
+    });
 }
 
 /**
@@ -123,6 +191,29 @@ function validatePayload(data) {
         }
     }
 
+    // schoolItems: [{ name, conditionMetTurns: [1..8] }]（古いクライアントは未送信を許容）
+    if (data.schoolItems != null) {
+        if (!Array.isArray(data.schoolItems) || data.schoolItems.length > 10) {
+            return 'invalid field: schoolItems';
+        }
+        for (var n = 0; n < data.schoolItems.length; n++) {
+            var schoolItem = data.schoolItems[n];
+            if (!schoolItem || typeof schoolItem !== 'object' || Array.isArray(schoolItem)
+                || typeof schoolItem.name !== 'string' || schoolItem.name.length > 50
+                || !Array.isArray(schoolItem.conditionMetTurns) || schoolItem.conditionMetTurns.length > 8) {
+                return 'invalid field: schoolItems[' + n + ']';
+            }
+            var seenTurns = {};
+            for (var p = 0; p < schoolItem.conditionMetTurns.length; p++) {
+                var turn = schoolItem.conditionMetTurns[p];
+                if (typeof turn !== 'number' || !isFinite(turn) || Math.floor(turn) !== turn || turn < 1 || turn > 8 || seenTurns[turn]) {
+                    return 'invalid field: schoolItems[' + n + '].conditionMetTurns[' + p + ']';
+                }
+                seenTurns[turn] = true;
+            }
+        }
+    }
+
     return null; // バリデーション成功
 }
 
@@ -174,33 +265,9 @@ function doPost(e) {
             var ss = SpreadsheetApp.getActiveSpreadsheet();
             var sheet = ss.getSheetByName('スコア記録') || ss.insertSheet('スコア記録');
 
-            if (sheet.getLastRow() === 0) {
-                sheet.appendRow([
-                    '受信日時', 'ゲーム開始日時', 'ゲーム完了日時', 'ビルドバージョン',
-                    '利用者UUID',
-                    '難易度', 'モード', '体験', '入塾', '満足', '経理',
-                    '総合スコア', 'ランク', '目標ポイント',
-                    '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード'
-                ]);
-            }
-
+            var headers = ensureScoreRecordHeaders(sheet);
             // M1: サニタイズしてから書き込み
-            sheet.appendRow([
-                new Date(),
-                sanitizeForSheet(data.startedAt || ''),
-                sanitizeForSheet(data.completedAt || ''),
-                sanitizeForSheet(data.buildVersion || ''),
-                sanitizeForSheet(data.userUUID || ''),
-                sanitizeForSheet(data.difficulty || ''),
-                sanitizeForSheet(data.mode || '通常'),
-                data.experience, data.enrollment, data.satisfaction, data.accounting,
-                data.displayScore,
-                sanitizeForSheet(data.grade),
-                data.points,
-                data.withdrawal, data.mobilization, data.enrollmentDiff,
-                sanitizeForSheet((data.finalDeck || []).join(', ')),
-                sanitizeForSheet((data.discardedCards || []).join(', '))
-            ]);
+            sheet.appendRow(buildScoreRecordRow(headers, data));
 
             console.log('[scoreReceiver] sheet write success');
         } catch (sheetErr) {

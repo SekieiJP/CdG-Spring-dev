@@ -1,5 +1,5 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260814-0004';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount } from './eventManager.js?v=20260814-0004';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0050';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0050';
 
 /**
  * UIController - UI操作・表示制御
@@ -34,6 +34,7 @@ export class UIController {
         this.tapMode = true; // タップ順配置モード
         this.trainingSelectionMode = 'normal'; // 'normal' | 'inspiration'
         this.inspirationRemaining = 0;
+        this.pendingScoreSubmissions = 0;
     }
 
     /**
@@ -609,7 +610,7 @@ export class UIController {
             if (!item?.difficulties.includes(difficulty)) return '';
             return `<li><strong>${this._escapeHTML(this._eventItemName(item))}</strong>（${item.acquisitionTiming}）<br>${this._escapeHTML(item.description)}</li>`;
         }).join('');
-        host.innerHTML = `<div class="event-title">🏆 ${this._escapeHTML(event.name)}</div><div class="event-end">開催終了: 2026年9月24日 0:00</div><label class="event-toggle-label"><input id="event-mode-toggle" type="checkbox" ${checked ? 'checked' : ''}> イベントモードで遊ぶ</label><details><summary>イベント詳細</summary><ul>${itemHtml}</ul></details>`;
+        host.innerHTML = `<div class="event-title">🏆 ${this._escapeHTML(event.name)}</div><div class="event-end">開催終了: 2026年9月24日 0:00</div><label class="calc-mode-label event-toggle-label"><span>🏆 イベントモードで遊ぶ</span><span class="toggle-switch"><input id="event-mode-toggle" type="checkbox" aria-label="イベントモードで遊ぶ" ${checked ? 'checked' : ''}><span class="toggle-slider"></span></span></label><details><summary>イベント詳細</summary><ul>${itemHtml}</ul></details>`;
         host.classList.remove('hidden');
         host.querySelector('#event-mode-toggle')?.addEventListener('change', e => localStorage.setItem('cdg_event_mode', e.target.checked ? 'true' : 'false'));
     }
@@ -1859,11 +1860,13 @@ export class UIController {
         const press = states['press-coverage'];
         if (press?.acquired && press.triggerCountThisTurn < 1 && (usage['動員'] || 0) >= 3) {
             press.triggerCountThisTurn += 1;
+            recordItemConditionMetTurn(press, this.gameState.turn);
             await this.resolveEventStatusEffect('press-coverage', press, null, animationContext);
         }
         const homework = states['spring-homework'];
         if (homework?.acquired && homework.triggerCountThisTurn < 1 && (usage['教務'] || 0) >= 3) {
             homework.triggerCountThisTurn += 1;
+            recordItemConditionMetTurn(homework, this.gameState.turn);
             const reservation = { reservationId: `spring-homework-${this.gameState.turn}-${homework.activationReservations.length}`, conditionTurn: this.gameState.turn, creationOrder: homework.activationReservations.length, activationTiming: 'final-action-end', status: 'pending' };
             homework.activationReservations.push(reservation);
             this.logger?.log(`イベント発動予約追加: ${reservation.reservationId}`, 'action');
@@ -2219,9 +2222,10 @@ export class UIController {
         this.saveGameState();
         await this.acquireEventItemsForTurn();
         const idea = event.items['idea-chemistry'];
-        if (!idea?.acquired || idea.usageTotal >= 1 || getOwnedCardCount(this.gameState) < 10) {
+        if (!idea?.acquired || idea.usageTotal >= 1 || event.eventTraining || getOwnedCardCount(this.gameState) < 10) {
             event.preparing = false; this.saveGameState(); return;
         }
+        recordItemConditionMetTurn(idea, this.gameState.turn);
         if (this.gameState.calcMode) {
             event.eventTraining = { itemId: 'idea-chemistry', calc: true };
             event.preparing = false; this.saveGameState();
@@ -2689,8 +2693,8 @@ export class UIController {
     }
 
     async sendScoreAndHandleVersion(score, finalDeck) {
-        const restartBtn = document.getElementById('restart-game');
-        if (restartBtn) restartBtn.disabled = true;
+        this.pendingScoreSubmissions += 1;
+        this.setResultRestartButtonSubmitting(true);
 
         try {
             const result = await submitScore(this.gameState, score, finalDeck, this.logger);
@@ -2701,8 +2705,35 @@ export class UIController {
                 this.showFloatNotification('新しいバージョンがあります。再読み込みをおすすめします', 'warning');
             }
         } finally {
-            if (restartBtn) restartBtn.disabled = false;
+            this.pendingScoreSubmissions = Math.max(0, this.pendingScoreSubmissions - 1);
+            if (this.pendingScoreSubmissions === 0) {
+                this.setResultRestartButtonSubmitting(false);
+            }
         }
+    }
+
+    /**
+     * 結果画面の再プレイボタンを、スコア送信の進行状況に合わせて更新する。
+     * @param {boolean} isSubmitting
+     */
+    setResultRestartButtonSubmitting(isSubmitting) {
+        const restartBtn = document.getElementById('restart-game');
+        if (!restartBtn) return;
+
+        if (isSubmitting) {
+            if (!restartBtn.dataset.readyText) {
+                restartBtn.dataset.readyText = restartBtn.textContent.trim();
+            }
+            restartBtn.disabled = true;
+            restartBtn.textContent = 'スコア送信中…';
+            restartBtn.setAttribute('aria-busy', 'true');
+            return;
+        }
+
+        restartBtn.disabled = false;
+        restartBtn.textContent = restartBtn.dataset.readyText || 'もう一度プレイ';
+        delete restartBtn.dataset.readyText;
+        restartBtn.removeAttribute('aria-busy');
     }
 
     /**
@@ -2899,6 +2930,9 @@ export class UIController {
      * リスタート
      */
     onRestart() {
+        // disabled属性を回避した操作でも、送信完了前には次のゲームを開始させない。
+        if (this.pendingScoreSubmissions > 0) return;
+
         this.logger.clear();
 
         // 全フェーズエリアを非表示

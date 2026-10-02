@@ -144,7 +144,15 @@ export class SaveManager {
     isVersionMatch(saveData) {
         const currentVersion = this.getBuildVersion();
         const savedVersion = saveData?.buildVersion;
-        return currentVersion === savedVersion;
+        const getGameVersion = (version) => {
+            const match = String(version || '').match(/^v(\d{8})-\d{4}$/);
+            return match ? match[1] : null;
+        };
+
+        const currentGameVersion = getGameVersion(currentVersion);
+        const savedGameVersion = getGameVersion(savedVersion);
+        // 下4桁は表示などゲーム内容に影響しない更新用のため、中断データを維持する。
+        return currentGameVersion !== null && currentGameVersion === savedGameVersion;
     }
 
     /**

@@ -91,6 +91,32 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         expect(startedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     });
 
+    test('下4桁のみのビルド更新では中断データを破棄しない', async ({ page }) => {
+        await page.goto('/');
+
+        const result = await page.evaluate(async () => {
+            const { SaveManager } = await import('./js/saveManager.js?v=version-test');
+            const originalVersion = window.BUILD_VERSION;
+            window.BUILD_VERSION = 'v20260815-0050';
+            try {
+                const saveManager = new SaveManager();
+                return {
+                    sameGameVersion: saveManager.isVersionMatch({ buildVersion: 'v20260815-0001' }),
+                    differentGameVersion: saveManager.isVersionMatch({ buildVersion: 'v20260816-0001' }),
+                    malformedVersion: saveManager.isVersionMatch({ buildVersion: 'v20260815' })
+                };
+            } finally {
+                window.BUILD_VERSION = originalVersion;
+            }
+        });
+
+        expect(result).toEqual({
+            sameGameVersion: true,
+            differentGameVersion: false,
+            malformedVersion: false
+        });
+    });
+
     test('スコア送信payloadに通常/計算機モードを含める', async ({ page }) => {
         await page.goto('/');
 
@@ -153,6 +179,72 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
 
         expect(result.modes).toEqual(['通常', '計算機']);
         expect(result.versionMatches).toEqual([true, true]);
+    });
+
+    test('スコア送信payloadに入手済み塾アイテムと条件成立ターンを含める', async ({ page }) => {
+        await page.goto('/');
+
+        const schoolItems = await page.evaluate(async () => {
+            const captured = [];
+            const originalFetch = window.fetch;
+            window.fetch = async (_url, options) => {
+                captured.push(JSON.parse(options.body));
+                return {
+                    ok: true,
+                    json: async () => ({ status: 'ok', currentVersion: window.BUILD_VERSION })
+                };
+            };
+
+            try {
+                const { submitScore } = await import('./js/scoreSubmitter.js?v=school-items-test');
+                await submitScore({
+                    startedAt: '2026-08-15T00:00:00.000Z',
+                    difficulty: 'fresh',
+                    calcMode: false,
+                    discardedCards: [],
+                    event: {
+                        enabled: true,
+                        eventName: 'テストイベント',
+                        items: {
+                            'press-coverage': {
+                                acquired: true,
+                                acquisitionOrder: 0,
+                                conditionMetTurns: [3, 1, 3]
+                            },
+                            'spring-homework': {
+                                acquired: true,
+                                acquisitionOrder: 2,
+                                conditionMetTurns: [8, 5]
+                            },
+                            'idea-chemistry': {
+                                acquired: false,
+                                acquisitionOrder: 1,
+                                conditionMetTurns: [4]
+                            }
+                        }
+                    }
+                }, {
+                    experience: 1,
+                    enrollment: 1,
+                    satisfaction: 3,
+                    accounting: 3,
+                    displayScore: 0,
+                    rank: { grade: 'D' },
+                    points: 0,
+                    withdrawal: 0,
+                    mobilization: 1,
+                    enrollmentDiff: 1
+                }, [{ cardName: 'チラシ折り' }], { log() {} });
+                return captured[0].schoolItems;
+            } finally {
+                window.fetch = originalFetch;
+            }
+        });
+
+        expect(schoolItems).toEqual([
+            { name: '新聞取材', conditionMetTurns: [1, 3] },
+            { name: '春休みの宿題', conditionMetTurns: [5, 8] }
+        ]);
     });
 
     test('スコア送信のバージョン判定はハイフンなし数値で比較する', async ({ page }) => {
@@ -237,8 +329,40 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
         });
 
         await expect(page.locator('#restart-game')).toBeDisabled();
+        await expect(page.locator('#restart-game')).toHaveText('スコア送信中…');
+        await expect(page.locator('#restart-game')).toHaveAttribute('aria-busy', 'true');
         await page.evaluate(() => window.__resolveScoreSubmit());
         await expect(page.locator('#restart-game')).toBeEnabled();
+        await expect(page.locator('#restart-game')).toHaveText('もう一度プレイ');
+        await expect(page.locator('#restart-game')).not.toHaveAttribute('aria-busy');
+    });
+
+    test('スコア送信リトライ中は再プレイを無効化し、3回失敗確定後に戻す', async ({ page }) => {
+        page.on('dialog', dialog => dialog.accept());
+        await page.goto('/');
+        await page.click('#start-game');
+        await page.waitForSelector('#training-cards .card', { timeout: 10000 });
+
+        await page.evaluate(() => {
+            window.__scoreSubmitAttempts = 0;
+            const originalFetch = window.fetch;
+            window.fetch = async (...args) => {
+                if (String(args[0]).includes('script.google.com')) {
+                    window.__scoreSubmitAttempts += 1;
+                    throw new Error('test network error');
+                }
+                return originalFetch(...args);
+            };
+            window.game.gameState.phase = 'end';
+            window.game.uiController.showResultPhase();
+        });
+
+        const restartBtn = page.locator('#restart-game');
+        await expect(restartBtn).toBeDisabled();
+        await expect(restartBtn).toHaveText('スコア送信中…');
+        await expect(restartBtn).toBeEnabled({ timeout: 7000 });
+        await expect(restartBtn).toHaveText('もう一度プレイ');
+        await expect.poll(() => page.evaluate(() => window.__scoreSubmitAttempts)).toBe(3);
     });
 
     test('スコア送信レスポンスが旧バージョン判定なら警告フラグを立てる', async ({ page }) => {

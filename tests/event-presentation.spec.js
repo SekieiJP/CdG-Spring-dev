@@ -1,9 +1,24 @@
 import { test, expect } from '@playwright/test';
 
+test.describe('イベントモードトグル', () => {
+    test('計算機モードと同じスライドトグルで表示する', async ({ page }) => {
+        await page.goto('/');
+
+        const toggle = page.locator('#event-mode-toggle');
+        const label = toggle.locator('xpath=ancestor::label');
+        await expect(label).toHaveClass(/calc-mode-label/);
+        await expect(toggle.locator('xpath=following-sibling::span')).toHaveClass(/toggle-slider/);
+        await expect(toggle.locator('xpath=following-sibling::span')).toBeVisible();
+
+        await toggle.locator('xpath=following-sibling::span').click();
+        await expect(toggle).toBeChecked();
+    });
+});
+
 test.describe('イベントアイテム獲得演出', () => {
     test.beforeEach(async ({ page }) => {
         await page.goto('/');
-        await page.locator('#event-mode-toggle').check();
+        await page.locator('#event-mode-toggle + .toggle-slider').click();
         await page.locator('#start-game').click();
         await expect(page.locator('.event-presentation')).toBeVisible();
     });
@@ -91,7 +106,8 @@ test.describe('イベントアイテム獲得演出', () => {
                 effect: cardsHost.querySelector('.anim-card-effect')?.textContent?.trim(),
                 imageAlt: cardsHost.querySelector('.anim-card-thumbnail')?.getAttribute('alt'),
                 experience: gameState.player.experience,
-                presentation: gameState.event.presentation
+                presentation: gameState.event.presentation,
+                conditionMetTurns: gameState.event.items['press-coverage'].conditionMetTurns
             };
         });
 
@@ -102,5 +118,6 @@ test.describe('イベントアイテム獲得演出', () => {
         expect(result.imageAlt).toBe('🏆新聞取材');
         expect(result.experience).toBe(2);
         expect(result.presentation).toBeNull();
+        expect(result.conditionMetTurns).toEqual([1]);
     });
 });

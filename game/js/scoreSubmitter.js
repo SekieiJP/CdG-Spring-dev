@@ -1,6 +1,8 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
+import { getEventItem } from './eventManager.js?v=20260815-0050';
+
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;
 
@@ -44,6 +46,30 @@ export function isClientVersionCurrent(clientVersion, currentVersion) {
     return clientNum >= currentNum;
 }
 
+/**
+ * GAS送信用に、入手済みの塾アイテムと条件成立ターンを整形する。
+ * @param {Object} gameState
+ * @returns {Array<{name: string, conditionMetTurns: number[]}>}
+ */
+export function buildSchoolItemsPayload(gameState) {
+    const items = gameState?.event?.items;
+    if (!gameState?.event?.enabled || !items) return [];
+
+    return Object.entries(items)
+        .filter(([, state]) => state?.acquired)
+        .sort(([, a], [, b]) => (a.acquisitionOrder ?? 0) - (b.acquisitionOrder ?? 0))
+        .map(([itemId, state]) => {
+            const turns = Array.isArray(state.conditionMetTurns)
+                ? state.conditionMetTurns.filter(turn => Number.isInteger(turn) && turn >= 1 && turn <= 8)
+                : [];
+            const conditionMetTurns = [...new Set(turns)].sort((a, b) => a - b);
+            return {
+                name: getEventItem(itemId)?.name || itemId,
+                conditionMetTurns
+            };
+        });
+}
+
 export async function submitScore(gameState, score, finalDeck, logger) {
     if (SCORE_ENDPOINT.includes('DEPLOY_ID')) {
         logger?.log('⚠️ スコア送信: エンドポイント未設定', 'info');
@@ -70,7 +96,8 @@ export async function submitScore(gameState, score, finalDeck, logger) {
         mobilization: score.mobilization,
         enrollmentDiff: score.enrollmentDiff,
         finalDeck: finalDeck.map(c => c.cardName),
-        discardedCards: gameState.discardedCards || []
+        discardedCards: gameState.discardedCards || [],
+        schoolItems: buildSchoolItemsPayload(gameState)
     };
 
     const MAX_RETRIES = 3;
