@@ -162,6 +162,7 @@ export class SaveManager {
      * @returns {Object}
      */
     serializeGameState(gameState) {
+        gameState.ensureCardIdentities();
         return {
             difficulty: gameState.difficulty || 'fresh',
             calcMode: gameState.calcMode || false,
@@ -174,14 +175,15 @@ export class SaveManager {
                 accounting: gameState.player.accounting,
                 deck: gameState.player.deck.map(card => this.serializeCard(card)),
                 hand: gameState.player.hand.map(card => this.serializeCard(card)),
-                placed: {
-                    leader: gameState.player.placed.leader.map(c => this.serializeCard(c)),
-                    teacher: gameState.player.placed.teacher.map(c => this.serializeCard(c)),
-                    staff: gameState.player.placed.staff.map(c => this.serializeCard(c))
-                },
+                placed: this.serializeCardGroups(gameState.player.placed),
+                zones: this.serializeCardGroups(gameState.player.zones),
                 tokens: { ...gameState.tokens }
             },
             startedAt: gameState.startedAt || null,
+            runId: gameState.runId,
+            nextInstanceId: gameState.nextInstanceId,
+            ruleState: structuredClone(gameState.ruleState || {}),
+            pendingAction: structuredClone(gameState.pendingAction || null),
             discardedCards: [...(gameState.discardedCards || [])],
             trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
             trainingRefreshPhaseStartRemaining: gameState.trainingRefreshPhaseStartRemaining ?? gameState.trainingRefreshRemaining ?? 0,
@@ -200,17 +202,11 @@ export class SaveManager {
      * @returns {Object}
      */
     serializeCard(card) {
-        return {
-            category: card.category,
-            rarity: card.rarity,
-            cardName: card.cardName,
-            topEffect: card.topEffect,
-            effect: card.effect,
-            cardNo: card.cardNo || null,
-            acquiredTurn: card.acquiredTurn,
-            poolId: card.poolId,
-            instanceId: card.instanceId
-        };
+        return structuredClone(card);
+    }
+
+    serializeCardGroups(groups = {}) {
+        return Object.fromEntries(Object.entries(groups).map(([id, cards]) => [id, cards.map(card => this.serializeCard(card))]));
     }
 
     /**
@@ -248,11 +244,15 @@ export class SaveManager {
         gameState.player.accounting = savedState.player.accounting;
         gameState.player.deck = savedState.player.deck.map(card => ({ ...card }));
         gameState.player.hand = savedState.player.hand.map(card => ({ ...card }));
-        gameState.player.placed = {
-            leader: (savedState.player.placed.leader || []).map(c => ({ ...c })),
-            teacher: (savedState.player.placed.teacher || []).map(c => ({ ...c })),
-            staff: (savedState.player.placed.staff || []).map(c => ({ ...c }))
-        };
+        gameState.player.placed = this.serializeCardGroups(savedState.player.placed);
+        for (const id of gameState.slotIds) gameState.player.placed[id] ||= [];
+        gameState.player.zones = this.serializeCardGroups(savedState.player.zones);
+        for (const id of gameState.config.cardZones) gameState.player.zones[id] ||= [];
+        gameState.runId = savedState.runId || gameState.runId;
+        gameState.nextInstanceId = savedState.nextInstanceId || 1;
+        gameState.ruleState = structuredClone(savedState.ruleState || {});
+        gameState.pendingAction = structuredClone(savedState.pendingAction || null);
+        gameState.ensureCardIdentities();
         // 旧形式（ルート直下tokens）と新形式（player.tokens）の両方に対応
         const savedTokens = savedState.player?.tokens || savedState.tokens;
         gameState.tokens = savedTokens

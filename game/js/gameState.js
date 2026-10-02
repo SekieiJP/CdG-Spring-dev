@@ -1,9 +1,15 @@
 /**
  * GameState - ゲーム状態管理
  */
-import { getDifficultyConfig } from './difficultyConfig.js';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0051';
+import { makeRunId } from './defaultRules.js?v=20260815-0051';
 
 export class GameState {
+    get config() { return getDifficultyConfig(this.difficulty); }
+    get slots() { return this.config.slots; }
+    get slotIds() { return this.slots.map(slot => slot.id); }
+    get totalTurns() { return this.config.turns.length; }
+    get staffNames() { return Object.fromEntries(this.slots.map(slot => [slot.id, slot.name])); }
     constructor(logger) {
         this.logger = logger;
         this.difficulty = 'fresh';
@@ -28,12 +34,14 @@ export class GameState {
             accounting: config.initialStatus.accounting,
             deck: [],           // デッキ
             hand: [],           // 手札
-            placed: {           // 配置済みカード
-                leader: [],
-                teacher: [],
-                staff: []
-            }
+            placed: Object.fromEntries(config.slots.map(slot => [slot.id, []])),
+            zones: Object.fromEntries(config.cardZones.map(id => [id, []]))
         };
+
+        this.runId = makeRunId();
+        this.nextInstanceId = 1;
+        this.ruleState = {};
+        this.pendingAction = null;
 
         this.turn = 0;  // 0-7 (1月下旬〜5月上旬)
         this.phase = 'start';  // start, training, action, meeting, end
@@ -108,6 +116,7 @@ export class GameState {
      * カードをデッキに追加
      */
     addToDeck(card) {
+        this.identifyCard(card);
         // 獲得ターンを記録（未設定の場合のみ）
         if (card.acquiredTurn === undefined) {
             card.acquiredTurn = this.turn;
@@ -120,7 +129,29 @@ export class GameState {
      * カードを手札に追加
      */
     addToHand(card) {
+        this.identifyCard(card);
         this.player.hand.push(card);
+    }
+
+    identifyCard(card) {
+        card.instanceId ||= `${this.runId}:${this.nextInstanceId++}`;
+        card.definitionId ||= card.cardNo ? `card:${card.cardNo}` : `${card.rarity}:${card.cardName}`;
+        return card;
+    }
+
+    getOwnedCards() {
+        return [...this.player.deck, ...this.player.hand, ...Object.values(this.player.placed).flat(),
+            ...Object.values(this.player.zones || {}).flat()];
+    }
+
+    ensureCardIdentities() {
+        const cards = this.getOwnedCards();
+        for (const card of cards) {
+            if (card.instanceId?.startsWith(`${this.runId}:`)) {
+                this.nextInstanceId = Math.max(this.nextInstanceId, Number(card.instanceId.split(':').at(-1)) + 1 || 1);
+            }
+        }
+        cards.forEach(card => this.identifyCard(card));
     }
 
     /**
@@ -143,7 +174,7 @@ export class GameState {
         const drawn = [];
 
         // デバッグモード: 指定カードを優先的に引く
-        if (window?.debugCards?.hand?.length > 0 && window.game?.cardManager) {
+        if (globalThis.window?.debugCards?.hand?.length > 0 && window.game?.cardManager) {
             const cardManager = window.game.cardManager;
             for (const cardName of window.debugCards.hand) {
                 if (drawn.length >= count) break;
@@ -159,7 +190,7 @@ export class GameState {
                     // 全カードから検索してコピー
                     const searchCard = cardManager.allCards.find(c => c.cardName === cardName);
                     if (searchCard) {
-                        const card = { ...searchCard };
+                        const card = this.identifyCard({ ...searchCard });
                         this.player.hand.push(card);
                         drawn.push(card);
                         this.logger?.log(`[DEBUG] 手札挿入: ${cardName} (デッキ外)`, 'info');
@@ -190,16 +221,19 @@ export class GameState {
      * カードを配置
      */
     placeCard(card, staff) {
+        this.identifyCard(card);
         this.player.placed[staff].push(card);
-        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+        const staffNames = this.staffNames;
         this.logger?.log(`${staffNames[staff]}に配置: ${card.cardName}`, 'action');
     }
 
     /**
      * 配置をクリア
      */
-    clearPlaced() {
-        this.player.placed = { leader: [], teacher: [], staff: [] };
+    clearPlaced({ includePersistent = false } = {}) {
+        for (const slot of this.slots) {
+            if (includePersistent || !slot.persistent) this.player.placed[slot.id] = [];
+        }
     }
 
     /**
@@ -241,9 +275,7 @@ export class GameState {
      */
     returnAllToDeck() {
         // 配置済みカードをデッキに戻す（配列対応）
-        const placedCards = Object.values(this.player.placed).flatMap(cards =>
-            Array.isArray(cards) ? cards : (cards ? [cards] : [])
-        );
+        const placedCards = this.slots.filter(slot => !slot.persistent).flatMap(slot => this.player.placed[slot.id] || []);
         placedCards.forEach(card => this.player.deck.push(card));
 
         // 手札をデッキに戻す

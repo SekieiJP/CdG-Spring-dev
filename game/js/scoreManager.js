@@ -1,8 +1,8 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey } from './difficultyConfig.js';
-import { isEventActive } from './eventManager.js';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20260815-0051';
+import { isEventActive } from './eventManager.js?v=20260815-0051';
 
 export class ScoreManager {
     constructor(logger) {
@@ -206,7 +206,7 @@ export class ScoreManager {
         let currentEnrollmentDiffScore = 0;
         let currentFreshDiffScore = 0;
 
-        if (difficulty === 'pro') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
             if (statKey === 'experience') {
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
@@ -307,7 +307,7 @@ export class ScoreManager {
         // --- startThreshold の計算 ---
         let startThreshold = currentThreshold; // デフォルト（逐次の場合）
 
-        if (difficulty === 'pro') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
             if (statKey === 'experience') {
                 startThreshold = getScoreGroupStartThreshold(
                     'mobilization',
@@ -488,8 +488,10 @@ export class ScoreManager {
      * スコアを計算
      */
     calculateScore(gameState) {
+        const custom = getDifficultyConfig(gameState.difficulty).rules?.calculateScore;
+        if (custom) return custom(gameState, this);
         // PROの場合はPRO専用ロジックを使う
-        if ((gameState.difficulty || 'fresh') === 'pro' && this.rankTable) {
+        if (getDifficultyConfig(gameState.difficulty).scoringModel === 'pro' && this.rankTable) {
             return this.calculateScorePro(gameState);
         }
 

@@ -10,6 +10,13 @@ export function resolveCardAction(cardManager, gameState, card, staff, config = 
     const beforeTokens = { ...gameState.tokens };
     const isRecommended = !!(config.recommended && card.category === config.recommended);
     const costCheck = cardManager.simulateCardEffect(card, staff, beforeStats, null, gameState);
+    const parsed = cardManager.parseEffect(card?.effect || '');
+    const conditions = parsed.conditionalBlocks.map(block => ({
+        condition: block.condition,
+        matched: cardManager.evaluateCondition(block.condition, staff, {
+            player: beforeStats, turn: gameState.turn, totalTurns: gameState.totalTurns
+        })
+    }));
     let result = costCheck;
     let recommendedApplied = false;
 
@@ -27,7 +34,11 @@ export function resolveCardAction(cardManager, gameState, card, staff, config = 
     return {
         cardName: card.cardName,
         cardNo: card.cardNo,
+        definitionId: card.definitionId,
         instanceId: card.instanceId,
+        staff,
+        turn: gameState.turn,
+        conditions,
         category: card.category,
         beforeStats,
         afterStats: snapshotStats(gameState.player),

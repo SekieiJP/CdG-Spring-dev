@@ -1,10 +1,43 @@
-import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0050';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0050';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0051';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0051';
+import { getPlacementError } from './placementRules.js?v=20260815-0051';
+import { submitScore, getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0051';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0051';
 
 /**
  * UIController - UI操作・表示制御
  */
 export class UIController {
+    copyPlaced(groups) {
+        return Object.fromEntries(Object.entries(groups).map(([id, cards]) => [id, [...cards]]));
+    }
+
+    renderDifficultyOptions() {
+        const container = document.querySelector('.difficulty-buttons');
+        if (!container) return;
+        for (const config of listDifficulties()) {
+            if (container.querySelector(`[data-difficulty="${config.id}"]`)) continue;
+            const button = document.createElement('button');
+            button.id = `btn-difficulty-${config.id}`;
+            button.className = 'difficulty-btn';
+            button.dataset.difficulty = config.id;
+            button.textContent = config.name;
+            container.appendChild(button);
+        }
+    }
+
+    renderStaffLayout() {
+        const container = document.querySelector('#action-area .staff-area');
+        if (!container) return;
+        const signature = this.gameState.slots.map(slot => `${slot.id}:${slot.name}`).join('|');
+        if (container.dataset.layout === signature) return;
+        container.dataset.layout = signature;
+        container.style.setProperty('--slot-count', this.gameState.slots.length);
+        container.innerHTML = this.gameState.slots.map(slot => `<div class="staff-slot" data-staff="${slot.id}">
+            <div class="staff-label">${this._escapeHTML(slot.name)}</div>
+            <div class="card-slot" id="slot-${slot.id}" data-staff="${slot.id}"><span class="slot-placeholder">タップまたはドラッグ</span></div>
+        </div>`).join('');
+    }
     get trainingSelectionMode() { return this.gameState.trainingSelectionMode || 'normal'; }
     set trainingSelectionMode(value) { this.gameState.trainingSelectionMode = value; }
     _escapeHTML(str) {
@@ -37,12 +70,14 @@ export class UIController {
         this.trainingSelectionMode = 'normal'; // 'normal' | 'inspiration'
         this.inspirationRemaining = 0;
         this.pendingScoreSubmissions = 0;
+        this.actionAnimation = new ActionAnimationController(this);
     }
 
     /**
      * UI初期化
      */
     init() {
+        this.renderDifficultyOptions();
         getOrCreateUserUUID(); // 結果画面表示より前にCookieを確定
         this.updateStatusDisplay();
         this.updateTurnDisplay();
@@ -88,8 +123,9 @@ export class UIController {
         startBtn?.addEventListener('click', () => this.onStartGame());
 
         // 難易度選択ボタン
-        document.querySelectorAll('.difficulty-btn').forEach(btn => {
-            btn.addEventListener('click', () => this.onDifficultySelect(btn.dataset.difficulty));
+        document.querySelector('.difficulty-buttons')?.addEventListener('click', event => {
+            const button = event.target.closest('.difficulty-btn');
+            if (button) this.onDifficultySelect(button.dataset.difficulty);
         });
 
         // 初訪問者向けFRESH吹き出し表示
@@ -819,10 +855,12 @@ export class UIController {
         this.updateStatusDisplay();
 
         // スタッフスロットをクリア（前ターンのカード表示を削除）
+        this.renderStaffLayout();
         this.clearStaffSlots();
 
         // 配置済み状態もクリア
         this.gameState.clearPlaced();
+        this.gameState.slotIds.forEach(staff => this.renderStaffSlot(staff));
 
         // ドロー変動通知を表示
         this.renderDrawNotification();
@@ -933,7 +971,7 @@ export class UIController {
      * スタッフスロットのUIをクリア
      */
     clearStaffSlots() {
-        const staffIds = ['slot-leader', 'slot-teacher', 'slot-staff'];
+        const staffIds = this.gameState.slotIds.map(id => `slot-${id}`);
         staffIds.forEach(id => {
             const slot = document.getElementById(id);
             if (slot) {
@@ -1022,21 +1060,11 @@ export class UIController {
      * カードをスロットに配置を試みる（職種チェック付き）
      */
     tryPlaceCardToSlot(card, staff) {
-        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+        const staffNames = this.gameState.staffNames;
         const currentStaffName = staffNames[staff];
 
-        // 職種条件【】のチェック
-        const allowedStaff = this.parseStaffRestriction(card.effect);
-        if (allowedStaff && !allowedStaff.includes(currentStaffName)) {
-            this.showFloatNotification(`このカードは ${allowedStaff.join('・')} 専用です`, 'error');
-            return;
-        }
-
-        // 並行効果を持たないカードは埋まったスロットに配置できない
-        if (!this.hasParallelEffect(card) && this.gameState.player.placed[staff].length > 0) {
-            this.showFloatNotification('このカードは重ね配置できません', 'error');
-            return;
-        }
+        const error = getPlacementError(this.cardManager, this.gameState, card, staff);
+        if (error) { this.showFloatNotification(error, 'error'); return; }
 
         // 条件付き効果〈〉のチェック（満たしていない場合のみ警告）
         const unmetConditions = this.checkUnmetConditions(card.effect, staff);
@@ -1055,33 +1083,20 @@ export class UIController {
      * 配置済みカードを実行順に仮適用し、新規カードがコスト不足になるか判定
      */
     willCardHaveCostShortage(card, staff) {
-        const config = this.turnManager.getCurrentTurnConfig();
-        const staffOrder = ['leader', 'teacher', 'staff'];
-        const simulatedPlaced = {
-            leader: [...this.gameState.player.placed.leader],
-            teacher: [...this.gameState.player.placed.teacher],
-            staff: [...this.gameState.player.placed.staff]
-        };
+        const staffOrder = this.gameState.slotIds;
+        const simulatedPlaced = this.copyPlaced(this.gameState.player.placed);
         simulatedPlaced[staff].push(card);
 
-        let stats = {
-            experience: this.gameState.player.experience,
-            enrollment: this.gameState.player.enrollment,
-            satisfaction: this.gameState.player.satisfaction,
-            accounting: this.gameState.player.accounting
-        };
+        const simulation = this.turnManager.createSimulationState();
 
         for (const slot of staffOrder) {
             for (const placedCard of simulatedPlaced[slot]) {
-                const isRecommended = !!(config?.recommended && placedCard.category === config.recommended);
-                const recommendedStatus = isRecommended ? config.recommendedStatus : null;
-                const result = this.cardManager.simulateCardEffect(placedCard, slot, stats, recommendedStatus, this.gameState);
+                const result = this.turnManager.resolveCardAction(placedCard, slot, simulation);
 
                 if (placedCard === card) {
                     return !result.applied && result.skippedReason === 'cost_shortage';
                 }
 
-                stats = result.afterStats;
             }
         }
 
@@ -1130,8 +1145,8 @@ export class UIController {
      */
     findBestSlot(card) {
         const isParallel = this.hasParallelEffect(card);
-        const staffOrder = ['leader', 'teacher', 'staff'];
-        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+        const staffOrder = this.gameState.slotIds;
+        const staffNames = this.gameState.staffNames;
         const allowedStaff = this.parseStaffRestriction(card.effect);
 
         let bestSlot = null;
@@ -1140,7 +1155,7 @@ export class UIController {
         for (const slotKey of staffOrder) {
             if (allowedStaff && !allowedStaff.includes(staffNames[slotKey])) continue;
             const count = this.gameState.player.placed[slotKey].length;
-            if (!isParallel && count > 0) continue; // 非並行は空きスロットのみ
+            if (getPlacementError(this.cardManager, this.gameState, card, slotKey)) continue;
             if (count < bestCount) {
                 bestCount = count;
                 bestSlot = slotKey;
@@ -1157,7 +1172,7 @@ export class UIController {
      */
     checkUnmetConditions(effect, staff) {
         const unmetConditions = [];
-        const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
+        const staffNames = this.gameState.staffNames;
         const currentStaffName = staffNames[staff];
 
         // 〈〉内の条件を抽出
@@ -1325,7 +1340,7 @@ export class UIController {
      * ドロップゾーン設定
      */
     setupDropZones() {
-        const slots = ['leader', 'teacher', 'staff'];
+        const slots = this.gameState.slotIds;
 
         slots.forEach(staff => {
             const slot = document.getElementById(`slot-${staff}`);
@@ -1393,14 +1408,14 @@ export class UIController {
      * 並行カードは常に配置可能、非並行カードは空きスロットがある場合のみ
      */
     getPlaceableCardCountInHand() {
-        const staffMap = { leader: '室長', teacher: '講師', staff: '事務' };
+        const staffMap = this.gameState.staffNames;
         return this.gameState.player.hand.filter(card => {
             const isParallel = this.hasParallelEffect(card);
             const allowedStaff = this.parseStaffRestriction(card.effect);
-            return ['leader', 'teacher', 'staff'].some(slotKey => {
+            return this.gameState.slotIds.some(slotKey => {
                 if (allowedStaff && !allowedStaff.includes(staffMap[slotKey])) return false;
                 const count = this.gameState.player.placed[slotKey].length;
-                return isParallel || count === 0;
+                return !getPlacementError(this.cardManager, this.gameState, card, slotKey);
             });
         }).length;
     }
@@ -1417,6 +1432,7 @@ export class UIController {
      * アクション実行
      */
     onConfirmAction() {
+        if (this.gameState.phase !== 'action' || this.actionBusy || this.gameState.pendingAction) return;
         if (this.gameState.calcMode && !this.confirmAllCalcActionInputs()) {
             return;
         }
@@ -1438,7 +1454,9 @@ export class UIController {
         };
 
         // アクション実行
+        this.actionBusy = true;
         const actionInfo = this.turnManager.executeActions();
+        this.saveGameState();
 
         // 実行後のステータス
         const afterStats = {
@@ -1455,332 +1473,12 @@ export class UIController {
     /**
      * ステータス変動演出を表示
      */
-    async showStatusAnimation(beforeStats, afterStats, actionInfo) {
-        const overlay = document.getElementById('status-animation-overlay');
-        const header = document.getElementById('animation-header');
-        const cards = document.getElementById('animation-cards');
-
-        if (!overlay || !header || !cards) {
-            // 演出要素がなければスキップして次へ進む
-            await this.finishActionPhase();
-            return;
-        }
-
-        let eventEffectsResolved = false;
-        try {
-            // 現在のステータス（リアルタイム更新用）
-            const currentStats = { ...beforeStats };
-
-            // ステータス表示を初期化
-            this.updateAnimationStats(currentStats, {});
-
-            // オーバーレイ表示
-            overlay.classList.remove('hidden');
-            header.innerHTML = '';
-            cards.innerHTML = '';
-
-            // 演出シーケンス
-            const config = this.turnManager.getCurrentTurnConfig();
-            const placed = this.gameState.player.placed;
-
-            // ターン情報表示
-            await this._sleep(300);
-            header.innerHTML = `${this.gameState.turn + 1}/8ターン ${config.week}`;
-
-            // おすすめ行動表示
-            if (config.recommended) {
-                await this._sleep(500);
-                header.innerHTML += `<br>🎯 おすすめ行動: ${config.recommended}`;
-                await this._sleep(800);
-            }
-
-            // カテゴリ色マップ（CSS変数と統一）
-            const categoryColors = {
-                '動員': '#3B82F6',  // --color-mobilization
-                '教務': '#10B981',  // --color-teaching
-                '庶務': '#EC4899',  // --color-affairs
-                '応対': '#F97316'   // --color-response
-            };
-
-            // ステータス日本語名マップ
-            const statusNames = {
-                'experience': '体験',
-                'enrollment': '入塾',
-                'satisfaction': '満足',
-                'accounting': '経理'
-            };
-
-            // 各カード効果をリアルタイムで表示
-            const staffOrder = ['leader', 'teacher', 'staff'];
-            const staffNames = { leader: '室長', teacher: '講師', staff: '事務' };
-
-            for (const staff of staffOrder) {
-                const staffCards = placed[staff]; // 配列
-                const cardEffectInfo = actionInfo?.cardEffects?.[staff];
-                if (staffCards.length === 0 || !cardEffectInfo) continue;
-
-                const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
-                for (let cardIdx = 0; cardIdx < staffCards.length; cardIdx += 1) {
-                    const card = staffCards[cardIdx];
-                    const perCardInfo = cardEffectInfo.cards?.[cardIdx];
-                    const categoryColor = categoryColors[card.category] || '#9CA3AF';
-                    const categoryBadge = `<span style="background:${categoryColor};color:white;padding:1px 4px;border-radius:4px;font-size:0.7em;margin-left:4px;">${this._escapeHTML(card.category)}</span>`;
-                    const isRecommended = perCardInfo?.isRecommended || false;
-                    const recommendedApplied = perCardInfo?.recommendedApplied || false;
-                    const skippedByCost = perCardInfo?.skippedReason === 'cost_shortage';
-                    const recommendedMark = isRecommended ? ' 🎯' : '';
-                    const bonusText = recommendedApplied ? `<div class="anim-bonus-text">🎯 おすすめボーナス ${statusName}+1</div>` : '';
-                    const skipText = skippedByCost ? '<div class="anim-skip-text">コスト不足のため効果なし</div>' : '';
-                    const thumbnailHTML = this.buildCardThumbnailHTML(card, 'anim-card-thumbnail');
-
-                    cards.innerHTML = `
-                        <div class="animation-card-item">
-                            <div class="anim-card-copy">
-                                <div class="anim-staff-name">${staffNames[staff]}${staffCards.length > 1 ? ` (${cardIdx + 1}/${staffCards.length})` : ''}</div>
-                                <div class="anim-card-name">${this._escapeHTML(card.cardName)}${categoryBadge}${recommendedMark}</div>
-                                <div class="anim-card-effect">${this._escapeHTML(card.effect)}</div>
-                                ${bonusText}
-                                ${skipText}
-                            </div>
-                            ${thumbnailHTML}
-                        </div>
-                    `;
-                    this.setupCardThumbnailFallback(cards);
-
-                    if (perCardInfo) {
-                        const beforeCardStats = { ...currentStats };
-                        const delta = this.calculateDelta(perCardInfo.beforeStats, perCardInfo.afterStats);
-                        Object.entries(delta).forEach(([key, value]) => {
-                            if (Object.prototype.hasOwnProperty.call(currentStats, key)) {
-                                currentStats[key] += value;
-                            }
-                        });
-                        this.updateAnimationStats(currentStats, delta, { skipRankDisplay: true });
-                        await this.animateRankUpsIfNeeded(beforeCardStats, { ...currentStats });
-                        await this._sleep(800);
-                    } else {
-                        await this._sleep(2000);
-                    }
-                }
-            }
-
-            // カード効果に続けて、同じ画面・同じ体裁で塾アイテム効果を表示する。
-            await this.resolveEventActionEffects({ overlay, header, cards, currentStats });
-            eventEffectsResolved = true;
-
-            // 演出終了（📊行動結果ステップを除去）
-            await this._sleep(500);
-        } finally {
-            overlay.classList.add('hidden');
-            await this.finishActionPhase({ eventEffectsResolved });
-        }
-    }
-
-    /**
-     * 指定時間待機
-     */
-    _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
-     * ランクバーを段階的にアニメーション
-     */
-    async _animateStatBar(containerId, statKey, fromValue, toValue, difficulty) {
-        if (!this.scoreManager?.rankTable) return;
-
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        const fillElem = container.querySelector('.rank-progress-fill');
-        const labelElem = container.querySelector('.rank-label');
-        const deficitElem = container.querySelector('.rank-deficit');
-        if (!fillElem) return;
-
-        const updateDeficit = (rankInfo) => {
-            if (!deficitElem || !rankInfo) return;
-            if (rankInfo.deficit > 0) {
-                deficitElem.textContent = `${rankInfo.targetGrade}まであと${rankInfo.deficit}`;
-                deficitElem.classList.remove('hidden');
-            } else {
-                deficitElem.textContent = '';
-                deficitElem.classList.add('hidden');
-            }
-        };
-
-        const updateProgress = (rankInfo, value, withTransition = true) => {
-            if (!rankInfo) return;
-            const range = rankInfo.nextThreshold - rankInfo.startThreshold;
-            const progress = range > 0
-                ? Math.max(Math.min(((value - rankInfo.startThreshold) / range) * 100, 100), 0)
-                : 100;
-            fillElem.style.transition = withTransition ? 'width 0.35s ease' : 'none';
-            fillElem.style.width = `${progress}%`;
-        };
-
-        let currentValue = fromValue;
-
-        while (true) {
-            const prevRank = this.scoreManager.getStatusRank(statKey, currentValue, difficulty);
-            const finalRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
-            if (!prevRank || !finalRank) break;
-
-            // 終点（nextThreshold）を跨ぐ場合のみ演出を行う
-            const nextThr = prevRank.nextThreshold;
-            const hasThresholdCrossing = Number.isFinite(nextThr) && currentValue < nextThr && toValue >= nextThr;
-            if (!hasThresholdCrossing) {
-                if (labelElem) labelElem.textContent = finalRank.grade;
-                updateProgress(finalRank, toValue, true);
-                await this._sleep(1000); // 跨ぎ1回分（550+50+400ms）と同程度の継続時間
-                updateDeficit(finalRank);
-                break;
-            }
-
-            // 終点を跨いだ: 100%へアニメーション
-            fillElem.style.transition = 'width 0.35s ease';
-            fillElem.style.width = '100%';
-            await this._sleep(550); // 350ms遷移 + 200ms静止
-
-            // 0%にリセット（瞬時）
-            fillElem.style.transition = 'none';
-            fillElem.style.width = '0%';
-
-            // 次のランク閾値へ進める
-            const nextThreshold = prevRank.nextThreshold;
-            if (nextThreshold <= currentValue) break;
-            currentValue = nextThreshold;
-
-            const nextRank = this.scoreManager.getStatusRank(statKey, currentValue, difficulty);
-            if (nextRank && labelElem) {
-                labelElem.textContent = nextRank.grade;
-            }
-
-            await this._sleep(50); // transition: none を確定させる
-
-            // 最終値がこのランクに収まるかチェック
-            const afterNextRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
-            if (!afterNextRank || afterNextRank.grade === nextRank?.grade) {
-                // 最後のランク → 最終値に対応するバー位置まで伸ばす
-                if (afterNextRank && labelElem) {
-                    labelElem.textContent = afterNextRank.grade;
-                }
-                updateProgress(afterNextRank, toValue, true);
-                await this._sleep(400);
-                updateDeficit(afterNextRank);
-                break;
-            }
-            // まだランクアップが残っている → ループ継続
-        }
-    }
-
-    /**
-     * ランクアップが必要なステータスのバーを並列アニメーション
-     */
-    async animateRankUpsIfNeeded(prevStats, newStats) {
-        const difficulty = this.gameState.difficulty || 'fresh';
-        const statMap = {
-            experience: 'exp',
-            enrollment: 'enr',
-            satisfaction: 'sat',
-            accounting: 'acc'
-        };
-
-        await Promise.all(
-            Object.entries(statMap).map(([statKey, id]) => this._animateStatBar(
-                `anim-${id}-rank`,
-                statKey,
-                prevStats[statKey] ?? 0,
-                newStats[statKey] ?? 0,
-                difficulty
-            ))
-        );
-    }
-
-    /**
-     * アニメーションステータス更新
-     */
-    updateAnimationStats(stats, delta, options = {}) {
-        const statMap = {
-            experience: 'exp',
-            enrollment: 'enr',
-            satisfaction: 'sat',
-            accounting: 'acc'
-        };
-
-        Object.entries(statMap).forEach(([key, id]) => {
-            const valueElem = document.getElementById(`anim-${id}-value`);
-            const deltaElem = document.getElementById(`anim-${id}-delta`);
-
-            if (valueElem) {
-                valueElem.textContent = stats[key];
-                if (delta[key] !== undefined && delta[key] !== 0) {
-                    valueElem.classList.add('updating');
-                    setTimeout(() => valueElem.classList.remove('updating'), 300);
-                }
-            }
-
-            if (deltaElem) {
-                const d = delta[key] || 0;
-                if (d !== 0) {
-                    deltaElem.textContent = d > 0 ? `+${d}` : `${d}`;
-                    deltaElem.className = `anim-delta ${d > 0 ? 'positive' : 'negative'}`;
-                } else {
-                    deltaElem.textContent = '';
-                    deltaElem.className = 'anim-delta';
-                }
-            }
-        });
-
-        if (!options.skipRankDisplay) {
-            this.updateAnimationRankDisplay(stats);
-        }
-    }
-
-    /**
-     * アニメーション画面のランク表示を更新
-     */
-    updateAnimationRankDisplay(stats) {
-        if (!this.scoreManager?.rankTable) return;
-        const difficulty = this.gameState.difficulty || 'fresh';
-        const statMap = {
-            experience: 'exp',
-            enrollment: 'enr',
-            satisfaction: 'sat',
-            accounting: 'acc'
-        };
-
-        Object.entries(statMap).forEach(([stat, id]) => {
-            const container = document.getElementById(`anim-${id}-rank`);
-            if (!container) return;
-
-            const value = stats[stat] ?? 0;
-            const rankInfo = this.scoreManager.getStatusRank(stat, value, difficulty);
-            if (!rankInfo) return;
-
-            const labelElem = container.querySelector('.rank-label');
-            if (labelElem) labelElem.textContent = rankInfo.grade;
-
-            const fillElem = container.querySelector('.rank-progress-fill');
-            if (fillElem) {
-                const range = rankInfo.nextThreshold - rankInfo.startThreshold;
-                const progress = range > 0
-                    ? Math.min(((value - rankInfo.startThreshold) / range) * 100, 100)
-                    : 100;
-                fillElem.style.width = `${progress}%`;
-            }
-
-            const deficitElem = container.querySelector('.rank-deficit');
-            if (deficitElem) {
-                if (rankInfo.deficit > 0) {
-                    deficitElem.textContent = `${rankInfo.targetGrade}まであと${rankInfo.deficit}`;
-                    deficitElem.classList.remove('hidden');
-                } else {
-                    deficitElem.textContent = '';
-                    deficitElem.classList.add('hidden');
-                }
-            }
-        });
-    }
+    showStatusAnimation(...args) { return this.actionAnimation.showStatusAnimation(...args); }
+    _sleep(ms) { return this.actionAnimation._sleep(ms); }
+    _animateStatBar(...args) { return this.actionAnimation._animateStatBar(...args); }
+    animateRankUpsIfNeeded(...args) { return this.actionAnimation.animateRankUpsIfNeeded(...args); }
+    updateAnimationStats(...args) { return this.actionAnimation.updateAnimationStats(...args); }
+    updateAnimationRankDisplay(...args) { return this.actionAnimation.updateAnimationRankDisplay(...args); }
 
     /**
      * ステータス差分を計算
@@ -1830,6 +1528,9 @@ export class UIController {
         if (!options.eventEffectsResolved) await this.resolveEventActionEffects();
         this.updateStatusDisplay();
         this.turnManager.advancePhase();
+        this.gameState.pendingAction = null;
+        this.actionBusy = false;
+        this.saveGameState();
         // advancePhase は同期処理なので、完了状態を保存してから次フェーズへ一度だけ進める。
         if (this.gameState.event?.actionCompletion) {
             this.gameState.event.actionCompletion = null;
@@ -1870,7 +1571,7 @@ export class UIController {
             this.logger?.log(`イベント発動予約追加: ${reservation.reservationId}`, 'action');
             this.saveGameState();
         }
-        if (this.gameState.turn === 7 && homework?.acquired) {
+        if (this.gameState.turn === this.gameState.totalTurns - 1 && homework?.acquired) {
             for (const reservation of homework.activationReservations.filter(r => r.status === 'pending').sort((a, b) => a.creationOrder - b.creationOrder)) {
                 reservation.status = 'resolving'; this.saveGameState();
                 await this.resolveEventStatusEffect('spring-homework', homework, reservation, animationContext);
@@ -2268,14 +1969,14 @@ export class UIController {
         const overlay = document.createElement('div');
         overlay.className = 'turn-overlay';
 
-        // 表示内容: 「2/8ターン 2月上旬 {weekTopic} 🎯おすすめ:◯◯」
+        // 表示内容: 「2/${this.gameState.totalTurns}ターン 2月上旬 {weekTopic} 🎯おすすめ:◯◯」
         const recommendedText = config.recommended ? `🎯おすすめ: ${config.recommended}` : '';
         const trainingText = config.training ? `習得: ${config.training}` : '';
         const deleteText = config.delete ? `削除: ${config.delete}枚` : '';
 
         overlay.innerHTML = `
             <div class="turn-overlay-content">
-                <div class="turn-overlay-turn">${this.gameState.turn + 1}/8 ターン</div>
+                <div class="turn-overlay-turn">${this.gameState.turn + 1}/${this.gameState.totalTurns} ターン</div>
                 <div class="turn-overlay-week">${config.week}</div>
                 <div class="turn-overlay-topic">${config.topic || ''}</div>
                 <div class="turn-overlay-info">
@@ -2353,7 +2054,7 @@ export class UIController {
         if (!btn) return;
 
         const remaining = this.gameState.trainingRefreshRemaining ?? 0;
-        const enabled = this.gameState.difficulty === 'pro' && remaining > 0 && rarity !== 'N';
+        const enabled = this.gameState.config.trainingRefresh.enabled && remaining > 0 && rarity !== 'N';
 
         if (enabled) {
             btn.classList.remove('hidden');
@@ -2611,7 +2312,7 @@ export class UIController {
         const breakdownElem = document.getElementById('result-breakdown');
         if (breakdownElem) {
             const difficulty = this.gameState.difficulty || 'fresh';
-            if (difficulty === 'pro') {
+            if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
                 breakdownElem.innerHTML = this.renderProBreakdown(score);
             } else {
                 breakdownElem.innerHTML = `
@@ -3039,7 +2740,7 @@ export class UIController {
                 tr.className = 'past';
             }
             tr.innerHTML = `
-                <td>${turn}/8</td>
+                <td>${turn}/${this.gameState.totalTurns}</td>
                 <td>${config.week}</td>
                 <td>${config.training || '-'}</td>
                 <td>${config.delete > 0 ? config.delete + '枚' : 'なし'}</td>
@@ -3074,7 +2775,7 @@ export class UIController {
         const summary = document.createElement('div');
         summary.className = 'score-summary';
 
-        if (difficulty === 'fresh') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'fresh') {
             summary.textContent = `退塾${withdrawal}名 / 体験${mobilization} / 入退差${enrollmentDiff}`;
         } else {
             summary.textContent = `退塾${withdrawal}名 / 体験${mobilization} / 入退差${enrollmentDiff} / 満足${satisfaction}`;
@@ -3083,11 +2784,11 @@ export class UIController {
 
         if (this.gameState.event?.enabled) {
             const note = document.createElement('div'); note.className = 'score-note';
-            note.textContent = difficulty === 'fresh' ? 'イベント中はS+基礎8点時、体験・入退差の上限超過分もスコアに加算されます。' : 'イベント中は体験50超・入退差48超・満足35超の分が上限超過加点になります。';
+            note.textContent = getDifficultyConfig(difficulty).scoringModel === 'fresh' ? 'イベント中はS+基礎8点時、体験・入退差の上限超過分もスコアに加算されます。' : 'イベント中は体験50超・入退差48超・満足35超の分が上限超過加点になります。';
             content.appendChild(note);
         }
 
-        if (difficulty === 'fresh') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'fresh') {
             this._renderFreshScoreTable(content, withdrawal, mobilization, enrollmentDiff);
         } else {
             this._renderProScoreTable(content, withdrawal, mobilization, enrollmentDiff, satisfaction);
@@ -3430,6 +3131,12 @@ export class UIController {
         const overlay = document.getElementById('start-overlay');
         overlay?.classList.add('hidden');
 
+        if (this.gameState.phase === 'action' && this.gameState.pendingAction) {
+            this.actionBusy = true;
+            this.finishActionPhase();
+            return;
+        }
+
         // 中断時に効果適用済みなら二重適用せず、演出だけ再表示する。
         if (this.gameState.event?.items) {
             Object.values(this.gameState.event.items).forEach(state => state.activationReservations.forEach(reservation => {
@@ -3578,6 +3285,7 @@ export class UIController {
      * 教室行動フェーズUI復元（手札・配置済みカードを表示）
      */
     restoreActionUI() {
+        this.renderStaffLayout();
         this.showPhaseArea('action');
         this.updateTurnDisplay();
         this.updateStatusDisplay();
@@ -3586,7 +3294,7 @@ export class UIController {
         if (this.gameState.calcMode) {
             this.clearStaffSlots();
             const placed = this.gameState.player.placed;
-            for (const staff of ['leader', 'teacher', 'staff']) {
+            for (const staff of this.gameState.slotIds) {
                 if (!Array.isArray(placed[staff])) placed[staff] = [];
                 this.renderStaffSlot(staff);
             }
@@ -3601,7 +3309,7 @@ export class UIController {
 
         // 配置済みカードを復元
         const placed = this.gameState.player.placed;
-        for (const staff of ['leader', 'teacher', 'staff']) {
+        for (const staff of this.gameState.slotIds) {
             for (const card of placed[staff]) {
                 this.placeCardToSlot(card, staff);
             }
@@ -3761,7 +3469,7 @@ export class UIController {
         this.setCalcActionUIVisibility();
         this.selectedCardForPlacement = null;
         this.clearStaffSlots();
-        ['leader', 'teacher', 'staff'].forEach(staff => this.renderStaffSlot(staff));
+        this.gameState.slotIds.forEach(staff => this.renderStaffSlot(staff));
 
         let container = document.getElementById('calc-action-inputs');
         if (!container) {
@@ -3773,8 +3481,8 @@ export class UIController {
             anchor?.after(container);
         }
 
-        const staffLabels = { leader: '室長', teacher: '講師', staff: '事務' };
-        container.innerHTML = ['leader', 'teacher', 'staff'].map(staff => `
+        const staffLabels = this.gameState.staffNames;
+        container.innerHTML = this.gameState.slotIds.map(staff => `
             <div class="calc-slot-row">
                 <label>${staffLabels[staff]}に配置するカードNo（空欄=配置なし）</label>
                 <input id="calc-action-${staff}" class="calc-card-input" type="text"
@@ -3784,7 +3492,7 @@ export class UIController {
             </div>
         `).join('');
 
-        ['leader', 'teacher', 'staff'].forEach(staff => {
+        this.gameState.slotIds.forEach(staff => {
             const input = document.getElementById(`calc-action-${staff}`);
             input?.addEventListener('input', () => {
                 if (this.handleCalcTerminatorInput(input, () => this.confirmCalcActionByStaff(staff))) {
@@ -3799,7 +3507,10 @@ export class UIController {
                 }
             });
             input?.addEventListener('blur', () => {
-                window.setTimeout(() => this.confirmCalcStaffInput(staff), 0);
+                window.setTimeout(() => {
+                    if (document.activeElement === input || this.actionBusy || this.gameState.phase !== 'action') return;
+                    this.confirmCalcStaffInput(staff);
+                }, 0);
             });
         });
 
@@ -3809,7 +3520,7 @@ export class UIController {
         }
 
         this.updateActionButtonState();
-        ['leader', 'teacher', 'staff'].forEach(staff => this.updateCalcActionPreview(staff));
+        this.gameState.slotIds.forEach(staff => this.updateCalcActionPreview(staff));
         this.focusFirstCalcInput();
     }
 
@@ -3833,7 +3544,7 @@ export class UIController {
     }
 
     focusNextCalcActionInput(staff) {
-        const order = ['leader', 'teacher', 'staff'];
+        const order = this.gameState.slotIds;
         const next = order[order.indexOf(staff) + 1];
         if (next) {
             document.getElementById(`calc-action-${next}`)?.focus();
@@ -3841,7 +3552,7 @@ export class UIController {
     }
 
     confirmCalcActionByStaff(staff) {
-        if (staff === 'staff') {
+        if (staff === this.gameState.slotIds.at(-1)) {
             document.getElementById('confirm-action')?.click();
             return;
         }
@@ -3988,16 +3699,12 @@ export class UIController {
     }
 
     simulateCalcActionAssignment(staff, cards) {
-        const staffLabel = { leader: '室長', teacher: '講師', staff: '事務' }[staff];
+        const staffLabel = this.gameState.staffNames[staff];
         const workingDeck = [
             ...this.gameState.player.deck,
             ...(this.gameState.player.placed[staff] || [])
         ];
-        const workingPlaced = {
-            leader: [...(this.gameState.player.placed.leader || [])],
-            teacher: [...(this.gameState.player.placed.teacher || [])],
-            staff: [...(this.gameState.player.placed.staff || [])]
-        };
+        const workingPlaced = this.copyPlaced(this.gameState.player.placed);
         workingPlaced[staff] = [];
 
         const resolvedCards = [];
@@ -4016,9 +3723,8 @@ export class UIController {
                 return { valid: false, reason: `${deckCard.cardName}は ${allowedStaff.join('・')} 専用です` };
             }
 
-            if (!this.hasParallelEffect(deckCard) && workingPlaced[staff].length > 0) {
-                return { valid: false, reason: `${deckCard.cardName}は重ね配置できません` };
-            }
+            const error = getPlacementError(this.cardManager, this.gameState, deckCard, staff, workingPlaced);
+            if (error) return { valid: false, reason: error };
 
             workingPlaced[staff].push(deckCard);
             resolvedCards.push(deckCard);
@@ -4171,9 +3877,9 @@ export class UIController {
         if (!this.gameState.calcMode) return true;
 
         const snapshot = this.createCalcPlacementSnapshot();
-        ['leader', 'teacher', 'staff'].forEach(staff => this.returnPlacedStaffToDeck(staff));
+        this.gameState.slotIds.forEach(staff => this.returnPlacedStaffToDeck(staff));
 
-        for (const staff of ['leader', 'teacher', 'staff']) {
+        for (const staff of this.gameState.slotIds) {
             if (!this.confirmCalcStaffInput(staff, { silent: true })) {
                 const msg = document.getElementById(`calc-action-msg-${staff}`);
                 const text = msg?.textContent || '入力内容を確認してください';
@@ -4189,22 +3895,14 @@ export class UIController {
     createCalcPlacementSnapshot() {
         return {
             deck: [...this.gameState.player.deck],
-            placed: {
-                leader: [...this.gameState.player.placed.leader],
-                teacher: [...this.gameState.player.placed.teacher],
-                staff: [...this.gameState.player.placed.staff]
-            }
+            placed: this.copyPlaced(this.gameState.player.placed)
         };
     }
 
     restoreCalcPlacementSnapshot(snapshot) {
         this.gameState.player.deck = [...snapshot.deck];
-        this.gameState.player.placed = {
-            leader: [...snapshot.placed.leader],
-            teacher: [...snapshot.placed.teacher],
-            staff: [...snapshot.placed.staff]
-        };
-        ['leader', 'teacher', 'staff'].forEach(staff => this.renderStaffSlot(staff));
+        this.gameState.player.placed = this.copyPlaced(snapshot.placed);
+        this.gameState.slotIds.forEach(staff => this.renderStaffSlot(staff));
     }
 
     returnPlacedStaffToDeck(staff) {

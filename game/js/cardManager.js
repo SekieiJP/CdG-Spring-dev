@@ -371,7 +371,8 @@ export class CardManager {
         return {
             '室長': 'leader',
             '講師': 'teacher',
-            '事務': 'staff'
+            '事務': 'staff',
+            ...Object.fromEntries((this.slots || []).map(slot => [slot.name, slot.id]))
         };
     }
 
