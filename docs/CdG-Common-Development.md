@@ -55,6 +55,8 @@ T06の初期検証では単体18件、iPhone寸法・Androidの関連ブラウ�
 
 Node単体35件、デスクトップChromium・iPhone寸法のChromium・Android Chromeの全ブラウザ312件が通過した。最後の配置後スクロール調整後にも、スマホ操作・カード表示・結果履歴の関連36件を3端末条件で再確認し、通過した。通常／スキップの結果一致、中断復帰、通信失敗・再送・次ゲームとの分離、難易度拡張、GASの重複判定を含む。通常テストでは公開先への送信を差し替えている。
 
-WebKitを実行するCI設定は追加済みだが、リモートCIは未実行。Safari実機・PWA登録、実機での通信復帰・性能、実際のGASへの反映は未確認である。GASのローカル検証は代替シート・ロック・Cacheを使い、公開環境での動作確認とは分けている。
+2026-10-03、公開前の[Linux CI](https://github.com/SekieiJP/CdG-Spring-dev/actions/runs/37042529544)で単体35件・ブラウザ312件が再試行なしで通過した。ブラウザはデスクトップChromium・iPhone 12条件のWebKit・Android Chromeである。GASはユーザーが最新版をデプロイし、既存URLへのGETで`status: ok`と0053の応答を確認した。
+
+Safari実機・PWA登録、実機での通信復帰・性能、実GASのスコア書き込み・再送は未確認である。GASのローカル検証は代替シート・ロック・Cacheを使い、公開環境での動作確認とは分けている。
 
 カード評価の条件と450ゲームの基準は[カード評価手順](CdG-Card-Evaluation.md)、送信仕様と公開反映の順序は[結果・送信仕様](CdG-Results-Submission.md)、MASTER側へ取り込むコミットと残る確認は[共通改修の引き継ぎ](CdG-Shared-Handoff.md)を参照する。

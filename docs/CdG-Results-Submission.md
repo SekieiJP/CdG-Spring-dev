@@ -22,7 +22,7 @@
 
 ## GAS側の変更
 
-`gas/scoreReceiver.gs`の変更はコードとローカル検証までで、実際のWeb Appへは未反映。
+2026-10-03、ユーザーが最新の`gas/scoreReceiver.gs`をデプロイ済みと報告した。現在の送信URLへの読み取り用GETでも`status: ok`・`currentVersion: v20260815-0053`を確認した。スコアPOSTと実シートへの書き込み・再送は別途確認する。
 
 ScriptLock内で結果IDの検索と書き込みを行い、SpreadsheetApp.flushで書き込みを確認してから受領済みとする。Cacheが失効・利用不能でも、シートの結果ID列から重複を検出する。重複した再送は`status: ok`と`duplicate: true`を返す。書き込み失敗をCacheに記録して再試行を塞がない。
 

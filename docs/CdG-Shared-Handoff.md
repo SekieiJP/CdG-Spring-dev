@@ -2,7 +2,11 @@
 
 2026-10-02。共通改修の初版を専用の作業枝で実装・検証し、`codex/shared-improvements`へ統合した。ゲームのビルドは`v20260815-0053`。保存互換性を判定する上8桁は維持している。
 
-実装を含む取り込み起点は`8a3aa117ef37f54eab7c2cf39d76d3894df3fc1e`。この後の共通統合枝には引き継ぎ文書の更新も含める。`main`への合流、push、ゲームやGASの公開反映は行っていない。
+実装を含む取り込み起点は`8a3aa117ef37f54eab7c2cf39d76d3894df3fc1e`。この後の共通統合枝には引き継ぎ文書の更新も含める。2026-10-02時点では`main`への合流、push、ゲームやGASの公開反映は行っていなかった。
+
+2026-10-03、ユーザーがGASの最新コードをデプロイし、クライアント0053のGitHub Pages公開を指示した。既存送信URLへのGETで`status: ok`と`v20260815-0053`を確認した。[公開前のLinux CI](https://github.com/SekieiJP/CdG-Spring-dev/actions/runs/37042529544)で単体35件・WebKitを含むブラウザ312件が再試行なしで通過した。公開先は`https://sekieijp.github.io/CdG-Spring-dev/game/index.html`、公開元は`main`の既存Pagesワークフローである。
+
+公開前の版は`v20260814-0004`。今回の0053は上8桁が異なるため、決定した互換判定に従い、旧公開版の中断データは引き継ぎ対象外になる。互換性がある今後の更新では上8桁を維持する。
 
 ## 実装した範囲
 
@@ -66,9 +70,9 @@ git merge codex/shared-improvements
 |---|---|
 | iPhone 12 Safari実機 | macOS 13のローカルではiPhone寸法・タッチをChromiumで検証。Safariのアドレスバー、長押し、配置、描画の滑らかさを実機で確認する |
 | PWA登録・起動 | manifestとアイコン・寸法は検証済み。iPhone SafariとAndroid Chromeで実際に登録し、独立画面・セーフエリア・中断復帰を確認する |
-| WebKit・リモートCI | Linux CIにWebKitを設定済み。リモートでの実行は未実施 |
-| GAS公開反映 | 受信コードとローカルの重複／失敗テストは完了。GASを先に既存デプロイへ反映し、クライアント0053を公開する。実環境の書き込み・応答紛失後の再送を確認する |
+| WebKit・リモートCI | 2026-10-03の公開前CIで単体35件・ブラウザ312件が通過。WebKitでの検証をSafari実機確認とは分ける |
+| GAS公開反映 | 2026-10-03にユーザーが最新コードをデプロイ。既存URLのGETで0053の正常応答を確認済み。実環境のスコア書き込み・応答紛失後の再送は未確認 |
 
-公開先のGASが旧コードのままの場合、応答紛失後の重複防止はまだ反映されていない。反映手順と実接続の確認は[結果・送信仕様](CdG-Results-Submission.md)、実機確認・テスト実行は[共通開発手順](CdG-Common-Development.md)を参照する。
+GASの0053の起動と応答を確認した。実シートへの書き込み・再送の確認方法は[結果・送信仕様](CdG-Results-Submission.md)、実機確認・テスト実行は[共通開発手順](CdG-Common-Development.md)を参照する。
 
 決定事項と着手順の記録は[共通作業計画](CdG-Shared-Work-Plan.md)と[上位の改修計画](CdG-Improvement-Plan.md)に残した。
