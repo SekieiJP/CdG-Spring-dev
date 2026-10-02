@@ -61,7 +61,8 @@ export class SaveManager {
                 buildVersion: this.getBuildVersion(),
                 savedAt: new Date().toISOString(),
                 gameState: this.serializeGameState(gameState),
-                trainingDecks: this.serializeTrainingDecks(cardManager)
+                trainingDecks: this.serializeTrainingDecks(cardManager),
+                trainingDiscards: this.serializeTrainingDiscards(cardManager)
             };
 
             window.CDG_DEBUG && console.log('[SAVE-DEBUG] save: phase=', gameState.phase, ', turn=', gameState.turn);
@@ -181,7 +182,10 @@ export class SaveManager {
                 tokens: { ...gameState.tokens }
             },
             startedAt: gameState.startedAt || null,
+            discardedCards: [...(gameState.discardedCards || [])],
             trainingRefreshRemaining: gameState.trainingRefreshRemaining ?? 0,
+            trainingRefreshPhaseStartRemaining: gameState.trainingRefreshPhaseStartRemaining ?? gameState.trainingRefreshRemaining ?? 0,
+            trainingSelectionMode: gameState.trainingSelectionMode ?? null,
             // 研修フェーズ中の抽選カード
             currentTrainingCards: gameState.currentTrainingCards ?
                 gameState.currentTrainingCards.map(card => this.serializeCard(card)) : null,
@@ -203,7 +207,9 @@ export class SaveManager {
             topEffect: card.topEffect,
             effect: card.effect,
             cardNo: card.cardNo || null,
-            acquiredTurn: card.acquiredTurn
+            acquiredTurn: card.acquiredTurn,
+            poolId: card.poolId,
+            instanceId: card.instanceId
         };
     }
 
@@ -215,9 +221,15 @@ export class SaveManager {
     serializeTrainingDecks(cardManager) {
         const result = {};
         for (const rarity of ['N', 'R', 'SR', 'SSR']) {
-            result[rarity] = cardManager.trainingDecks[rarity].map(card => this.serializeCard(card));
+            result[rarity] = (cardManager.trainingDecks[rarity] || []).map(card => this.serializeCard(card));
         }
         return result;
+    }
+
+    serializeTrainingDiscards(cardManager) {
+        return Object.fromEntries(['R', 'SR', 'SSR'].map(rarity => [rarity,
+            (cardManager.trainingDiscards?.[rarity] || []).map(card => this.serializeCard(card))
+        ]));
     }
 
     /**
@@ -247,11 +259,13 @@ export class SaveManager {
             ? { passion: 0, inspiration: 0, organize: 0, fatigue: 0, ...savedTokens }
             : { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
         gameState.startedAt = savedState.startedAt || null;
+        gameState.discardedCards = [...(savedState.discardedCards || [])];
         gameState.trainingRefreshRemaining = savedState.trainingRefreshRemaining ?? 0;
+        gameState.trainingRefreshPhaseStartRemaining = savedState.trainingRefreshPhaseStartRemaining ?? gameState.trainingRefreshRemaining;
+        // 旧保存のnullはUIの従来推定へ渡し、新しい保存では通常／発想を明示する。
+        gameState.trainingSelectionMode = savedState.trainingSelectionMode ?? null;
         // 研修フェーズ中の抽選カードを復元
-        if (savedState.currentTrainingCards) {
-            gameState.currentTrainingCards = savedState.currentTrainingCards.map(card => ({ ...card }));
-        }
+        gameState.currentTrainingCards = savedState.currentTrainingCards?.map(card => ({ ...card })) ?? null;
         gameState.event = savedState.event ? JSON.parse(JSON.stringify(savedState.event)) : null;
         gameState.eventCardUsage = { ...(savedState.eventCardUsage || {}) };
         this.logger?.log('ゲーム状態を復元しました', 'info');
@@ -262,12 +276,15 @@ export class SaveManager {
      * @param {CardManager} cardManager
      * @param {Object} savedDecks
      */
-    restoreTrainingDecks(cardManager, savedDecks) {
+    restoreTrainingDecks(cardManager, savedDecks = {}, savedDiscards = {}) {
         for (const rarity of ['N', 'R', 'SR', 'SSR']) {
             if (savedDecks[rarity]) {
                 cardManager.trainingDecks[rarity] = savedDecks[rarity].map(card => ({ ...card }));
             }
         }
+        cardManager.trainingDiscards = Object.fromEntries(['R', 'SR', 'SSR'].map(rarity => [rarity,
+            (savedDiscards?.[rarity] || []).map(card => ({ ...card }))
+        ]));
         this.logger?.log('研修デッキを復元しました', 'info');
     }
 }

@@ -1,6 +1,8 @@
 /**
  * TurnManager - ターン進行管理
  */
+import { resolveCardAction } from './actionResolver.js';
+
 export class TurnManager {
     static TURN_CONFIG = [
         { name: '1月下旬', week: '1月下旬', training: 'R', recommended: '動員', recommendedStatus: 'experience', delete: 1 },
@@ -163,7 +165,6 @@ export class TurnManager {
      */
     executeActions() {
         const placed = this.gameState.player.placed;
-        const config = this.getCurrentTurnConfig();
         const actionInfo = {
             cardEffects: {} // staff -> { beforeStats, afterStats, isRecommended, cards }
         };
@@ -186,51 +187,9 @@ export class TurnManager {
                 const perCard = [];
 
                 cards.forEach(card => {
-                    const beforeStats = {
-                        experience: this.gameState.player.experience,
-                        enrollment: this.gameState.player.enrollment,
-                        satisfaction: this.gameState.player.satisfaction,
-                        accounting: this.gameState.player.accounting
-                    };
-
-                    const isRecommended = !!(config.recommended && card.category === config.recommended);
-                    const costCheck = this.cardManager.simulateCardEffect(card, staff, beforeStats, null, this.gameState);
-                    let effectResult = costCheck;
-                    let recommendedAppliedForCard = false;
-
-                    if (costCheck.applied && isRecommended && config.recommendedStatus) {
-                        this.gameState.updateStatus(config.recommendedStatus, 1);
-                        this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
-                        recommendedApplied = true;
-                        recommendedAppliedForCard = true;
-                    }
-
-                    if (costCheck.applied) {
-                        effectResult = this.cardManager.applyCardEffect(card, staff, this.gameState, beforeStats, {
-                            costStats: beforeStats
-                        });
-                    } else {
-                        this.logger?.log(`コスト不足: ${card.cardName}の効果は無効`, 'warning');
-                    }
-
-                    const afterStats = {
-                        experience: this.gameState.player.experience,
-                        enrollment: this.gameState.player.enrollment,
-                        satisfaction: this.gameState.player.satisfaction,
-                        accounting: this.gameState.player.accounting
-                    };
-
-                    perCard.push({
-                        cardName: card.cardName,
-                        category: card.category,
-                        beforeStats,
-                        afterStats,
-                        isRecommended,
-                        recommendedApplied: recommendedAppliedForCard,
-                        applied: effectResult.applied,
-                        skippedReason: effectResult.skippedReason,
-                        shortageEffects: effectResult.shortageEffects || []
-                    });
+                    const resolved = this.resolveCardAction(card, staff);
+                    recommendedApplied ||= resolved.recommendedApplied;
+                    perCard.push(resolved);
                 });
 
                 const staffAfterStats = {
@@ -260,6 +219,15 @@ export class TurnManager {
         this.gameState.eventCardUsage = usage;
         this.logger?.log(`イベント用有効カード枚数: ${JSON.stringify(usage)}`, 'info');
         return actionInfo;
+    }
+
+    /** 本体とsolverが同じコスト・条件・おすすめ順序で1枚を解決する入口。 */
+    resolveCardAction(card, staff, state = this.gameState) {
+        const isSimulation = state !== this.gameState;
+        const manager = isSimulation
+            ? Object.assign(Object.create(this.cardManager), { logger: null })
+            : this.cardManager;
+        return resolveCardAction(manager, state, card, staff, this.getTurnConfigs()[state.turn], isSimulation ? null : this.logger);
     }
 
     /**

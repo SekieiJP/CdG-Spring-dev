@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('イベントモードトグル', () => {
     test('計算機モードと同じスライドトグルで表示する', async ({ page }) => {

@@ -36,7 +36,8 @@ export class ScoreManager {
      */
     async loadRankData(csvPath) {
         try {
-            const response = await fetch(csvPath);
+            const version = globalThis.window?.BUILD_VERSION;
+            const response = await fetch(csvPath + (version ? `?v=${version}` : ''));
             if (!response.ok) {
                 throw new Error(`CSV読み込み失敗: ${response.status}`);
             }
@@ -48,8 +49,7 @@ export class ScoreManager {
                 .filter((line) => line !== '');
 
             if (lines.length <= 1) {
-                this.rankTable = [];
-                return this.rankTable;
+                throw new Error('ランクデータが空です');
             }
 
             const headers = lines[0]
@@ -101,6 +101,8 @@ export class ScoreManager {
                     return baseRow;
                 })
                 .filter(Boolean);
+
+            if (this.rankTable.length === 0) throw new Error('ランクデータの形式が不正です');
 
             return this.rankTable;
         } catch (error) {

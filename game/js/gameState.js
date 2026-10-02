@@ -44,6 +44,8 @@ export class GameState {
         this.trainingRefreshRemaining = diffConfig.trainingRefresh?.enabled
             ? diffConfig.trainingRefresh.maxCount : 0;
         this.trainingRefreshPhaseStartRemaining = this.trainingRefreshRemaining;
+        this.trainingSelectionMode = 'normal';
+        this.currentTrainingCards = null;
         this.startedAt = null;
         this.discardedCards = [];  // 途中で削除したカード名の一覧
         // イベントは開始時に固定され、カードとは完全に別管理する。

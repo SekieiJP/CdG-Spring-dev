@@ -5,6 +5,8 @@ import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwne
  * UIController - UI操作・表示制御
  */
 export class UIController {
+    get trainingSelectionMode() { return this.gameState.trainingSelectionMode || 'normal'; }
+    set trainingSelectionMode(value) { this.gameState.trainingSelectionMode = value; }
     _escapeHTML(str) {
         if (typeof str !== 'string') return str;
         return str
@@ -555,11 +557,7 @@ export class UIController {
         if (window.game) {
             const success = await window.game.setDifficulty(difficulty);
             if (!success) {
-                // CSVが見つからない場合（PRO準備中など）
-                alert(`${difficulty.toUpperCase()}難易度は現在準備中です。\nFRESH難易度でお楽しみください。`);
-                // FRESHにフォールバック
-                this.onDifficultySelect('fresh');
-                await window.game.setDifficulty('fresh');
+                alert(`${difficulty.toUpperCase()}のデータを読み込めませんでした。\n通信を確認して、もう一度「ゲーム開始」を押してください。`);
                 return;
             }
         }
@@ -3524,16 +3522,16 @@ export class UIController {
      * 研修フェーズUI復元（保存された抽選カードを表示）
      */
     restoreTrainingUI() {
+        const isInspiration = this.gameState.trainingSelectionMode === 'inspiration' ||
+            (this.gameState.trainingSelectionMode == null && (this.gameState.tokens?.inspiration ?? 0) > 0);
         if (this.gameState.calcMode) {
-            if ((this.gameState.tokens?.inspiration ?? 0) > 0) {
+            if (isInspiration) {
                 this.trainingSelectionMode = 'inspiration';
                 this.inspirationRemaining = this.gameState.tokens.inspiration;
-                this.markTrainingRefreshPhaseStart();
                 this.showCalcTrainingUI('SR', 0, this.inspirationRemaining);
             } else {
                 const rarity = this.gameState.turn === 0 ? 'R' : this.turnManager.getCurrentTurnConfig()?.training;
                 const count = this.gameState.turn === 0 ? 2 : 1;
-                this.markTrainingRefreshPhaseStart();
                 this.showCalcTrainingUI(rarity, count, count);
             }
             return;
@@ -3551,7 +3549,7 @@ export class UIController {
         }
 
         // 発想追加習得フロー中の復元
-        if ((this.gameState.tokens?.inspiration ?? 0) > 0) {
+        if (isInspiration) {
             this.trainingSelectionMode = 'inspiration';
             this.inspirationRemaining = this.gameState.tokens.inspiration;
             // showInspirationTrainingRound は currentTrainingCards を再抽選するが、

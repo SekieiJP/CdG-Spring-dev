@@ -20,11 +20,16 @@ export class CardManager {
         try {
             const cb = (typeof window !== 'undefined' && window.BUILD_VERSION) ? '?v=' + window.BUILD_VERSION : '';
             const response = await fetch(csvPath + cb);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const csvText = await response.text();
 
             // 難易度切替時の混在防止
             this.allCards = [];
             this.parseCSV(csvText);
+            if (this.allCards.length === 0 || this.allCards.some(card => !card.cardName || !card.rarity || !card.effect)) {
+                this.allCards = [];
+                throw new Error('カードデータが空、または形式が不正です');
+            }
             this.logger?.log(`カードデータ読み込み完了: ${this.allCards.length}枚`, 'info');
 
             return true;
@@ -182,10 +187,10 @@ export class CardManager {
         this.trainingDecks = { N: [], R: [], SR: [], SSR: [] };
         this.trainingDiscards = { R: [], SR: [], SSR: [] };
 
-        this.allCards.forEach(card => {
+        this.allCards.forEach((card, index) => {
             if (this.trainingDecks[card.rarity]) {
-                this.trainingDecks[card.rarity].push({ ...card });
-                this.trainingDecks[card.rarity].push({ ...card });
+                this.trainingDecks[card.rarity].push({ ...card, poolId: `training:${index}:0` });
+                this.trainingDecks[card.rarity].push({ ...card, poolId: `training:${index}:1` });
             }
         });
 
@@ -241,8 +246,8 @@ export class CardManager {
         const usedNames = new Set();
 
         // デバッグモード: 指定カードを優先的に引く
-        if (window?.debugCards?.training?.length > 0) {
-            for (const cardName of window.debugCards.training) {
+        if (globalThis.window?.debugCards?.training?.length > 0) {
+            for (const cardName of globalThis.window.debugCards.training) {
                 if (drawn.length >= count) break;
                 if (usedNames.has(cardName)) continue;
 
@@ -328,13 +333,16 @@ export class CardManager {
 
         // 現在の候補カードをゲームから永久除外（捨て札にも戻さない）
         currentCards.forEach(card => {
-            const idx = this.trainingDecks[rarity]?.findIndex(c => c === card);
-            if (idx > -1) {
-                this.trainingDecks[rarity].splice(idx, 1);
-            }
-            const discardIdx = this.trainingDiscards[rarity]?.findIndex(c => c === card);
+            // 候補はdraw時にコピーされ、復元でも別オブジェクトになる。参照一致で探さない。
+            const discardIdx = this.trainingDiscards[rarity].findIndex(candidate => card.poolId
+                ? candidate.poolId === card.poolId
+                : candidate.cardName === card.cardName && candidate.cardNo === card.cardNo);
             if (discardIdx > -1) {
                 this.trainingDiscards[rarity].splice(discardIdx, 1);
+            } else {
+                const idx = this.trainingDecks[rarity]?.findIndex(candidate => candidate === card ||
+                    (card.poolId && candidate.poolId === card.poolId));
+                if (idx > -1) this.trainingDecks[rarity].splice(idx, 1);
             }
         });
 
@@ -700,7 +708,12 @@ export class CardManager {
      */
     simulateCardEffect(card, staff, stats, recommendedStatus = null, gameState = null) {
         const beforeStats = { ...stats };
-        const parsed = this.parseEffect(card.effect || '');
+        const parsed = this.parseEffect(card?.effect || '');
+        const skippedReason = !card?.effect ? 'empty_effect'
+            : parsed.staffRestrictions.length && !parsed.staffRestrictions.includes(staff) ? 'staff_restriction' : null;
+        if (skippedReason) {
+            return { beforeStats, afterStats: { ...beforeStats }, applied: false, skippedReason, shortageEffects: [] };
+        }
         const statsSnapshot = { ...beforeStats };
         const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot, gameState);
         const shortageEffects = this.getCostShortageEffects(applicableEffects, beforeStats);

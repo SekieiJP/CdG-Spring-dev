@@ -2,7 +2,7 @@
  * カード効果パーサー単体テスト
  * ブラウザ内でCardManagerのパース機能を直接テスト
  */
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('効果テキストパーサー単体テスト', () => {
     let page;

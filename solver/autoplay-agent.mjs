@@ -897,8 +897,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             let best = -999;
             legalSlots.forEach((slot) => {
                 const sim = cloneForSimulation(stateLike);
-                const applied = game.cardManager.applyCardEffect(card, slot, sim);
-                if (!applied) return;
+                const result = game.turnManager.resolveCardAction(card, slot, sim);
+                if (!result.applied) return;
 
                 const afterExact = calcProExactPointsFromPlayer(sim.player);
                 const afterPotential = calcProObjectivePotential(sim);
@@ -1220,6 +1220,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
 
         function cloneForSimulation(srcState) {
             return {
+                difficulty: srcState.difficulty || game.gameState.difficulty,
+                turn: srcState.turn ?? game.gameState.turn,
+                totalTurns: srcState.totalTurns ?? game.gameState.totalTurns ?? game.turnManager.getTurnConfigs().length,
                 player: snapshotStatus(srcState.player),
                 tokens: ensureTokens(srcState.tokens),
                 updateStatus(type, delta) {
@@ -1354,7 +1357,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         function transitionPlacement(simState, card, slot, recommendedByStaff, placedCounts) {
-            const turnConfig = game.turnManager.getCurrentTurnConfig();
+            // 探索でも室長→講師→事務の順序を守る。後のスタッフを解決した状態で前へ戻らない。
+            if (SLOT_KEYS.slice(SLOT_KEYS.indexOf(slot) + 1).some(later => (placedCounts[later] || 0) > 0)) return null;
             const nextState = cloneForSimulation(simState);
             const beforeStatus = snapshotStatus(nextState.player);
             const beforeTokens = ensureTokens(nextState.tokens);
@@ -1367,17 +1371,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             const beforeProNeeds = isProStrategy ? buildProNeeds(nextState.player) : null;
 
             const nextRecommended = { ...recommendedByStaff };
-            if (
-                turnConfig?.recommended &&
-                turnConfig?.recommendedStatus &&
-                card.category === turnConfig.recommended
-            ) {
-                nextState.updateStatus(turnConfig.recommendedStatus, 1);
-                nextRecommended[slot] = true;
-            }
-
-            const applied = game.cardManager.applyCardEffect(card, slot, nextState);
-            if (!applied) return null;
+            const result = game.turnManager.resolveCardAction(card, slot, nextState);
+            if (!result.applied) return null;
+            if (result.recommendedApplied) nextRecommended[slot] = true;
 
             const afterStatus = snapshotStatus(nextState.player);
             const afterTokens = ensureTokens(nextState.tokens);
@@ -1684,8 +1680,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             const before = calcFreshSObjectiveSignal(simState);
             const beforeNeeds = buildFreshNeeds(simState.player);
             const beforePotential = calcFreshObjectivePotential(simState);
-            const applied = game.cardManager.applyCardEffect(card, slotHint, simState);
-            if (!applied) return -999;
+            const result = game.turnManager.resolveCardAction(card, slotHint, simState);
+            if (!result.applied) return -999;
             const after = calcFreshSObjectiveSignal(simState);
             const afterNeeds = buildFreshNeeds(simState.player);
             const afterPotential = calcFreshObjectivePotential(simState);
@@ -3517,6 +3513,9 @@ async function main() {
 
     try {
         const page = await browser.newPage();
+        // 自動評価から実際のスコア送信・解析サービスへ通信しない。
+        await page.route('**/*', route => new URL(route.request().url()).origin === `http://127.0.0.1:${args.port}`
+            ? route.continue() : route.abort());
         await page.goto(`http://127.0.0.1:${args.port}/index.html`, { waitUntil: 'domcontentloaded' });
         await page.waitForFunction(() => !!window.game && !!window.game.cardManager && window.game.cardManager.allCards.length > 0, null, { timeout: 30000 });
 

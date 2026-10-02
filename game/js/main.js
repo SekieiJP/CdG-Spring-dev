@@ -73,6 +73,10 @@ class Game {
                     if (savedDifficulty !== this.difficulty) {
                         await this.loadCardsForDifficulty(savedDifficulty);
                     }
+                    if (this.cardLoadFailed) {
+                        this.uiController.showFloatNotification('データを読み込めませんでした。中断データは残っています。再読み込みしてください。', 'error');
+                        return;
+                    }
                     // ゲーム状態を復元
                     this.restoreFromSave(saveData);
                     return;
@@ -111,7 +115,12 @@ class Game {
 
         // ランクCSV読み込み
         if (config.rankCsvPath) {
-            await this.scoreManager.loadRankData(config.rankCsvPath);
+            const ranks = await this.scoreManager.loadRankData(config.rankCsvPath);
+            if (!ranks?.length) {
+                this.cardLoadFailed = true;
+                this.logger.log(`${config.name}のランクデータの読み込みに失敗しました`, 'error');
+                return false;
+            }
         }
 
         return true;
@@ -175,7 +184,7 @@ class Game {
         this.logger.log('前回のゲームを復元しています...', 'info');
 
         // 研修デッキを復元
-        this.saveManager.restoreTrainingDecks(this.cardManager, saveData.trainingDecks);
+        this.saveManager.restoreTrainingDecks(this.cardManager, saveData.trainingDecks, saveData.trainingDiscards);
 
         // ゲーム状態を復元
         this.saveManager.restoreGameState(this.gameState, saveData.gameState);

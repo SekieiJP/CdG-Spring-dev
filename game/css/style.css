@@ -56,6 +56,8 @@ body {
     color: var(--color-text);
     min-height: 100vh;
     overflow-x: hidden;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 /* ==================== レイアウト ==================== */
@@ -70,7 +72,7 @@ body {
 /* ==================== スクロール追従ヘッダー（コンパクト版） ==================== */
 .sticky-header {
     position: fixed;
-    top: 0;
+    top: env(safe-area-inset-top, 0px);
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
@@ -1851,6 +1853,7 @@ html.font-normal .compact-stats {
 }
 
 .event-mode-panel { margin: 14px 0; padding: 12px; border: 2px solid #f59e0b; border-radius: 10px; background: #fffbeb; color: #1f2937; text-align: left; }
+.event-mode-panel.hidden { display: none; }
 .event-title { font-weight: 700; color: #92400e; }
 .event-end { font-size: .85em; margin: 4px 0 8px; color: #78350f; }
 .event-mode-panel details { margin-top: 8px; color: #1f2937; }

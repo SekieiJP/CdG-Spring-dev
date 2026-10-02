@@ -4,7 +4,7 @@
  * - ゲーム開始時に startedAt が記録される
  * - ゲーム終了時に submitScore が呼ばれる（エンドポイント未設定のためログ出力を確認）
  */
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('スロット指定モード: 並行カード重ね配置', () => {
     test.beforeEach(async ({ page }) => {
