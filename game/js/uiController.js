@@ -1,3 +1,5 @@
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0052';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0052';
 import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0052';
 import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0052';
 import { getPlacementError } from './placementRules.js?v=20260815-0052';
@@ -71,6 +73,7 @@ export class UIController {
         this.inspirationRemaining = 0;
         this.pendingScoreSubmissions = 0;
         this.actionAnimation = new ActionAnimationController(this);
+        this.mobileLayout = new MobileLayoutController(gameState);
     }
 
     /**
@@ -78,6 +81,7 @@ export class UIController {
      */
     init() {
         this.renderDifficultyOptions();
+        this.mobileLayout.init();
         getOrCreateUserUUID(); // 結果画面表示より前にCookieを確定
         this.updateStatusDisplay();
         this.updateTurnDisplay();
@@ -353,7 +357,7 @@ export class UIController {
         let recommendedText = '-';
         let recommended = null;
 
-        if (this.gameState.turn < 8) {
+        if (this.gameState.turn < this.gameState.totalTurns) {
             const config = this.turnManager.getCurrentTurnConfig();
             turnText = config.name;
             recommendedText = config.recommended || '-';
@@ -397,6 +401,9 @@ export class UIController {
      * フェーズエリアの表示切り替え
      */
     showPhaseArea(phase) {
+        document.body.dataset.phase = phase;
+        document.body.dataset.calcMode = String(this.gameState.calcMode);
+        this.mobileLayout.schedule();
         const areas = ['training-area', 'action-area', 'meeting-area', 'result-area'];
         areas.forEach(areaId => {
             const elem = document.getElementById(areaId);
@@ -422,9 +429,6 @@ export class UIController {
             cardDiv.addEventListener('dragend', (e) => this.onCardDragEnd(e));
         }
 
-        if (options.clickable) {
-            cardDiv.addEventListener('click', () => options.onClick(card, cardDiv));
-        }
 
         // カテゴリ色クラス
         const categoryClass = `category-${this._escapeHTML(card.category)}`;
@@ -435,7 +439,7 @@ export class UIController {
 
         // 表示する効果テキスト
         // カード説明設定が短縮時のみcompactでtopEffectを使用
-        const useCompact = options.compact && this.isShortCardDesc();
+        const useCompact = options.shortDescription || (options.compact && this.isShortCardDesc());
         const displayEffect = useCompact && card.topEffect ? card.topEffect : card.effect;
         const thumbnailHTML = this.buildCardThumbnailHTML(card, 'card-thumbnail');
 
@@ -451,37 +455,14 @@ export class UIController {
                 <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
                 ${thumbnailHTML}
             </div>
+            <span class="card-detail-hint">ⓘ 長押し</span>
         `;
+        cardDiv.setAttribute('aria-label', `${card.cardName}。長押しで詳細`);
         this.setupCardThumbnailFallback(cardDiv);
 
-        // スマホ長押し/PCホバー: カード直下フローティング（showHoverTooltip）
-        let pressTimer;
-        cardDiv.addEventListener('touchstart', (e) => {
-            this._lastTouchTime = Date.now();
-            pressTimer = setTimeout(() => { this.showHoverTooltip(card, cardDiv); }, 500);
-        });
-        cardDiv.addEventListener('touchend', () => {
-            this._lastTouchTime = Date.now();
-            clearTimeout(pressTimer);
-            const hover = document.querySelector('.hover-tooltip');
-            if (hover) hover.remove();
-        });
-        cardDiv.addEventListener('touchmove', () => clearTimeout(pressTimer));
-
-        // PC向けマウスオーバー: フローティング表示（showHoverTooltip）
-        // スマホでタッチ後に合成mouseenterが発火する問題を防ぐため、直近500ms以内のタッチ後は無視
-        let hoverTimer;
-        cardDiv.addEventListener('mouseenter', () => {
-            if (Date.now() - (this._lastTouchTime || 0) < 500) return;
-            clearTimeout(this._hoverHideTimer);
-            hoverTimer = setTimeout(() => { this.showHoverTooltip(card, cardDiv); }, 500);
-        });
-        cardDiv.addEventListener('mouseleave', () => {
-            clearTimeout(hoverTimer);
-            this._hoverHideTimer = setTimeout(() => {
-                const hover = document.querySelector('.hover-tooltip');
-                if (hover) hover.remove();
-            }, 500);
+        bindCardInteraction(cardDiv, {
+            activate: options.clickable ? () => options.onClick(card, cardDiv) : null,
+            details: () => this.showEffectTooltip(card), hover: () => this.showHoverTooltip(card, cardDiv)
         });
 
         return cardDiv;
@@ -560,7 +541,7 @@ export class UIController {
         const matchedTokens = tokenDefs.filter(t => effect.includes(t.keyword));
 
         // 仕様3: トークンなし かつ カード説明「全文」設定 → 表示しない
-        if (matchedTokens.length === 0 && !this.isShortCardDesc()) return;
+
 
         const tokensHTML = matchedTokens.length > 0
             ? '<div class="tooltip-tokens"><div class="tooltip-tokens-title">トークン効果</div>' +
@@ -577,8 +558,8 @@ export class UIController {
 
         // カードの下隣に位置を設定
         const rect = cardDiv.getBoundingClientRect();
-        tooltip.style.left = rect.left + 'px';
-        tooltip.style.top = (rect.bottom + 4) + 'px';
+        tooltip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 288)) + 'px';
+        tooltip.style.top = Math.min(rect.bottom + 4, window.innerHeight - 160) + 'px';
 
         document.body.appendChild(tooltip);
     }
@@ -587,6 +568,11 @@ export class UIController {
      * ゲーム開始
      */
     async onStartGame() {
+        if (this.startingGame) return;
+        this.startingGame = true;
+        const startButton = document.getElementById('start-game');
+        if (startButton) startButton.disabled = true;
+        try {
         const difficulty = this.selectedDifficulty || 'fresh';
 
         // 難易度に応じたCSVを読み込み
@@ -630,6 +616,7 @@ export class UIController {
         // 初回研修（Rカード4枚から2枚選択）
         if (this.gameState.event?.eventTraining) this.showEventTraining();
         else this.showInitialTraining();
+        } finally { this.startingGame = false; if (startButton) startButton.disabled = false; }
     }
 
     renderEventStartControls() {
@@ -985,6 +972,7 @@ export class UIController {
      * 手札表示
      */
     renderHand() {
+        this.mobileLayout.schedule();
         const handContainer = document.getElementById('hand-cards');
         if (!handContainer) return;
 
@@ -1278,7 +1266,7 @@ export class UIController {
             cards.forEach(card => {
                 const cardElem = this.createCardElement(card, {
                     clickable: true,
-                    compact: true,
+                    compact: true, shortDescription: true,
                     onClick: () => this.onPlacedCardClick(card, staff)
                 });
                 slot.appendChild(cardElem);
@@ -1617,6 +1605,7 @@ export class UIController {
      * 教室行動のカード演出に続けて、塾アイテム効果を同じ体裁で表示する。
      */
     async showEventStatusAnimation(itemId, beforeStats, afterStats, actual, animationContext) {
+        this.actionAnimation.clock.beginCard();
         const item = getEventItem(itemId);
         const { overlay, cards, currentStats } = animationContext;
         if (!item || !overlay || !cards || !currentStats) {
@@ -3130,12 +3119,6 @@ export class UIController {
         const overlay = document.getElementById('start-overlay');
         overlay?.classList.add('hidden');
 
-        if (this.gameState.phase === 'action' && this.gameState.pendingAction) {
-            this.actionBusy = true;
-            this.finishActionPhase();
-            return;
-        }
-
         // 中断時に効果適用済みなら二重適用せず、演出だけ再表示する。
         if (this.gameState.event?.items) {
             Object.values(this.gameState.event.items).forEach(state => state.activationReservations.forEach(reservation => {
@@ -3163,6 +3146,11 @@ export class UIController {
                 this.resumeEventActionCompletion();
                 return;
             }
+        }
+        if (this.gameState.phase === 'action' && this.gameState.pendingAction) {
+            this.actionBusy = true;
+            this.finishActionPhase();
+            return;
         }
         const calcToggle = document.getElementById('calc-mode-toggle');
         if (calcToggle) {

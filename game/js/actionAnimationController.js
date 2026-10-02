@@ -1,3 +1,4 @@
+import { AnimationClock } from './animationClock.js?v=20260815-0052';
 /** 確定した解決結果を表示する。通常のカード効果はここでは再適用しない。 */
 export class ActionAnimationController {
     constructor(ui) {
@@ -5,6 +6,7 @@ export class ActionAnimationController {
         this.gameState = ui.gameState;
         this.turnManager = ui.turnManager;
         this.scoreManager = ui.scoreManager;
+        this.clock = new AnimationClock();
     }
     async showStatusAnimation(beforeStats, afterStats, actionInfo) {
         const overlay = document.getElementById('status-animation-overlay');
@@ -18,6 +20,10 @@ export class ActionAnimationController {
         }
 
         let eventEffectsResolved = false;
+        this.clock.start();
+        cards.onclick = event => { if (event.target.closest('.animation-card-item')) this.clock.skipCard(); };
+        const skipButton = document.getElementById('btn-animation-skip');
+        if (skipButton) skipButton.onclick = () => this.clock.skipTurn();
         try {
             // 現在のステータス（リアルタイム更新用）
             const currentStats = { ...beforeStats };
@@ -72,6 +78,7 @@ export class ActionAnimationController {
 
                 const statusName = statusNames[config.recommendedStatus] || config.recommendedStatus;
                 for (let cardIdx = 0; cardIdx < staffCards.length; cardIdx += 1) {
+                    this.clock.beginCard();
                     const card = staffCards[cardIdx];
                     const perCardInfo = cardEffectInfo.cards?.[cardIdx];
                     const categoryColor = categoryColors[card.category] || '#9CA3AF';
@@ -123,6 +130,7 @@ export class ActionAnimationController {
             await this._sleep(500);
         } finally {
             overlay.classList.add('hidden');
+            this.clock.finish(); cards.onclick = null;
             await this.ui.finishActionPhase({ eventEffectsResolved });
         }
     }
@@ -131,7 +139,7 @@ export class ActionAnimationController {
      * 指定時間待機
      */
     _sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+        return this.clock.wait(ms);
     }
 
     /**

@@ -14,14 +14,14 @@ async function startActionPhase(page) {
 }
 
 test.describe('スタッフスロットのレスポンシブ配置', () => {
-    test('480px以下ではスタッフスロットを縦1列にし、空スロットplaceholderを幅広に表示する', async ({ page }) => {
+    test('480px以下でも配置先を横に並べ、縦幅を圧縮する', async ({ page }) => {
         await page.setViewportSize({ width: 480, height: 800 });
         await startActionPhase(page);
 
         const staffAreaColumns = await page.locator('.staff-area').evaluate(el =>
             getComputedStyle(el).gridTemplateColumns.split(' ').length
         );
-        expect(staffAreaColumns).toBe(1);
+        expect(staffAreaColumns).toBe(3);
 
         const slotBox = await page.locator('#slot-leader').boundingBox();
         const placeholderBox = await page.locator('#slot-leader .slot-placeholder').boundingBox();
@@ -30,7 +30,7 @@ test.describe('スタッフスロットのレスポンシブ配置', () => {
         expect(placeholderBox.width).toBeGreaterThan(slotBox.width * 0.9);
     });
 
-    test('480px以下では同一スタッフ内カードを1行2枚までで折り返す', async ({ page }) => {
+    test('480px以下では同一スタッフ内カードを短縮して縦に重ねる', async ({ page }) => {
         await page.setViewportSize({ width: 480, height: 800 });
         await startActionPhase(page);
 
@@ -48,10 +48,10 @@ test.describe('スタッフスロットのレスポンシブ配置', () => {
         );
 
         expect(boxes).toHaveLength(3);
-        expect(Math.abs(boxes[0].y - boxes[1].y)).toBeLessThan(8);
-        expect(boxes[1].x).toBeGreaterThan(boxes[0].x);
+        expect(boxes[1].y).toBeGreaterThan(boxes[0].y);
+        expect(Math.abs(boxes[0].x - boxes[1].x)).toBeLessThan(2);
         expect(boxes[2].y).toBeGreaterThan(boxes[0].y + 20);
-        expect(boxes[0].width).toBeGreaterThan(160);
+        expect(boxes[0].width).toBeGreaterThan(100);
     });
 
     test('481px以上ではスタッフスロットを従来通り横3列にする', async ({ page }) => {
