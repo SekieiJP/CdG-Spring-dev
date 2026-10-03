@@ -9,7 +9,7 @@ import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
 import {VALUE_FEATURES,VALUE_SCHEMA,createValueForecaster,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
-import {publicDraw} from '../../solver/browser/pro-risk-research.js';
+import {publicDraw,createRiskPolicy} from '../../solver/browser/pro-risk-research.js';
 import {predictionCalibration,deletionCoverage,forecastStatsCalibration} from '../../solver/pro-mean125-metrics.mjs';
 import {remainingTrainingNames} from '../../solver/browser/pro-learned-research.js';
 import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
@@ -25,7 +25,7 @@ function setup(config={},valueModel=null){const state=new GameState(null);state.
  updateStatus(k,d){const old=this.player[k];this.player[k]=Math.max(0,old+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-old;}});
  const enumerate=(hand,counts)=>hand.flatMap((c,i)=>{const p=cm.parseEffect(c.effect),slots=p.staffRestrictions.length?p.staffRestrictions:['leader','teacher','staff'];
  return slots.filter(slot=>c.effect.includes('並行')||counts[slot]===0).map(slot=>({cardIndex:i,card:c,slot}));});
- const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config,valueModel});
+ const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,turns:state.config.turns,publicActionParser:config.fastPublicActions?new CardManager(null):null,config,valueModel});
  return {state,tm,clone,enumerate,strategy,observe:(cs=[],options={})=>createAdvisorObservation(state,cs,{rankTable:sm.rankTable,...options})};}
 test('15点の経路は公式ScoreManagerに一致し、14点目標と異なる',()=>{
  const {state}=setup(),routes=targetRoutes(sm.rankTable,15);
@@ -247,4 +247,21 @@ test('仮想将来は現在の追加研修を消費済みとして扱い、学�
  assert.ok(strategy.acquisition(extra,'learned').evaluations.every(e=>Number.isFinite(e.score)));
  state.turn=6;const ob=observe([card(25),card(40)]);for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
  assert.ok(strategy.acquisition(ob,'rollout').evaluations.every(e=>Number.isFinite(e.score)));
+});
+
+test('短い先読みは固定評価で続きを見積もり、最終ターンでは公式得点を優先する',()=>{
+ const config={fastPublicActions:true,planning:{worlds:4,valueHorizon:1,futurePolicy:'baseline',futureBeam:16,drawSampler:'keyed',contextSalt:true}},model=tinyModel('count-15',100);
+ const {state,strategy,observe}=setup(config,model);state.turn=2;state.player.deck=[];Object.assign(state.player,{experience:20,enrollment:10,satisfaction:15,accounting:15});
+ const ob=observe([card(25),card(15)]);for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ const advice=strategy.acquisition(ob,'rollout');assert.deepEqual(advice.recommended.indices,[1]);assert.ok(advice.evaluations.every(e=>e.estimated&&e.below8===null));
+ state.turn=7;Object.assign(state.player,{experience:49,enrollment:47,satisfaction:25,accounting:15});const final=strategy.acquisition(observe([card(25),card(15)]),'rollout');
+ assert.deepEqual(final.recommended.indices,[0]);assert.equal(final.recommended.mean,14);assert.ok(final.evaluations.every(e=>!e.estimated));
+ assert.throws(()=>setup(config),/固定評価/);
+});
+test('仮想研修で使ったリフレッシュ回数を後続取得と固定評価へ反映する',()=>{
+ const {state,strategy,observe,clone,tm,enumerate}=setup();state.turn=5;state.player.deck=[];Object.assign(state.player,{experience:30,enrollment:20,satisfaction:25,accounting:15});
+ const seen=[],baseline={...strategy,acquisition(ob,mode,skip){seen.push(['acquisition',ob.refreshRemaining]);return strategy.acquisition(ob,mode,skip);},futureValue(ob){seen.push(['leaf',ob.refreshRemaining]);return {mean:12,forecast:ob.stats,tie:0};}};
+ const refreshAdvice=ob=>({evaluations:ob.candidates.map(()=>({score:10})),recommended:{score:0}});
+ const risk=createRiskPolicy({baseline,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,refreshAdvice,config:{planning:{worlds:1,valueHorizon:2,futureRefresh:true,futurePolicy:'baseline',futureBeam:8}}});
+ const ob={...observe([card(25)]),refreshRemaining:1};risk.acquisition(ob);assert.deepEqual(seen,[['acquisition',0],['leaf',0]]);assert.equal(ob.refreshRemaining,1);
 });

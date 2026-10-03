@@ -18,7 +18,7 @@ async function main(){
  const root=path.resolve('game'),port=18680,server=http.createServer(async(req,res)=>{try{
   const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
   if(pathname==='/value-dataset.json'){res.writeHead(200,{'Content-Type':'application/json'});res.end(datasetBytes);return;}
-  const file=['/research/pro-value-model.js','/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-learned-research.js'].includes(pathname)?path.resolve('solver/browser',path.basename(pathname)):path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
+  const file=['/research/pro-value-model.js','/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js'].includes(pathname)?path.resolve('solver/browser',path.basename(pathname)):path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
   if(!file.startsWith(root+path.sep)&&!file.startsWith(path.resolve('solver/browser')+path.sep))throw Error('path');
   const bytes=await readFile(file);res.writeHead(200,{'Content-Type':file.endsWith('.js')?'application/javascript':file.endsWith('.html')?'text/html':'text/plain','Cache-Control':'no-store'});res.end(bytes);
  }catch{res.writeHead(404);res.end();}});await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));
