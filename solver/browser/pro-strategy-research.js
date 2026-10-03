@@ -54,6 +54,7 @@ export function targetRoutes(rankTable, target=15) {
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null}) {
     if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
     if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
+    if(config.placementRolloutTurns!==undefined&&(!Number.isInteger(config.placementRolloutTurns)||config.placementRolloutTurns<2||config.placementRolloutTurns>8))throw Error('配置の先読み範囲は残り2〜8ターン');
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
@@ -130,7 +131,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
         if(!skipRollout&&config.lateBeam&&remaining<=(config.lateBeamTurns??2))beamWidth=Math.max(beamWidth,config.lateBeam);
-        if(config.endgameRollout&&!skipRollout&&remaining===2)return riskPolicy.placements(observation,hand,state);
+        if(!skipRollout&&(config.endgameRollout&&remaining===2||config.placementRolloutTurns&&remaining>1&&remaining<=config.placementRolloutTurns))return riskPolicy.placements(observation,hand,state);
         const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
         const growth=Object.fromEntries(KEYS.map(k=>[k,config.signedGrowth?future[k]-observation.stats[k]:Math.max(0,future[k]-observation.stats[k])]));
         function evaluate(next) {
