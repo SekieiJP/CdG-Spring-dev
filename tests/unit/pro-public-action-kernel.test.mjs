@@ -26,3 +26,9 @@ test('同じ公開状態の再利用は、元の手札・乱数を読まず、�
  kernel(card,'staff',state);assert.equal(state.tokens.inspiration,0);
  const cost=cm.allCards.find(c=>Number(c.cardNo)===43),before=make();assert.equal(kernel(cost,'leader',state).applied,false);assert.deepEqual(make(),before);
 });
+
+test('満足を先に上げてから並行の手紙を重ねると発動し、逆順では発動しない',()=>{
+ const talk=cm.allCards.find(c=>Number(c.cardNo)===13),letter=cm.allCards.find(c=>Number(c.cardNo)===49),make=()=>({turn:3,totalTurns:8,player:{experience:20,enrollment:10,satisfaction:12,accounting:15},tokens:{passion:0,fatigue:0,inspiration:0,organize:0}});
+ const a=make(),b=make();kernel(talk,'staff',a);kernel(letter,'staff',a);kernel(letter,'staff',b);kernel(talk,'staff',b);
+ assert.equal(a.player.satisfaction,15);assert.equal(a.tokens.passion,2);assert.equal(a.tokens.inspiration,1);assert.equal(b.player.satisfaction,15);assert.equal(b.tokens.passion,0);assert.equal(b.tokens.inspiration,0);
+});
