@@ -11,6 +11,8 @@ async function main(){
  if(!/^[a-z0-9-]+$/.test(stage)||n<250||n%250)throw Error('安全なstage名と250の倍数を指定');
  const custom=process.argv.indexOf('--configs'),configs=JSON.parse(await readFile(custom>=0?process.argv[custom+1]:'solver/research-scenarios/pro-mean125-configs.json','utf8')),ids=idsText.split(',');
  if(ids.some(id=>!configs[id]||configs[id].initial))throw Error('有効なリセマラなしの設定を指定');
+ const portIndex=process.argv.indexOf('--port-base'),portBase=portIndex>=0?Number(process.argv[portIndex+1]):18480;
+ if(!Number.isInteger(portBase)||portBase<1024||portBase>65534)throw Error('安全なport-baseを指定');
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
@@ -28,7 +30,7 @@ async function main(){
   if(process.argv.includes('--resume'))try{const d=JSON.parse(await readRunBytes(job.output)),s=d.settings,records=d.simulations?.[0]?.playRecords;
    if(s?.seed===seed&&s.episodeOffset===job.b*250&&s.episodes===250&&JSON.stringify(s.research)===JSON.stringify(job.config)&&s.provenance?.strategyVersion===fingerprints.strategyVersion&&s.provenance?.codeHash===fingerprints.codeHash&&records?.length===250&&records.every(r=>r.metadata.cardVersion===fingerprints.cardVersion&&r.metadata.rankVersion===fingerprints.rankVersion&&!r.metadata.reroll)){console.log(`reuse ${job.id}/${job.b}`);done++;continue;}}catch{}
   console.log(`start ${stage}/${job.id} batch${job.b}`);let log='';
-  await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['solver/autoplay-agent.mjs','--difficulty','pro','--episodes','250','--episode-offset',String(job.b*250),'--seed',seed,'--policies','pro_goal','--acquisition-model','pro_splus','--refresh-policy','public','--refresh-model','pro_splus','--research-config',job.configPath,'--port',String(18480+index),'--output',job.output,'--trace-samples','0','--no-report'],{stdio:['ignore','pipe','pipe']});
+  await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['solver/autoplay-agent.mjs','--difficulty','pro','--episodes','250','--episode-offset',String(job.b*250),'--seed',seed,'--policies','pro_goal','--acquisition-model','pro_splus','--refresh-policy','public','--refresh-model','pro_splus','--research-config',job.configPath,'--port',String(portBase+index),'--output',job.output,'--trace-samples','0','--no-report'],{stdio:['ignore','pipe','pipe']});
    child.stdout.on('data',s=>log+=s);child.stderr.on('data',s=>log+=s);child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error(`${job.id}: ${code}\n${log}`)));});
   await writeFile(`${root}/${job.id}-batch${job.b}.log`,log);
   const data=JSON.parse(await readRunBytes(job.output)),sim=data.simulations[0];console.log(`done ${++done}/${jobs.length} ${job.id}/${job.b}: mean=${sim.scoreSummary.mean.toFixed(3)} median=${sim.scoreSummary.p50} minutes=${((Date.now()-started)/60000).toFixed(2)}`);

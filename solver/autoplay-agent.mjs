@@ -320,7 +320,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
         const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
         const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
-            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,config:research });
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,config:research,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
         const SLOT_KEYS = game.gameState.slotIds;

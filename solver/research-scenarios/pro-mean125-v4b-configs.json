@@ -1,0 +1,105 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "seek49-alone": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "refresh": "seek49"
+  },
+  "seek13-alone": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "refresh": "seek13-49"
+  },
+  "bonus49-alone": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "cardBonus": {
+      "49": 90
+    }
+  },
+  "bonus49-40": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "cardBonus": {
+      "49": 90,
+      "40": 55
+    }
+  },
+  "bonus-parallel": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "cardBonus": {
+      "49": 70,
+      "31": 25,
+      "30": 20,
+      "21": 10
+    }
+  },
+  "inspiration12": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "weights": {
+      "inspiration": 12
+    }
+  },
+  "inspiration-support": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "cardBonus": {
+      "13": 20,
+      "23": 35,
+      "29": 20
+    },
+    "weights": {
+      "inspiration": 12
+    }
+  },
+  "bonus49-buffer": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "cardBonus": {
+      "49": 90
+    },
+    "safetyBuffer": 2,
+    "signedGrowth": true
+  }
+}

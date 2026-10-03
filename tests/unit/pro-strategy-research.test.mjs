@@ -110,3 +110,11 @@ test('残りターンと取得予定の成長・経理の余裕を含む評価�
    const advice=strategy.acquisition(observe(cm.allCards,{allowSkip:true}),'engine');assert.ok(advice.evaluations.every(e=>Number.isFinite(e.score)));}
  }
 });
+
+test('基準配置を使う仮想将来も隠れた乱数を消費せず、状態を変更しない',()=>{
+ const {state,strategy,observe}=setup({safetyBuffer:2,adaptiveDraw:true,planning:{worlds:4,futurePolicy:'baseline',futureBeam:24}});
+ state.turn=6;Object.assign(state.player,{experience:35,enrollment:30,satisfaction:28,accounting:13});
+ const snapshot=JSON.stringify(state),ob=observe([card(25),card(40)]);
+ for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ const advice=strategy.acquisition(ob,'rollout');assert.ok(advice.evaluations.every(e=>Number.isFinite(e.score)));assert.equal(JSON.stringify(state),snapshot);
+});

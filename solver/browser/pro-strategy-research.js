@@ -49,11 +49,14 @@ export function targetRoutes(rankTable, target=15) {
         (KEYS.some(k=>s[k]<r[k])||j<i)));
 }
 
-export function createResearchPolicy({projectDeck,score,cloneState,resolve,enumerateOptions,catalog=[],config={}}) {
-    const routeCache=new Map();
+export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}) {
+    const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
+    const tableKey=table=>{if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));return tableKeys.get(table);};
+    function score(stats,table){const key=tableKey(table)+'|'+KEYS.map(k=>stats[k]).join(',');
+        if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
     const weights = mode => ({...(RESEARCH_MODES[mode] || RESEARCH_MODES.median),...(config.weights||{})});
     function routes(observation,mode) {
-        const target=mode==='median'?14:15,key=JSON.stringify([target,observation.rankTable]);
+        const target=mode==='median'?14:15,key=target+'|'+tableKey(observation.rankTable);
         if(!routeCache.has(key))routeCache.set(key,targetRoutes(observation.rankTable,target));
         return routeCache.get(key);
     }
@@ -122,7 +125,9 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
             let v=value(end,observation,objective);
             if(remaining<=1) return score(next.player,observation.rankTable).points*10000+v;
             const maxDraw=Math.max(4,observation.owned.length+1);
-            const drawFactor=config.tokenHorizon?Math.min(1.25,(remaining-1)/4):1;
+            const parallelRatio=observation.owned.filter(c=>(c.effect||'').includes('並行')).length/Math.max(1,observation.owned.length);
+            const throughputFactor=config.adaptiveDraw?Math.max(.2,Math.min(1,parallelRatio+.2)):1;
+            const drawFactor=(config.tokenHorizon?Math.min(1.25,(remaining-1)/4):1)*throughputFactor;
             const inspirationFactor=config.tokenHorizon?Math.min(1.5,(remaining-1)/3):1;
             v+=w.draw*drawFactor*(clamp(4+next.tokens.passion-next.tokens.fatigue,0,maxDraw)-4);
             v+=w.inspiration*inspirationFactor*next.tokens.inspiration+Math.min(4,(remaining-1)*1.3)*next.tokens.organize;
@@ -176,6 +181,6 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         return removed;
     }
     const baseline={acquisition,placements,deletions,value,forecast};
-    const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config});
+    const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     return {...baseline,initial,riskPolicy};
 }
