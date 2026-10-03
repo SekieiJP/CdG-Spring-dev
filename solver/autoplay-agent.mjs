@@ -2,7 +2,7 @@
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -3636,12 +3636,14 @@ async function main() {
             simulations
         };
 
+        await mkdir(path.dirname(outputAbs), { recursive: true });
         await writeFile(outputAbs, `${JSON.stringify(reportJson, null, 2)}\n`, 'utf-8');
 
         let reportAbs = null;
         if (args.report) {
             reportAbs = path.resolve(repoRoot, args.report);
             const markdown = buildNaturalLanguageReport(reportJson);
+            await mkdir(path.dirname(reportAbs), { recursive: true });
             await writeFile(reportAbs, markdown, 'utf-8');
         }
 

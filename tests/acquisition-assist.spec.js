@@ -18,6 +18,7 @@ test('初期オン、5秒後に2枚を強調し、通常の選択・状態を変
     await glow(page).first().click();
     await expect(page.locator('#training-cards .selected')).toHaveCount(1);
     await expect(glow(page)).toHaveCount(2);
+    await expect.poll(()=>glow(page).first().evaluate(card=>getComputedStyle(card).boxShadow)).toContain('123, 198, 246');
 });
 test('設定オフを保持し、提示から5秒経過後にオンへ戻すとすぐ強調する',async({page})=>{
     await training(page); await page.click('#btn-settings-full');
@@ -55,6 +56,26 @@ test('発想追加取得を再提示するたびに比較し、PROでは表示�
     await expect(glow(page)).toHaveCount(0); await page.clock.runFor(5000); await expect(glow(page)).toHaveCount(1);
     await page.evaluate(async()=>{const g=window.game;await g.setDifficulty('pro');g.gameState.reset('pro');g.gameState.phase='training';g.uiController.showInitialTraining();});
     await page.clock.runFor(6000); await expect(glow(page)).toHaveCount(0);
+});
+test('コストを払えない発想候補では辞退を強調し、取得せずに確定できる',async({page})=>{
+    await training(page);
+    const owned=await page.evaluate(()=>{
+        const g=window.game;g.gameState.turn=7;
+        Object.assign(g.gameState.player,{experience:0,enrollment:0,satisfaction:0,accounting:0});
+        g.gameState.tokens.inspiration=1;
+        g.uiController.drawInspirationCandidates=()=>[22,26,32].map(no=>g.cardManager.allCards.find(c=>Number(c.cardNo)===no));
+        g.uiController.startInspirationTrainingFlow();
+        return g.gameState.getOwnedCards().length;
+    });
+    await page.clock.runFor(4999);await expect(glow(page)).toHaveCount(0);
+    await page.clock.runFor(1);await expect(glow(page)).toHaveCount(1);
+    await expect(glow(page)).toHaveClass(/skip-option/);
+    await expect(page.locator('#confirm-training')).toBeDisabled();
+    await glow(page).click();await page.click('#confirm-training');
+    const result=await page.evaluate(()=>({count:window.game.gameState.getOwnedCards().length,
+        decision:window.game.gameState.playRecord.events.filter(e=>e.type==='acquisition-decision').at(-1)}));
+    expect(result.count).toBe(owned);expect(result.decision.chosenIndices).toEqual([]);
+    expect(result.decision.advice.recommended.skip).toBe(true);
 });
 test.describe('実時間での数式計算',()=>{
     test.use({testDate:null});

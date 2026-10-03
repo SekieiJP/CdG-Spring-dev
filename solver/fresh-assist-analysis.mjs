@@ -36,12 +36,16 @@ export function summarize(records){
     for(const record of records){
         const meta=record.metadata;
         if(meta.difficulty!=='fresh'||meta.calcMode||meta.eventId||!record.result||!Number.isFinite(score(record)))continue;
-        const model=meta.acquisitionModel||'baseline';
+        const decisions=record.events.filter(event=>event.type==='acquisition-decision');
+        const manual=meta.source==='human'||!meta.acquisitionModel&&decisions.some(event=>Object.hasOwn(event,'assistEnabled'));
+        const exposure=manual?(!decisions.length?'取得判断の記録なし':decisions.every(event=>event.assistShown)?'全取得で表示':decisions.some(event=>event.assistShown)?'一部取得で表示':'表示なし'):null;
+        const model=manual?'manual':meta.acquisitionModel||'baseline';
         const continuation=meta.continuationPolicy||meta.strategy;
-        const label=meta.source==='counterfactual'?`状況再試行:${(meta.forcedChoice||[]).join(',')||'skip'}/${model}`:`${model}/${meta.acquisitionAblation||'full'}@${continuation}`;
-        const stage=String(meta.seed).replace(/:\d+$/,'');
+        const label=meta.source==='counterfactual'?`状況再試行:${(meta.forcedChoice||[]).join(',')||'skip'}/${model}`:
+            manual?`プレイヤー/${exposure}@${continuation}`:`${model}/${meta.acquisitionAblation||'full'}@${continuation}`;
+        const stage=manual||meta.source==='human'?'player-records':String(meta.seed).replace(/:\d+$/,'');
         const key=JSON.stringify([stage,label,meta.cardVersion,meta.rankVersion,meta.rulesVersion,meta.codeVersion,meta.provenance?.codeHash]);
-        if(!groups.has(key))groups.set(key,{id:groups.size,label:`${stage}: ${label}`,model,continuation,stage,metadata:{...meta,catalog:undefined,randomState:undefined},records:[],seen:new Map()});
+        if(!groups.has(key))groups.set(key,{id:groups.size,label:`${stage}: ${label}`,model,continuation,stage,metadata:{...meta,assistExposure:exposure,catalog:undefined,randomState:undefined},records:[],seen:new Map()});
         const group=groups.get(key),previous=group.seen.get(meta.seed);
         if(previous){
             if(score(previous)!==score(record)||isS(previous)!==isS(record))throw new Error(`同一条件・seedの結果が競合しています: ${meta.seed}`);
@@ -110,6 +114,7 @@ const group=document.querySelector('#group'),search=document.querySelector('#sea
 document.querySelector('#summary').innerHTML='<div class="scroll"><table><tr><th>方略</th><th>n</th><th>S率</th><th>中央値</th><th>p10</th><th>平均</th></tr>'+data.groups.map(g=>'<tr><td>'+esc(g.label)+'</td><td>'+g.n+'</td><td>'+(g.sRate*100).toFixed(1)+'%</td><td>'+g.median+'</td><td>'+g.p10+'</td><td>'+g.mean.toFixed(3)+'</td></tr>').join('')+'</table></div>';
 document.querySelector('#comparison').textContent=JSON.stringify(data.comparisons,null,2);
 for(const g of data.groups){const o=document.createElement('option');o.value=g.id;o.textContent=g.label;group.append(o)}
+if(data.rows.length)group.value=String(data.rows[0].group);
 function draw(){const g=data.groups.find(g=>String(g.id)===group.value);if(!g)return;document.querySelector('#meta').textContent=JSON.stringify({...g,metadata:g.metadata,seeds:g.seeds},null,2);
 document.querySelector('#rows').innerHTML=data.rows.filter(r=>r.group===g.id&&[r.cardNo,r.name].join(' ').includes(search.value)&&(!bucket.value||r.bucket===bucket.value)&&(!turn.value||String(r.turn)===turn.value)).map(r=>'<tr><td>'+esc(r.cardNo)+'</td><td><details><summary>'+esc(r.name)+'</summary><pre>'+esc(JSON.stringify({寄与:r.contributions,特徴:r.features,平均状態:r.stats,平均デッキ枚数:r.deckSizeMean},null,2))+'</pre></details></td><td>'+(r.turn+1)+'</td><td>'+esc(r.bucket)+'</td><td>'+r.offers+'/'+r.picked+'</td><td>'+r.valueMean.toFixed(2)+'</td><td>'+(r.sRate*100).toFixed(1)+'%</td><td>'+r.scoreMean.toFixed(2)+'</td></tr>').join('');
 const host=document.querySelector('#examples');host.replaceChildren();for(const e of data.examples.filter(e=>e.group===g.id&&(!bucket.value||e.bucket===bucket.value)&&(!turn.value||String(e.turn)===turn.value))){const d=document.createElement('details'),s=document.createElement('summary');s.textContent='ターン'+(e.turn+1)+' / '+e.bucket+' / 最終'+e.score+'点';d.append(s);const p=document.createElement('pre');p.textContent=JSON.stringify(e,null,2);d.append(p);const b=document.createElement('button');b.textContent='この状況をJSONで保存';b.onclick=()=>{const url=URL.createObjectURL(new Blob([JSON.stringify(e,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='fresh-decision.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};d.append(b);host.append(d)}}
