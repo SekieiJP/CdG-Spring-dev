@@ -94,8 +94,9 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
             const nodes=[[-1.7,.08],[-.85,.24],[0,.36],[.85,.24],[1.7,.08]];utility=nodes.reduce((sum,[z,p])=>sum+p*value({...f.end,accounting:Math.max(0,f.end.accounting+z*std.accounting),satisfaction:Math.max(0,f.end.satisfaction+z*std.satisfaction)},observation,mode),0);}
         return {score:utility+f.engine*w.engine-f.risk*w.risk,forecast:f};
     }
-    function acquisition(observation,mode) {
+    function acquisition(observation,mode,skipRollout=false) {
         if(mode==='rollout')return riskPolicy.acquisition(observation);
+        if(mode==='learned'&&config.lateAcquisitionRollout&&!skipRollout&&observation.totalTurns-observation.turn<=config.lateAcquisitionRollout)return riskPolicy.acquisition(observation);
         if(mode==='learned')return learnedPolicy.acquisition(observation);
         if(config.acquisitionWeights)mode='acq-'+mode;
         const before=deckValue(observation,observation.owned,mode),choices=[];
@@ -192,7 +193,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return removed;
     }
-    const baseline={acquisition,placements,deletions,value,forecast};
+    const baseline={acquisition,placements,deletions,value,forecast,futureRefresh:(...args)=>learnedPolicy.refresh(...args)};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     return {...baseline,initial,riskPolicy,learnedPolicy};

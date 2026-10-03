@@ -9,6 +9,7 @@ import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
 import {VALUE_FEATURES,VALUE_SCHEMA,createValueForecaster,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
+import {publicDraw} from '../../solver/browser/pro-risk-research.js';
 import {predictionCalibration,deletionCoverage,forecastStatsCalibration} from '../../solver/pro-mean125-metrics.mjs';
 import {remainingTrainingNames} from '../../solver/browser/pro-learned-research.js';
 import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
@@ -231,4 +232,19 @@ test('発想として投影するトークの仮説は、カード定義や実�
 test('指定した回転札の最初の1枚を削除で保護し、探索幅を限定範囲で設定する',()=>{
  const {state,strategy,observe}=setup({deleteFloor:2,protectCards:[13],protectUntil:6,protectEnrollment:32,placementBeam:360,lateBeam:720});state.player.deck=[];for(const n of [7,13,15,17,30,31])state.addToDeck({...card(n)});
  Object.assign(state.player,{experience:42,enrollment:32,satisfaction:26,accounting:18});assert.ok(!strategy.deletions(observe(),10,'aggressive').some(d=>Number(d.cardNo)===13));assert.throws(()=>setup({placementBeam:0}),/8〜2000/);
+});
+
+test('仮の手札の乱数をカードごとに固定すると、別の候補を足しても共通カードの相対順を保つ',()=>{
+ for(let world=0;world<64;world++){
+  const a=publicDraw([card(6),card(13),card(17)],3,world,4,'test','keyed'),b=publicDraw([card(6),card(9),card(13),card(17)],4,world,4,'test','keyed');
+  assert.deepEqual(a.map(c=>c.cardNo),b.filter(c=>Number(c.cardNo)!==9).map(c=>c.cardNo));}
+});
+test('仮想将来は現在の追加研修を消費済みとして扱い、学習する後続取得も再帰せず動く',()=>{
+ const config={lateAcquisitionRollout:1,planning:{worlds:4,contextSalt:true,drawSampler:'keyed',futureAcquisition:'learned',futurePolicy:'baseline',futureBeam:32,futureRefresh:'learned'}},model=tinyModel('count-15');
+ const {state,strategy,observe}=setup(config,model);state.turn=7;state.player.deck=[];Object.assign(state.player,{experience:49,enrollment:47,satisfaction:25,accounting:15});state.tokens.inspiration=1;
+ const extra=observe([card(25),card(15)],{allowSkip:true}),consumed={...extra,tokens:{...extra.tokens,inspiration:0},allowSkip:false},a=strategy.acquisition(extra,'rollout'),b=strategy.acquisition(consumed,'rollout');
+ for(const e of a.evaluations.filter(e=>e.indices.length))assert.equal(e.mean,b.evaluations.find(x=>x.indices.join(',')===e.indices.join(',')).mean);
+ assert.ok(strategy.acquisition(extra,'learned').evaluations.every(e=>Number.isFinite(e.score)));
+ state.turn=6;const ob=observe([card(25),card(40)]);for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ assert.ok(strategy.acquisition(ob,'rollout').evaluations.every(e=>Number.isFinite(e.score)));
 });

@@ -1,11 +1,12 @@
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
-export const RISK_VERSION='pro-public-rollout-v1';
+export const RISK_VERSION='pro-public-rollout-v2';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
 function rng(text){let n=2166136261;for(const c of text)n=Math.imul(n^c.charCodeAt(0),16777619);return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
-export function publicDraw(cards,count,world,turn,salt='pro-risk-v1'){
+export function publicDraw(cards,count,world,turn,salt='pro-risk-v1',method='legacy'){
  const random=rng(`${salt}:hand:${world}:${turn}`),ordered=[...cards].sort((a,b)=>Number(a.cardNo)-Number(b.cardNo));
- return ordered.map((card,i)=>({card,order:random(),i})).sort((a,b)=>a.order-b.order||a.i-b.i).slice(0,Math.max(0,count)).map(x=>x.card);
+ const copies=new Map();
+ return ordered.map((card,i)=>{const no=String(card.cardNo),copy=copies.get(no)||0;copies.set(no,copy+1);let order=random();if(method==='keyed'){const keyed=rng(`${salt}:hand:${world}:${turn}:${no}:${copy}`);keyed();keyed();order=keyed();}return {card,order,i};}).sort((a,b)=>a.order-b.order||a.i-b.i).slice(0,Math.max(0,count)).map(x=>x.card);
 }
 export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}){
  const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,smooth:.12,salt:'pro-risk-v1',...config.planning};
@@ -14,7 +15,9 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
  const cleanCard=c=>({cardNo:c.cardNo,cardName:c.cardName,rarity:c.rarity,category:c.category,effect:c.effect||''});
  if(!Number.isInteger(cfg.worlds)||cfg.worlds<1||cfg.worlds>256)throw Error('仮想将来の数は1〜256');
- const publicCatalog=catalog.map(cleanCard),transitionCache=new Map();
+ const publicCatalog=catalog.map(cleanCard),transitionCache=new Map(),contextSalts=new WeakMap();
+ function publicSalt(root){if(!cfg.contextSalt)return cfg.salt;if(!contextSalts.has(root)){const text=JSON.stringify([root.turn,KEYS.map(k=>root.stats[k]),root.tokens,root.owned.map(c=>c.cardNo).sort((a,b)=>a-b),root.candidates.map(c=>c.cardNo).sort((a,b)=>a-b),root.pickCount,root.allowSkip,root.refreshRemaining,root.offerHistory.map(e=>[e.type,e.cards.map(c=>c.cardNo)])]);const random=rng(text);random();random();contextSalts.set(root,cfg.salt+':context:'+Math.floor(random()*4294967296));}return contextSalts.get(root);}
+
  function onlyPublic(root){return {turn:root.turn,totalTurns:root.totalTurns,difficulty:'pro',mode:'normal',stats:Object.fromEntries(KEYS.map(k=>[k,root.stats[k]])),tokens:{passion:root.tokens.passion,fatigue:root.tokens.fatigue,inspiration:root.tokens.inspiration,organize:root.tokens.organize},owned:root.owned.map(cleanCard),candidates:root.candidates.map(cleanCard),pickCount:root.pickCount,allowSkip:root.allowSkip,rankTable:root.rankTable,turns:root.turns,offerHistory:root.offerHistory||[],refreshRemaining:root.refreshRemaining||0};}
  const makeState=observation=>cloneState({difficulty:'pro',turn:observation.turn,totalTurns:observation.totalTurns,player:observation.stats,tokens:observation.tokens});
  const observe=(root,state,owned,history=root.offerHistory||[])=>({...root,turn:state.turn,stats:{...state.player},tokens:{...state.tokens},owned,candidates:[],offerHistory:history});
@@ -59,7 +62,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  // プールはカタログ・見た候補・恒久除外だけから再構成する。実物の研修デッキにアクセスしない。
  function makePool(root){
   const available=publicCatalog.filter(c=>c.rarity!=='N'),counts=Object.fromEntries(available.map(c=>[String(c.cardNo),2])),removed={};
-  const pool={available,counts,removed,refreshRemaining:root.refreshRemaining||0};
+  const pool={available,counts,removed,refreshRemaining:root.refreshRemaining||0,history:[...(root.offerHistory||[])],salt:publicSalt(root)};
   for(const entry of root.offerHistory||[])for(const c of entry.cards||[]){const no=String(c.cardNo);
    if(entry.type==='refresh')removed[no]=(removed[no]||0)+1;
    else {refill(pool,c.rarity||entry.rarity);counts[no]=Math.max(0,(counts[no]??2)-1);}}
@@ -68,23 +71,24 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  function refill(pool,rarity){const all=pool.available.filter(c=>c.rarity===rarity);
   if(!all.some(c=>pool.counts[c.cardNo]>0))for(const c of all)pool.counts[c.cardNo]=Math.max(0,2-(pool.removed[c.cardNo]||0));}
  function offer(pool,rarity,world,turn,round){
-  const all=pool.available.filter(c=>c.rarity===rarity),random=rng(`${cfg.salt}:offer:${world}:${turn}:${round}:${rarity}`),candidates=[];
+  const all=pool.available.filter(c=>c.rarity===rarity),random=rng(`${pool.salt}:offer:${world}:${turn}:${round}:${rarity}`),candidates=[];
   for(let i=0;i<3;i++) {refill(pool,rarity);const eligible=all.filter(c=>pool.counts[c.cardNo]>0&&!candidates.includes(c));if(!eligible.length)break;
    const card=eligible[Math.floor(random()*eligible.length)];candidates.push(card);pool.counts[card.cardNo]--;}
-  return candidates;
+  pool.history.push({type:'offer',turn,rarity,cards:candidates});return candidates;
  }
  function chooseFuture(root,state,owned,pool,world,round,rarity,allowSkip=false){
   let candidates=offer(pool,rarity,world,state.turn,round);if(!candidates.length)return owned;
   if(cfg.futureRefresh&&refreshAdvice&&pool.refreshRemaining>0&&!allowSkip&&
       !(rarity!=='SSR'&&pool.refreshRemaining<2&&state.turn<4)){
    const catalog=pool.available.filter(c=>c.rarity===rarity&&(pool.removed[c.cardNo]||0)<2);
-   const reference=refreshAdvice({...observe(root,state,owned),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
-   const current=refreshAdvice({...observe(root,state,owned),candidates,pickCount:1,allowSkip:false}).recommended.score;
+   const reference=refreshAdvice({...observe(root,state,owned,pool.history),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
+   const current=refreshAdvice({...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip:false}).recommended.score;
    const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))]?.score;
-   if(current<cutoff){for(const card of candidates)pool.removed[card.cardNo]=(pool.removed[card.cardNo]||0)+1;pool.refreshRemaining--;candidates=offer(pool,rarity,world,state.turn,round+100);}
+   const learnedAdvice=cfg.futureRefresh==='learned'?baseline.futureRefresh({...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip:false},rarity,3,1):null;
+   if(learnedAdvice?learnedAdvice.shouldRefresh:current<cutoff){pool.history.push({type:'refresh',turn:state.turn,rarity,cards:candidates});for(const card of candidates)pool.removed[card.cardNo]=(pool.removed[card.cardNo]||0)+1;pool.refreshRemaining--;candidates=offer(pool,rarity,world,state.turn,round+100);}
   }
-  const ob={...observe(root,state,owned),candidates,pickCount:1,allowSkip};
-  const choice=baseline.acquisition(ob,'engine').recommended;
+  const ob={...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip};
+  const choice=baseline.acquisition(ob,cfg.futureAcquisition||'engine',true).recommended;
   return [...owned,...choice.indices.map(i=>candidates[i])];
  }
  function deleteFuture(root,state,owned,max){
@@ -101,7 +105,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    let round=0;
    if(state.turn!==starting||phase!=='training')cards=chooseFuture(root,state,cards,pool,world,round++,root.turns[state.turn].training);
    while(state.tokens.inspiration>0){cards=chooseFuture(root,state,cards,pool,world,round++,'SR',true);state.tokens.inspiration--;}
-   const hand=publicDraw(cards,Math.min(cards.length,Math.max(0,4+state.tokens.passion-state.tokens.fatigue)),world,state.turn,cfg.salt);
+   const hand=publicDraw(cards,Math.min(cards.length,Math.max(0,4+state.tokens.passion-state.tokens.fatigue)),world,state.turn,pool.salt,cfg.drawSampler||'legacy');
    state.tokens.passion=0;state.tokens.fatigue=0;
    const ob=observe(root,state,cards);
    if(cfg.futurePolicy==='baseline'){const seq=baseline.placements(ob,hand,state,'engine',cfg.futureBeam||64,true);for(const step of seq){const next=transition(state,hand[step.cardIndex],step.slot);if(next)state=next;}}
@@ -122,7 +126,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   const choices=[],n=root.candidates.length,indices=[];
   if(root.pickCount===2)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)indices.push([i,j]);else for(let i=0;i<n;i++)indices.push([i]);
   if(root.allowSkip)indices.push([]);
-  for(const choice of indices)choices.push({indices:choice,...evaluate(root,[...root.owned,...choice.map(i=>root.candidates[i])],makeState(root),'training')});
+  for(const choice of indices){const after=makeState(root);if(root.allowSkip)after.tokens.inspiration=Math.max(0,after.tokens.inspiration-1);choices.push({indices:choice,...evaluate(root,[...root.owned,...choice.map(i=>root.candidates[i])],after,'training')});}
   choices.sort((a,b)=>b.score-a.score||a.indices.length-b.indices.length||String(a.indices).localeCompare(String(b.indices)));
   return {version:RISK_VERSION,mode:'rollout',worlds:cfg.worlds,evaluations:choices,recommended:choices[0]};
  }

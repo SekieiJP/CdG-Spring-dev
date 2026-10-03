@@ -3796,7 +3796,7 @@ async function main() {
         // 過去の結果・学習用シード・ソースパスは実行中の評価器に渡さない。
         valueModel=data.model;
     }
-    if(research&&([research.acquisition,research.placement,research.deletion].includes('learned')||research.refresh==='learned')&&!valueModel)throw Error('学習済みモデルが必要');
+    if(research&&([research.acquisition,research.placement,research.deletion,research.planning?.futureAcquisition,research.planning?.futureRefresh].includes('learned')||research.refresh==='learned')&&!valueModel)throw Error('学習済みモデルが必要');
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
