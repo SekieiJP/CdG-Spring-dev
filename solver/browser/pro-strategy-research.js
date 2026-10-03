@@ -1,0 +1,138 @@
+/** PRO攻略の仮説をブラウザ内で検証する分析用方略。本体の推薦には接続しない。 */
+export const RESEARCH_VERSION = 'pro-human-strategy-v1';
+const KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
+const SLOTS = ['leader', 'teacher', 'staff'];
+const clamp = (x, lo=0, hi=1) => Math.max(lo, Math.min(hi, x));
+export const RESEARCH_MODES = Object.freeze({
+    median: Object.freeze({experience:2.5,enrollment:4,satisfaction:3,accounting:5,engine:2.5,risk:1.4,future:.65,route:18,draw:7,inspiration:4}),
+    ceiling: Object.freeze({experience:3,enrollment:4.2,satisfaction:2.7,accounting:3.5,engine:4,risk:1,future:.75,route:40,draw:9,inspiration:6}),
+    engine: Object.freeze({experience:2.7,enrollment:4.2,satisfaction:2.5,accounting:3.4,engine:8,risk:.8,future:.8,route:24,draw:12,inspiration:8})
+});
+
+/** 公式ランク表から退塾0・1の到達経路を求める。値は到達確率ではない。 */
+export function targetRoutes(rankTable, target=15) {
+    const axes = {experience:[],enrollment:[],satisfaction:[],withdrawal:[]};
+    for (const row of rankTable) {
+        for (const [axis, threshold, points] of [
+            ['experience',row.thresholds.experience,row.scores.mobilization],
+            ['enrollment',row.enrollmentDiffThreshold,row.scores.enrollmentDiff],
+            ['satisfaction',row.thresholds.satisfaction,row.scores.satisfaction],
+            ['withdrawal',row.withdrawalThreshold,row.scores.withdrawal]]) {
+            if (threshold !== null && points !== null) axes[axis].push({threshold,points});
+        }
+    }
+    const candidates=[];
+    for (const w of [0,1]) {
+        const safety=axes.withdrawal.filter(a=>w<=a.threshold).sort((a,b)=>a.threshold-b.threshold)[0]?.points ?? -13;
+        for(const e of axes.experience)for(const n of axes.enrollment)for(const s of axes.satisfaction) {
+            if(e.points+n.points+s.points+safety<target)continue;
+            candidates.push({experience:Math.max(e.threshold,n.threshold+w),enrollment:n.threshold+w,
+                satisfaction:Math.max(15,s.threshold),accounting:15-w,withdrawal:w});
+        }
+    }
+    return candidates.filter((r,i)=>!candidates.some((s,j)=>j!==i&&KEYS.every(k=>s[k]<=r[k])&&
+        (KEYS.some(k=>s[k]<r[k])||j<i)));
+}
+
+export function createResearchPolicy({projectDeck,score,cloneState,resolve,enumerateOptions}) {
+    const routeCache=new Map();
+    const weights = mode => RESEARCH_MODES[mode] || RESEARCH_MODES.median;
+    function routes(observation,mode) {
+        const target=mode==='median'?14:15,key=JSON.stringify([target,observation.rankTable]);
+        if(!routeCache.has(key))routeCache.set(key,targetRoutes(observation.rankTable,target));
+        return routeCache.get(key);
+    }
+    function value(stats,observation,mode='median') {
+        const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:mode==='median'?25:35,accounting:18};
+        const goal=score(stats,observation.rankTable);
+        const completion=Math.max(0,...routes(observation,mode).map(r=>KEYS.reduce((v,k)=>v*clamp(stats[k]/Math.max(1,r[k])),1)));
+        return KEYS.reduce((sum,k)=>sum+w[k]*(Math.min(stats[k],caps[k])+.05*Math.max(0,stats[k]-caps[k])),0)+
+            goal.smoothPoints*5+goal.points*2+w.route*completion;
+    }
+    function forecast(observation,cards,mode) {
+        const w=weights(mode);
+        let f=projectDeck(observation,{weights:w,cards});
+        // 固定2回の補正。将来の抽選・山札順・ゲームの反復実行は使わない。
+        f=projectDeck(observation,{weights:w,cards,forecast:f.end});
+        return f;
+    }
+    function deckValue(observation,cards,mode) {
+        const f=forecast(observation,cards,mode),w=weights(mode);
+        return {score:value(f.end,observation,mode)+f.engine*w.engine-f.risk*w.risk,forecast:f};
+    }
+    function acquisition(observation,mode) {
+        const before=deckValue(observation,observation.owned,mode),choices=[];
+        const n=observation.candidates.length;
+        function add(indices) {
+            const after=deckValue(observation,[...observation.owned,...indices.map(i=>observation.candidates[i])],mode);
+            choices.push({indices,score:after.score-before.score,forecast:after.forecast.end,
+                engineDelta:after.forecast.engine-before.forecast.engine});
+        }
+        if(observation.pickCount===2)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)add([i,j]);
+        else for(let i=0;i<n;i++)add([i]);
+        if(observation.allowSkip)add([]);
+        choices.sort((a,b)=>b.score-a.score||a.indices.length-b.indices.length||String(a.indices).localeCompare(String(b.indices)));
+        return {version:RESEARCH_VERSION,mode,before:before.forecast.end,evaluations:choices,recommended:choices[0]};
+    }
+    function placements(observation,hand,state,mode,beamWidth=180) {
+        const objective=mode==='myopic'?'median':mode;
+        const remaining=observation.totalTurns-observation.turn,w=weights(objective);
+        const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
+        const growth=Object.fromEntries(KEYS.map(k=>[k,Math.max(0,future[k]-observation.stats[k])]));
+        function evaluate(next) {
+            const end=Object.fromEntries(KEYS.map(k=>[k,Math.max(0,next.player[k]+growth[k])]));
+            end.enrollment=Math.min(end.enrollment,end.experience);
+            let v=value(end,observation,objective);
+            if(remaining<=1) return score(next.player,observation.rankTable).points*10000+v;
+            const maxDraw=Math.max(4,observation.owned.length+1);
+            v+=w.draw*(clamp(4+next.tokens.passion-next.tokens.fatigue,0,maxDraw)-4);
+            v+=w.inspiration*next.tokens.inspiration+Math.min(4,(remaining-1)*1.3)*next.tokens.organize;
+            v-=Math.max(0,3-next.player.accounting)*3;
+            return v;
+        }
+        let frontier=[{state:cloneState(state),counts:Object.fromEntries(SLOTS.map(s=>[s,0])),used:0n,seq:[]}];
+        frontier[0].value=evaluate(frontier[0].state);
+        for(let depth=0;depth<Math.min(hand.length,16);depth++) {
+            const expanded=[...frontier],seen=new Set();
+            for(const node of frontier)for(const option of enumerateOptions(hand,node.counts)) {
+                if(node.used&(1n<<BigInt(option.cardIndex)))continue;
+                if(SLOTS.slice(SLOTS.indexOf(option.slot)+1).some(s=>node.counts[s]>0))continue;
+                const next=cloneState(node.state);
+                if(!resolve(option.card,option.slot,next).applied)continue;
+                const used=node.used|(1n<<BigInt(option.cardIndex)),counts={...node.counts,[option.slot]:node.counts[option.slot]+1};
+                const key=JSON.stringify([used.toString(),counts,next.player,next.tokens]);
+                if(seen.has(key))continue;seen.add(key);
+                expanded.push({state:next,used,counts,seq:[...node.seq,{cardIndex:option.cardIndex,slot:option.slot}],value:evaluate(next)});
+            }
+            expanded.sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length);
+            frontier=expanded.slice(0,beamWidth);
+        }
+        return frontier[0]?.seq||[];
+    }
+    /** 1回の会議の削除順を評価。取得・配置とは独立して切り替える。 */
+    function deletions(observation,deleteMax,mode,objective='median') {
+        if(mode==='off'||observation.turn>=observation.totalTurns-1)return [];
+        const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
+        let owned=[...observation.owned];const removed=[];
+        for(let k=0;k<deleteMax&&owned.length>5;k++) {
+            const baseline=deckValue(next,owned,objective),candidates=[];
+            for(let index=0;index<owned.length;index++) {
+                const card=owned[index];if(mode==='basic'&&card.rarity!=='N')continue;
+                const after=[...owned];after.splice(index,1);
+                const evaluated=deckValue(next,after,objective);
+                if(mode!=='basic') {
+                    // 最後の回復役を消すとまだ不足する場面では残す。名前・レア度の一律削除を避ける。
+                    const losesRole=(status,category,target)=>next.stats[status]<target&&card.category===category&&
+                        !after.some(c=>c.category===category)&&evaluated.forecast.end[status]<target;
+                    if(losesRole('accounting','庶務',15)||losesRole('satisfaction','応対',15)||losesRole('experience','動員',40))continue;
+                }
+                candidates.push({index,cardNo:card.cardNo,gain:evaluated.score-baseline.score,after:evaluated.forecast.end});
+            }
+            candidates.sort((a,b)=>b.gain-a.gain||a.index-b.index);
+            const best=candidates[0];if(!best||(mode==='adaptive'&&best.gain<=0))break;
+            removed.push(best);owned.splice(best.index,1);
+        }
+        return removed;
+    }
+    return {acquisition,placements,deletions,value,forecast};
+}

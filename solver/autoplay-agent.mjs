@@ -105,6 +105,7 @@ function parseArgs(argv) {
         episodes: 200,
         difficulty: 'fresh',
         acquisitionModel: null,
+        researchConfig: null,
         refreshPolicy: 'auto',
         refreshModel: null,
         acquisitionAblation: null,
@@ -140,6 +141,8 @@ function parseArgs(argv) {
             if(!['auto','legacy','public','none'].includes(next))throw new Error('--refresh-policy: auto|legacy|public|none');
             args.refreshPolicy=next;i++;
         } else if(key === '--refresh-model' && next){args.refreshModel=next;i++;
+        } else if (key === '--research-config' && next) {
+            args.researchConfig = next; i++;
         } else if (key === '--acquisition-model' && next) {
             args.acquisitionModel = next; i++;
         } else if (key === '--acquisition-ablation' && next) {
@@ -203,9 +206,10 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const absPath = path.resolve(rootDir, `.${relPath}`);
+            const researchPath = '/research/pro-strategy-research.js';
+            const absPath = relPath === researchPath ? path.join(__dirname, 'browser/pro-strategy-research.js') : path.resolve(rootDir, `.${relPath}`);
 
-            if (!absPath.startsWith(rootDir)) {
+            if (relPath !== researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
                 res.writeHead(403);
                 res.end('Forbidden');
                 return;
@@ -231,8 +235,8 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
@@ -310,6 +314,10 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         const scoreTargets = diff === 'pro'
             ? { aPoints: 8, sClearPoints: 12, aPlusPoints: 10, sPlusPoints: 14 }
             : { aPoints: 7, sClearPoints: 8, aPlusPoints: 7, sPlusPoints: 9 };
+
+        const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
+        const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions });
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
         const SLOT_KEYS = game.gameState.slotIds;
@@ -2173,6 +2181,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         function pickTrainingCards(cards, count = 1, allowSkip = false, recordChoice = true) {
+            if (research?.acquisition !== 'control' && researchPolicy) {
+                const observation = publicObservation(cards,{pickCount:count,allowSkip});
+                const advice = researchPolicy.acquisition(observation,research.acquisition);
+                if(recordChoice)game.gameState.record('research-acquisition-decision',{observation,advice,chosenIndices:advice.recommended.indices});
+                return advice.recommended.indices.map(i=>cards[i]);
+            }
             if (acquisitionAdvisor && acquisitionModel) {
                 const observation = acquisitionAdvisor.createAdvisorObservation(game.gameState, cards, { pickCount: count, allowSkip, rankTable: game.scoreManager.rankTable });
                 const advice = acquisitionAdvisor.recommendAcquisition(observation, { profile: acquisitionModel, ablation: acquisitionAblation });
@@ -2710,7 +2724,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 return placements;
             }
 
-            const seq = isProGoal ? planProGoalPlacements() : planPlacementsBeamLike(strategyPolicy);
+            const observation = researchPolicy ? publicObservation() : null;
+            const seq = researchPolicy && research.placement !== 'control'
+                ? researchPolicy.placements(observation,[...game.gameState.player.hand],game.gameState,research.placement)
+                : isProGoal ? planProGoalPlacements() : planPlacementsBeamLike(strategyPolicy);
+            if(researchPolicy)game.gameState.record('research-placement-decision',{observation,hand:game.gameState.player.hand.map(c=>({cardNo:c.cardNo,cardName:c.cardName})),
+                placements:seq.map(step=>({...step,cardNo:game.gameState.player.hand[step.cardIndex].cardNo}))});
             const handCards = [...game.gameState.player.hand];
 
             seq.forEach((step) => {
@@ -2737,6 +2756,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 return [];
             }
 
+            if(researchPolicy && research.deletion !== 'control') {
+                const observation=publicObservation(),decisions=researchPolicy.deletions(observation,deleteMax,research.deletion,research.objective),removed=[];
+                for(const decision of decisions){const card=game.gameState.player.deck.find(c=>String(c.cardNo)===String(decision.cardNo));if(card){game.gameState.removeFromDeck(card);removed.push(card.cardName);}}
+                game.gameState.record('research-deletion-decision',{observation,deleteMax,decisions});
+                decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;
+            }
             if(isProGoal){const removed=deleteByPublicFormula(deleteMax);decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;}
             let candidates = [...game.gameState.player.deck];
             decisionTelemetry.meeting.optionCountTotal += candidates.length + 1;
@@ -3151,6 +3176,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 catalog: game.cardManager.allCards, provenance, replacement,
                 strategy: acquisitionModel ? `formula:${acquisitionModel}:${acquisitionAblation || 'full'}@${strategyPolicy}` : strategyPolicy,
                 acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
+                research,
                 source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null });
             game.cardManager.initTrainingPool();
             game.gameState.phase = 'start';
@@ -3679,19 +3705,32 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research });
+}
+
+async function readGitProvenance() {
+    // クラウド保存先のGit管理ファイルが一時的に読めない場合だけ短く再試行する。
+    // 最後まで読めなければ実験を停止し、版情報を推測して続けない。
+    for(let attempt=0;attempt<4;attempt++) {
+        try { return {gitCommit:execFileSync('git',['rev-parse','HEAD'],{cwd:repoRoot,encoding:'utf8',stdio:'pipe'}).trim(),
+            workingTreeDirty:!!execFileSync('git',['status','--porcelain'],{cwd:repoRoot,encoding:'utf8',stdio:'pipe'}).trim()}; }
+        catch(error) { if(attempt===3)throw error; await new Promise(resolve=>setTimeout(resolve,500*(attempt+1))); }
+    }
 }
 
 async function main() {
     const args = parseArgs(process.argv.slice(2));
+    const research = args.researchConfig ? JSON.parse(await readFile(path.resolve(repoRoot,args.researchConfig),'utf8')) : null;
+    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine'].includes(research.acquisition) ||
+        !['control','median','ceiling','engine','myopic'].includes(research.placement) ||
+        !['control','adaptive','basic','aggressive','off'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
     const initialObservation = decision?.observation || decision;
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).digest('hex'),
-        gitCommit: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim(),
-        workingTreeDirty: !!execFileSync('git', ['status', '--porcelain'], { cwd: repoRoot, encoding: 'utf8' }).trim() };
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).digest('hex'),
+        ...await readGitProvenance() };
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
@@ -3712,7 +3751,7 @@ async function main() {
                 policyName: normalized,
                 traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
                 acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice
+                initialObservation, forcedChoice: args.forcedChoice, research
             });
             simulations.push(result);
         }
@@ -3724,7 +3763,7 @@ async function main() {
                 episodes: args.episodes,
                 seed: args.seed, provenance, replacement: args.replacement, acquisitionModel: args.acquisitionModel,
                 acquisitionAblation: args.acquisitionAblation,refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice,
+                initialObservation, forcedChoice: args.forcedChoice, research,
                 difficulty: args.difficulty,
                 scoreTargets: getScoreTargets(args.difficulty),
                 policies: args.policies.map(normalizePolicyName)

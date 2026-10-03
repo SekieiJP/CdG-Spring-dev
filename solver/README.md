@@ -135,3 +135,20 @@ node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assi
 ```
 
 集計はファイルを順に読み込み、詳細イベントを全ゲーム分保持しない。seedの重複・欠け、コード版、比較条件はレポートの測定条件で確認する。バッチ番号・seed群を変える前に、既存の入力ファイルを混ぜないようにする。
+
+## PROの人向け攻略分析（2026-10-03）
+
+現在の攻略研究は、[人向けレポート](../docs/CdG-PRO-Strategy-Guide.md)と[方法・実験結果](../docs/CdG-PRO-Strategy-Analysis.md)を参照してください。中央値を重視する一発勝負と、15点以上を狙う再挑戦を別の指標で評価します。**新しい傾向比較は各方略・局面で最低250シード**。このREADMEの古い200回の例は今回の攻略判断の根拠に含めません。
+
+```bash
+node solver/pro-strategy-study.mjs development 250
+node solver/pro-strategy-study.mjs validation 1000 control,full-median,full-ceiling,full-engine,acq-ceiling,delete-basic
+node solver/pro-strategy-scenes.mjs
+node solver/pro-strategy-metrics.mjs solver/local-runs/pro-strategy/validation/manifest.json solver/local-evaluation/pro-strategy/validation
+```
+
+- `browser/pro-strategy-research.js`：公開情報だけで取得・配置・削除を独立に評価するブラウザ方略。ゲーム本体の推薦に接続しません。
+- `pro-strategy-study.mjs`：開発・別シード検証を250ゲームずつ起動。ステージ間は逐次実行し、巨大なイベントJSONを一括生成しません。
+- `pro-strategy-scenes.mjs`：同じ局面から候補を固定した再試行を各250シード実行。
+- `pro-strategy-metrics.mjs`：中央値、15点率、下振れ、95%区間、同一シードの対比較。重複や250未満、異なるルール等の混在を拒否します。
+- `research-results/pro-strategy-20261003/`：今回の開発・検証・局面の集計とバッチの監査情報。大量の個別ログは `local-runs/pro-strategy/` に置き、Gitから除外します。
