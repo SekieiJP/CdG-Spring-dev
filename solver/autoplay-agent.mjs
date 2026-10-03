@@ -3426,7 +3426,6 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
             const score = game.scoreManager.calculateScore(game.gameState);
             game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
-            if(research?.progressEvery&&(episode+1)%research.progressEvery===0)console.log('research-progress',episode+1);
             const exportedRecord=game.gameState.exportPlayRecord();
             if(research)for(const event of exportedRecord.events) {
                 // 同一版のカタログ・ランク表はハッシュで追跡し、各判断に巨大な複製を残さない。

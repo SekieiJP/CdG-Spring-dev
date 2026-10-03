@@ -58,7 +58,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         return routeCache.get(key);
     }
     function value(stats,observation,mode='median') {
-        const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:mode==='median'?25:35,accounting:18};
+        const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:mode==='median'?25:35,accounting:18,...config.caps};
         const scoredStats={...stats,accounting:Math.max(0,stats.accounting-(config.safetyBuffer||0))};
         const goal=score(scoredStats,observation.rankTable);
         const completion=Math.max(0,...routes(observation,mode).map(r=>KEYS.reduce((v,k)=>v*clamp(stats[k]/Math.max(1,r[k])),1)));
@@ -69,7 +69,12 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         const w=weights(mode);
         let f=projectDeck(observation,{weights:w,cards});
         // 固定2回の補正。将来の抽選・山札順・ゲームの反復実行は使わない。
-        f=projectDeck(observation,{weights:w,cards,forecast:f.end});
+        const allowances={8:[15,16,9,1.5],7:[12,11,7,1.5],6:[8,8,4,1],5:[5,5,1.5,.3],4:[2.5,2.5,.8,.3],3:[0,0,0,.8],2:[0,0,0,.4],1:[0,0,0,0]};
+        const a=allowances[observation.totalTurns-observation.turn]||[0,0,0,0],scale=config.futureAllowance||0;
+        const anticipated=Object.fromEntries(KEYS.map((k,i)=>[k,f.end[k]+a[i]*scale]));
+        f=projectDeck(observation,{weights:w,cards,forecast:anticipated});
+        f.end=Object.fromEntries(KEYS.map((k,i)=>[k,f.end[k]+a[i]*scale]));
+        f.end.enrollment=Math.min(f.end.enrollment,f.end.experience);
         return f;
     }
     function deckValue(observation,cards,mode) {
@@ -104,10 +109,11 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         const advice=acquisition(observation,mode),evaluations=advice.evaluations.filter(a=>eligible.has(a.indices.join('-')));
         return {accept:true,chosenIndices:evaluations[0].indices,advice:{...advice,evaluations,recommended:evaluations[0]}};
     }
-    function placements(observation,hand,state,mode,beamWidth=180) {
+    function placements(observation,hand,state,mode,beamWidth=180,skipRollout=false) {
         if(mode==='rollout')return riskPolicy.placements(observation,hand,state);
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
+        if(config.endgameRollout&&!skipRollout&&remaining===2)return riskPolicy.placements(observation,hand,state);
         const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
         const growth=Object.fromEntries(KEYS.map(k=>[k,config.signedGrowth?future[k]-observation.stats[k]:Math.max(0,future[k]-observation.stats[k])]));
         function evaluate(next) {
@@ -116,8 +122,10 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
             let v=value(end,observation,objective);
             if(remaining<=1) return score(next.player,observation.rankTable).points*10000+v;
             const maxDraw=Math.max(4,observation.owned.length+1);
-            v+=w.draw*(clamp(4+next.tokens.passion-next.tokens.fatigue,0,maxDraw)-4);
-            v+=w.inspiration*next.tokens.inspiration+Math.min(4,(remaining-1)*1.3)*next.tokens.organize;
+            const drawFactor=config.tokenHorizon?Math.min(1.25,(remaining-1)/4):1;
+            const inspirationFactor=config.tokenHorizon?Math.min(1.5,(remaining-1)/3):1;
+            v+=w.draw*drawFactor*(clamp(4+next.tokens.passion-next.tokens.fatigue,0,maxDraw)-4);
+            v+=w.inspiration*inspirationFactor*next.tokens.inspiration+Math.min(4,(remaining-1)*1.3)*next.tokens.organize;
             v-=Math.max(0,3-next.player.accounting)*3;
             return v;
         }

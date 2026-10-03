@@ -119,7 +119,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  function placements(root,hand,state){
   root=onlyPublic(root);
   let alternatives=plan(root,hand,state,cfg.realBeam,cfg.actionCandidates);
-  for(const mode of ['engine','median','myopic']){const seq=baseline.placements(root,hand,state,mode),next=cloneState(state);for(const p of seq)resolve(hand[p.cardIndex],p.slot,next);alternatives.push({seq,state:next});}
+  for(const mode of ['engine','median','myopic']){const seq=baseline.placements(root,hand,state,mode,180,true),next=cloneState(state);for(const p of seq)resolve(hand[p.cardIndex],p.slot,next);alternatives.push({seq,state:next});}
   const seen=new Set();alternatives=alternatives.filter(node=>{const key=JSON.stringify([node.state.player,node.state.tokens]);if(seen.has(key))return false;seen.add(key);return true;});
   if(state.turn===root.totalTurns-1)return alternatives.sort((a,b)=>score(b.state.player,root.rankTable).points-score(a.state.player,root.rankTable).points||score(b.state.player,root.rankTable).smoothPoints-score(a.state.player,root.rankTable).smoothPoints)[0]?.seq||[];
   for(const node of alternatives)node.evaluation=evaluate(root,root.owned,node.state,'after-action');

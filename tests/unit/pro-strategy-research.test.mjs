@@ -102,3 +102,11 @@ test('仮想将来の配置も配置順・コスト・条件を本体と共有�
  for(const p of seq)assert.ok(tm.resolveCardAction(hand[p.cardIndex],p.slot,next).applied);
  assert.equal(sm.calculateScore(next).points,16);assert.deepEqual(strategy.deletions(observe(),3,'rollout'),[]);
 });
+
+test('残りターンと取得予定の成長・経理の余裕を含む評価も全カードで有限',()=>{
+ for(const config of [{signedGrowth:true,safetyBuffer:2,tokenHorizon:true,futureAllowance:1},{sigma:.6,caps:{satisfaction:25},statScale:.35,smoothWeight:12}]){
+  const {state,strategy,observe}=setup(config);for(const turn of [0,3,6,7]){state.turn=turn;
+   Object.assign(state.player,{experience:20,enrollment:12,satisfaction:15,accounting:8});
+   const advice=strategy.acquisition(observe(cm.allCards,{allowSkip:true}),'engine');assert.ok(advice.evaluations.every(e=>Number.isFinite(e.score)));}
+ }
+});
