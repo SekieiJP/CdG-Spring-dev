@@ -1,12 +1,12 @@
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0054';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0054';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0054';
-import { ResultController } from './resultController.js?v=20260815-0054';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0054';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0054';
-import { getPlacementError } from './placementRules.js?v=20260815-0054';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0054';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0054';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0055';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0055';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0055';
+import { ResultController } from './resultController.js?v=20260815-0055';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0055';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0055';
+import { getPlacementError } from './placementRules.js?v=20260815-0055';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0055';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0055';
 
 /**
  * UIController - UI操作・表示制御
@@ -3932,12 +3932,12 @@ export class UIController {
                     </div>
                 </div>
                 <div class="settings-section">
-                    <h3>取得アシスト（FRESH）</h3>
+                    <h3>取得アシスト（FRESH・PRO）</h3>
                     <div class="font-toggle">
                         <button data-acquisition-assist="on" class="font-toggle-option${this.acquisitionAssist.enabled ? ' active' : ''}">オン</button>
                         <button data-acquisition-assist="off" class="font-toggle-option${!this.acquisitionAssist.enabled ? ' active' : ''}">オフ</button>
                     </div>
-                    <p class="font-toggle-note">候補提示の5秒後に、おすすめの背後が淡く光ります。通常のFRESHで利用できます。</p>
+                    <p class="font-toggle-note">候補提示の5秒後に、おすすめの背後が淡く光ります。通常のFRESH・PROで利用できます。</p>
                 </div>
                 <div class="settings-section">
                     <h3>リンク</h3>

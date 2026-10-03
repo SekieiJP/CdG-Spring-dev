@@ -1,4 +1,4 @@
-import { createAdvisorObservation, recommendAcquisition } from './freshAcquisitionAdvisor.js?v=20260815-0054';
+import { createAdvisorObservation, recommendAcquisition, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20260815-0055';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -12,7 +12,7 @@ export class AcquisitionAssistController {
     }
     eligible() {
         const state = this.ui.gameState;
-        return state.difficulty === 'fresh' && !state.calcMode && !state.event?.enabled && state.phase === 'training';
+        return supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && state.phase === 'training';
     }
     clear() {
         clearTimeout(this.timer);
@@ -29,7 +29,7 @@ export class AcquisitionAssistController {
         if (!this.eligible() || !cards?.length || this.container.children.length < cards.length) return;
         const inspiration = this.ui.trainingSelectionMode === 'inspiration';
         const observation = createAdvisorObservation(this.ui.gameState, cards, {
-            pickCount: this.ui.gameState.turn === 0 && !inspiration ? 2 : 1, allowSkip: inspiration
+            pickCount: this.ui.gameState.turn === 0 && !inspiration ? 2 : 1, allowSkip: inspiration, rankTable: this.ui.scoreManager.rankTable
         });
         const presentedAt = performance.now();
         try {

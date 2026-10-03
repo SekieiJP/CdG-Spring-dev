@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0054';
-import { CardManager } from '../../game/js/cardManager.js?v=20260815-0054';
-import { TurnManager } from '../../game/js/turnManager.js?v=20260815-0054';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0055';
+import { CardManager } from '../../game/js/cardManager.js?v=20260815-0055';
+import { TurnManager } from '../../game/js/turnManager.js?v=20260815-0055';
 
 const makeCard = effect => ({ category: '動員', cardName: '検証', effect });
 

@@ -99,3 +99,24 @@ node solver/autoplay-agent.mjs --episodes 300 --difficulty fresh --policies fres
 ```bash
 node solver/autoplay-agent.mjs --episodes 200 --difficulty pro --policies pro_foundation,pro_stable,pro_upside --output solver/pro-foundation-r1.json --report solver/pro-foundation-r1.md
 ```
+
+## PROのS+取得推薦
+
+[計画](../docs/CdG-PRO-Assist-Plan.md)に測定順序と制約を記載。S+以上にはSSを含み、FRESHのS以上と混ぜない。通常モードだけを比較する。公開ゲームの取得推薦は数式で計算し、分析用の配置探索は自動プレイ時だけに使う。
+
+```sh
+node solver/autoplay-agent.mjs --difficulty pro --episodes 200 --policies pro_goal --acquisition-model pro_splus --seed pro-assist-example --output solver/local-runs/pro-assist/example.json --no-report
+node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assist/example.json --output-dir solver/local-evaluation/pro-assist/example
+node solver/acquisition-benchmark.mjs solver/local-runs/pro-assist/example.json --output solver/local-evaluation/pro-assist/benchmark.json
+```
+
+- 取得式：`pro_balanced`（安定）、`pro_engine`（回転）、`pro_bridge`（高満足）、`pro_precision`（動員・入退差）、`pro_splus`（入退差と経理を補強）、`pro_lean`（希釈・コストへの慎重さ）。数値・既定の採用モデルは`game/js/proAcquisitionAdvisor.js`に集約する。
+- 新しい配置・削除方略：`pro_goal`、`pro_engine`、`pro_bridge`、`pro_precision`。`--acquisition-model`も指定する。ブラウザ内で既知の手札を比較し、本体と共通の効果解決を使う。配置は室長→講師→事務の順。探索は幅180、最大12枚まで。未知の未来の山札・抽選は読まない。
+- 数式を使うPROのリフレッシュは、公開カタログと提示・除外履歴の比較で判断する。発想の取得では希釈を避けるため辞退も評価する。旧方略の再現時は従来のリフレッシュ方略を使う。
+- `--acquisition-ablation goal|points|engine|accounting|...`で一つの寄与を除外できる。能力・条件の投影式は同じにして、意思決定への寄与を測る。
+- `acquisition-analysis.mjs --extract ... --seed ... --decision ...`と`autoplay-agent.mjs --decision-file ... --forced-choice 0|1|2|skip`で公開場面の候補別再試行を行う。新しい共通seedを使い、元の非公開の抽選順を復元しない。PROの使用済みプール・永久除外は記録された履歴だけから復元する。除外履歴のない旧記録は完全な同条件復元ではないため使わない。
+- HTMLでカード・ターン・不足・構築傾向を絞り、重み寄与、状態、トークン、デッキ枚数、取得時と提示時の同伴成績を確認できる。後者は相関・選択の偏りを含む。モデル変更は開発・検証群までで行い、凍結後の評価群を再調整に使わない。
+- `fresh-assist-analysis.mjs`は従来のFRESH用入口として維持する。人間のプレイは自動プレイと別にし、実際にアシストを表示したかも区別する。
+- `acquisition-benchmark.mjs`は同じMac上のChromiumで画面寸法を変える測定。iPhone 12 Safari／Android実機の処理時間とは区別する。
+
+生の記録・生成HTML/CSV・測定JSONは`solver/local-runs/`と`solver/local-evaluation/`に保存し、公開配信やGitコミットに含めない。

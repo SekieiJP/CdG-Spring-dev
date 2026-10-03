@@ -15,6 +15,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const gameRoot = path.join(repoRoot, 'game');
 
 function normalizePolicyName(name) {
+    if (['pro_goal','pro_engine','pro_bridge','pro_precision'].includes(name)) return name;
     if (name === 'random') return 'random';
     if (name === 'beam') return 'beam';
     if (name === 'deep_beam' || name === 'deepbeam' || name === 'deep') return 'deep_beam';
@@ -104,6 +105,8 @@ function parseArgs(argv) {
         episodes: 200,
         difficulty: 'fresh',
         acquisitionModel: null,
+        refreshPolicy: 'auto',
+        refreshModel: null,
         acquisitionAblation: null,
         episodeOffset: 0,
         decisionFile: null,
@@ -133,6 +136,10 @@ function parseArgs(argv) {
         } else if (key === '--forced-choice' && next) {
             if (next !== 'skip' && !/^\d+(,\d+)*$/.test(next)) throw new Error('--forced-choice は候補番号0,1など、またはskip');
             args.forcedChoice = next === 'skip' ? [] : next.split(',').map(Number); i++;
+        } else if (key === '--refresh-policy' && next) {
+            if(!['auto','legacy','public','none'].includes(next))throw new Error('--refresh-policy: auto|legacy|public|none');
+            args.refreshPolicy=next;i++;
+        } else if(key === '--refresh-model' && next){args.refreshModel=next;i++;
         } else if (key === '--acquisition-model' && next) {
             args.acquisitionModel = next; i++;
         } else if (key === '--acquisition-ablation' && next) {
@@ -224,15 +231,15 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, episodeOffset, initialObservation, forcedChoice }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, episodeOffset, initialObservation, forcedChoice }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
         }
-        const acquisitionAdvisor = acquisitionModel ? await import('/js/freshAcquisitionAdvisor.js?v=' + window.BUILD_VERSION.slice(1)) : null;
-        if (acquisitionAdvisor && (diff !== 'fresh' || !acquisitionAdvisor.PROFILES[acquisitionModel])) throw new Error('FRESH取得モデルの指定が不正です');
-        if (initialObservation && (diff !== 'fresh' || initialObservation.difficulty !== 'fresh' || initialObservation.mode !== 'normal' ||
+        const acquisitionAdvisor = acquisitionModel || diff==='pro' ? await import('/js/acquisitionAdvisor.js?v=' + window.BUILD_VERSION.slice(1)) : null;
+        if (acquisitionModel && (!['fresh','pro'].includes(diff) || !acquisitionAdvisor.PROFILES[acquisitionModel] || acquisitionModel.startsWith('pro_') !== (diff==='pro'))) throw new Error('難易度と取得モデルの指定が不正です');
+        if (initialObservation && (!['fresh','pro'].includes(diff) || initialObservation.difficulty !== diff || initialObservation.mode !== 'normal' ||
             !Number.isInteger(initialObservation.turn) || initialObservation.turn < 0 || initialObservation.turn >= 8 || !Array.isArray(forcedChoice) ||
             new Set(forcedChoice).size !== forcedChoice.length || forcedChoice.some(index => !initialObservation.candidates[index]) ||
             (forcedChoice.length !== initialObservation.pickCount && !(initialObservation.allowSkip && forcedChoice.length === 0)))) throw new Error('状況再試行の入力・選択が不正です');
@@ -257,7 +264,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         const freshOnlyPolicies = new Set(['fresh_adaptive', 'deep_beam', 'deep_beam_satcap', 'fresh_rule_nonly', 'fresh_s50', 'fresh_stable', 'fresh_stable_classic', 'fresh_stable_push', 'fresh_upside']);
-        const proPolicies = new Set(['pro_foundation', 'pro_stable', 'pro_stable_refreshless', 'pro_stable_refresh_init', 'pro_nonly', 'pro_nonly_refreshless', 'pro_adaptive', 'pro_adaptive_nonly', 'pro_smax', 'pro_hybrid', 'pro_upside', 'pro_strategic1', 'pro_strategic1_stable', 'pro_strategic1_upside', 'pro_compress', 'pro_spike12', 'pro_expand']);
+        const proPolicies = new Set(['pro_goal','pro_engine','pro_bridge','pro_precision','pro_foundation', 'pro_stable', 'pro_stable_refreshless', 'pro_stable_refresh_init', 'pro_nonly', 'pro_nonly_refreshless', 'pro_adaptive', 'pro_adaptive_nonly', 'pro_smax', 'pro_hybrid', 'pro_upside', 'pro_strategic1', 'pro_strategic1_stable', 'pro_strategic1_upside', 'pro_compress', 'pro_spike12', 'pro_expand']);
         let strategyPolicy = policy;
         if (diff !== 'fresh' && freshOnlyPolicies.has(policy)) {
             // FRESH方略をPROで使う場合は、合法手選択を重視したPRO基盤へ寄せる
@@ -267,6 +274,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
         const isFreshAdaptive = freshOnlyPolicies.has(strategyPolicy);
         const isProDifficulty = diff === 'pro';
+        const isProGoal = ['pro_goal','pro_engine','pro_bridge','pro_precision'].includes(strategyPolicy);
+        const effectiveRefreshPolicy=refreshPolicy==='auto'?(isProDifficulty&&acquisitionModel?'public':'legacy'):(refreshPolicy||'legacy');
+        const effectiveRefreshModel=refreshModel || acquisitionModel || 'pro_splus';
+        if(effectiveRefreshPolicy==='public'&&(!isProDifficulty||!acquisitionAdvisor.PROFILES[effectiveRefreshModel]?.goal))throw new Error('公開リフレッシュにはPROモデルが必要です');
+        const proFormula = isProDifficulty ? await import('/js/proAcquisitionAdvisor.js?v='+window.BUILD_VERSION.slice(1)) : null;
+        const goalWeights = proFormula?.PROFILES[strategyPolicy==='pro_goal'?'pro_balanced':strategyPolicy] || proFormula?.PROFILES.pro_balanced;
         const isProFoundation = strategyPolicy === 'pro_foundation';
         const isProRefreshless = strategyPolicy === 'pro_stable_refreshless' || strategyPolicy === 'pro_nonly_refreshless';
         const isProRefreshInit = strategyPolicy === 'pro_stable_refresh_init';
@@ -285,7 +298,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         const isProSpike12 = strategyPolicy === 'pro_spike12';
         const isProCompress = strategyPolicy === 'pro_compress' || isProSpike12;
         const isProExpand = strategyPolicy === 'pro_expand';
-        const isProStrategy = isProDifficulty && (isProFoundation || isProStable || isProAdaptive || isProSmax || isProHybrid || isProUpside || isProStrategic1 || isProCompress || isProExpand);
+        const isProStrategy = isProDifficulty && (isProGoal || isProFoundation || isProStable || isProAdaptive || isProSmax || isProHybrid || isProUpside || isProStrategic1 || isProCompress || isProExpand);
         const isDeepBeam = strategyPolicy === 'deep_beam';
         const isDeepBeamSatCap = strategyPolicy === 'deep_beam_satcap';
         const isRuleNOnly = strategyPolicy === 'fresh_rule_nonly' || isProNOnly;
@@ -825,7 +838,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             };
         }
 
-        function calcProExactPointsFromPlayer(player) {
+        // 過去の方略の再現用の近似。新しいS+方略は公式ランク表を参照する。
+        function calcLegacyProApproxPointsFromPlayer(player) {
             const withdrawal = calcWithdrawalFromPlayer(player);
             const mobilization = player.experience || 0;
             const enrollmentDiff = (player.enrollment || 0) - withdrawal;
@@ -874,7 +888,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         function calcProObjectivePotential(stateLike) {
-            const exact = calcProExactPointsFromPlayer(stateLike.player);
+            const exact = calcLegacyProApproxPointsFromPlayer(stateLike.player);
             let potential = exact.points;
 
             potential += Math.min(Math.max(exact.mobilization, 0), 40) / 40 * 2.2;
@@ -928,7 +942,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             if (!isProStrategy || !card) return 0;
 
             const beforePlayer = snapshotStatus(stateLike.player);
-            const beforeExact = calcProExactPointsFromPlayer(stateLike.player);
+            const beforeExact = calcLegacyProApproxPointsFromPlayer(stateLike.player);
             const beforePotential = calcProObjectivePotential(stateLike);
             const beforeSignal = calcProThresholdSignal(beforeExact);
             const legalSlots = listLegalSlots(card, null);
@@ -940,7 +954,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 const result = game.turnManager.resolveCardAction(card, slot, sim);
                 if (!result.applied) return;
 
-                const afterExact = calcProExactPointsFromPlayer(sim.player);
+                const afterExact = calcLegacyProApproxPointsFromPlayer(sim.player);
                 const afterPotential = calcProObjectivePotential(sim);
                 const afterSignal = calcProThresholdSignal(afterExact);
                 const delta = calcStatusDelta(beforePlayer, snapshotStatus(sim.player));
@@ -2158,12 +2172,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             return score;
         }
 
-        function pickTrainingCards(cards, count = 1, allowSkip = false) {
-            if (acquisitionAdvisor) {
-                const observation = acquisitionAdvisor.createAdvisorObservation(game.gameState, cards, { pickCount: count, allowSkip });
+        function pickTrainingCards(cards, count = 1, allowSkip = false, recordChoice = true) {
+            if (acquisitionAdvisor && acquisitionModel) {
+                const observation = acquisitionAdvisor.createAdvisorObservation(game.gameState, cards, { pickCount: count, allowSkip, rankTable: game.scoreManager.rankTable });
                 const advice = acquisitionAdvisor.recommendAcquisition(observation, { profile: acquisitionModel, ablation: acquisitionAblation });
                 const chosenIndices = advice.recommended.indices;
-                game.gameState.record('acquisition-decision', { observation, advice, chosenIndices });
+                if(recordChoice) game.gameState.record('acquisition-decision', { observation, advice, chosenIndices });
                 return chosenIndices.map(index => cards[index]);
             }
             if (strategyPolicy === 'random') {
@@ -2303,7 +2317,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
         function evaluateTrainingPackScore(cards, pickCount, turnIndex = game.gameState.turn) {
             if (!Array.isArray(cards) || cards.length === 0) return -999;
-            const picked = pickTrainingCards(cards, pickCount);
+            const picked = pickTrainingCards(cards, pickCount, false, false);
             if (picked.length === 0) return -999;
             return picked.reduce((acc, card) => acc + scoreTrainingCardByPolicy(card, turnIndex), 0);
         }
@@ -2349,6 +2363,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         function maybeRefreshTrainingCandidates({ rarity, candidates, drawCount, pickCount, phaseTag }) {
+            if(effectiveRefreshPolicy==='none')return candidates;
+            if(effectiveRefreshPolicy==='public') return refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag});
             if (!isProStrategy || rarity === 'N') {
                 return candidates;
             }
@@ -2413,6 +2429,82 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 decisionTelemetry.training.refreshByPhase[phaseTag] = (decisionTelemetry.training.refreshByPhase[phaseTag] || 0) + 1;
             }
             return current;
+        }
+
+        function publicObservation(cards=[],options={}) {
+            return acquisitionAdvisor.createAdvisorObservation(game.gameState,cards,{...options,rankTable:game.scoreManager.rankTable});
+        }
+        function refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining || rarity==='N' || phaseTag==='inspiration')return candidates;
+            // カタログと提示・除外履歴だけを使う。未公開の研修山札を読まない。
+            const removed=new Map();
+            for(const e of game.gameState.playRecord.events.filter(e=>e.type==='refresh'))for(const c of e.cards)removed.set(String(c.cardNo),(removed.get(String(c.cardNo))||0)+1);
+            const catalog=game.cardManager.allCards.filter(c=>c.rarity===rarity&&(removed.get(String(c.cardNo))||0)<2);
+            if(!catalog.length)return candidates;
+            const reference=acquisitionAdvisor.recommendAcquisition(publicObservation(catalog,{pickCount:1}),{profile:effectiveRefreshModel}).evaluations;
+            const current=acquisitionAdvisor.recommendAcquisition(publicObservation(candidates,{pickCount}),{profile:effectiveRefreshModel}).recommended.score/pickCount;
+            const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))].score;
+            // 残り回数はSSR研修に温存する。初回に使うのは候補が下位の場合だけ。
+            if(current>=cutoff || (rarity!=='SSR' && game.gameState.trainingRefreshRemaining<2 && game.gameState.turn<4))return candidates;
+            const refreshed=game.cardManager.refreshTrainingCards(rarity,candidates,drawCount);
+            if(!refreshed.length)return candidates;
+            game.gameState.trainingRefreshRemaining--;
+            episodeRefreshUsage[phaseTag]++;decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;
+            return refreshed;
+        }
+        function planProGoalPlacements() {
+            if(!acquisitionModel)throw new Error('S+方略にはPRO取得モデルを指定してください');
+            const observation=publicObservation(),cards=[...game.gameState.player.hand],remaining=8-observation.turn;
+            // 既知のデッキから将来成長を一度だけ近似し、今の手札の順序を比較する。
+            const future=proFormula.projectProDeck({...observation,turn:observation.turn+1},{weights:goalWeights});
+            const growth=Object.fromEntries(STATUS_KEYS.map(k=>[k,Math.max(0,future.end[k]-observation.stats[k])]));
+            function value(state) {
+                const end=Object.fromEntries(STATUS_KEYS.map(k=>[k,Math.max(0,state.player[k]+growth[k])]));
+                end.enrollment=Math.min(end.enrollment,end.experience);
+                let v=proFormula.proUtility(end,observation.rankTable,goalWeights);
+                if(remaining<=1)v+=proFormula.proGoal(state.player,observation.rankTable).points*20;
+                else {
+                    v+=(state.tokens.passion-state.tokens.fatigue)*(strategyPolicy==='pro_engine'?9:5);
+                    v+=state.tokens.inspiration*(strategyPolicy==='pro_engine'?5:2.5)+state.tokens.organize*3;
+                    // 次のターンのコスト支払いを守るが、十分なバッファの経理は攻めに使える。
+                    v-=Math.max(0,3-state.player.accounting)*2;
+                }
+                return v;
+            }
+            let frontier=[{state:cloneForSimulation(game.gameState),counts:Object.fromEntries(SLOT_KEYS.map(k=>[k,0])),seq:[],used:0n,value:0}];
+            frontier[0].value=value(frontier[0].state);
+            for(let depth=0;depth<Math.min(cards.length,12);depth++){
+                const expanded=[...frontier],seen=new Map();
+                for(const node of frontier)for(const option of enumeratePlacementOptions(cards,node.counts)){
+                    if(node.used & (1n<<BigInt(option.cardIndex)))continue;
+                    if(SLOT_KEYS.slice(SLOT_KEYS.indexOf(option.slot)+1).some(k=>node.counts[k]>0))continue;
+                    const state=cloneForSimulation(node.state);
+                    const result=game.turnManager.resolveCardAction(option.card,option.slot,state);
+                    if(!result.applied)continue;
+                    const counts={...node.counts,[option.slot]:node.counts[option.slot]+1},used=node.used|(1n<<BigInt(option.cardIndex));
+                    const key=JSON.stringify([used.toString(),counts,state.player,state.tokens]);
+                    if(seen.has(key))continue;seen.set(key,true);
+                    expanded.push({state,counts,used,seq:[...node.seq,{cardIndex:option.cardIndex,slot:option.slot}],value:value(state)});
+                }
+                expanded.sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length);
+                frontier=expanded.slice(0,180);
+            }
+            return frontier[0]?.seq||[];
+        }
+        function deleteByPublicFormula(deleteMax) {
+            const removed=[];
+            if(game.gameState.turn>=7)return removed;
+            for(let k=0;k<deleteMax;k++){
+                const observation={...publicObservation(),turn:game.gameState.turn+1,tokens:{passion:game.gameState.tokens.passion,fatigue:game.gameState.tokens.fatigue,inspiration:0,organize:0}};
+                const utility=cards=>{const forecast=proFormula.projectProDeck(observation,{weights:goalWeights,cards});return proFormula.proUtility(forecast.end,observation.rankTable,goalWeights)+forecast.engine*goalWeights.engine;};
+                const baseline=utility(observation.owned);
+                let best=null,gain=0;
+                for(const card of game.gameState.player.deck){const i=observation.owned.findIndex(c=>String(c.cardNo)===String(card.cardNo));if(i<0)continue;
+                    const after=[...observation.owned];after.splice(i,1);const improvement=utility(after)-baseline;
+                    if(improvement>gain){gain=improvement;best=card;}}
+                if(!best)break;game.gameState.removeFromDeck(best);removed.push(best.cardName);
+            }
+            return removed;
         }
 
         function planPlacementsBeamLike(mode) {
@@ -2618,7 +2710,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 return placements;
             }
 
-            const seq = planPlacementsBeamLike(strategyPolicy);
+            const seq = isProGoal ? planProGoalPlacements() : planPlacementsBeamLike(strategyPolicy);
             const handCards = [...game.gameState.player.hand];
 
             seq.forEach((step) => {
@@ -2645,6 +2737,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 return [];
             }
 
+            if(isProGoal){const removed=deleteByPublicFormula(deleteMax);decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;}
             let candidates = [...game.gameState.player.deck];
             decisionTelemetry.meeting.optionCountTotal += candidates.length + 1;
             if (isRuleNOnly) {
@@ -3057,7 +3150,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             game.gameState.startRecording({ cardVersion: game.cardManager.dataVersion, rankVersion: game.cardManager.rankVersion,
                 catalog: game.cardManager.allCards, provenance, replacement,
                 strategy: acquisitionModel ? `formula:${acquisitionModel}:${acquisitionAblation || 'full'}@${strategyPolicy}` : strategyPolicy,
-                acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy,
+                acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
                 source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null });
             game.cardManager.initTrainingPool();
             game.gameState.phase = 'start';
@@ -3070,16 +3163,19 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 game.gameState.turn = initialObservation.turn;
                 Object.assign(game.gameState.player, initialObservation.stats);
                 game.gameState.tokens = { ...initialObservation.tokens };
+                game.gameState.trainingRefreshRemaining=initialObservation.refreshRemaining ?? game.gameState.trainingRefreshRemaining;
                 initialObservation.owned.forEach(card => game.gameState.addToDeck({ ...card }));
                 // 提示履歴から既知の使用済み枚数だけを再構成し、未公開の並びは使わない。
-                for (const offer of initialObservation.offers || []) {
+                for (const offer of initialObservation.offerHistory || initialObservation.offers || []) {
                     for (const card of offer.cards) {
+                        if(offer.type==='refresh') {const discards=game.cardManager.trainingDiscards[offer.rarity]||[];const i=discards.findIndex(c=>String(c.cardNo)===String(card.cardNo));if(i>=0)discards.splice(i,1);continue;}
                         let pool = game.cardManager.trainingDecks[offer.rarity];
                         if (!pool) continue;
                         if (!pool.length) { game.cardManager.trainingDecks[offer.rarity] = [...game.cardManager.trainingDiscards[offer.rarity]]; game.cardManager.trainingDiscards[offer.rarity] = []; pool = game.cardManager.trainingDecks[offer.rarity]; }
                         const index = pool.findIndex(item => String(item.cardNo) === String(card.cardNo));
                         if (index >= 0) game.cardManager.trainingDiscards[offer.rarity].push(...pool.splice(index, 1));
                     }
+                    game.gameState.record(offer.type||'offer',{rarity:offer.rarity,cards:offer.cards,restoredPublicHistory:true});
                 }
                 forcedChoice.forEach(index => game.gameState.addToDeck({ ...initialObservation.candidates[index] }));
                 if (initialObservation.allowSkip) game.gameState.tokens.inspiration = Math.max(0, game.gameState.tokens.inspiration - 1);
@@ -3583,7 +3679,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, episodeOffset, initialObservation, forcedChoice });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice });
 }
 
 async function main() {
@@ -3615,7 +3711,7 @@ async function main() {
                 difficulty: args.difficulty,
                 policyName: normalized,
                 traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
-                acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, episodeOffset: args.episodeOffset,
+                acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
                 initialObservation, forcedChoice: args.forcedChoice
             });
             simulations.push(result);
@@ -3627,7 +3723,7 @@ async function main() {
             settings: {
                 episodes: args.episodes,
                 seed: args.seed, provenance, replacement: args.replacement, acquisitionModel: args.acquisitionModel,
-                acquisitionAblation: args.acquisitionAblation, episodeOffset: args.episodeOffset,
+                acquisitionAblation: args.acquisitionAblation,refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
                 initialObservation, forcedChoice: args.forcedChoice,
                 difficulty: args.difficulty,
                 scoreTargets: getScoreTargets(args.difficulty),

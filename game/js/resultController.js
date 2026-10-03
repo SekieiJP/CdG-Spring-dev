@@ -1,6 +1,6 @@
-import { ResultRepository } from './resultRepository.js?v=20260815-0054';
-import { SubmissionQueue } from './submissionQueue.js?v=20260815-0054';
-import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20260815-0054';
+import { ResultRepository } from './resultRepository.js?v=20260815-0055';
+import { SubmissionQueue } from './submissionQueue.js?v=20260815-0055';
+import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20260815-0055';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {

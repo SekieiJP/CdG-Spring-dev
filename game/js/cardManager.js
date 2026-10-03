@@ -1,4 +1,4 @@
-import { fingerprint, cardIdentity } from './playRecord.js?v=20260815-0054';
+import { fingerprint, cardIdentity } from './playRecord.js?v=20260815-0055';
 /**
  * CardManager - カード管理と効果処理
  */
@@ -336,6 +336,7 @@ export class CardManager {
             this.trainingDiscards[rarity] = [];
         }
 
+        this.gameState?.record('refresh', { rarity, cards: currentCards.map(card => ({ cardNo:card.cardNo, cardName:card.cardName, rarity:card.rarity, effect:card.effect })) });
         // 現在の候補カードをゲームから永久除外（捨て札にも戻さない）
         currentCards.forEach(card => {
             // 候補はdraw時にコピーされ、復元でも別オブジェクトになる。参照一致で探さない。

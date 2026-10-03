@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0054';
-import { CardManager } from '../../game/js/cardManager.js?v=20260815-0054';
-import { createAdvisorObservation, recommendAcquisition } from '../../game/js/freshAcquisitionAdvisor.js?v=20260815-0054';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0055';
+import { CardManager } from '../../game/js/cardManager.js?v=20260815-0055';
+import { createAdvisorObservation, recommendAcquisition } from '../../game/js/freshAcquisitionAdvisor.js?v=20260815-0055';
 const cm = new CardManager(null);
 cm.parseCSV(readFileSync(new URL('../../game/data/cards_fresh.csv',import.meta.url),'utf8'));
 const card = no => cm.allCards.find(c=>Number(c.cardNo)===no);
