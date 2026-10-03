@@ -140,7 +140,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   root=onlyPublic(root);
   if(root.turn>=root.totalTurns-1)return [];
   let owned=[...root.owned],decisions=[];
-  for(let k=0;k<max&&owned.length>4;k++){
+  for(let k=0;k<max&&owned.length>(config.deleteFloor??4);k++){
    const current=evaluate(root,owned,makeState(root),'after-meeting'),options=[];
    for(let i=0;i<owned.length;i++){const after=[...owned];after.splice(i,1);options.push({index:i,cardNo:owned[i].cardNo,...evaluate(root,after,makeState(root),'after-meeting')});}
    options.sort((a,b)=>b.score-a.score||a.index-b.index);const best=options[0];if(!best||best.score<=current.score+.005)break;

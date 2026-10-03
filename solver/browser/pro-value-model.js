@@ -19,6 +19,11 @@ export function publicValueObservation(o){
   owned:o.owned.map(card),rankTable:o.rankTable,turns:o.turns,refreshRemaining:o.refreshRemaining||0,
   offerHistory:(o.offerHistory||[]).map(e=>({type:e.type,cards:(e.cards||[]).map(c=>({cardNo:c.cardNo}))}))};
 }
+/** 教師データと同じ投影を固定する。プレイ方略の重み調整で特徴の意味を変えない。 */
+export function createValueForecaster(projectDeck){
+ const weights=Object.freeze({experience:2.7,enrollment:4.2,satisfaction:2.5,accounting:3.4,engine:8,risk:.8,future:.8,route:24,draw:12,inspiration:8});
+ return (observation,cards)=>{const first=projectDeck(observation,{weights,cards});return projectDeck(observation,{weights,cards,forecast:first.end});};
+}
 /** 入力を明示的な公開フィールドだけから作る。seed・ラベル・山札順などへのアクセスを避ける。 */
 export function encodeValueFeatures(observation,phase,{forecast,score}){
  observation=publicValueObservation(observation);

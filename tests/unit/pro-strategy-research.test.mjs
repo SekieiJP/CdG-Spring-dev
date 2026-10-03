@@ -8,7 +8,7 @@ import {TurnManager} from '../../game/js/turnManager.js';
 import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
-import {VALUE_FEATURES,VALUE_SCHEMA,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
+import {VALUE_FEATURES,VALUE_SCHEMA,createValueForecaster,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
 import {remainingTrainingNames} from '../../solver/browser/pro-learned-research.js';
 import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
 import {median,wilson,retryEstimate,summarizeOutcomes,pairedOutcomes} from '../../solver/pro-strategy-metrics.mjs';
@@ -186,4 +186,17 @@ test('リフレッシュ判断は見えている候補と残り回数で変わ�
  assert.equal(JSON.stringify(state),before);
  const good=observe([card(6),card(7),card(8),card(15)],{pickCount:2});assert.ok(!strategy.learnedPolicy.refresh(good,'R',4,2).shouldRefresh);
  bad.refreshRemaining=0;assert.ok(!strategy.learnedPolicy.refresh(bad,'R',4,2).shouldRefresh);
+});
+
+test('学習予測の投影は学習時の固定重みと一致し、プレイ用重みに依存しない',()=>{
+ const {state,strategy,observe}=setup();for(const n of [13,40,45,49])state.addToDeck({...card(n)});
+ for(const turn of [0,3,6,7]){state.turn=turn;const ob=observe(),fixed=createValueForecaster(projectProDeck);assert.deepEqual(fixed(ob,ob.owned),strategy.forecast(ob,ob.owned,'engine'));}
+ const model=tinyModel('forecast-enrollment'),a=setup({learned:{blend:0}},model),b=setup({weights:{enrollment:20,experience:.1,future:.1},learned:{blend:0}},model);
+ for(const n of [13,40,45,49]){a.state.addToDeck({...card(n)});b.state.addToDeck({...card(n)});}
+ assert.equal(a.strategy.learnedPolicy.estimate(a.observe(),'acquisition'),b.strategy.learnedPolicy.estimate(b.observe(),'acquisition'));
+});
+test('削除の最低保持枚数を研究条件として変え、合法な枚数内で削除する',()=>{
+ for(const floor of [2,3,4,5]){const {state,strategy,observe}=setup({deleteFloor:floor});state.player.deck=[];for(const n of [7,13,15,17,30,31])state.addToDeck({...card(n)});
+  Object.assign(state.player,{experience:42,enrollment:32,satisfaction:26,accounting:18});const decisions=strategy.deletions(observe(),10,'aggressive');assert.equal(decisions.length,6-floor);}
+ assert.throws(()=>setup({deleteFloor:1}),/2〜12/);
 });

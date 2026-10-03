@@ -52,6 +52,7 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null,valueModel=null}) {
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
+    if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
     const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
     const tableKey=table=>{if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));return tableKeys.get(table);};
     function score(stats,table){const key=tableKey(table)+'|'+KEYS.map(k=>stats[k]).join(',');
@@ -164,7 +165,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         if(mode==='off'||observation.turn>=observation.totalTurns-1)return [];
         const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
         let owned=[...observation.owned];const removed=[];
-        for(let k=0;k<deleteMax&&owned.length>5;k++) {
+        for(let k=0;k<deleteMax&&owned.length>(config.deleteFloor??5);k++) {
             const baseline=deckValue(next,owned,objective),candidates=[];
             for(let index=0;index<owned.length;index++) {
                 const card=owned[index];if(mode==='basic'&&card.rarity!=='N')continue;
@@ -187,6 +188,6 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     }
     const baseline={acquisition,placements,deletions,value,forecast};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
-    const learnedPolicy=valueModel?createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
+    const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     return {...baseline,initial,riskPolicy,learnedPolicy};
 }

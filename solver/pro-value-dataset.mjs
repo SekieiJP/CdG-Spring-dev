@@ -33,10 +33,12 @@ export function extractValueRows(record){
 }
 async function main(){
  const outputDir=process.argv[2]||'solver/local-runs/pro-mean125/value-v1';await mkdir(outputDir,{recursive:true});
- const files=[],stages=['v1-development','v2-development','v4-development','v4b-development'];
+ const files=[],sourceIndex=process.argv.indexOf('--sources');
+ if(sourceIndex>=0){const manifest=JSON.parse(await readFile(process.argv[sourceIndex+1],'utf8'));for(const split of ['train','validation'])for(const file of manifest[split]||[])files.push({split,file});if(!files.some(f=>f.split==='train')||!files.some(f=>f.split==='validation'))throw Error('学習・検証ソースが必要');}
+ else {const stages=['v1-development','v2-development','v4-development','v4b-development'];
  for(const stage of stages)files.push({split:'train',file:`solver/local-runs/pro-mean125/${stage}/baseline-batch0.json`});
  for(let b=0;b<4;b++){files.push({split:'train',file:`solver/local-runs/pro-strategy/validation/full-engine-batch${b}.json`});files.push({split:'train',file:`solver/local-runs/pro-reroll/validation/public-engine-batch${b}.json`});}
- files.push({split:'validation',file:'solver/local-runs/pro-mean125/v3-development/baseline-batch0.json'});
+ files.push({split:'validation',file:'solver/local-runs/pro-mean125/v3-development/baseline-batch0.json'});}
  const data={schema:1,createdAt:new Date().toISOString(),purpose:'学習用の公開状態と過去の結果。新規プレイ中の予測にはtarget・seedを渡さない。',train:[],validation:[],sources:[],catalog:null,turns:null,versions:null};
  const seeds={train:new Set(),validation:new Set()};
  for(const {split,file}of files){const bytes=await readRunBytes(file),raw=JSON.parse(bytes),records=raw.simulations[0].playRecords;

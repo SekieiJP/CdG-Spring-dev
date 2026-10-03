@@ -1,4 +1,4 @@
-import {encodeValueFeatures,predictValue,publicValueObservation} from './pro-value-model.js';
+import {encodeValueFeatures,predictValue,publicValueObservation,createValueForecaster} from './pro-value-model.js';
 /** 学習済みの固定木を計算する研究用の判断。未来ゲームの反復は行わない。 */
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 /** 実物の研修山札を読まず、公開提示と永久除外から残りの種類を復元する。 */
@@ -9,11 +9,12 @@ export function remainingTrainingNames(catalog,history,rarity){
   if(event.type==='refresh')removed.set(n,(removed.get(n)||0)+1);else{refill();counts.set(n,Math.max(0,counts.get(n)-1));}}
  refill();return all.filter(c=>counts.get(String(c.cardNo))>0);
 }
-export function createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model,catalog=[],config={}}){
+export function createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model,catalog=[],config={}}){
+ const valueForecast=createValueForecaster(projectDeck);
  const settings={blend:.005,beam:72,minDeleteGain:.01,...config.learned},cache=new Map();
  function estimate(observation,phase){
   const key=JSON.stringify([phase,observation.turn,KEYS.map(k=>observation.stats[k]),observation.tokens,observation.owned.map(c=>c.cardNo).sort((a,b)=>a-b),observation.refreshRemaining,observation.offerHistory]);
-  if(!cache.has(key)){if(cache.size>40000)cache.clear();cache.set(key,predictValue(model,encodeValueFeatures(observation,phase,{forecast:baseline.forecast,score})));}return cache.get(key);
+  if(!cache.has(key)){if(cache.size>40000)cache.clear();cache.set(key,predictValue(model,encodeValueFeatures(observation,phase,{forecast:valueForecast,score})));}return cache.get(key);
  }
  function acquisition(observation){
   const root=publicValueObservation(observation),candidates=observation.candidates,n=candidates.length,indices=[];
@@ -52,7 +53,7 @@ export function createLearnedPolicy({baseline,score,cloneState,resolve,enumerate
   const root=publicValueObservation(observation);if(root.turn>=root.totalTurns-1)return [];
   const next={...root,turn:root.turn+1,tokens:{...root.tokens,organize:0}},decisions=[];let owned=[...root.owned];
   const utility=cards=>{const o={...next,owned:cards},f=baseline.forecast(o,cards,'engine');return estimate(o,'before-training')+settings.blend*(baseline.value(f.end,o,'engine')+f.engine*8-f.risk*.8);};
-  for(let k=0;k<max&&owned.length>5;k++){
+  for(let k=0;k<max&&owned.length>(config.deleteFloor??5);k++){
    const current=utility(owned),options=owned.map((c,i)=>{const after=[...owned];after.splice(i,1);return {index:i,cardNo:c.cardNo,score:utility(after)};}).sort((a,b)=>b.score-a.score||a.index-b.index),best=options[0];
    if(!best||best.score-current<=settings.minDeleteGain)break;decisions.push({...best,gain:best.score-current});owned.splice(best.index,1);
   }

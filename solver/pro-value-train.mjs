@@ -26,9 +26,9 @@ async function main(){
  try{const page=await browser.newPage();page.on('console',msg=>{if(msg.text().startsWith('VALUE '))console.log(msg.text());});page.on('pageerror',err=>console.error(err.message));
   await page.route('**/*',route=>new URL(route.request().url()).origin===`http://127.0.0.1:${port}`?route.continue():route.abort());await page.goto(`http://127.0.0.1:${port}/`);await page.waitForFunction(()=>window.game?.cardManager?.allCards.length>0);
   await page.evaluate(async()=>{
-   const data=await(await fetch('/value-dataset.json')).json(),vm=await import('/research/pro-value-model.js'),formula=await import('/js/proAcquisitionAdvisor.js'),research=await import('/research/pro-strategy-research.js');
-   const policy=research.createResearchPolicy({projectDeck:formula.projectProDeck,score:formula.proGoal,cloneState:x=>x,resolve:()=>({applied:false}),enumerateOptions:()=>[],catalog:data.catalog,config:{}});
-   const context={forecast:policy.forecast,score:formula.proGoal};let done=0;
+   const data=await(await fetch('/value-dataset.json')).json(),vm=await import('/research/pro-value-model.js'),formula=await import('/js/proAcquisitionAdvisor.js');
+   const forecast=vm.createValueForecaster(formula.projectProDeck);
+   const context={forecast,score:formula.proGoal};let done=0;
    const encode=rows=>rows.map(r=>{if(++done%10000===0)console.log('VALUE features '+done);return {x:vm.encodeValueFeatures(vm.unpackValueObservation(r.observation,data),r.observation.phase,context),y:r.target,weight:r.weight,phase:r.observation.phase,turn:r.observation.turn,seed:r.seed};});
    window.valueResearch={train:encode(data.train),validation:encode(data.validation),vm};console.log('VALUE features complete '+done);
   });
