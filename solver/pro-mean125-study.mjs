@@ -23,7 +23,7 @@ async function main(){
  for(const id of ids){const config={id,...configs[id]};if(config.valueModelPath)config.valueModelSha256=sha(await readFile(config.valueModelPath));const configPath=`${root}/${id}-config.json`,batchFiles=[];await writeFile(configPath,JSON.stringify(config,null,2)+'\n');
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;batchFiles.push(path.resolve(output));jobs.push({id,config,configPath,b,output});}
   runs.push({id,description:JSON.stringify(config),files:batchFiles});}
- const comparisons=ids.includes('baseline')?ids.filter(id=>id!=='baseline').map(id=>({id:`baseline-to-${id}`,before:'baseline',after:id})):[];
+ const comparisons=['baseline','champion-v1'].filter(reference=>ids.includes(reference)).flatMap(reference=>ids.filter(id=>id!==reference&&(reference==='baseline'||id!=='baseline')).map(id=>({id:`${reference}-to-${id}`,before:reference,after:id})));
  await writeFile(`${root}/manifest.json`,JSON.stringify({stage,n,seed,goal:'no rerolls; mean score >=12.5',fingerprints,runs,comparisons},null,2)+'\n');
  let next=0,done=0;
  async function worker(index){while(next<jobs.length){const job=jobs[next++],started=Date.now();

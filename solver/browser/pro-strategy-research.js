@@ -52,6 +52,7 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null,valueModel=null}) {
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
+    if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
     const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
@@ -74,13 +75,13 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
             goal.smoothPoints*(config.smoothWeight??5)+goal.points*(config.pointWeight??2)+w.route*completion;
     }
     function forecast(observation,cards,mode) {
-        const w=weights(mode);
-        let f=projectDeck(observation,{weights:w,cards});
+        const w=weights(mode),projectedCards=cards.map(c=>config.predictiveEffects?.[c.cardNo]?{cardNo:c.cardNo,cardName:c.cardName,category:c.category,rarity:c.rarity,effect:config.predictiveEffects[c.cardNo]}:c);
+        let f=projectDeck(observation,{weights:w,cards:projectedCards});
         // 固定2回の補正。将来の抽選・山札順・ゲームの反復実行は使わない。
         const allowances={8:[15,16,9,1.5],7:[12,11,7,1.5],6:[8,8,4,1],5:[5,5,1.5,.3],4:[2.5,2.5,.8,.3],3:[0,0,0,.8],2:[0,0,0,.4],1:[0,0,0,0]};
         const a=allowances[observation.totalTurns-observation.turn]||[0,0,0,0],scale=config.futureAllowance||0;
         const anticipated=Object.fromEntries(KEYS.map((k,i)=>[k,f.end[k]+a[i]*scale]));
-        f=projectDeck(observation,{weights:w,cards,forecast:anticipated});
+        f=projectDeck(observation,{weights:w,cards:projectedCards,forecast:anticipated});
         f.end=Object.fromEntries(KEYS.map((k,i)=>[k,f.end[k]+a[i]*scale]));
         f.end.enrollment=Math.min(f.end.enrollment,f.end.experience);
         return f;
@@ -119,11 +120,12 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         const advice=acquisition(observation,mode),evaluations=advice.evaluations.filter(a=>eligible.has(a.indices.join('-')));
         return {accept:true,chosenIndices:evaluations[0].indices,advice:{...advice,evaluations,recommended:evaluations[0]}};
     }
-    function placements(observation,hand,state,mode,beamWidth=180,skipRollout=false) {
+    function placements(observation,hand,state,mode,beamWidth=config.placementBeam??180,skipRollout=false) {
         if(mode==='rollout')return riskPolicy.placements(observation,hand,state);
         if(mode==='learned')return learnedPolicy.placements(observation,hand,state);
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
+        if(!skipRollout&&config.lateBeam&&remaining<=(config.lateBeamTurns??2))beamWidth=Math.max(beamWidth,config.lateBeam);
         if(config.endgameRollout&&!skipRollout&&remaining===2)return riskPolicy.placements(observation,hand,state);
         const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
         const growth=Object.fromEntries(KEYS.map(k=>[k,config.signedGrowth?future[k]-observation.stats[k]:Math.max(0,future[k]-observation.stats[k])]));
@@ -172,6 +174,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
             const baseline=deckValue(next,owned,objective),candidates=[];
             for(let index=0;index<owned.length;index++) {
                 const card=owned[index];if(mode==='basic'&&card.rarity!=='N')continue;
+                if(observation.turn<(config.protectUntil??6)&&config.protectCards?.includes(Number(card.cardNo))&&owned.filter(c=>String(c.cardNo)===String(card.cardNo)).length===1)continue;
                 const after=[...owned];after.splice(index,1);
                 if(config.protectFinance&&card.category==='庶務'&&next.stats.accounting<18&&after.filter(c=>c.category==='庶務').length<2)continue;
                 const evaluated=deckValue(next,after,objective);
@@ -179,7 +182,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
                     // 最後の回復役を消すとまだ不足する場面では残す。名前・レア度の一律削除を避ける。
                     const losesRole=(status,category,target)=>next.stats[status]<target&&card.category===category&&
                         !after.some(c=>c.category===category)&&evaluated.forecast.end[status]<target;
-                    if(losesRole('accounting','庶務',15)||losesRole('satisfaction','応対',15)||losesRole('experience','動員',40))continue;
+                    if(losesRole('accounting','庶務',15)||losesRole('satisfaction','応対',15)||losesRole('experience','動員',40)||config.protectEnrollment&&losesRole('enrollment','教務',Number(config.protectEnrollment)))continue;
                 }
                 candidates.push({index,cardNo:card.cardNo,gain:evaluated.score-baseline.score,after:evaluated.forecast.end});
             }

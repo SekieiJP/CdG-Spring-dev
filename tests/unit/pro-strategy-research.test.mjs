@@ -222,3 +222,13 @@ test('取得の比重と基準の余裕を別に調整し、入力を変更せ�
   assert.ok(changed.strategy.acquisition(ob,'engine').evaluations.every(e=>Number.isFinite(e.score)));}
  assert.equal(JSON.stringify(ob),snapshot);assert.throws(()=>setup({statBuffers:{satisfaction:-1}}),/0〜12/);
 });
+
+test('発想として投影するトークの仮説は、カード定義や実際の効果を変更しない',()=>{
+ const actual=card(13),effect=actual.effect,{state,strategy,observe,tm,clone}=setup({predictiveEffects:{13:'[並行🤹][発想💡]'}});state.addToDeck({...actual});
+ const ob=observe(),projected=strategy.forecast(ob,[actual],'engine');assert.ok(projected.engine>0);assert.equal(card(13).effect,effect);assert.equal(ob.owned.find(c=>Number(c.cardNo)===13).effect,effect);
+ const next=clone(state);tm.resolveCardAction(actual,'staff',next);assert.equal(next.tokens.inspiration,0);assert.equal(next.player.satisfaction,state.player.satisfaction+3);
+});
+test('指定した回転札の最初の1枚を削除で保護し、探索幅を限定範囲で設定する',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:2,protectCards:[13],protectUntil:6,protectEnrollment:32,placementBeam:360,lateBeam:720});state.player.deck=[];for(const n of [7,13,15,17,30,31])state.addToDeck({...card(n)});
+ Object.assign(state.player,{experience:42,enrollment:32,satisfaction:26,accounting:18});assert.ok(!strategy.deletions(observe(),10,'aggressive').some(d=>Number(d.cardNo)===13));assert.throws(()=>setup({placementBeam:0}),/8〜2000/);
+});
