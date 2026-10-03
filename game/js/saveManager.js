@@ -1,4 +1,4 @@
-import { RandomSource } from './randomSource.js?v=20260815-0053';
+import { RandomSource } from './randomSource.js?v=20260815-0054';
 /**
  * SaveManager - ゲーム状態の保存・復元管理
  * v20260208-1200: 中断・再開機能実装
