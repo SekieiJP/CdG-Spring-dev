@@ -9,6 +9,7 @@ import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
 import {VALUE_FEATURES,VALUE_SCHEMA,createValueForecaster,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
+import {predictionCalibration,deletionCoverage,forecastStatsCalibration} from '../../solver/pro-mean125-metrics.mjs';
 import {remainingTrainingNames} from '../../solver/browser/pro-learned-research.js';
 import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
 import {median,wilson,retryEstimate,summarizeOutcomes,pairedOutcomes} from '../../solver/pro-strategy-metrics.mjs';
@@ -199,4 +200,14 @@ test('削除の最低保持枚数を研究条件として変え、合法な枚�
  for(const floor of [2,3,4,5]){const {state,strategy,observe}=setup({deleteFloor:floor});state.player.deck=[];for(const n of [7,13,15,17,30,31])state.addToDeck({...card(n)});
   Object.assign(state.player,{experience:42,enrollment:32,satisfaction:26,accounting:18});const decisions=strategy.deletions(observe(),10,'aggressive');assert.equal(decisions.length,6-floor);}
  assert.throws(()=>setup({deleteFloor:1}),/2〜12/);
+});
+
+test('学習得点と固定式投影の校正は主研修を使い、追加研修と少数圧縮を区別する',()=>{
+ const records=Array.from({length:250},(_,i)=>({result:{score:{displayScore:12,experience:40,enrollment:32,satisfaction:25,accounting:15}},events:[
+  {type:'research-acquisition-decision',turn:0,observation:{allowSkip:true},advice:{recommended:{predictedScore:99,forecast:{experience:99,enrollment:99,satisfaction:99,accounting:99}}}},
+  {type:'research-acquisition-decision',turn:0,observation:{allowSkip:false},advice:{recommended:{predictedScore:11,forecast:{experience:38,enrollment:31,satisfaction:25,accounting:16}}}},
+  {type:'research-deletion-decision',turn:0,observation:{owned:Array(6)},decisions:Array(i<10?2:1)}]}));
+ const c=predictionCalibration(records);assert.equal(c.length,1);assert.equal(c[0].n,250);assert.equal(c[0].bias,-1);assert.ok(c[0].minimum250);
+ const f=forecastStatsCalibration(records);assert.equal(f[0].axes.experience.bias,-2);assert.equal(f[0].axes.accounting.bias,1);
+ const d=deletionCoverage(records);assert.equal(d.gamesBelow5,10);assert.equal(d.byTurn[0].below5Count,10);assert.ok(!d.byTurn[1].minimum250);
 });

@@ -28,12 +28,24 @@ export function observedCards(records){
 export function predictionCalibration(records){
  const rows=[];
  for(let turn=0;turn<8;turn++){
-  const pairs=records.map(r=>{const e=r.events.find(e=>e.type==='research-acquisition-decision'&&e.turn===turn);return e&&Number.isFinite(e.advice?.recommended?.mean)?[e.advice.recommended.mean,r.result.score.displayScore]:null;}).filter(Boolean);
+  const pairs=records.map(r=>{const e=r.events.find(e=>e.type==='research-acquisition-decision'&&e.turn===turn&&!e.observation?.allowSkip),predicted=e?.advice?.recommended?.mean??e?.advice?.recommended?.predictedScore;return Number.isFinite(predicted)?[predicted,r.result.score.displayScore]:null;}).filter(Boolean);
   if(!pairs.length)continue;const differences=pairs.map(([predicted,actual])=>predicted-actual);
   rows.push({turn,n:pairs.length,minimum250:pairs.length>=250,predictedMean:mean(pairs.map(p=>p[0])),actualMean:mean(pairs.map(p=>p[1])),bias:mean(differences),bias95:meanInterval(differences),meanAbsoluteError:mean(differences.map(Math.abs)),
-   interpretation:'推定は仮想将来で使う後続方略に対する値。実際の後続方略が異なる場合、方略差も誤差に含む。'});
+   interpretation:'主研修の選択後の推定値。仮想将来または学習時の後続方略に対する値で、実際の後続方略の差と選択後の分布変化も誤差に含む。'});
  }
  return rows;
+}
+export function deletionCoverage(records){
+ const turns=Array.from({length:8},()=>[]);let gamesBelow5=0;
+ for(const r of records){let below=false;for(const e of r.events.filter(e=>e.type==='research-deletion-decision')){const n=e.observation.owned.length-e.decisions.length;turns[e.turn].push(n);below||=n<5;}gamesBelow5+=Number(below);}
+ return {n:records.length,gamesBelow5,descriptiveOnly:true,byTurn:turns.map((rows,turn)=>({turn,n:rows.length,minimum250:rows.length>=250,min:rows.length?Math.min(...rows):null,mean:mean(rows),below5Count:rows.filter(n=>n<5).length})),
+  interpretation:'保持枚数の条件が実際に働いた頻度。少数の圧縮事例の効果を一般化しない。'};
+}
+export function forecastStatsCalibration(records){
+ return Array.from({length:8},(_,turn)=>{const pairs=records.map(r=>{const e=r.events.find(e=>e.type==='research-acquisition-decision'&&e.turn===turn&&!e.observation?.allowSkip),p=e?.advice?.recommended?.forecast;return p?[p,r.result.score]:null;}).filter(Boolean);
+  return {turn,n:pairs.length,minimum250:pairs.length>=250,axes:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>{const errors=pairs.map(([p,a])=>p[k]-a[k]);return [k,{bias:mean(errors),bias95:meanInterval(errors),meanAbsoluteError:mean(errors.map(Math.abs))}];})),
+   interpretation:'旧固定式の所有集合の投影と実際の最終値。後から取得するカードと実際の操作方略の差を含む。学習予測自体のパラメータ推定ではない。'};
+ });
 }
 async function main(){
  const [manifestFile,outDir]=process.argv.slice(2);if(!manifestFile||!outDir)throw Error('manifestと出力先を指定');
@@ -44,7 +56,7 @@ async function main(){
    if(manifest.fingerprints&&batch.some(r=>r.metadata.provenance.strategyVersion!==manifest.fingerprints.strategyVersion||r.metadata.provenance.codeHash!==manifest.fingerprints.codeHash||r.metadata.cardVersion!==manifest.fingerprints.cardVersion||r.metadata.rankVersion!==manifest.fingerprints.rankVersion))throw Error('実行設定と記録の版が異なる');
    summary.audit.push({id:run.id,file,sha256:createHash('sha256').update(bytes).digest('hex'),n:batch.length,version:data.settings.provenance.strategyVersion});records.push(...batch);}
   const outcomes=records.map(compactRecord),stats=summarizeOutcomes(outcomes),cat=outcomes.filter(r=>r.score<8),w0=outcomes.filter(r=>r.stats.withdrawal===0),w1=outcomes.filter(r=>r.stats.withdrawal>0);
-  outcomesByGroup[run.id]=outcomes;summary.groups[run.id]={description:run.description,...stats,mean95:meanInterval(outcomes.map(r=>r.score)),resets:0,predictionCalibration:predictionCalibration(records),
+  outcomesByGroup[run.id]=outcomes;summary.groups[run.id]={description:run.description,...stats,mean95:meanInterval(outcomes.map(r=>r.score)),resets:0,predictionCalibration:predictionCalibration(records),forecastStatsCalibration:forecastStatsCalibration(records),deletionCoverage:deletionCoverage(records),
    failure:{below8Count:cat.length,below8Mean:mean(cat.map(r=>r.score)),noWithdrawalCount:w0.length,noWithdrawalMean:mean(w0.map(r=>r.score)),withdrawalCount:w1.length,withdrawalMean:mean(w1.map(r=>r.score))},
    analysis:'developmentは方略の選択用。mean125達成は独立した1000シード以上の検証で判断する。',cards:observedCards(records),
    examplesHigh:outcomes.filter(r=>r.score>=14).slice(0,5).map(r=>({seed:r.seed,score:r.score,stats:r.stats,turnStats:r.turnStats,deck:r.finalDeck}))};
