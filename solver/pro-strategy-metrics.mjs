@@ -3,6 +3,13 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
+import {gunzip} from 'node:zlib';
+import {promisify} from 'node:util';
+const unzip=promisify(gunzip);
+export async function readRunBytes(file){
+    if(file.endsWith('.gz'))return unzip(await readFile(file));
+    try{return await readFile(file);}catch(error){if(error.code!=='ENOENT')throw error;return unzip(await readFile(file+'.gz'));}
+}
 export function wilson(k,n) {
     if(!n)return [null,null];const z=1.96,p=k/n,d=1+z*z/n;
     const mid=(p+z*z/(2*n))/d,half=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;
@@ -28,24 +35,24 @@ export function compactRecord(record) {
     if(record.truncated)throw new Error('イベント記録が途中で切れています');
     const events=record.events||[],first=events.find(e=>e.type==='offer');
     const turnStats={},cards={};let acquisitions=0,deleted=0,drawn=0,placed=0,applied=0,failed=0;
-    const card=no=>cards[no]||(cards[no]={cardNo:String(no),acquired:0,deleted:0,placed:0,applied:0,failed:0,delta:{experience:0,enrollment:0,satisfaction:0,accounting:0}});
+    const card=no=>cards[no]||(cards[no]={cardNo:String(no),acquired:0,deleted:0,placed:0,applied:0,failed:0,placedByStaff:{},delta:{experience:0,enrollment:0,satisfaction:0,accounting:0}});
     for(const e of events) {
         if(e.type==='acquire'){card(e.card.cardNo).acquired++;if(e.card.rarity!=='N')acquisitions++;}
         if(e.type==='delete'){deleted++;card(e.card.cardNo).deleted++;}
         if(e.type==='draw')drawn+=e.cards.length;
-        if(e.type==='place'){placed++;card(e.card.cardNo).placed++;}
+        if(e.type==='place'){placed++;const c=card(e.card.cardNo);c.placed++;c.placedByStaff[e.staff]=(c.placedByStaff[e.staff]||0)+1;}
         if(e.type==='resolve'){
             if(e.applied){applied++;card(e.cardNo).applied++;}else{failed++;card(e.cardNo).failed++;}
             const c=card(e.cardNo);for(const key of Object.keys(c.delta))c.delta[key]+=(e.afterStats[key]??0)-(e.beforeStats[key]??0);
             turnStats[e.turn]=e.afterStats;
         }
     }
-    return {seed:record.metadata.seed,score:s.displayScore,basePoints:s.points,grade:s.rank?.grade,
+    return {seed:record.metadata.reroll?.sessionSeed || record.metadata.seed,reroll:record.metadata.reroll || null,actualSeed:record.metadata.seed,score:s.displayScore,basePoints:s.points,grade:s.rank?.grade,
         stats:{experience:s.experience,enrollment:s.enrollment,satisfaction:s.satisfaction,accounting:s.accounting,
             withdrawal:s.withdrawal,difference:s.enrollmentDiff},deckSize:record.result.finalDeck.length,
         finalDeck:record.result.finalDeck.map(c=>({cardNo:c.cardNo,cardName:c.cardName})),cards,turnStats,
-        acquisitions,deleted,drawn,placed,applied,failed,
-        firstOfferHash:createHash('sha256').update(JSON.stringify(first?.cards.map(c=>c.cardNo)||[])).digest('hex'),
+        acquisitions,deleted,drawn,placed,applied,failed,initialPicks:events.filter(e=>e.type==='acquire'&&e.turn===0&&e.card.rarity==='R').slice(0,2).map(e=>String(e.card.cardNo)),initialRefreshUsed:events.filter(e=>e.type==='refresh'&&e.turn===0).length,
+        firstOfferHash:createHash('sha256').update(JSON.stringify(record.metadata.reroll?.rejectedStarts?.[0]?.cards || record.metadata.reroll?.initialCards || first?.cards.map(c=>c.cardNo)||[])).digest('hex'),
         provenance:record.metadata.provenance,cardVersion:record.metadata.cardVersion,rankVersion:record.metadata.rankVersion,
         research:record.metadata.research,source:record.metadata.source,
         policy:JSON.stringify({research:record.metadata.research??null,acquisitionModel:record.metadata.acquisitionModel??null,
@@ -96,7 +103,7 @@ export function pairedOutcomes(before,after,{minimumSeeds=250,iterations=2000}={
 export async function loadRuns(files) {
     const outcomes=[];
     for(const file of files) {
-        const data=JSON.parse(await readFile(file,'utf8'));
+        const data=JSON.parse(await readRunBytes(file));
         if(data.simulations.length!==1)throw new Error('1ファイル1方略で指定してください');
         outcomes.push(...data.simulations[0].playRecords.map(compactRecord));
     }

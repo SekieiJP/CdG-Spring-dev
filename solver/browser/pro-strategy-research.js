@@ -2,6 +2,20 @@
 export const RESEARCH_VERSION = 'pro-human-strategy-v1';
 const KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const SLOTS = ['leader', 'teacher', 'staff'];
+/** 初期4候補だけで判定する。pairs=nullは全開始、初回の提示は異なるカード名4種。 */
+export function initialPairIndices(candidates, pairs=null) {
+    const key=pair=>pair.map(Number).sort((a,b)=>a-b).join('-');
+    const allowed=pairs===null?null:new Set(pairs.map(key)), choices=[];
+    for(let i=0;i<candidates.length;i++)for(let j=i+1;j<candidates.length;j++) {
+        if(!allowed||allowed.has(key([candidates[i].cardNo,candidates[j].cardNo])))choices.push([i,j]);
+    }
+    return choices;
+}
+export function validateInitialRule(rule) {
+    if(!rule||!Object.hasOwn(rule,'pairs')||(rule.pairs!==null&&(!Array.isArray(rule.pairs)||!rule.pairs.length||
+        rule.pairs.some(pair=>!Array.isArray(pair)||pair.length!==2||pair[0]===pair[1]||pair.some(n=>!Number.isInteger(n)||n<6||n>17)))))
+        throw new Error('初期ペア条件はnullまたはRカードNo6〜17の2枚組');
+}
 const clamp = (x, lo=0, hi=1) => Math.max(lo, Math.min(hi, x));
 export const RESEARCH_MODES = Object.freeze({
     median: Object.freeze({experience:2.5,enrollment:4,satisfaction:3,accounting:5,engine:2.5,risk:1.4,future:.65,route:18,draw:7,inspiration:4}),
@@ -74,6 +88,14 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         choices.sort((a,b)=>b.score-a.score||a.indices.length-b.indices.length||String(a.indices).localeCompare(String(b.indices)));
         return {version:RESEARCH_VERSION,mode,before:before.forecast.end,evaluations:choices,recommended:choices[0]};
     }
+    function initial(observation,rule,mode) {
+        validateInitialRule(rule);
+        if(observation.turn!==0||observation.pickCount!==2)throw new Error('初回研修以外のリセマラ判定');
+        const eligible=new Set(initialPairIndices(observation.candidates,rule.pairs).map(a=>a.join('-')));
+        if(!eligible.size)return {accept:false,chosenIndices:[]};
+        const advice=acquisition(observation,mode),evaluations=advice.evaluations.filter(a=>eligible.has(a.indices.join('-')));
+        return {accept:true,chosenIndices:evaluations[0].indices,advice:{...advice,evaluations,recommended:evaluations[0]}};
+    }
     function placements(observation,hand,state,mode,beamWidth=180) {
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
@@ -134,5 +156,5 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         }
         return removed;
     }
-    return {acquisition,placements,deletions,value,forecast};
+    return {acquisition,initial,placements,deletions,value,forecast};
 }

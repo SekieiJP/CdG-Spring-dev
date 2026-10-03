@@ -152,3 +152,20 @@ node solver/pro-strategy-metrics.mjs solver/local-runs/pro-strategy/validation/m
 - `pro-strategy-scenes.mjs`：同じ局面から候補を固定した再試行を各250シード実行。
 - `pro-strategy-metrics.mjs`：中央値、15点率、下振れ、95%区間、同一シードの対比較。重複や250未満、異なるルール等の混在を拒否します。
 - `research-results/pro-strategy-20261003/`：今回の開発・検証・局面の集計とバッチの監査情報。大量の個別ログは `local-runs/pro-strategy/` に置き、Gitから除外します。
+
+### 初期2枚とリセマラの検証
+
+`pro-reroll-study.mjs` は、初回4候補だけでリセットを判定し、受け入れたゲームを最後までプレイします。破棄した開始もシード・候補・回数を保存します。初回は異なるカード名4種のため、同名2枚の開始条件は拒否します。判断と操作はブラウザ、以下の起動・集計は記録管理だけです。
+
+```bash
+node solver/pro-reroll-study.mjs development 250
+node solver/pro-reroll-study.mjs validation 1000 public-engine,any-engine,pair-7-15,pair-13-17,relaxed-finance --configs solver/research-scenarios/pro-reroll-configs.json
+node solver/pro-reroll-metrics.mjs solver/local-runs/pro-reroll/validation/manifest.json solver/local-evaluation/pro-reroll/validation
+node solver/pro-reroll-study.mjs confirmation 250 pair-13-17,pair-13-17-acq-median,pair-13-17-place-myopic,pair-13-17-delete-off,pair-13-17-delete-basic,pair-13-17-delete-adaptive --configs solver/research-scenarios/pro-reroll-configs.json
+```
+
+リセマラの「1シード」は、最初の開始から受け入れるまでの1組です。実際に受け入れた乱数シードも別途保存し、完走数以上の開始・リセット数を報告します。各条件は最低250組で、完走したゲームの乱数シードも全て異なります。初期4候補以外の未来の情報を見てリセットすることはしません。
+
+`pro-reroll-metrics.mjs` は、通常の得点集計に加え、12種から異なる4種を提示する理論出現率、全開始・リセットの監査、完走／リセット回数、リセット時間と完走時間の比を変えた時間換算を出します。実際のスマートフォンで人が操作した時間は未測定です。`--resume` は設定・シード範囲・分析コード・本体・カード・ランクの版が一致した完了バッチだけを再利用します。
+
+初回リセマラの結果は[攻略レポート](../docs/CdG-PRO-Reroll-Guide.md)と[分析資料](../docs/CdG-PRO-Reroll-Analysis.md)。新規詳細ログは内容一致を検証して `.json.gz` に圧縮し、読み込み時は元の `.json` パスにも対応します。

@@ -1,0 +1,5852 @@
+{
+  "generatedAt": "2026-10-03T14:40:06.261Z",
+  "stage": "confirmation",
+  "n": 250,
+  "seed": "pro-reroll-v1-confirmation",
+  "groups": {
+    "pair-13-17": {
+      "config": {
+        "id": "pair-13-17",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 11.372,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -7,
+      "max": 16,
+      "score15": {
+        "count": 5,
+        "rate": 0.02,
+        "interval95": [
+          0.008572197944651562,
+          0.045956295414986886
+        ]
+      },
+      "score14": {
+        "count": 32,
+        "rate": 0.128
+      },
+      "score12Rate": 0.552,
+      "scoreBelow8Rate": 0.052,
+      "withdrawalZeroRate": 0.812,
+      "meanStats": {
+        "experience": 41.728,
+        "enrollment": 35.536,
+        "satisfaction": 32.492,
+        "accounting": 16.948,
+        "withdrawal": 0.424,
+        "difference": 35.112
+      },
+      "milestones": {
+        "experience50": 0.144,
+        "difference40": 0.236,
+        "difference48": 0.012,
+        "satisfaction25": 0.912,
+        "satisfaction35": 0.364
+      },
+      "activity": {
+        "deckSize": 10.9,
+        "acquisitions": 10.308,
+        "deleted": 4.408,
+        "drawn": 36.664,
+        "placed": 31.264,
+        "applied": 31.264,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "5": 1,
+        "6": 2,
+        "7": 4,
+        "8": 2,
+        "9": 6,
+        "10": 37,
+        "11": 54,
+        "12": 56,
+        "13": 50,
+        "14": 27,
+        "15": 4,
+        "16": 1,
+        "-7": 1,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 50,
+        "expectedAttempts95": [
+          21.759804417870644,
+          116.65619558212937
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.1829271931124533,
+            "interval95": [
+              0.0824897299652193,
+              0.3752838962817614
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.6358303199128832,
+            "interval95": [
+              0.34978846338342706,
+              0.904848967352425
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.8673804441052471,
+            "interval95": [
+              0.5772249576507149,
+              0.9909462809861002
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.148,
+          "meanPlaced": 0.328,
+          "meanDeleted": 0,
+          "meanApplied": 0.328,
+          "meanPlacedByStaff": {
+            "leader": 0.168,
+            "teacher": 0.104,
+            "staff": 0.056
+          }
+        },
+        "10": {
+          "acquiredRate": 0.076,
+          "meanPlaced": 0.164,
+          "meanDeleted": 0,
+          "meanApplied": 0.164,
+          "meanPlacedByStaff": {
+            "leader": 0.076,
+            "teacher": 0.088,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.088,
+          "meanPlaced": 0.168,
+          "meanDeleted": 0.016,
+          "meanApplied": 0.168,
+          "meanPlacedByStaff": {
+            "leader": 0.052,
+            "teacher": 0.116,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.504,
+          "meanDeleted": 0.136,
+          "meanApplied": 4.504,
+          "meanPlacedByStaff": {
+            "leader": 0.708,
+            "teacher": 1.464,
+            "staff": 2.332
+          }
+        },
+        "15": {
+          "acquiredRate": 0.06,
+          "meanPlaced": 0.116,
+          "meanDeleted": 0.028,
+          "meanApplied": 0.116,
+          "meanPlacedByStaff": {
+            "leader": 0.028,
+            "teacher": 0.032,
+            "staff": 0.056
+          }
+        },
+        "16": {
+          "acquiredRate": 0.068,
+          "meanPlaced": 0.104,
+          "meanDeleted": 0.036,
+          "meanApplied": 0.104,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.104
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.272,
+          "meanDeleted": 0.076,
+          "meanApplied": 4.272,
+          "meanPlacedByStaff": {
+            "leader": 0.808,
+            "teacher": 2.18,
+            "staff": 1.284
+          }
+        },
+        "40": {
+          "acquiredRate": 0.324,
+          "meanPlaced": 0.696,
+          "meanDeleted": 0.004,
+          "meanApplied": 0.696,
+          "meanPlacedByStaff": {
+            "leader": 0.696,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.48,
+          "meanPlaced": 1.268,
+          "meanDeleted": 0.008,
+          "meanApplied": 1.268,
+          "meanPlacedByStaff": {
+            "leader": 0.912,
+            "teacher": 0.124,
+            "staff": 0.232
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": 50,
+        "expectedResets": 500,
+        "expectedStarts": 550,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": 50
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": 55
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": 75
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": 100
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 116.65619558212937,
+          "expectedResets": 1166.5619558212936,
+          "expectedStarts": 1283.218151403423,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 116.65619558212937
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 128.32181514034232
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 174.98429337319405
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 233.31239116425874
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 21.759804417870644,
+          "expectedResets": 217.59804417870643,
+          "expectedStarts": 239.35784859657707,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 21.759804417870644
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 23.93578485965771
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 32.63970662680596
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 43.51960883574129
+            }
+          ]
+        }
+      ],
+      "examples15": [
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:8",
+          "actualSeed": "pro-reroll-v1-confirmation-reset2:8",
+          "score": 15,
+          "stats": {
+            "experience": 59,
+            "enrollment": 41,
+            "satisfaction": 36,
+            "accounting": 20,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 6,
+              "enrollment": 3,
+              "satisfaction": 13,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 15,
+              "enrollment": 13,
+              "satisfaction": 21,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 24,
+              "enrollment": 19,
+              "satisfaction": 22,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 37,
+              "enrollment": 26,
+              "satisfaction": 30,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 49,
+              "enrollment": 32,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 59,
+              "enrollment": 41,
+              "satisfaction": 36,
+              "accounting": 20
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:8",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:8",
+                "cards": [
+                  "16",
+                  "8",
+                  "7",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:8",
+                "cards": [
+                  "7",
+                  "14",
+                  "6",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 3,
+            "initialCards": [
+              "7",
+              "13",
+              "17",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:31",
+          "actualSeed": "pro-reroll-v1-confirmation-reset10:31",
+          "score": 15,
+          "stats": {
+            "experience": 56,
+            "enrollment": 40,
+            "satisfaction": 36,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 4,
+              "satisfaction": 8,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 6,
+              "satisfaction": 13,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 10,
+              "satisfaction": 18,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 32,
+              "enrollment": 12,
+              "satisfaction": 23,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 41,
+              "enrollment": 16,
+              "satisfaction": 32,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 46,
+              "enrollment": 26,
+              "satisfaction": 33,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 56,
+              "enrollment": 40,
+              "satisfaction": 36,
+              "accounting": 15
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:31",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:31",
+                "cards": [
+                  "9",
+                  "13",
+                  "8",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:31",
+                "cards": [
+                  "13",
+                  "12",
+                  "10",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:31",
+                "cards": [
+                  "9",
+                  "16",
+                  "6",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:31",
+                "cards": [
+                  "12",
+                  "15",
+                  "6",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:31",
+                "cards": [
+                  "13",
+                  "10",
+                  "15",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:31",
+                "cards": [
+                  "14",
+                  "13",
+                  "9",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:31",
+                "cards": [
+                  "7",
+                  "11",
+                  "17",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:31",
+                "cards": [
+                  "13",
+                  "11",
+                  "10",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:31",
+                "cards": [
+                  "6",
+                  "10",
+                  "11",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:31",
+                "cards": [
+                  "7",
+                  "14",
+                  "16",
+                  "17"
+                ]
+              }
+            ],
+            "attempts": 11,
+            "initialCards": [
+              "6",
+              "9",
+              "17",
+              "13"
+            ],
+            "chosenIndices": [
+              2,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:53",
+          "actualSeed": "pro-reroll-v1-confirmation-reset14:53",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 39,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 4,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 11,
+              "satisfaction": 12,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 19,
+              "enrollment": 14,
+              "satisfaction": 13,
+              "accounting": 14
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 23,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 32,
+              "satisfaction": 27,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 33,
+              "satisfaction": 31,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 39,
+              "accounting": 16
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:53",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:53",
+                "cards": [
+                  "10",
+                  "15",
+                  "11",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:53",
+                "cards": [
+                  "9",
+                  "6",
+                  "17",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:53",
+                "cards": [
+                  "6",
+                  "10",
+                  "14",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:53",
+                "cards": [
+                  "15",
+                  "11",
+                  "17",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:53",
+                "cards": [
+                  "17",
+                  "6",
+                  "9",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:53",
+                "cards": [
+                  "8",
+                  "7",
+                  "9",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:53",
+                "cards": [
+                  "6",
+                  "14",
+                  "15",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:53",
+                "cards": [
+                  "15",
+                  "10",
+                  "17",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset10:53",
+                "cards": [
+                  "15",
+                  "9",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset11:53",
+                "cards": [
+                  "7",
+                  "8",
+                  "11",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset12:53",
+                "cards": [
+                  "6",
+                  "9",
+                  "11",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset13:53",
+                "cards": [
+                  "12",
+                  "6",
+                  "13",
+                  "9"
+                ]
+              }
+            ],
+            "attempts": 15,
+            "initialCards": [
+              "15",
+              "17",
+              "13",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "35",
+              "cardName": "季節のデコレーション"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:57",
+          "actualSeed": "pro-reroll-v1-confirmation-reset3:57",
+          "score": 16,
+          "stats": {
+            "experience": 50,
+            "enrollment": 50,
+            "satisfaction": 41,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 50
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 6,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 19,
+              "enrollment": 8,
+              "satisfaction": 14,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 27,
+              "enrollment": 12,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "4": {
+              "experience": 37,
+              "enrollment": 21,
+              "satisfaction": 25,
+              "accounting": 16
+            },
+            "5": {
+              "experience": 47,
+              "enrollment": 30,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 36,
+              "satisfaction": 34,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 50,
+              "satisfaction": 41,
+              "accounting": 18
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:57",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:57",
+                "cards": [
+                  "9",
+                  "12",
+                  "10",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:57",
+                "cards": [
+                  "8",
+                  "16",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:57",
+                "cards": [
+                  "8",
+                  "9",
+                  "16",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 4,
+            "initialCards": [
+              "7",
+              "17",
+              "9",
+              "13"
+            ],
+            "chosenIndices": [
+              1,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            }
+          ]
+        }
+      ]
+    },
+    "pair-13-17-acq-median": {
+      "config": {
+        "id": "pair-13-17-acq-median",
+        "acquisition": "median",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 11.264,
+      "median": 12,
+      "p10": 9,
+      "p90": 13,
+      "min": -3,
+      "max": 15,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 21,
+        "rate": 0.084
+      },
+      "score12Rate": 0.516,
+      "scoreBelow8Rate": 0.044,
+      "withdrawalZeroRate": 0.844,
+      "meanStats": {
+        "experience": 41.912,
+        "enrollment": 35.22,
+        "satisfaction": 29.772,
+        "accounting": 17.564,
+        "withdrawal": 0.372,
+        "difference": 34.848
+      },
+      "milestones": {
+        "experience50": 0.148,
+        "difference40": 0.2,
+        "difference48": 0.008,
+        "satisfaction25": 0.832,
+        "satisfaction35": 0.208
+      },
+      "activity": {
+        "deckSize": 10.592,
+        "acquisitions": 9.792,
+        "deleted": 4.2,
+        "drawn": 33.872,
+        "placed": 29.376,
+        "applied": 29.376,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 2,
+        "5": 1,
+        "6": 1,
+        "7": 3,
+        "8": 2,
+        "9": 13,
+        "10": 32,
+        "11": 63,
+        "12": 60,
+        "13": 48,
+        "14": 20,
+        "15": 1,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.144,
+          "meanPlaced": 0.312,
+          "meanDeleted": 0,
+          "meanApplied": 0.312,
+          "meanPlacedByStaff": {
+            "leader": 0.152,
+            "teacher": 0.072,
+            "staff": 0.088
+          }
+        },
+        "10": {
+          "acquiredRate": 0.072,
+          "meanPlaced": 0.156,
+          "meanDeleted": 0,
+          "meanApplied": 0.156,
+          "meanPlacedByStaff": {
+            "leader": 0.076,
+            "teacher": 0.08,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.072,
+          "meanPlaced": 0.164,
+          "meanDeleted": 0,
+          "meanApplied": 0.164,
+          "meanPlacedByStaff": {
+            "leader": 0.06,
+            "teacher": 0.104,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.308,
+          "meanDeleted": 0.092,
+          "meanApplied": 4.308,
+          "meanPlacedByStaff": {
+            "leader": 0.424,
+            "teacher": 1.336,
+            "staff": 2.548
+          }
+        },
+        "15": {
+          "acquiredRate": 0.088,
+          "meanPlaced": 0.144,
+          "meanDeleted": 0.04,
+          "meanApplied": 0.144,
+          "meanPlacedByStaff": {
+            "leader": 0.028,
+            "teacher": 0.024,
+            "staff": 0.092
+          }
+        },
+        "16": {
+          "acquiredRate": 0.1,
+          "meanPlaced": 0.1,
+          "meanDeleted": 0.06,
+          "meanApplied": 0.1,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.1
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.128,
+          "meanDeleted": 0.136,
+          "meanApplied": 4.128,
+          "meanPlacedByStaff": {
+            "leader": 0.76,
+            "teacher": 2.268,
+            "staff": 1.1
+          }
+        },
+        "40": {
+          "acquiredRate": 0.22,
+          "meanPlaced": 0.42,
+          "meanDeleted": 0,
+          "meanApplied": 0.42,
+          "meanPlacedByStaff": {
+            "leader": 0.42,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.308,
+          "meanPlaced": 0.652,
+          "meanDeleted": 0.004,
+          "meanApplied": 0.652,
+          "meanPlacedByStaff": {
+            "leader": 0.52,
+            "teacher": 0.056,
+            "staff": 0.076
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": 250,
+        "expectedResets": 2500,
+        "expectedStarts": 2749.9999999999995,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": 250
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": 275
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": 375
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": 500
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 1415.5697104483056,
+          "expectedResets": 14155.697104483055,
+          "expectedStarts": 15571.266814931361,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 1415.5697104483056
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 1557.1266814931362
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 2123.354565672458
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 2831.139420896611
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 44.830289551690214,
+          "expectedResets": 448.30289551690214,
+          "expectedStarts": 493.13318506859235,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 44.830289551690214
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 49.31331850685924
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 67.24543432753532
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 89.66057910338043
+            }
+          ]
+        }
+      ],
+      "examples15": [
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:170",
+          "actualSeed": "pro-reroll-v1-confirmation-reset1:170",
+          "score": 15,
+          "stats": {
+            "experience": 57,
+            "enrollment": 45,
+            "satisfaction": 35,
+            "accounting": 21,
+            "withdrawal": 0,
+            "difference": 45
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 9
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 4,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 18,
+              "enrollment": 5,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 27,
+              "enrollment": 8,
+              "satisfaction": 17,
+              "accounting": 11
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 23,
+              "satisfaction": 20,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 30,
+              "satisfaction": 26,
+              "accounting": 17
+            },
+            "6": {
+              "experience": 47,
+              "enrollment": 36,
+              "satisfaction": 29,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 57,
+              "enrollment": 45,
+              "satisfaction": 35,
+              "accounting": 21
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:170",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:170",
+                "cards": [
+                  "12",
+                  "11",
+                  "17",
+                  "8"
+                ]
+              }
+            ],
+            "attempts": 2,
+            "initialCards": [
+              "6",
+              "9",
+              "17",
+              "13"
+            ],
+            "chosenIndices": [
+              2,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            }
+          ]
+        }
+      ]
+    },
+    "pair-13-17-place-myopic": {
+      "config": {
+        "id": "pair-13-17-place-myopic",
+        "acquisition": "engine",
+        "placement": "myopic",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 11.38,
+      "median": 12,
+      "p10": 9,
+      "p90": 13,
+      "min": -3,
+      "max": 15,
+      "score15": {
+        "count": 4,
+        "rate": 0.016,
+        "interval95": [
+          0.006239123654412256,
+          0.04041044048322319
+        ]
+      },
+      "score14": {
+        "count": 25,
+        "rate": 0.1
+      },
+      "score12Rate": 0.54,
+      "scoreBelow8Rate": 0.04,
+      "withdrawalZeroRate": 0.856,
+      "meanStats": {
+        "experience": 40.884,
+        "enrollment": 33.984,
+        "satisfaction": 33.02,
+        "accounting": 17.436,
+        "withdrawal": 0.352,
+        "difference": 33.632
+      },
+      "milestones": {
+        "experience50": 0.164,
+        "difference40": 0.128,
+        "difference48": 0.012,
+        "satisfaction25": 0.952,
+        "satisfaction35": 0.436
+      },
+      "activity": {
+        "deckSize": 10.72,
+        "acquisitions": 9.96,
+        "deleted": 4.24,
+        "drawn": 36.444,
+        "placed": 31.24,
+        "applied": 31.24,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "2": 1,
+        "4": 1,
+        "5": 1,
+        "6": 1,
+        "7": 3,
+        "8": 5,
+        "9": 11,
+        "10": 27,
+        "11": 62,
+        "12": 62,
+        "13": 48,
+        "14": 21,
+        "15": 4,
+        "-3": 1,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 62.5,
+        "expectedAttempts95": [
+          24.746080172403968,
+          160.27891982759604
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.14895801818995646,
+            "interval95": [
+              0.06066836501783768,
+              0.3380043414345838
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.5535684065197863,
+            "interval95": [
+              0.2687013963833693,
+              0.8728619030364386
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.8006988323427172,
+            "interval95": [
+              0.46520235234836604,
+              0.9838359043004841
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.148,
+          "meanPlaced": 0.36,
+          "meanDeleted": 0.008,
+          "meanApplied": 0.36,
+          "meanPlacedByStaff": {
+            "leader": 0.16,
+            "teacher": 0.116,
+            "staff": 0.084
+          }
+        },
+        "10": {
+          "acquiredRate": 0.06,
+          "meanPlaced": 0.124,
+          "meanDeleted": 0,
+          "meanApplied": 0.124,
+          "meanPlacedByStaff": {
+            "leader": 0.068,
+            "teacher": 0.056,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.092,
+          "meanPlaced": 0.164,
+          "meanDeleted": 0.012,
+          "meanApplied": 0.164,
+          "meanPlacedByStaff": {
+            "leader": 0.036,
+            "teacher": 0.128,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.456,
+          "meanDeleted": 0.176,
+          "meanApplied": 4.456,
+          "meanPlacedByStaff": {
+            "leader": 0.004,
+            "teacher": 1.224,
+            "staff": 3.228
+          }
+        },
+        "15": {
+          "acquiredRate": 0.044,
+          "meanPlaced": 0.068,
+          "meanDeleted": 0.012,
+          "meanApplied": 0.068,
+          "meanPlacedByStaff": {
+            "leader": 0.048,
+            "teacher": 0.004,
+            "staff": 0.016
+          }
+        },
+        "16": {
+          "acquiredRate": 0.048,
+          "meanPlaced": 0.092,
+          "meanDeleted": 0.024,
+          "meanApplied": 0.092,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.092
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.688,
+          "meanDeleted": 0.048,
+          "meanApplied": 4.688,
+          "meanPlacedByStaff": {
+            "leader": 1.028,
+            "teacher": 2.504,
+            "staff": 1.156
+          }
+        },
+        "40": {
+          "acquiredRate": 0.34,
+          "meanPlaced": 0.568,
+          "meanDeleted": 0.008,
+          "meanApplied": 0.568,
+          "meanPlacedByStaff": {
+            "leader": 0.568,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.54,
+          "meanPlaced": 1.448,
+          "meanDeleted": 0.016,
+          "meanApplied": 1.448,
+          "meanPlacedByStaff": {
+            "leader": 0.452,
+            "teacher": 0.468,
+            "staff": 0.528
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": 62.5,
+        "expectedResets": 625,
+        "expectedStarts": 687.4999999999999,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": 62.5
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": 68.75
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": 93.75
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": 125
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 160.27891982759604,
+          "expectedResets": 1602.7891982759604,
+          "expectedStarts": 1763.0681181035563,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 160.27891982759604
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 176.30681181035564
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 240.41837974139406
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 320.5578396551921
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 24.746080172403968,
+          "expectedResets": 247.46080172403967,
+          "expectedStarts": 272.20688189644363,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 24.746080172403968
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 27.220688189644367
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 37.11912025860595
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 49.492160344807935
+            }
+          ]
+        }
+      ],
+      "examples15": [
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:57",
+          "actualSeed": "pro-reroll-v1-confirmation-reset3:57",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 48,
+            "satisfaction": 32,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 48
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 8,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 5,
+              "satisfaction": 11,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 9,
+              "satisfaction": 11,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 13,
+              "satisfaction": 14,
+              "accounting": 16
+            },
+            "4": {
+              "experience": 34,
+              "enrollment": 24,
+              "satisfaction": 20,
+              "accounting": 17
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 32,
+              "satisfaction": 23,
+              "accounting": 19
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 40,
+              "satisfaction": 29,
+              "accounting": 18
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 48,
+              "satisfaction": 32,
+              "accounting": 18
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:57",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:57",
+                "cards": [
+                  "9",
+                  "12",
+                  "10",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:57",
+                "cards": [
+                  "8",
+                  "16",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:57",
+                "cards": [
+                  "8",
+                  "9",
+                  "16",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 4,
+            "initialCards": [
+              "7",
+              "17",
+              "9",
+              "13"
+            ],
+            "chosenIndices": [
+              1,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "34",
+              "cardName": "笑顔伝わる教室通信"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:115",
+          "actualSeed": "pro-reroll-v1-confirmation-reset36:115",
+          "score": 15,
+          "stats": {
+            "experience": 56,
+            "enrollment": 41,
+            "satisfaction": 41,
+            "accounting": 23,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 5,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 19,
+              "enrollment": 7,
+              "satisfaction": 10,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 11,
+              "satisfaction": 14,
+              "accounting": 11
+            },
+            "4": {
+              "experience": 31,
+              "enrollment": 17,
+              "satisfaction": 21,
+              "accounting": 10
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 22,
+              "satisfaction": 30,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 49,
+              "enrollment": 30,
+              "satisfaction": 36,
+              "accounting": 18
+            },
+            "7": {
+              "experience": 56,
+              "enrollment": 41,
+              "satisfaction": 41,
+              "accounting": 23
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:115",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:115",
+                "cards": [
+                  "8",
+                  "9",
+                  "13",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:115",
+                "cards": [
+                  "6",
+                  "15",
+                  "10",
+                  "8"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:115",
+                "cards": [
+                  "16",
+                  "17",
+                  "6",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:115",
+                "cards": [
+                  "12",
+                  "15",
+                  "16",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:115",
+                "cards": [
+                  "12",
+                  "11",
+                  "7",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:115",
+                "cards": [
+                  "11",
+                  "15",
+                  "9",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:115",
+                "cards": [
+                  "8",
+                  "10",
+                  "13",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:115",
+                "cards": [
+                  "11",
+                  "9",
+                  "8",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:115",
+                "cards": [
+                  "6",
+                  "14",
+                  "11",
+                  "8"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:115",
+                "cards": [
+                  "6",
+                  "17",
+                  "12",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset10:115",
+                "cards": [
+                  "11",
+                  "12",
+                  "9",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset11:115",
+                "cards": [
+                  "14",
+                  "16",
+                  "13",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset12:115",
+                "cards": [
+                  "12",
+                  "17",
+                  "15",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset13:115",
+                "cards": [
+                  "7",
+                  "6",
+                  "11",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset14:115",
+                "cards": [
+                  "17",
+                  "16",
+                  "8",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset15:115",
+                "cards": [
+                  "15",
+                  "13",
+                  "14",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset16:115",
+                "cards": [
+                  "9",
+                  "6",
+                  "8",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset17:115",
+                "cards": [
+                  "9",
+                  "12",
+                  "10",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset18:115",
+                "cards": [
+                  "11",
+                  "6",
+                  "16",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset19:115",
+                "cards": [
+                  "12",
+                  "13",
+                  "9",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset20:115",
+                "cards": [
+                  "13",
+                  "16",
+                  "9",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset21:115",
+                "cards": [
+                  "9",
+                  "8",
+                  "17",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset22:115",
+                "cards": [
+                  "8",
+                  "11",
+                  "14",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset23:115",
+                "cards": [
+                  "10",
+                  "12",
+                  "14",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset24:115",
+                "cards": [
+                  "9",
+                  "15",
+                  "16",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset25:115",
+                "cards": [
+                  "12",
+                  "13",
+                  "16",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset26:115",
+                "cards": [
+                  "9",
+                  "15",
+                  "12",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset27:115",
+                "cards": [
+                  "12",
+                  "10",
+                  "15",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset28:115",
+                "cards": [
+                  "10",
+                  "14",
+                  "16",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset29:115",
+                "cards": [
+                  "11",
+                  "15",
+                  "7",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset30:115",
+                "cards": [
+                  "15",
+                  "16",
+                  "17",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset31:115",
+                "cards": [
+                  "8",
+                  "15",
+                  "9",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset32:115",
+                "cards": [
+                  "9",
+                  "8",
+                  "14",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset33:115",
+                "cards": [
+                  "8",
+                  "17",
+                  "10",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset34:115",
+                "cards": [
+                  "7",
+                  "6",
+                  "12",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset35:115",
+                "cards": [
+                  "16",
+                  "10",
+                  "6",
+                  "15"
+                ]
+              }
+            ],
+            "attempts": 37,
+            "initialCards": [
+              "14",
+              "13",
+              "16",
+              "17"
+            ],
+            "chosenIndices": [
+              1,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:122",
+          "actualSeed": "pro-reroll-v1-confirmation-reset2:122",
+          "score": 15,
+          "stats": {
+            "experience": 48,
+            "enrollment": 48,
+            "satisfaction": 37,
+            "accounting": 21,
+            "withdrawal": 0,
+            "difference": 48
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 5,
+              "satisfaction": 11,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 16,
+              "enrollment": 10,
+              "satisfaction": 15,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 21,
+              "enrollment": 13,
+              "satisfaction": 19,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 26,
+              "enrollment": 19,
+              "satisfaction": 23,
+              "accounting": 11
+            },
+            "5": {
+              "experience": 31,
+              "enrollment": 26,
+              "satisfaction": 31,
+              "accounting": 18
+            },
+            "6": {
+              "experience": 38,
+              "enrollment": 38,
+              "satisfaction": 35,
+              "accounting": 18
+            },
+            "7": {
+              "experience": 48,
+              "enrollment": 48,
+              "satisfaction": 37,
+              "accounting": 21
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:122",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:122",
+                "cards": [
+                  "6",
+                  "17",
+                  "12",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:122",
+                "cards": [
+                  "11",
+                  "16",
+                  "14",
+                  "7"
+                ]
+              }
+            ],
+            "attempts": 3,
+            "initialCards": [
+              "17",
+              "13",
+              "15",
+              "16"
+            ],
+            "chosenIndices": [
+              0,
+              1
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "33",
+              "cardName": "私も載ったよ！成績UP掲示"
+            },
+            {
+              "cardNo": "44",
+              "cardName": "今だけ！体験生特典"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:178",
+          "actualSeed": "pro-reroll-v1-confirmation-reset26:178",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 46,
+            "satisfaction": 37,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 46
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 8,
+              "enrollment": 5,
+              "satisfaction": 16,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 7,
+              "satisfaction": 16,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 28,
+              "enrollment": 13,
+              "satisfaction": 22,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 40,
+              "enrollment": 24,
+              "satisfaction": 31,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 44,
+              "enrollment": 24,
+              "satisfaction": 32,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 52,
+              "enrollment": 30,
+              "satisfaction": 35,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 46,
+              "satisfaction": 37,
+              "accounting": 19
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:178",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:178",
+                "cards": [
+                  "6",
+                  "8",
+                  "17",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:178",
+                "cards": [
+                  "7",
+                  "6",
+                  "14",
+                  "8"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:178",
+                "cards": [
+                  "17",
+                  "9",
+                  "6",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:178",
+                "cards": [
+                  "6",
+                  "14",
+                  "10",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:178",
+                "cards": [
+                  "17",
+                  "15",
+                  "16",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:178",
+                "cards": [
+                  "9",
+                  "16",
+                  "10",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:178",
+                "cards": [
+                  "16",
+                  "10",
+                  "8",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:178",
+                "cards": [
+                  "8",
+                  "10",
+                  "13",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:178",
+                "cards": [
+                  "10",
+                  "13",
+                  "14",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:178",
+                "cards": [
+                  "14",
+                  "10",
+                  "16",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset10:178",
+                "cards": [
+                  "7",
+                  "11",
+                  "13",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset11:178",
+                "cards": [
+                  "17",
+                  "12",
+                  "9",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset12:178",
+                "cards": [
+                  "15",
+                  "9",
+                  "7",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset13:178",
+                "cards": [
+                  "6",
+                  "8",
+                  "13",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset14:178",
+                "cards": [
+                  "11",
+                  "12",
+                  "17",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset15:178",
+                "cards": [
+                  "11",
+                  "7",
+                  "17",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset16:178",
+                "cards": [
+                  "14",
+                  "8",
+                  "11",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset17:178",
+                "cards": [
+                  "13",
+                  "11",
+                  "15",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset18:178",
+                "cards": [
+                  "12",
+                  "11",
+                  "10",
+                  "8"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset19:178",
+                "cards": [
+                  "14",
+                  "6",
+                  "13",
+                  "11"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset20:178",
+                "cards": [
+                  "16",
+                  "17",
+                  "12",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset21:178",
+                "cards": [
+                  "7",
+                  "16",
+                  "9",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset22:178",
+                "cards": [
+                  "11",
+                  "8",
+                  "13",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset23:178",
+                "cards": [
+                  "15",
+                  "8",
+                  "10",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset24:178",
+                "cards": [
+                  "9",
+                  "12",
+                  "10",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset25:178",
+                "cards": [
+                  "6",
+                  "15",
+                  "10",
+                  "14"
+                ]
+              }
+            ],
+            "attempts": 27,
+            "initialCards": [
+              "17",
+              "13",
+              "10",
+              "8"
+            ],
+            "chosenIndices": [
+              0,
+              1
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "29",
+              "cardName": "設問の急所は？教材研究"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            }
+          ]
+        }
+      ]
+    },
+    "pair-13-17-delete-off": {
+      "config": {
+        "id": "pair-13-17-delete-off",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "off",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 9.052,
+      "median": 10,
+      "p10": 7,
+      "p90": 12,
+      "min": -5,
+      "max": 13,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 0,
+        "rate": 0
+      },
+      "score12Rate": 0.104,
+      "scoreBelow8Rate": 0.16,
+      "withdrawalZeroRate": 0.744,
+      "meanStats": {
+        "experience": 35.752,
+        "enrollment": 28.524,
+        "satisfaction": 28.536,
+        "accounting": 16.98,
+        "withdrawal": 0.688,
+        "difference": 27.836
+      },
+      "milestones": {
+        "experience50": 0.052,
+        "difference40": 0.016,
+        "difference48": 0,
+        "satisfaction25": 0.764,
+        "satisfaction35": 0.204
+      },
+      "activity": {
+        "deckSize": 14.484,
+        "acquisitions": 9.484,
+        "deleted": 0,
+        "drawn": 33.076,
+        "placed": 28.108,
+        "applied": 28.108,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 3,
+        "5": 5,
+        "6": 8,
+        "7": 16,
+        "8": 27,
+        "9": 55,
+        "10": 61,
+        "11": 41,
+        "12": 18,
+        "13": 8,
+        "-5": 1,
+        "-4": 3,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.112,
+          "meanPlaced": 0.156,
+          "meanDeleted": 0,
+          "meanApplied": 0.156,
+          "meanPlacedByStaff": {
+            "leader": 0.096,
+            "teacher": 0.032,
+            "staff": 0.028
+          }
+        },
+        "10": {
+          "acquiredRate": 0.104,
+          "meanPlaced": 0.116,
+          "meanDeleted": 0,
+          "meanApplied": 0.116,
+          "meanPlacedByStaff": {
+            "leader": 0.064,
+            "teacher": 0.052,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.1,
+          "meanPlaced": 0.16,
+          "meanDeleted": 0,
+          "meanApplied": 0.16,
+          "meanPlacedByStaff": {
+            "leader": 0.04,
+            "teacher": 0.12,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 3.476,
+          "meanDeleted": 0,
+          "meanApplied": 3.476,
+          "meanPlacedByStaff": {
+            "leader": 0.28,
+            "teacher": 1.136,
+            "staff": 2.06
+          }
+        },
+        "15": {
+          "acquiredRate": 0.084,
+          "meanPlaced": 0.156,
+          "meanDeleted": 0,
+          "meanApplied": 0.156,
+          "meanPlacedByStaff": {
+            "leader": 0.04,
+            "teacher": 0.036,
+            "staff": 0.08
+          }
+        },
+        "16": {
+          "acquiredRate": 0.052,
+          "meanPlaced": 0.068,
+          "meanDeleted": 0,
+          "meanApplied": 0.068,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.068
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 3.252,
+          "meanDeleted": 0,
+          "meanApplied": 3.252,
+          "meanPlacedByStaff": {
+            "leader": 0.84,
+            "teacher": 1.752,
+            "staff": 0.66
+          }
+        },
+        "40": {
+          "acquiredRate": 0.34,
+          "meanPlaced": 0.468,
+          "meanDeleted": 0,
+          "meanApplied": 0.468,
+          "meanPlacedByStaff": {
+            "leader": 0.468,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.208,
+          "meanPlaced": 0.216,
+          "meanDeleted": 0,
+          "meanApplied": 0.216,
+          "meanPlacedByStaff": {
+            "leader": 0.18,
+            "teacher": 0.004,
+            "staff": 0.032
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": null,
+        "expectedResets": null,
+        "expectedStarts": null,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": null
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": null
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": null
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": null
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": null,
+          "expectedResets": null,
+          "expectedStarts": null,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": null
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": null
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": null
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": null
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 66.07705122865472,
+          "expectedResets": 660.7705122865473,
+          "expectedStarts": 726.847563515202,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 66.07705122865472
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 72.6847563515202
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 99.1155768429821
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 132.15410245730945
+            }
+          ]
+        }
+      ],
+      "examples15": []
+    },
+    "pair-13-17-delete-basic": {
+      "config": {
+        "id": "pair-13-17-delete-basic",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "basic",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 11.532,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -3,
+      "max": 16,
+      "score15": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "score14": {
+        "count": 34,
+        "rate": 0.136
+      },
+      "score12Rate": 0.576,
+      "scoreBelow8Rate": 0.036,
+      "withdrawalZeroRate": 0.836,
+      "meanStats": {
+        "experience": 42.016,
+        "enrollment": 35.42,
+        "satisfaction": 32.884,
+        "accounting": 17.652,
+        "withdrawal": 0.364,
+        "difference": 35.056
+      },
+      "milestones": {
+        "experience50": 0.164,
+        "difference40": 0.232,
+        "difference48": 0.012,
+        "satisfaction25": 0.916,
+        "satisfaction35": 0.416
+      },
+      "activity": {
+        "deckSize": 11.124,
+        "acquisitions": 10.336,
+        "deleted": 4.212,
+        "drawn": 36.264,
+        "placed": 31.188,
+        "applied": 31.188,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "6": 2,
+        "7": 2,
+        "8": 2,
+        "9": 10,
+        "10": 36,
+        "11": 49,
+        "12": 56,
+        "13": 54,
+        "14": 28,
+        "15": 5,
+        "16": 1,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 41.666666666666664,
+        "expectedAttempts95": [
+          19.469345106403555,
+          90.54176600470754
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.21567117403507274,
+            "interval95": [
+              0.10511558438326751,
+              0.40979684068487254
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.7031815565015263,
+            "interval95": [
+              0.4261019823502049,
+              0.9283843975651833
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.9118988115991433,
+            "interval95": [
+              0.6706410653376355,
+              0.9948712054878983
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.136,
+          "meanPlaced": 0.304,
+          "meanDeleted": 0,
+          "meanApplied": 0.304,
+          "meanPlacedByStaff": {
+            "leader": 0.152,
+            "teacher": 0.096,
+            "staff": 0.056
+          }
+        },
+        "10": {
+          "acquiredRate": 0.08,
+          "meanPlaced": 0.16,
+          "meanDeleted": 0,
+          "meanApplied": 0.16,
+          "meanPlacedByStaff": {
+            "leader": 0.068,
+            "teacher": 0.092,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.096,
+          "meanPlaced": 0.232,
+          "meanDeleted": 0,
+          "meanApplied": 0.232,
+          "meanPlacedByStaff": {
+            "leader": 0.068,
+            "teacher": 0.164,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.792,
+          "meanDeleted": 0,
+          "meanApplied": 4.792,
+          "meanPlacedByStaff": {
+            "leader": 0.86,
+            "teacher": 1.6,
+            "staff": 2.332
+          }
+        },
+        "15": {
+          "acquiredRate": 0.056,
+          "meanPlaced": 0.176,
+          "meanDeleted": 0,
+          "meanApplied": 0.176,
+          "meanPlacedByStaff": {
+            "leader": 0.024,
+            "teacher": 0.036,
+            "staff": 0.116
+          }
+        },
+        "16": {
+          "acquiredRate": 0.064,
+          "meanPlaced": 0.156,
+          "meanDeleted": 0,
+          "meanApplied": 0.156,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.156
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.544,
+          "meanDeleted": 0,
+          "meanApplied": 4.544,
+          "meanPlacedByStaff": {
+            "leader": 0.836,
+            "teacher": 2.372,
+            "staff": 1.336
+          }
+        },
+        "40": {
+          "acquiredRate": 0.312,
+          "meanPlaced": 0.672,
+          "meanDeleted": 0,
+          "meanApplied": 0.672,
+          "meanPlacedByStaff": {
+            "leader": 0.672,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.444,
+          "meanPlaced": 1.096,
+          "meanDeleted": 0,
+          "meanApplied": 1.096,
+          "meanPlacedByStaff": {
+            "leader": 0.768,
+            "teacher": 0.124,
+            "staff": 0.204
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": 41.666666666666664,
+        "expectedResets": 416.6666666666667,
+        "expectedStarts": 458.3333333333333,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": 41.666666666666664
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": 45.833333333333336
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": 62.5
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": 83.33333333333333
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 90.54176600470754,
+          "expectedResets": 905.4176600470754,
+          "expectedStarts": 995.9594260517829,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 90.54176600470754
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 99.59594260517831
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 135.8126490070613
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 181.08353200941508
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 19.469345106403555,
+          "expectedResets": 194.69345106403554,
+          "expectedStarts": 214.1627961704391,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 19.469345106403555
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 21.416279617043912
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 29.204017659605334
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 38.93869021280711
+            }
+          ]
+        }
+      ],
+      "examples15": [
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:8",
+          "actualSeed": "pro-reroll-v1-confirmation-reset2:8",
+          "score": 15,
+          "stats": {
+            "experience": 59,
+            "enrollment": 41,
+            "satisfaction": 36,
+            "accounting": 20,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 6,
+              "enrollment": 3,
+              "satisfaction": 13,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 15,
+              "enrollment": 13,
+              "satisfaction": 21,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 24,
+              "enrollment": 19,
+              "satisfaction": 22,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 37,
+              "enrollment": 26,
+              "satisfaction": 30,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 49,
+              "enrollment": 32,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 59,
+              "enrollment": 41,
+              "satisfaction": 36,
+              "accounting": 20
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:8",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:8",
+                "cards": [
+                  "16",
+                  "8",
+                  "7",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:8",
+                "cards": [
+                  "7",
+                  "14",
+                  "6",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 3,
+            "initialCards": [
+              "7",
+              "13",
+              "17",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:31",
+          "actualSeed": "pro-reroll-v1-confirmation-reset10:31",
+          "score": 15,
+          "stats": {
+            "experience": 56,
+            "enrollment": 40,
+            "satisfaction": 36,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 4,
+              "satisfaction": 8,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 6,
+              "satisfaction": 13,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 10,
+              "satisfaction": 18,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 32,
+              "enrollment": 12,
+              "satisfaction": 23,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 41,
+              "enrollment": 16,
+              "satisfaction": 32,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 46,
+              "enrollment": 26,
+              "satisfaction": 33,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 56,
+              "enrollment": 40,
+              "satisfaction": 36,
+              "accounting": 15
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:31",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:31",
+                "cards": [
+                  "9",
+                  "13",
+                  "8",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:31",
+                "cards": [
+                  "13",
+                  "12",
+                  "10",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:31",
+                "cards": [
+                  "9",
+                  "16",
+                  "6",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:31",
+                "cards": [
+                  "12",
+                  "15",
+                  "6",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:31",
+                "cards": [
+                  "13",
+                  "10",
+                  "15",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:31",
+                "cards": [
+                  "14",
+                  "13",
+                  "9",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:31",
+                "cards": [
+                  "7",
+                  "11",
+                  "17",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:31",
+                "cards": [
+                  "13",
+                  "11",
+                  "10",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:31",
+                "cards": [
+                  "6",
+                  "10",
+                  "11",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:31",
+                "cards": [
+                  "7",
+                  "14",
+                  "16",
+                  "17"
+                ]
+              }
+            ],
+            "attempts": 11,
+            "initialCards": [
+              "6",
+              "9",
+              "17",
+              "13"
+            ],
+            "chosenIndices": [
+              2,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:37",
+          "actualSeed": "pro-reroll-v1-confirmation-reset3:37",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 40,
+            "satisfaction": 39,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 6,
+              "enrollment": 6,
+              "satisfaction": 5,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 10,
+              "enrollment": 9,
+              "satisfaction": 9,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 15,
+              "enrollment": 14,
+              "satisfaction": 10,
+              "accounting": 15
+            },
+            "4": {
+              "experience": 25,
+              "enrollment": 21,
+              "satisfaction": 15,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 33,
+              "enrollment": 25,
+              "satisfaction": 25,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 32,
+              "satisfaction": 32,
+              "accounting": 17
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 40,
+              "satisfaction": 39,
+              "accounting": 16
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:37",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:37",
+                "cards": [
+                  "17",
+                  "7",
+                  "14",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:37",
+                "cards": [
+                  "17",
+                  "10",
+                  "12",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:37",
+                "cards": [
+                  "13",
+                  "16",
+                  "7",
+                  "10"
+                ]
+              }
+            ],
+            "attempts": 4,
+            "initialCards": [
+              "13",
+              "6",
+              "17",
+              "10"
+            ],
+            "chosenIndices": [
+              0,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "43",
+              "cardName": "テレビCM放映"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:53",
+          "actualSeed": "pro-reroll-v1-confirmation-reset14:53",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 39,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 4,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 11,
+              "satisfaction": 12,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 19,
+              "enrollment": 14,
+              "satisfaction": 13,
+              "accounting": 14
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 23,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 32,
+              "satisfaction": 27,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 33,
+              "satisfaction": 31,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 39,
+              "accounting": 16
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:53",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:53",
+                "cards": [
+                  "10",
+                  "15",
+                  "11",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:53",
+                "cards": [
+                  "9",
+                  "6",
+                  "17",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:53",
+                "cards": [
+                  "6",
+                  "10",
+                  "14",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:53",
+                "cards": [
+                  "15",
+                  "11",
+                  "17",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:53",
+                "cards": [
+                  "17",
+                  "6",
+                  "9",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:53",
+                "cards": [
+                  "8",
+                  "7",
+                  "9",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:53",
+                "cards": [
+                  "6",
+                  "14",
+                  "15",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:53",
+                "cards": [
+                  "15",
+                  "10",
+                  "17",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset10:53",
+                "cards": [
+                  "15",
+                  "9",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset11:53",
+                "cards": [
+                  "7",
+                  "8",
+                  "11",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset12:53",
+                "cards": [
+                  "6",
+                  "9",
+                  "11",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset13:53",
+                "cards": [
+                  "12",
+                  "6",
+                  "13",
+                  "9"
+                ]
+              }
+            ],
+            "attempts": 15,
+            "initialCards": [
+              "15",
+              "17",
+              "13",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "35",
+              "cardName": "季節のデコレーション"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            }
+          ]
+        }
+      ]
+    },
+    "pair-13-17-delete-adaptive": {
+      "config": {
+        "id": "pair-13-17-delete-adaptive",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "adaptive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "n": 250,
+      "mean": 11.46,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -3,
+      "max": 16,
+      "score15": {
+        "count": 5,
+        "rate": 0.02,
+        "interval95": [
+          0.008572197944651562,
+          0.045956295414986886
+        ]
+      },
+      "score14": {
+        "count": 33,
+        "rate": 0.132
+      },
+      "score12Rate": 0.552,
+      "scoreBelow8Rate": 0.048,
+      "withdrawalZeroRate": 0.792,
+      "meanStats": {
+        "experience": 41.384,
+        "enrollment": 35.54,
+        "satisfaction": 32.692,
+        "accounting": 16.936,
+        "withdrawal": 0.424,
+        "difference": 35.116
+      },
+      "milestones": {
+        "experience50": 0.136,
+        "difference40": 0.236,
+        "difference48": 0.012,
+        "satisfaction25": 0.928,
+        "satisfaction35": 0.392
+      },
+      "activity": {
+        "deckSize": 10.996,
+        "acquisitions": 10.292,
+        "deleted": 4.296,
+        "drawn": 36.612,
+        "placed": 31.316,
+        "applied": 31.316,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "5": 2,
+        "6": 2,
+        "7": 3,
+        "8": 1,
+        "9": 8,
+        "10": 33,
+        "11": 58,
+        "12": 54,
+        "13": 51,
+        "14": 28,
+        "15": 4,
+        "16": 1,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 50,
+        "expectedAttempts95": [
+          21.759804417870644,
+          116.65619558212937
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.1829271931124533,
+            "interval95": [
+              0.0824897299652193,
+              0.3752838962817614
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.6358303199128832,
+            "interval95": [
+              0.34978846338342706,
+              0.904848967352425
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.8673804441052471,
+            "interval95": [
+              0.5772249576507149,
+              0.9909462809861002
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "audit": {
+        "n": 250,
+        "distinctAcceptedSeeds": 250,
+        "reroll": true,
+        "allRejectedFailCondition": true,
+        "allAcceptedMeetCondition": true,
+        "initialRefreshUsed": 0
+      },
+      "initialRefreshMean": 0,
+      "starts": {
+        "theoretical": {
+          "accepted": 45,
+          "total": 495,
+          "probability": 0.09090909090909091,
+          "expectedResets": 10
+        },
+        "totalStarts": 2815,
+        "resets": 2565,
+        "observedAcceptance": 0.08880994671403197,
+        "meanResets": 10.26,
+        "medianResets": 7.5,
+        "maxResets": 62
+      },
+      "pickedPairs": {
+        "13-17": 250
+      },
+      "cardActivity": {
+        "7": {
+          "acquiredRate": 0.152,
+          "meanPlaced": 0.328,
+          "meanDeleted": 0,
+          "meanApplied": 0.328,
+          "meanPlacedByStaff": {
+            "leader": 0.164,
+            "teacher": 0.096,
+            "staff": 0.068
+          }
+        },
+        "10": {
+          "acquiredRate": 0.08,
+          "meanPlaced": 0.156,
+          "meanDeleted": 0.004,
+          "meanApplied": 0.156,
+          "meanPlacedByStaff": {
+            "leader": 0.072,
+            "teacher": 0.084,
+            "staff": 0
+          }
+        },
+        "11": {
+          "acquiredRate": 0.084,
+          "meanPlaced": 0.168,
+          "meanDeleted": 0.012,
+          "meanApplied": 0.168,
+          "meanPlacedByStaff": {
+            "leader": 0.052,
+            "teacher": 0.116,
+            "staff": 0
+          }
+        },
+        "13": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.568,
+          "meanDeleted": 0.092,
+          "meanApplied": 4.568,
+          "meanPlacedByStaff": {
+            "leader": 0.704,
+            "teacher": 1.5,
+            "staff": 2.364
+          }
+        },
+        "15": {
+          "acquiredRate": 0.056,
+          "meanPlaced": 0.108,
+          "meanDeleted": 0.028,
+          "meanApplied": 0.108,
+          "meanPlacedByStaff": {
+            "leader": 0.024,
+            "teacher": 0.028,
+            "staff": 0.056
+          }
+        },
+        "16": {
+          "acquiredRate": 0.064,
+          "meanPlaced": 0.092,
+          "meanDeleted": 0.036,
+          "meanApplied": 0.092,
+          "meanPlacedByStaff": {
+            "leader": 0,
+            "teacher": 0,
+            "staff": 0.092
+          }
+        },
+        "17": {
+          "acquiredRate": 1,
+          "meanPlaced": 4.328,
+          "meanDeleted": 0.064,
+          "meanApplied": 4.328,
+          "meanPlacedByStaff": {
+            "leader": 0.792,
+            "teacher": 2.244,
+            "staff": 1.292
+          }
+        },
+        "40": {
+          "acquiredRate": 0.328,
+          "meanPlaced": 0.712,
+          "meanDeleted": 0.008,
+          "meanApplied": 0.712,
+          "meanPlacedByStaff": {
+            "leader": 0.712,
+            "teacher": 0,
+            "staff": 0
+          }
+        },
+        "49": {
+          "acquiredRate": 0.476,
+          "meanPlaced": 1.224,
+          "meanDeleted": 0.012,
+          "meanApplied": 1.224,
+          "meanPlacedByStaff": {
+            "leader": 0.888,
+            "teacher": 0.128,
+            "staff": 0.208
+          }
+        }
+      },
+      "effort": {
+        "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+        "expectedCompletedGames": 50,
+        "expectedResets": 500,
+        "expectedStarts": 550,
+        "equivalentFullGameDurations": [
+          {
+            "resetToFullGame": 0,
+            "value": 50
+          },
+          {
+            "resetToFullGame": 0.01,
+            "value": 55
+          },
+          {
+            "resetToFullGame": 0.05,
+            "value": 75
+          },
+          {
+            "resetToFullGame": 0.1,
+            "value": 100
+          }
+        ]
+      },
+      "effort95": [
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 116.65619558212937,
+          "expectedResets": 1166.5619558212936,
+          "expectedStarts": 1283.218151403423,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 116.65619558212937
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 128.32181514034232
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 174.98429337319405
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 233.31239116425874
+            }
+          ]
+        },
+        {
+          "assumption": "independent starts; initial-only reset; fixed reset/full-game duration ratio; unchanged continuation policy",
+          "expectedCompletedGames": 21.759804417870644,
+          "expectedResets": 217.59804417870643,
+          "expectedStarts": 239.35784859657707,
+          "equivalentFullGameDurations": [
+            {
+              "resetToFullGame": 0,
+              "value": 21.759804417870644
+            },
+            {
+              "resetToFullGame": 0.01,
+              "value": 23.93578485965771
+            },
+            {
+              "resetToFullGame": 0.05,
+              "value": 32.63970662680596
+            },
+            {
+              "resetToFullGame": 0.1,
+              "value": 43.51960883574129
+            }
+          ]
+        }
+      ],
+      "examples15": [
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:8",
+          "actualSeed": "pro-reroll-v1-confirmation-reset2:8",
+          "score": 15,
+          "stats": {
+            "experience": 59,
+            "enrollment": 41,
+            "satisfaction": 36,
+            "accounting": 20,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 6,
+              "enrollment": 3,
+              "satisfaction": 13,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 15,
+              "enrollment": 13,
+              "satisfaction": 21,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 24,
+              "enrollment": 19,
+              "satisfaction": 22,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 37,
+              "enrollment": 26,
+              "satisfaction": 30,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 49,
+              "enrollment": 32,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 59,
+              "enrollment": 41,
+              "satisfaction": 36,
+              "accounting": 20
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:8",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:8",
+                "cards": [
+                  "16",
+                  "8",
+                  "7",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:8",
+                "cards": [
+                  "7",
+                  "14",
+                  "6",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 3,
+            "initialCards": [
+              "7",
+              "13",
+              "17",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:31",
+          "actualSeed": "pro-reroll-v1-confirmation-reset10:31",
+          "score": 15,
+          "stats": {
+            "experience": 56,
+            "enrollment": 40,
+            "satisfaction": 36,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 4,
+              "satisfaction": 8,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 6,
+              "satisfaction": 13,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 10,
+              "satisfaction": 18,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 32,
+              "enrollment": 12,
+              "satisfaction": 23,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 41,
+              "enrollment": 16,
+              "satisfaction": 32,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 46,
+              "enrollment": 26,
+              "satisfaction": 33,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 56,
+              "enrollment": 40,
+              "satisfaction": 36,
+              "accounting": 15
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:31",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:31",
+                "cards": [
+                  "9",
+                  "13",
+                  "8",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:31",
+                "cards": [
+                  "13",
+                  "12",
+                  "10",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:31",
+                "cards": [
+                  "9",
+                  "16",
+                  "6",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:31",
+                "cards": [
+                  "12",
+                  "15",
+                  "6",
+                  "9"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:31",
+                "cards": [
+                  "13",
+                  "10",
+                  "15",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:31",
+                "cards": [
+                  "14",
+                  "13",
+                  "9",
+                  "15"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:31",
+                "cards": [
+                  "7",
+                  "11",
+                  "17",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:31",
+                "cards": [
+                  "13",
+                  "11",
+                  "10",
+                  "6"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:31",
+                "cards": [
+                  "6",
+                  "10",
+                  "11",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:31",
+                "cards": [
+                  "7",
+                  "14",
+                  "16",
+                  "17"
+                ]
+              }
+            ],
+            "attempts": 11,
+            "initialCards": [
+              "6",
+              "9",
+              "17",
+              "13"
+            ],
+            "chosenIndices": [
+              2,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:53",
+          "actualSeed": "pro-reroll-v1-confirmation-reset14:53",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 39,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 4,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 11,
+              "satisfaction": 12,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 19,
+              "enrollment": 14,
+              "satisfaction": 13,
+              "accounting": 14
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 23,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 32,
+              "satisfaction": 27,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 33,
+              "satisfaction": 31,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 39,
+              "accounting": 16
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:53",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:53",
+                "cards": [
+                  "10",
+                  "15",
+                  "11",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "13"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:53",
+                "cards": [
+                  "9",
+                  "6",
+                  "17",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset3:53",
+                "cards": [
+                  "6",
+                  "10",
+                  "14",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset4:53",
+                "cards": [
+                  "15",
+                  "11",
+                  "17",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset5:53",
+                "cards": [
+                  "17",
+                  "6",
+                  "9",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset6:53",
+                "cards": [
+                  "8",
+                  "7",
+                  "9",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset7:53",
+                "cards": [
+                  "14",
+                  "6",
+                  "15",
+                  "10"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset8:53",
+                "cards": [
+                  "6",
+                  "14",
+                  "15",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset9:53",
+                "cards": [
+                  "15",
+                  "10",
+                  "17",
+                  "7"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset10:53",
+                "cards": [
+                  "15",
+                  "9",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset11:53",
+                "cards": [
+                  "7",
+                  "8",
+                  "11",
+                  "16"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset12:53",
+                "cards": [
+                  "6",
+                  "9",
+                  "11",
+                  "12"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset13:53",
+                "cards": [
+                  "12",
+                  "6",
+                  "13",
+                  "9"
+                ]
+              }
+            ],
+            "attempts": 15,
+            "initialCards": [
+              "15",
+              "17",
+              "13",
+              "9"
+            ],
+            "chosenIndices": [
+              1,
+              2
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "35",
+              "cardName": "季節のデコレーション"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            }
+          ]
+        },
+        {
+          "sessionSeed": "pro-reroll-v1-confirmation:57",
+          "actualSeed": "pro-reroll-v1-confirmation-reset3:57",
+          "score": 16,
+          "stats": {
+            "experience": 50,
+            "enrollment": 50,
+            "satisfaction": 41,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 50
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 6,
+              "satisfaction": 9,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 19,
+              "enrollment": 8,
+              "satisfaction": 14,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 27,
+              "enrollment": 12,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "4": {
+              "experience": 37,
+              "enrollment": 21,
+              "satisfaction": 25,
+              "accounting": 16
+            },
+            "5": {
+              "experience": 47,
+              "enrollment": 30,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 36,
+              "satisfaction": 34,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 50,
+              "satisfaction": 41,
+              "accounting": 18
+            }
+          },
+          "initial": {
+            "sessionSeed": "pro-reroll-v1-confirmation:57",
+            "rejectedStarts": [
+              {
+                "seed": "pro-reroll-v1-confirmation:57",
+                "cards": [
+                  "9",
+                  "12",
+                  "10",
+                  "17"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset1:57",
+                "cards": [
+                  "8",
+                  "16",
+                  "12",
+                  "14"
+                ]
+              },
+              {
+                "seed": "pro-reroll-v1-confirmation-reset2:57",
+                "cards": [
+                  "8",
+                  "9",
+                  "16",
+                  "11"
+                ]
+              }
+            ],
+            "attempts": 4,
+            "initialCards": [
+              "7",
+              "17",
+              "9",
+              "13"
+            ],
+            "chosenIndices": [
+              1,
+              3
+            ],
+            "initialRefreshUsed": 0
+          },
+          "deck": [
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "comparisons": {
+    "pair-13-17-to-pair-13-17-acq-median": {
+      "id": "pair-13-17-to-pair-13-17-acq-median",
+      "before": "pair-13-17",
+      "after": "pair-13-17-acq-median",
+      "n": 250,
+      "meanDifference": -0.108,
+      "meanDifference95": [
+        -0.392,
+        0.2
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": -0.016,
+      "score15RateDifference95": [
+        -0.036,
+        0
+      ],
+      "newly15": 1,
+      "lost15": 5,
+      "firstOfferMismatches": 0,
+      "breakEvenResetRatioPointEstimate": null,
+      "afterBetterFor": "none_nonnegative"
+    },
+    "pair-13-17-to-pair-13-17-place-myopic": {
+      "id": "pair-13-17-to-pair-13-17-place-myopic",
+      "before": "pair-13-17",
+      "after": "pair-13-17-place-myopic",
+      "n": 250,
+      "meanDifference": 0.008,
+      "meanDifference95": [
+        -0.368,
+        0.384
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": -0.004,
+      "score15RateDifference95": [
+        -0.024,
+        0.016
+      ],
+      "newly15": 3,
+      "lost15": 4,
+      "firstOfferMismatches": 0,
+      "breakEvenResetRatioPointEstimate": null,
+      "afterBetterFor": "none_nonnegative"
+    },
+    "pair-13-17-to-pair-13-17-delete-off": {
+      "id": "pair-13-17-to-pair-13-17-delete-off",
+      "before": "pair-13-17",
+      "after": "pair-13-17-delete-off",
+      "n": 250,
+      "meanDifference": -2.32,
+      "meanDifference95": [
+        -2.8,
+        -1.872
+      ],
+      "medianDifference": -2,
+      "medianDifference95": [
+        -3,
+        -1
+      ],
+      "score15RateDifference": -0.02,
+      "score15RateDifference95": [
+        -0.04,
+        -0.004
+      ],
+      "newly15": 0,
+      "lost15": 5,
+      "firstOfferMismatches": 0,
+      "breakEvenResetRatioPointEstimate": null,
+      "afterBetterFor": null
+    },
+    "pair-13-17-to-pair-13-17-delete-basic": {
+      "id": "pair-13-17-to-pair-13-17-delete-basic",
+      "before": "pair-13-17",
+      "after": "pair-13-17-delete-basic",
+      "n": 250,
+      "meanDifference": 0.16,
+      "meanDifference95": [
+        -0.072,
+        0.396
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        1
+      ],
+      "score15RateDifference": 0.004,
+      "score15RateDifference95": [
+        0,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 0,
+      "firstOfferMismatches": 0,
+      "breakEvenResetRatioPointEstimate": null,
+      "afterBetterFor": "all_nonnegative"
+    },
+    "pair-13-17-to-pair-13-17-delete-adaptive": {
+      "id": "pair-13-17-to-pair-13-17-delete-adaptive",
+      "before": "pair-13-17",
+      "after": "pair-13-17-delete-adaptive",
+      "n": 250,
+      "meanDifference": 0.088,
+      "meanDifference95": [
+        -0.072,
+        0.3
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -0.5,
+        0.5
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        0,
+        0
+      ],
+      "newly15": 0,
+      "lost15": 0,
+      "firstOfferMismatches": 0,
+      "breakEvenResetRatioPointEstimate": null,
+      "afterBetterFor": "all_nonnegative"
+    }
+  },
+  "files": [
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-batch0.json",
+      "sha256": "15a0b1b76aa0569019d906027f2778541e7a81afb5068f3ce41dfaff7b99739d",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    },
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-acq-median-batch0.json",
+      "sha256": "5b48ccd62b259b868257eac666437953d511d188cdefd49bf1c94c962627ea64",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17-acq-median",
+        "acquisition": "median",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    },
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-place-myopic-batch0.json",
+      "sha256": "cdc5341c0b36e2ecac057b1f1864d1a196aac5ee8a25dadfcd1c20ad5137e4f4",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17-place-myopic",
+        "acquisition": "engine",
+        "placement": "myopic",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    },
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-delete-off-batch0.json",
+      "sha256": "74900d90619f7b6e9c27ae69c9d9ff27ec876734a46ad2694ed9a5abaa5d0647",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17-delete-off",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "off",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    },
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-delete-basic-batch0.json",
+      "sha256": "5313bf0c478291d8959db14cd8db32e5c134b4d09c286249a83cbec15fb021b3",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17-delete-basic",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "basic",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    },
+    {
+      "file": "solver/local-runs/pro-reroll/confirmation/pair-13-17-delete-adaptive-batch0.json",
+      "sha256": "76b0fb21fa2684c9a4a0d17cb25cfa3ed6961dda3aed992eb58385cc512ef105",
+      "episodes": 250,
+      "episodeOffset": 0,
+      "seed": "pro-reroll-v1-confirmation",
+      "research": {
+        "id": "pair-13-17-delete-adaptive",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "adaptive",
+        "objective": "engine",
+        "initial": {
+          "pairs": [
+            [
+              13,
+              17
+            ]
+          ]
+        }
+      },
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d",
+        "gitCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+        "workingTreeDirty": true
+      }
+    }
+  ]
+}

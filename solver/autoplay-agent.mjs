@@ -3171,14 +3171,34 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 }
                 : null;
             episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
-            game.gameState.reset(diff, { seed: `${seedBase}:${episode + (episodeOffset || 0)}`, source: 'autoplay', strategy: strategyPolicy });
+            const sessionSeed = `${seedBase}:${episode + (episodeOffset || 0)}`;
+            const rejectedStarts=[];
+            let initialDecision=null,initialCandidatesForRule=null;
+            // タイトルへ戻って開始し直す。失敗した候補やRNG状態を次の判断へ渡さない。
+            for(let attempt=0;;attempt++) {
+                if(attempt>=10000)throw new Error('初期ペア条件が10000開始で成立しません');
+                const actualSeed=attempt?`${seedBase}-reset${attempt}:${episode + (episodeOffset || 0)}`:sessionSeed;
+                game.gameState.reset(diff, { seed: actualSeed, source: 'autoplay', strategy: strategyPolicy });
+                game.cardManager.initTrainingPool();
+                if(!research?.initial)break;
+                game.cardManager.getBasicCards().forEach(card=>game.gameState.addToDeck({...card}));
+                initialCandidatesForRule=game.cardManager.drawTrainingCards('R',4);
+                initialDecision=researchPolicy.initial(publicObservation(initialCandidatesForRule,{pickCount:2}),research.initial,research.acquisition==='control'?'engine':research.acquisition);
+                if(initialDecision.accept)break;
+                rejectedStarts.push({seed:actualSeed,cards:initialCandidatesForRule.map(c=>c.cardNo)});
+            }
             game.gameState.startRecording({ cardVersion: game.cardManager.dataVersion, rankVersion: game.cardManager.rankVersion,
                 catalog: game.cardManager.allCards, provenance, replacement,
                 strategy: acquisitionModel ? `formula:${acquisitionModel}:${acquisitionAblation || 'full'}@${strategyPolicy}` : strategyPolicy,
                 acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
                 research,
                 source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null });
-            game.cardManager.initTrainingPool();
+            if(research?.initial) {
+                game.gameState.playRecord.metadata.reroll={sessionSeed,rejectedStarts,attempts:rejectedStarts.length+1,
+                    initialCards:initialCandidatesForRule.map(c=>c.cardNo),chosenIndices:initialDecision.chosenIndices,initialRefreshUsed:0};
+                game.gameState.record('offer',{rarity:'R',cards:initialCandidatesForRule.map(c=>({...c}))});
+                game.gameState.record('research-initial-decision',{rule:research.initial,observation:publicObservation(initialCandidatesForRule,{pickCount:2}),decision:initialDecision});
+            }
             game.gameState.phase = 'start';
             game.gameState.turn = 0;
             game.gameState.currentTrainingCards = null;
@@ -3213,17 +3233,18 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             } else {
             // 初期デッキ
             const basicCards = game.cardManager.getBasicCards();
-            basicCards.forEach((card) => {
+            if(!research?.initial)basicCards.forEach((card) => {
                 game.gameState.addToDeck({ ...card });
             });
+            else game.gameState.getOwnedCards().forEach(card=>game.gameState.record('acquire',{card:{...card},restoredInitialBasic:true}));
             game.gameState.recordStartTime();
 
             // 初回研修（R4枚から2枚）
-            let initialCandidates = game.cardManager.drawTrainingCards('R', 4);
+            let initialCandidates = initialCandidatesForRule || game.cardManager.drawTrainingCards('R', 4);
             const initialCandidatesBeforeRefresh = [...initialCandidates];
             decisionTelemetry.training.rounds += 1;
             decisionTelemetry.training.candidateCountTotal += initialCandidates.length;
-            initialCandidates = maybeRefreshTrainingCandidates({
+            if(!research?.initial)initialCandidates = maybeRefreshTrainingCandidates({
                 rarity: 'R',
                 candidates: initialCandidates,
                 drawCount: 4,
@@ -3231,7 +3252,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 phaseTag: 'initial'
             });
             decisionTelemetry.training.candidateCountTotal += initialCandidates.length;
-            const initialPicks = pickTrainingCards(initialCandidates, 2);
+            const initialPicks = initialDecision ? initialDecision.chosenIndices.map(i=>initialCandidates[i]) : pickTrainingCards(initialCandidates, 2);
             initialPicks.forEach((card) => {
                 game.gameState.addToDeck({ ...card });
             });
@@ -3387,7 +3408,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
             const score = game.scoreManager.calculateScore(game.gameState);
             game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
-            playRecords.push(game.gameState.exportPlayRecord());
+            const exportedRecord=game.gameState.exportPlayRecord();
+            if(research?.initial)for(const event of exportedRecord.events) {
+                // 同一版のカタログ・ランク表はハッシュで追跡し、各判断に巨大な複製を残さない。
+                if(event.observation){delete event.observation.catalog;delete event.observation.rankTable;}
+            }
+            playRecords.push(exportedRecord);
             const displayScore = Number(score.displayScore ?? score.points ?? 0);
             const scorePoints = Number(score.points ?? 0);
             const thresholdMetric = diff === 'pro' ? scorePoints : displayScore;
@@ -3724,6 +3750,7 @@ async function main() {
     if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine'].includes(research.acquisition) ||
         !['control','median','ceiling','engine','myopic'].includes(research.placement) ||
         !['control','adaptive','basic','aggressive','off'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
+    if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile)throw new Error('局面再試行とリセマラは同時指定できません');}
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
     const initialObservation = decision?.observation || decision;
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
