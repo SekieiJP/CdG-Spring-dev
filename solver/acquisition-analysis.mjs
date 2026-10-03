@@ -1,5 +1,6 @@
 /** 状況別の取得評価と、同seedのS率・中央値比較。ゲームの判断・操作は行わない。 */
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { recordsFrom } from './card-evaluation.mjs';
@@ -66,7 +67,9 @@ export function summarize(records,{difficulty='fresh',targetRank=difficulty==='p
             if(score(previous)!==score(record)||isS(previous)!==isS(record))throw new Error(`同一条件・seedの結果が競合しています: ${meta.seed}`);
             continue;
         }
-        group.seen.set(meta.seed,record);group.records.push(record);
+        // 比較にはseed・得点・到達だけが必要。詳細なイベントを全ゲーム分保持しない。
+        const outcome={metadata:{seed:meta.seed},result:{score:{displayScore:score(record),rank:{grade:record.result.score.rank?.grade}}}};
+        group.seen.set(meta.seed,outcome);group.records.push(outcome);
         let decisionIndex=0;
         for(const event of record.events){
             if(event.type!=='acquisition-decision')continue;
@@ -108,7 +111,8 @@ export function summarize(records,{difficulty='fresh',targetRank=difficulty==='p
         candidates.sort((a,b)=>mean(b.records.map(isS))-mean(a.records.map(isS))||
             quantile(b.records.map(score),.5)-quantile(a.records.map(score),.5));
         const sameContinuation=candidates.filter(other=>other.continuation===group.continuation&&other.metadata.refreshPolicy===group.metadata.refreshPolicy&&other.metadata.refreshModel===group.metadata.refreshModel);
-        const reference=sameContinuation[0]||candidates[0]||(group.metadata.source==='counterfactual'?compatible[0]:null);
+        const fullModel=group.metadata.acquisitionAblation?compatible.find(other=>other.model===group.model&&!other.metadata.acquisitionAblation&&other.continuation===group.continuation&&other.metadata.refreshPolicy===group.metadata.refreshPolicy&&other.metadata.refreshModel===group.metadata.refreshModel):null;
+        const reference=fullModel||sameContinuation[0]||candidates[0]||(group.metadata.source==='counterfactual'?compatible[0]:null);
         if(!reference||reference===group)continue;
         const comparison=pairedComparison(reference.records,group.records,2000,{targetRank});
         if(comparison)comparisons.push({before:reference.id,after:group.id,scope:reference.continuation===group.continuation&&reference.metadata.refreshPolicy===group.metadata.refreshPolicy&&reference.metadata.refreshModel===group.metadata.refreshModel?'acquisition-only':'full-strategy',...comparison});
@@ -152,7 +156,8 @@ export async function main(args=process.argv.slice(2)){
         const decision=record?.events.filter(e=>e.type==='acquisition-decision')[index];if(!decision)throw new Error('指定した状況がありません');
         await mkdir(resolve(output),{recursive:true});await writeFile(resolve(output,'decision.json'),JSON.stringify(decision,null,2));return;}
     if(!files.length)throw new Error('入力JSONを指定してください');
-    const records=[];for(const file of files)records.push(...recordsFrom(JSON.parse(await readFile(resolve(file),'utf8'))));
+    // 一度に読み込むのは一ファイル。250ゲームずつの入力でも集計値・対応は同一になる。
+    const records=(function*(){for(const file of files)yield* recordsFrom(JSON.parse(readFileSync(resolve(file),'utf8')));})();
     const data=summarize(records,{difficulty});await mkdir(resolve(output),{recursive:true});
     await writeFile(resolve(output,'index.html'),html(data));await writeFile(resolve(output,'summary.json'),JSON.stringify(data,null,2));
     const fields=['group','cardNo','name','turn','bucket','archetype','offers','picked','valueMean','scoreMean','sRate','pickedSRate','pickedScoreMean','deckSizeMean'];

@@ -120,3 +120,18 @@ node solver/acquisition-benchmark.mjs solver/local-runs/pro-assist/example.json 
 - `acquisition-benchmark.mjs`は同じMac上のChromiumで画面寸法を変える測定。iPhone 12 Safari／Android実機の処理時間とは区別する。
 
 生の記録・生成HTML/CSV・測定JSONは`solver/local-runs/`と`solver/local-evaluation/`に保存し、公開配信やGitコミットに含めない。
+
+### 取得以外を揃える比較と大規模実行
+
+`--refresh-policy auto|legacy|public|none`で分析用のリフレッシュ判断を指定する。`auto`は数式PROでpublic、それ以外でlegacy。取得のみを比べる場合は、両方に同じ`--refresh-policy public --refresh-model pro_splus`を指定する。集計は判断の違いを`acquisition-only`／`full-strategy`として区別する。
+
+PROの詳細記録は大きいので、1ファイル250ゲームを推奨する。次の例で同じ1,000seedを漏れなく実行できる。従来取得の対照では`--acquisition-model`を省略し、配置・削除・リフレッシュを同じにする。
+
+```sh
+for batch in 0 1 2 3; do
+  node solver/autoplay-agent.mjs --difficulty pro --episodes 250 --episode-offset "$((batch * 250))" --policies pro_compress --acquisition-model pro_splus --refresh-policy public --refresh-model pro_splus --seed pro-assist-new-study --port 4290 --output "solver/local-runs/pro-assist/study-batch$batch.json" --no-report || break
+done
+node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assist/study-batch*.json --output-dir solver/local-evaluation/pro-assist/study
+```
+
+集計はファイルを順に読み込み、詳細イベントを全ゲーム分保持しない。seedの重複・欠け、コード版、比較条件はレポートの測定条件で確認する。バッチ番号・seed群を変える前に、既存の入力ファイルを混ぜないようにする。

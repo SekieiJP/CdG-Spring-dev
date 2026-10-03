@@ -19,3 +19,9 @@ test('リフレッシュも変更した比較を取得だけの効果として�
     const before=record('dev:0',null,'S',12,{refreshPolicy:'legacy',refreshModel:null}),after=record('dev:0','pro_balanced','S+',14);
     const data=summarize([before,after],{difficulty:'pro'});assert.equal(data.comparisons[0].scope,'full-strategy');
 });
+test('特徴除去は同じモデルの全特徴版と比較し、成功・得点の対応を保つ',()=>{
+    const full=record('dev:0','pro_splus','SS',15),reduced=record('dev:0','pro_splus','S',12,{acquisitionAblation:'engine'});
+    const data=summarize([full,reduced],{difficulty:'pro'});
+    assert.equal(data.comparisons.length,1);assert.equal(data.comparisons[0].before,0);assert.equal(data.comparisons[0].after,1);
+    assert.equal(data.comparisons[0].sRateDifference,-1);assert.equal(data.comparisons[0].medianDifference,-3);
+});
