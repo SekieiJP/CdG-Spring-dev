@@ -51,7 +51,7 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score,cloneState,resolve,enumerateOptions,catalog=[],config={}}) {
     const routeCache=new Map();
-    const weights = mode => RESEARCH_MODES[mode] || RESEARCH_MODES.median;
+    const weights = mode => ({...(RESEARCH_MODES[mode] || RESEARCH_MODES.median),...(config.weights||{})});
     function routes(observation,mode) {
         const target=mode==='median'?14:15,key=JSON.stringify([target,observation.rankTable]);
         if(!routeCache.has(key))routeCache.set(key,targetRoutes(observation.rankTable,target));
@@ -59,10 +59,11 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
     }
     function value(stats,observation,mode='median') {
         const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:mode==='median'?25:35,accounting:18};
-        const goal=score(stats,observation.rankTable);
+        const scoredStats={...stats,accounting:Math.max(0,stats.accounting-(config.safetyBuffer||0))};
+        const goal=score(scoredStats,observation.rankTable);
         const completion=Math.max(0,...routes(observation,mode).map(r=>KEYS.reduce((v,k)=>v*clamp(stats[k]/Math.max(1,r[k])),1)));
-        return KEYS.reduce((sum,k)=>sum+w[k]*(Math.min(stats[k],caps[k])+.05*Math.max(0,stats[k]-caps[k])),0)+
-            goal.smoothPoints*5+goal.points*2+w.route*completion;
+        return (config.statScale??1)*KEYS.reduce((sum,k)=>sum+w[k]*(Math.min(stats[k],caps[k])+.05*Math.max(0,stats[k]-caps[k])),0)+
+            goal.smoothPoints*(config.smoothWeight??5)+goal.points*(config.pointWeight??2)+w.route*completion;
     }
     function forecast(observation,cards,mode) {
         const w=weights(mode);
@@ -73,7 +74,11 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
     }
     function deckValue(observation,cards,mode) {
         const f=forecast(observation,cards,mode),w=weights(mode);
-        return {score:value(f.end,observation,mode)+f.engine*w.engine-f.risk*w.risk,forecast:f};
+        let utility=value(f.end,observation,mode);
+        if(config.sigma>0){const seen=Math.min(1,f.draw/Math.max(1,cards.length)),uses=(observation.totalTurns-observation.turn)*seen;
+            const std=Object.fromEntries(['accounting','satisfaction'].map(k=>[k,Math.sqrt(f.outputs.reduce((s,o)=>s+o.delta[k]**2,0)*uses*(1-seen))*config.sigma]));
+            const nodes=[[-1.7,.08],[-.85,.24],[0,.36],[.85,.24],[1.7,.08]];utility=nodes.reduce((sum,[z,p])=>sum+p*value({...f.end,accounting:Math.max(0,f.end.accounting+z*std.accounting),satisfaction:Math.max(0,f.end.satisfaction+z*std.satisfaction)},observation,mode),0);}
+        return {score:utility+f.engine*w.engine-f.risk*w.risk,forecast:f};
     }
     function acquisition(observation,mode) {
         if(mode==='rollout')return riskPolicy.acquisition(observation);
@@ -81,7 +86,8 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         const n=observation.candidates.length;
         function add(indices) {
             const after=deckValue(observation,[...observation.owned,...indices.map(i=>observation.candidates[i])],mode);
-            choices.push({indices,score:after.score-before.score,forecast:after.forecast.end,
+            const bonus=indices.reduce((sum,i)=>sum+(observation.owned.some(c=>String(c.cardNo)===String(observation.candidates[i].cardNo))?0:(config.cardBonus?.[observation.candidates[i].cardNo]||0)),0)*(observation.totalTurns-observation.turn)/observation.totalTurns;
+            choices.push({indices,score:after.score-before.score+bonus,forecast:after.forecast.end,
                 engineDelta:after.forecast.engine-before.forecast.engine});
         }
         if(observation.pickCount===2)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)add([i,j]);
@@ -103,7 +109,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
         const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
-        const growth=Object.fromEntries(KEYS.map(k=>[k,Math.max(0,future[k]-observation.stats[k])]));
+        const growth=Object.fromEntries(KEYS.map(k=>[k,config.signedGrowth?future[k]-observation.stats[k]:Math.max(0,future[k]-observation.stats[k])]));
         function evaluate(next) {
             const end=Object.fromEntries(KEYS.map(k=>[k,Math.max(0,next.player[k]+growth[k])]));
             end.enrollment=Math.min(end.enrollment,end.experience);
@@ -145,6 +151,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
             for(let index=0;index<owned.length;index++) {
                 const card=owned[index];if(mode==='basic'&&card.rarity!=='N')continue;
                 const after=[...owned];after.splice(index,1);
+                if(config.protectFinance&&card.category==='庶務'&&next.stats.accounting<18&&after.filter(c=>c.category==='庶務').length<2)continue;
                 const evaluated=deckValue(next,after,objective);
                 if(mode!=='basic') {
                     // 最後の回復役を消すとまだ不足する場面では残す。名前・レア度の一律削除を避ける。

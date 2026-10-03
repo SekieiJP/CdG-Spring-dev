@@ -316,7 +316,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             : { aPoints: 7, sClearPoints: 8, aPlusPoints: 7, sPlusPoints: 9 };
 
         // 分析中の純粋な効果文の解析だけをキャッシュする。本体ファイル・ゲーム規則は変更しない。
-        if(research?.planning){const original=game.cardManager.parseEffect,cache=new Map();
+        if(research?.planning||research?.cacheEffects){const original=game.cardManager.parseEffect,cache=new Map();
             game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
         const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
         const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
@@ -2380,6 +2380,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         function maybeRefreshTrainingCandidates({ rarity, candidates, drawCount, pickCount, phaseTag }) {
+            if(research?.refresh&&['seek49','seek13-49'].includes(research.refresh))return refreshForResearch({rarity,candidates,drawCount,phaseTag});
             if(effectiveRefreshPolicy==='none')return candidates;
             if(effectiveRefreshPolicy==='public') return refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag});
             if (!isProStrategy || rarity === 'N') {
@@ -2448,6 +2449,18 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             return current;
         }
 
+        function refreshForResearch({rarity,candidates,drawCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining||phaseTag==='inspiration')return candidates;
+            const owned=game.gameState.getOwnedCards(),target=rarity==='SSR'?49:
+                research.refresh==='seek13-49'&&rarity==='R'&&game.gameState.turn===0?13:null;
+            if(!target||owned.some(c=>Number(c.cardNo)===target)||candidates.some(c=>Number(c.cardNo)===target))return candidates;
+            // 見た恒久除外だけで目標が残るか確認。未公開の研修デッキを参照しない。
+            const removed=game.gameState.playRecord.events.filter(e=>e.type==='refresh').flatMap(e=>e.cards).filter(c=>Number(c.cardNo)===target).length;
+            if(removed>=2)return candidates;
+            const refreshed=game.cardManager.refreshTrainingCards(rarity,candidates,drawCount);if(!refreshed.length)return candidates;
+            game.gameState.trainingRefreshRemaining--;episodeRefreshUsage[phaseTag]++;
+            decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;return refreshed;
+        }
         function publicObservation(cards=[],options={}) {
             return acquisitionAdvisor.createAdvisorObservation(game.gameState,cards,{...options,rankTable:game.scoreManager.rankTable});
         }
@@ -3413,6 +3426,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
             const score = game.scoreManager.calculateScore(game.gameState);
             game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
+            if(research?.progressEvery&&(episode+1)%research.progressEvery===0)console.log('research-progress',episode+1);
             const exportedRecord=game.gameState.exportPlayRecord();
             if(research)for(const event of exportedRecord.events) {
                 // 同一版のカタログ・ランク表はハッシュで追跡し、各判断に巨大な複製を残さない。
