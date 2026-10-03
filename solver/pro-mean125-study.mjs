@@ -18,7 +18,7 @@ async function main(){
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
- const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js'];
+ const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js'];
  const strategyVersion=sha(Buffer.concat(await Promise.all(files.map(file=>readFile(file)))));
  const sources=await Promise.all((await readdir('game/js')).filter(name=>name.endsWith('.js')).sort().map(async name=>name+await readFile(`game/js/${name}`,'utf8')));
  const fingerprints={strategyVersion,codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};

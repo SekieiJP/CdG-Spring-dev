@@ -1,4 +1,5 @@
 import {createRiskPolicy} from './pro-risk-research.js';
+import {createPublicActionKernel} from './pro-public-action-kernel.js';
 import {createLearnedPolicy} from './pro-learned-research.js';
 /** PRO攻略の仮説をブラウザ内で検証する分析用方略。本体の推薦には接続しない。 */
 export const RESEARCH_VERSION = 'pro-human-strategy-v1';
@@ -50,7 +51,9 @@ export function targetRoutes(rankTable, target=15) {
         (KEYS.some(k=>s[k]<r[k])||j<i)));
 }
 
-export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null,valueModel=null}) {
+export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null}) {
+    if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
+    if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
@@ -193,7 +196,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return removed;
     }
-    const baseline={acquisition,placements,deletions,value,forecast,futureRefresh:(...args)=>learnedPolicy.refresh(...args)};
+    const baseline={acquisition,placements,deletions,value,forecast,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8};}};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     return {...baseline,initial,riskPolicy,learnedPolicy};

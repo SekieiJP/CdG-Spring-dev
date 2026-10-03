@@ -1,5 +1,5 @@
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
-export const RISK_VERSION='pro-public-rollout-v2';
+export const RISK_VERSION='pro-public-rollout-v3';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
 function rng(text){let n=2166136261;for(const c of text)n=Math.imul(n^c.charCodeAt(0),16777619);return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
@@ -10,6 +10,7 @@ export function publicDraw(cards,count,world,turn,salt='pro-risk-v1',method='leg
 }
 export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}){
  const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,smooth:.12,salt:'pro-risk-v1',...config.planning};
+ if(cfg.valueHorizon!==undefined&&(!Number.isInteger(cfg.valueHorizon)||cfg.valueHorizon<1||cfg.valueHorizon>8||!baseline.futureValue))throw Error('固定評価までの先読みは1〜8ターン');
  const scoreCache=new Map(),tableKeys=new WeakMap();
  function score(stats,table){if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));const key=tableKeys.get(table)+'|'+KEYS.map(k=>stats[k]).join(',');
   if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
@@ -77,17 +78,18 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   pool.history.push({type:'offer',turn,rarity,cards:candidates});return candidates;
  }
  function chooseFuture(root,state,owned,pool,world,round,rarity,allowSkip=false){
+  const observation=()=>({...observe(root,state,owned,pool.history),refreshRemaining:pool.refreshRemaining});
   let candidates=offer(pool,rarity,world,state.turn,round);if(!candidates.length)return owned;
   if(cfg.futureRefresh&&refreshAdvice&&pool.refreshRemaining>0&&!allowSkip&&
       !(rarity!=='SSR'&&pool.refreshRemaining<2&&state.turn<4)){
    const catalog=pool.available.filter(c=>c.rarity===rarity&&(pool.removed[c.cardNo]||0)<2);
-   const reference=refreshAdvice({...observe(root,state,owned,pool.history),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
-   const current=refreshAdvice({...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip:false}).recommended.score;
+   const reference=refreshAdvice({...observation(),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
+   const current=refreshAdvice({...observation(),candidates,pickCount:1,allowSkip:false}).recommended.score;
    const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))]?.score;
-   const learnedAdvice=cfg.futureRefresh==='learned'?baseline.futureRefresh({...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip:false},rarity,3,1):null;
+   const learnedAdvice=cfg.futureRefresh==='learned'?baseline.futureRefresh({...observation(),candidates,pickCount:1,allowSkip:false},rarity,3,1):null;
    if(learnedAdvice?learnedAdvice.shouldRefresh:current<cutoff){pool.history.push({type:'refresh',turn:state.turn,rarity,cards:candidates});for(const card of candidates)pool.removed[card.cardNo]=(pool.removed[card.cardNo]||0)+1;pool.refreshRemaining--;candidates=offer(pool,rarity,world,state.turn,round+100);}
   }
-  const ob={...observe(root,state,owned,pool.history),candidates,pickCount:1,allowSkip};
+  const ob={...observation(),candidates,pickCount:1,allowSkip};
   const choice=baseline.acquisition(ob,cfg.futureAcquisition||'engine',true).recommended;
   return [...owned,...choice.indices.map(i=>candidates[i])];
  }
@@ -97,7 +99,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   for(const d of decisions){const i=result.findIndex(c=>String(c.cardNo)===String(d.cardNo));if(i>=0)result.splice(i,1);}return result;
  }
  function rollout(root,owned,initialState,phase,world){
-  let state=cloneState(initialState),cards=[...owned];const pool=makePool(root),starting=state.turn;
+  let state=cloneState(initialState),cards=[...owned];const pool=makePool(root),starting=state.turn;let played=0;
   if(phase==='after-action'){
    cards=deleteFuture(root,state,cards,(root.turns[state.turn].deletion||0)+(state.tokens.organize||0));state.tokens.organize=0;state.turn++;
   }else if(phase==='after-meeting'){state.tokens.organize=0;state.turn++;}
@@ -110,6 +112,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    const ob=observe(root,state,cards);
    if(cfg.futurePolicy==='baseline'){const seq=baseline.placements(ob,hand,state,'engine',cfg.futureBeam||64,true);for(const step of seq){const next=transition(state,hand[step.cardIndex],step.slot);if(next)state=next;}}
    else {const best=plan(ob,hand,state)[0];if(best)state=best.state;}
+   if(++played>=cfg.valueHorizon&&state.turn<root.totalTurns-1){const ob={...observe(root,state,cards,pool.history),refreshRemaining:pool.refreshRemaining},leaf=baseline.futureValue(ob,'after-action');return {score:leaf.mean,utility:leaf.mean+(cfg.leafBlend??.002)*leaf.tie,stats:leaf.forecast,estimated:true};}
    if(state.turn<root.totalTurns-1)cards=deleteFuture(root,state,cards,(root.turns[state.turn].deletion||0)+(state.tokens.organize||0));
    state.tokens.organize=0;
   }
@@ -118,7 +121,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  function evaluate(root,owned,state,phase){
   if((phase==='after-action'||phase==='after-meeting')&&state.turn===root.totalTurns-1)return {score:endpointUtility(state.player,root.rankTable),mean:score(state.player,root.rankTable).points,below8:Number(score(state.player,root.rankTable).points<8),forecast:{...state.player}};
   const outcomes=Array.from({length:cfg.worlds},(_,world)=>rollout(root,owned,state,phase,world));
-  return {score:mean(outcomes.map(o=>o.utility)),mean:mean(outcomes.map(o=>o.score)),below8:mean(outcomes.map(o=>Number(o.score<8))),
+  return {score:mean(outcomes.map(o=>o.utility)),mean:mean(outcomes.map(o=>o.score)),below8:outcomes.some(o=>o.estimated)?null:mean(outcomes.map(o=>Number(o.score<8))),estimated:outcomes.some(o=>o.estimated),
    forecast:Object.fromEntries(KEYS.map(k=>[k,mean(outcomes.map(o=>o.stats[k]))]))};
  }
  function acquisition(root){
@@ -128,7 +131,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   if(root.allowSkip)indices.push([]);
   for(const choice of indices){const after=makeState(root);if(root.allowSkip)after.tokens.inspiration=Math.max(0,after.tokens.inspiration-1);choices.push({indices:choice,...evaluate(root,[...root.owned,...choice.map(i=>root.candidates[i])],after,'training')});}
   choices.sort((a,b)=>b.score-a.score||a.indices.length-b.indices.length||String(a.indices).localeCompare(String(b.indices)));
-  return {version:RISK_VERSION,mode:'rollout',worlds:cfg.worlds,evaluations:choices,recommended:choices[0]};
+  return {version:RISK_VERSION,mode:'rollout',worlds:cfg.worlds,valueHorizon:cfg.valueHorizon??null,evaluations:choices,recommended:choices[0]};
  }
  function placements(root,hand,state){
   root=onlyPublic(root);
