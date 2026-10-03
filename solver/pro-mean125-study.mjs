@@ -13,6 +13,8 @@ async function main(){
  if(ids.some(id=>!configs[id]||configs[id].initial))throw Error('有効なリセマラなしの設定を指定');
  const portIndex=process.argv.indexOf('--port-base'),portBase=portIndex>=0?Number(process.argv[portIndex+1]):18480;
  if(!Number.isInteger(portBase)||portBase<1024||portBase>65534)throw Error('安全なport-baseを指定');
+ const workersIndex=process.argv.indexOf('--workers'),workers=workersIndex>=0?Number(process.argv[workersIndex+1]):2;
+ if(!Number.isInteger(workers)||workers<1||workers>2)throw Error('workersは1または2');
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
@@ -36,6 +38,6 @@ async function main(){
   const data=JSON.parse(await readRunBytes(job.output)),sim=data.simulations[0];console.log(`done ${++done}/${jobs.length} ${job.id}/${job.b}: mean=${sim.scoreSummary.mean.toFixed(3)} median=${sim.scoreSummary.p50} minutes=${((Date.now()-started)/60000).toFixed(2)}`);
   await compressRun(job.output);
  }}
- await Promise.all([worker(0),worker(1)]);
+ await Promise.all(Array.from({length:workers},(_,index)=>worker(index)));
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
