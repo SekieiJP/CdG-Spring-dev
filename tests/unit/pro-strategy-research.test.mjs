@@ -265,3 +265,12 @@ test('仮想研修で使ったリフレッシュ回数を後続取得と固定�
  const risk=createRiskPolicy({baseline,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,refreshAdvice,config:{planning:{worlds:1,valueHorizon:2,futureRefresh:true,futurePolicy:'baseline',futureBeam:8}}});
  const ob={...observe([card(25)]),refreshRemaining:1};risk.acquisition(ob);assert.deepEqual(seen,[['acquisition',0],['leaf',0]]);assert.equal(ob.refreshRemaining,1);
 });
+
+test('配置の短い先読みは全期間に使え、再帰・非公開参照をせず、最終配置は実得点を優先する',()=>{
+ const config={fastPublicActions:true,placementRolloutTurns:8,planning:{worlds:2,valueHorizon:1,futurePolicy:'baseline',futureBeam:16,contextSalt:true,drawSampler:'keyed'}},model=tinyModel('count-15');
+ const {state,strategy,observe,tm,clone}=setup(config,model);state.turn=2;Object.assign(state.player,{experience:20,enrollment:10,satisfaction:12,accounting:15});const hand=[card(13),card(49),card(45)];
+ const ob=observe();for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ const original=JSON.stringify(state),next=clone(state);for(const p of strategy.placements(ob,hand,state,'engine'))assert.ok(tm.resolveCardAction(hand[p.cardIndex],p.slot,next).applied);assert.equal(JSON.stringify(state),original);
+ state.turn=7;Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});const finalHand=[card(42),card(25),card(30),card(15)],final=clone(state);for(const p of strategy.placements(observe(),finalHand,state,'engine'))assert.ok(tm.resolveCardAction(finalHand[p.cardIndex],p.slot,final).applied);assert.equal(sm.calculateScore(final).points,16);
+ assert.throws(()=>setup({...config,placementRolloutTurns:1},model),/2〜8/);
+});
