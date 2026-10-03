@@ -8,7 +8,7 @@ import {chromium} from 'playwright';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function main(){
  const [dir='solver/local-runs/pro-mean125/value-v1',idsText='depth3,depth4,monotone3']=process.argv.slice(2),datasetBytes=await readFile(path.join(dir,'dataset.json'));
- const dataset=JSON.parse(datasetBytes),specs={depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240}},ids=idsText.split(',');
+ const dataset=JSON.parse(datasetBytes),specs={depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
  if(ids.some(id=>!specs[id]))throw Error('学習条件の指定が不正');
  if(dataset.counts.trainSeeds<250||dataset.counts.validationSeeds<250)throw Error('各群250シード以上が必要');
  const trainSeeds=new Set(dataset.train.map(r=>r.seed)),validationSeeds=new Set(dataset.validation.map(r=>r.seed));
