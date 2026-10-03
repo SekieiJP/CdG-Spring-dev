@@ -138,7 +138,7 @@ node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assi
 
 ## PROの人向け攻略分析（2026-10-03）
 
-現在の攻略研究は、[人向けレポート](../docs/CdG-PRO-Strategy-Guide.md)と[方法・実験結果](../docs/CdG-PRO-Strategy-Analysis.md)を参照してください。中央値を重視する一発勝負と、15点以上を狙う再挑戦を別の指標で評価します。**新しい傾向比較は各方略・局面で最低250シード**。このREADMEの古い200回の例は今回の攻略判断の根拠に含めません。
+現在の攻略研究は、[人向けレポート](../docs/CdG-PRO-Strategy-Guide.md)と[方法・実験結果](../docs/CdG-PRO-Strategy-Analysis.md)を参照してください。一発勝負は最初の候補からリセットなしの1ゲームで中央値を評価し、15点以上を狙う再挑戦だけ初期リセマラを利用できます。ゲーム内の研修リフレッシュは両カテゴリで利用できます。**新しい傾向比較は各方略・局面で最低250シード**。このREADMEの古い200回の例は今回の攻略判断の根拠に含めません。
 
 ```bash
 node solver/pro-strategy-study.mjs development 250
@@ -155,7 +155,7 @@ node solver/pro-strategy-metrics.mjs solver/local-runs/pro-strategy/validation/m
 
 ### 初期2枚とリセマラの検証
 
-`pro-reroll-study.mjs` は、初回4候補だけでリセットを判定し、受け入れたゲームを最後までプレイします。破棄した開始もシード・候補・回数を保存します。初回は異なるカード名4種のため、同名2枚の開始条件は拒否します。判断と操作はブラウザ、以下の起動・集計は記録管理だけです。
+`pro-reroll-study.mjs` は15点狙いのカテゴリの分析用です。受け入れ後の中央値は補助指標で、一発勝負の評価には使いません。初回4候補だけでリセットを判定し、受け入れたゲームを最後までプレイします。破棄した開始もシード・候補・回数を保存します。初回は異なるカード名4種のため、同名2枚の開始条件は拒否します。判断と操作はブラウザ、以下の起動・集計は記録管理だけです。
 
 ```bash
 node solver/pro-reroll-study.mjs development 250
