@@ -14,13 +14,13 @@ const sm=new ScoreManager(null),savedFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});
 await sm.loadRankData('test');globalThis.fetch=savedFetch;
 const card=n=>cm.allCards.find(c=>Number(c.cardNo)===n);
-function setup(){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
+function setup(config={}){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
  const tm=new TurnManager(state,cm,null);
  const clone=s=>({difficulty:'pro',turn:s.turn,totalTurns:8,player:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,s.player[k]])),tokens:{...s.tokens},
  updateStatus(k,d){const old=this.player[k];this.player[k]=Math.max(0,old+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-old;}});
  const enumerate=(hand,counts)=>hand.flatMap((c,i)=>{const p=cm.parseEffect(c.effect),slots=p.staffRestrictions.length?p.staffRestrictions:['leader','teacher','staff'];
  return slots.filter(slot=>c.effect.includes('並行')||counts[slot]===0).map(slot=>({cardIndex:i,card:c,slot}));});
- const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate});
+ const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config});
  return {state,tm,clone,enumerate,strategy,observe:(cs=[],options={})=>createAdvisorObservation(state,cs,{rankTable:sm.rankTable,...options})};}
 test('15点の経路は公式ScoreManagerに一致し、14点目標と異なる',()=>{
  const {state}=setup(),routes=targetRoutes(sm.rankTable,15);
@@ -79,4 +79,26 @@ test('250シード未満・重複・版の混在を集計や対比較は拒否�
 test('0件の成功を不可能や有限の平均試行回数として扱わない',()=>{
  const zero=retryEstimate(0,250);assert.equal(zero.expectedAttempts,null);assert.equal(zero.expectedAttempts95[1],null);assert.ok(wilson(0,250)[1]>0);
  const r=retryEstimate(25,250,[10]);assert.equal(r.expectedAttempts,10);assert.ok(Math.abs(r.successWithin[0].probability-(1-.9**10))<1e-12);
+});
+
+test('仮想将来による最終ターン取得は公式得点を伸ばし、非公開情報を読まない',()=>{
+ const {state,strategy,observe}=setup({planning:{worlds:8,rolloutBeam:32}});state.turn=7;
+ Object.assign(state.player,{experience:49,enrollment:47,satisfaction:25,accounting:15});state.player.deck=[];
+ const observation=observe([card(25),card(15)]),snapshot=JSON.stringify(state);
+ for(const key of ['seed','rng','deckOrder','trainingDecks'])Object.defineProperty(observation,key,{enumerable:true,get(){throw Error('private');}});
+ const advice=strategy.acquisition(observation,'rollout');assert.deepEqual(advice.recommended.indices,[0]);
+ assert.equal(advice.recommended.mean,14);assert.equal(JSON.stringify(state),snapshot);
+});
+test('仮想将来で最終ターンの情熱は実スコアに加点されない',()=>{
+ const {state,strategy,observe}=setup({planning:{worlds:4}});state.turn=7;state.player.deck=[];
+ Object.assign(state.player,{experience:45,enrollment:40,satisfaction:35,accounting:15});
+ const advice=strategy.acquisition(observe([card(49),card(15)]),'rollout');
+ assert.ok(advice.evaluations.every(e=>e.mean===14));
+});
+test('仮想将来の配置も配置順・コスト・条件を本体と共有する',()=>{
+ const {state,strategy,observe,tm,clone}=setup({planning:{worlds:4}});state.turn=7;
+ Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});const hand=[card(42),card(25),card(30),card(15)];
+ const seq=strategy.placements(observe(),hand,state,'rollout'),next=clone(state);
+ for(const p of seq)assert.ok(tm.resolveCardAction(hand[p.cardIndex],p.slot,next).applied);
+ assert.equal(sm.calculateScore(next).points,16);assert.deepEqual(strategy.deletions(observe(),3,'rollout'),[]);
 });

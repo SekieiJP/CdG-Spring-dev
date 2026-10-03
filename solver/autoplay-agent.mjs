@@ -206,10 +206,10 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const researchPath = '/research/pro-strategy-research.js';
-            const absPath = relPath === researchPath ? path.join(__dirname, 'browser/pro-strategy-research.js') : path.resolve(rootDir, `.${relPath}`);
+            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js'].includes(relPath);
+            const absPath = researchPath ? path.join(__dirname, 'browser',path.basename(relPath)) : path.resolve(rootDir, `.${relPath}`);
 
-            if (relPath !== researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
+            if (!researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
                 res.writeHead(403);
                 res.end('Forbidden');
                 return;
@@ -315,9 +315,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             ? { aPoints: 8, sClearPoints: 12, aPlusPoints: 10, sPlusPoints: 14 }
             : { aPoints: 7, sClearPoints: 8, aPlusPoints: 7, sPlusPoints: 9 };
 
+        // 分析中の純粋な効果文の解析だけをキャッシュする。本体ファイル・ゲーム規則は変更しない。
+        if(research?.planning){const original=game.cardManager.parseEffect,cache=new Map();
+            game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
         const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
         const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
-            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions });
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,config:research });
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
         const SLOT_KEYS = game.gameState.slotIds;
@@ -3360,6 +3363,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
                     while ((game.gameState.tokens?.inspiration || 0) > 0) {
                         decisionTelemetry.training.inspirationRounds += 1;
+                        if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='inspiration';
                         let extraCandidates = game.cardManager.drawTrainingCards('SR', 3);
                         const extraCandidatesBeforeRefresh = [...extraCandidates];
                         decisionTelemetry.training.candidateCountTotal += extraCandidates.length;
@@ -3384,6 +3388,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                         });
                         game.gameState.tokens.inspiration -= 1;
                     }
+                    if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='normal';
                     if (episodeTrace) {
                         episodeTrace.turns.push({
                             turn: trainingTurn,
@@ -3409,7 +3414,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             const score = game.scoreManager.calculateScore(game.gameState);
             game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
             const exportedRecord=game.gameState.exportPlayRecord();
-            if(research?.initial)for(const event of exportedRecord.events) {
+            if(research)for(const event of exportedRecord.events) {
                 // 同一版のカタログ・ランク表はハッシュで追跡し、各判断に巨大な複製を残さない。
                 if(event.observation){delete event.observation.catalog;delete event.observation.rankTable;}
             }
@@ -3747,16 +3752,16 @@ async function readGitProvenance() {
 async function main() {
     const args = parseArgs(process.argv.slice(2));
     const research = args.researchConfig ? JSON.parse(await readFile(path.resolve(repoRoot,args.researchConfig),'utf8')) : null;
-    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine'].includes(research.acquisition) ||
-        !['control','median','ceiling','engine','myopic'].includes(research.placement) ||
-        !['control','adaptive','basic','aggressive','off'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
+    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout'].includes(research.acquisition) ||
+        !['control','median','ceiling','engine','myopic','rollout'].includes(research.placement) ||
+        !['control','adaptive','basic','aggressive','off','rollout'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
     if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile)throw new Error('局面再試行とリセマラは同時指定できません');}
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
     const initialObservation = decision?.observation || decision;
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).digest('hex'),
         ...await readGitProvenance() };
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });

@@ -1,3 +1,4 @@
+import {createRiskPolicy} from './pro-risk-research.js';
 /** PRO攻略の仮説をブラウザ内で検証する分析用方略。本体の推薦には接続しない。 */
 export const RESEARCH_VERSION = 'pro-human-strategy-v1';
 const KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
@@ -48,7 +49,7 @@ export function targetRoutes(rankTable, target=15) {
         (KEYS.some(k=>s[k]<r[k])||j<i)));
 }
 
-export function createResearchPolicy({projectDeck,score,cloneState,resolve,enumerateOptions}) {
+export function createResearchPolicy({projectDeck,score,cloneState,resolve,enumerateOptions,catalog=[],config={}}) {
     const routeCache=new Map();
     const weights = mode => RESEARCH_MODES[mode] || RESEARCH_MODES.median;
     function routes(observation,mode) {
@@ -75,6 +76,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         return {score:value(f.end,observation,mode)+f.engine*w.engine-f.risk*w.risk,forecast:f};
     }
     function acquisition(observation,mode) {
+        if(mode==='rollout')return riskPolicy.acquisition(observation);
         const before=deckValue(observation,observation.owned,mode),choices=[];
         const n=observation.candidates.length;
         function add(indices) {
@@ -97,6 +99,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         return {accept:true,chosenIndices:evaluations[0].indices,advice:{...advice,evaluations,recommended:evaluations[0]}};
     }
     function placements(observation,hand,state,mode,beamWidth=180) {
+        if(mode==='rollout')return riskPolicy.placements(observation,hand,state);
         const objective=mode==='myopic'?'median':mode;
         const remaining=observation.totalTurns-observation.turn,w=weights(objective);
         const future=mode==='myopic'?observation.stats:forecast({...observation,turn:observation.turn+1},observation.owned,objective).end;
@@ -133,6 +136,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
     }
     /** 1回の会議の削除順を評価。取得・配置とは独立して切り替える。 */
     function deletions(observation,deleteMax,mode,objective='median') {
+        if(mode==='rollout')return riskPolicy.deletions(observation,deleteMax);
         if(mode==='off'||observation.turn>=observation.totalTurns-1)return [];
         const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
         let owned=[...observation.owned];const removed=[];
@@ -156,5 +160,7 @@ export function createResearchPolicy({projectDeck,score,cloneState,resolve,enume
         }
         return removed;
     }
-    return {acquisition,initial,placements,deletions,value,forecast};
+    const baseline={acquisition,placements,deletions,value,forecast};
+    const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config});
+    return {...baseline,initial,riskPolicy};
 }
