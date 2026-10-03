@@ -206,7 +206,7 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js'].includes(relPath);
+            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js'].includes(relPath);
             const absPath = researchPath ? path.join(__dirname, 'browser',path.basename(relPath)) : path.resolve(rootDir, `.${relPath}`);
 
             if (!researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
@@ -235,8 +235,8 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
@@ -320,7 +320,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
         const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
         const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
-            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,config:research,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,config:research,valueModel,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
         const SLOT_KEYS = game.gameState.slotIds;
@@ -3749,7 +3749,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel });
 }
 
 async function readGitProvenance() {
@@ -3765,17 +3765,25 @@ async function readGitProvenance() {
 async function main() {
     const args = parseArgs(process.argv.slice(2));
     const research = args.researchConfig ? JSON.parse(await readFile(path.resolve(repoRoot,args.researchConfig),'utf8')) : null;
-    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout'].includes(research.acquisition) ||
-        !['control','median','ceiling','engine','myopic','rollout'].includes(research.placement) ||
-        !['control','adaptive','basic','aggressive','off','rollout'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
+    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout','learned'].includes(research.acquisition) ||
+        !['control','median','ceiling','engine','myopic','rollout','learned'].includes(research.placement) ||
+        !['control','adaptive','basic','aggressive','off','rollout','learned'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
     if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile)throw new Error('局面再試行とリセマラは同時指定できません');}
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
     const initialObservation = decision?.observation || decision;
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).digest('hex'),
         ...await readGitProvenance() };
+    let valueModel=null;
+    if(research?.valueModelPath){
+        const bytes=await readFile(path.resolve(repoRoot,research.valueModelPath)),hash=createHash('sha256').update(bytes).digest('hex'),data=JSON.parse(bytes);
+        if(hash!==research.valueModelSha256||data.provenance.versions[0]!==provenance.codeHash||data.provenance.versions[1]!=='sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex')||data.provenance.versions[2]!=='sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex'))throw Error('学習モデルまたは本体・カード・ランク版が異なる');
+        // 過去の結果・学習用シード・ソースパスは実行中の評価器に渡さない。
+        valueModel=data.model;
+    }
+    if(research&&[research.acquisition,research.placement,research.deletion].includes('learned')&&!valueModel)throw Error('学習済みモデルが必要');
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
@@ -3796,7 +3804,7 @@ async function main() {
                 policyName: normalized,
                 traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
                 acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice, research
+                initialObservation, forcedChoice: args.forcedChoice, research, valueModel
             });
             simulations.push(result);
         }

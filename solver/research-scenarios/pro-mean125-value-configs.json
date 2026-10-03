@@ -1,0 +1,101 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "learned-acq": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned-acq-zero": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned-acq-blend": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.02,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned-all": {
+    "acquisition": "learned",
+    "placement": "learned",
+    "deletion": "learned",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned-place": {
+    "acquisition": "engine",
+    "placement": "learned",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned-delete": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "learned",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "monotone-all": {
+    "acquisition": "learned",
+    "placement": "learned",
+    "deletion": "learned",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/monotone3-model.json"
+  }
+}

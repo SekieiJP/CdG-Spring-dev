@@ -16,11 +16,11 @@ async function main(){
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
- const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js'];
+ const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js'];
  const strategyVersion=sha(Buffer.concat(await Promise.all(files.map(file=>readFile(file)))));
  const sources=await Promise.all((await readdir('game/js')).filter(name=>name.endsWith('.js')).sort().map(async name=>name+await readFile(`game/js/${name}`,'utf8')));
  const fingerprints={strategyVersion,codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
- for(const id of ids){const config={id,...configs[id]},configPath=`${root}/${id}-config.json`,batchFiles=[];await writeFile(configPath,JSON.stringify(config,null,2)+'\n');
+ for(const id of ids){const config={id,...configs[id]};if(config.valueModelPath)config.valueModelSha256=sha(await readFile(config.valueModelPath));const configPath=`${root}/${id}-config.json`,batchFiles=[];await writeFile(configPath,JSON.stringify(config,null,2)+'\n');
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;batchFiles.push(path.resolve(output));jobs.push({id,config,configPath,b,output});}
   runs.push({id,description:JSON.stringify(config),files:batchFiles});}
  const comparisons=ids.includes('baseline')?ids.filter(id=>id!=='baseline').map(id=>({id:`baseline-to-${id}`,before:'baseline',after:id})):[];

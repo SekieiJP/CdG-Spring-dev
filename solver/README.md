@@ -169,3 +169,16 @@ node solver/pro-reroll-study.mjs confirmation 250 pair-13-17,pair-13-17-acq-medi
 `pro-reroll-metrics.mjs` は、通常の得点集計に加え、12種から異なる4種を提示する理論出現率、全開始・リセットの監査、完走／リセット回数、リセット時間と完走時間の比を変えた時間換算を出します。実際のスマートフォンで人が操作した時間は未測定です。`--resume` は設定・シード範囲・分析コード・本体・カード・ランクの版が一致した完了バッチだけを再利用します。
 
 初回リセマラの結果は[攻略レポート](../docs/CdG-PRO-Reroll-Guide.md)と[分析資料](../docs/CdG-PRO-Reroll-Analysis.md)。新規詳細ログは内容一致を検証して `.json.gz` に圧縮し、読み込み時は元の `.json` パスにも対応します。
+
+### リセマラなし平均12.5点の研究
+
+[到達条件と方法](../docs/CdG-PRO-Mean125-Research-Plan.md)、[検証記録](../docs/CdG-PRO-Mean125-Research-Log.md)。研究用の取得・配置・削除は本体推薦から独立してブラウザで実行する。現在は目標未達で、完成版のカードパワー表は確定していない。
+
+```sh
+node solver/pro-value-dataset.mjs
+node solver/pro-value-train.mjs solver/local-runs/pro-mean125/value-v1 depth3,depth4,monotone3
+node solver/pro-mean125-study.mjs value-development 250 baseline,learned-acq,learned-acq-zero,learned-acq-blend,learned-all,learned-place,learned-delete,monotone-all --configs solver/research-scenarios/pro-mean125-value-configs.json --port-base 18780
+node solver/pro-mean125-metrics.mjs solver/local-runs/pro-mean125/value-development/manifest.json solver/local-evaluation/pro-mean125/value-development
+```
+
+取得・配置・会議後の予測と最終得点を学習する。過去の教師ラベル・シードは、新規プレイの評価器に渡さない。モデル予測誤差は方略の成功率・得点の改善を示す指標とは分け、最低250シードの実プレイ比較で確認する。大量の状態、モデル、個別ゲーム記録は `local-runs/` に保存し、集計・仕様・再現手順を研究ブランチへ残す。

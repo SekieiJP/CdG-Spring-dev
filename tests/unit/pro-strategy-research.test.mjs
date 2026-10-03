@@ -8,19 +8,21 @@ import {TurnManager} from '../../game/js/turnManager.js';
 import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
+import {VALUE_FEATURES,VALUE_SCHEMA,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
+import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
 import {median,wilson,retryEstimate,summarizeOutcomes,pairedOutcomes} from '../../solver/pro-strategy-metrics.mjs';
 const cm=new CardManager(null);cm.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const sm=new ScoreManager(null),savedFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});
 await sm.loadRankData('test');globalThis.fetch=savedFetch;
 const card=n=>cm.allCards.find(c=>Number(c.cardNo)===n);
-function setup(config={}){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
+function setup(config={},valueModel=null){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
  const tm=new TurnManager(state,cm,null);
  const clone=s=>({difficulty:'pro',turn:s.turn,totalTurns:8,player:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,s.player[k]])),tokens:{...s.tokens},
  updateStatus(k,d){const old=this.player[k];this.player[k]=Math.max(0,old+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-old;}});
  const enumerate=(hand,counts)=>hand.flatMap((c,i)=>{const p=cm.parseEffect(c.effect),slots=p.staffRestrictions.length?p.staffRestrictions:['leader','teacher','staff'];
  return slots.filter(slot=>c.effect.includes('並行')||counts[slot]===0).map(slot=>({cardIndex:i,card:c,slot}));});
- const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config});
+ const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config,valueModel});
  return {state,tm,clone,enumerate,strategy,observe:(cs=[],options={})=>createAdvisorObservation(state,cs,{rankTable:sm.rankTable,...options})};}
 test('15点の経路は公式ScoreManagerに一致し、14点目標と異なる',()=>{
  const {state}=setup(),routes=targetRoutes(sm.rankTable,15);
@@ -117,4 +119,48 @@ test('基準配置を使う仮想将来も隠れた乱数を消費せず、状�
  const snapshot=JSON.stringify(state),ob=observe([card(25),card(40)]);
  for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
  const advice=strategy.acquisition(ob,'rollout');assert.ok(advice.evaluations.every(e=>Number.isFinite(e.score)));assert.equal(JSON.stringify(state),snapshot);
+});
+
+const tinyModel=(feature,value=2)=>({schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:10,learningRate:1,trees:[{feature:VALUE_FEATURES.indexOf(feature),threshold:.5,left:{value:0},right:{value}}]});
+test('学習評価の特徴は公開状態だけから作り、非公開getterと過去の教師ラベルを読まない',()=>{
+ const {strategy,observe}=setup(),ob=observe();
+ const clean=encodeValueFeatures(ob,'acquisition',{forecast:strategy.forecast,score:proGoal});
+ for(const key of ['seed','rng','deckOrder','trainingDecks','target'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ assert.deepEqual(encodeValueFeatures(ob,'acquisition',{forecast:strategy.forecast,score:proGoal}),clean);
+ assert.equal(clean.length,VALUE_FEATURES.length);assert.ok(clean.every(Number.isFinite));
+ const after=encodeValueFeatures(ob,'after-action',{forecast:strategy.forecast,score:proGoal});assert.equal(after[VALUE_FEATURES.indexOf('remaining')],7);
+});
+test('学習した固定木は、状態ごとに取得・スキップを選び、元の状態を変更しない',()=>{
+ const {strategy,observe,state}=setup({learned:{blend:0}},tinyModel('count-15'));
+ const ob=observe([card(6),card(15),card(13)],{allowSkip:true}),before=JSON.stringify(state);
+ for(const key of ['seed','rng','deckOrder','trainingDecks'])Object.defineProperty(ob,key,{enumerable:true,get(){throw Error('private');}});
+ assert.deepEqual(strategy.acquisition(ob,'learned').recommended.indices,[1]);
+ assert.equal(JSON.stringify(state),before);
+ const negative=setup({learned:{blend:0}},tinyModel('count-15',-2));assert.deepEqual(negative.strategy.acquisition(negative.observe([card(15)],{allowSkip:true}),'learned').recommended.indices,[]);
+});
+test('学習評価の最終ターンも公式最大得点を優先し、未来トークンを利用しない',()=>{
+ const {state,strategy,observe,clone,tm}=setup({learned:{blend:0}},tinyModel('token-passion',100));state.turn=7;
+ Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});const hand=[card(42),card(25),card(30),card(15)];
+ const next=clone(state);for(const p of strategy.placements(observe(),hand,state,'learned'))assert.ok(tm.resolveCardAction(hand[p.cardIndex],p.slot,next).applied);
+ assert.equal(sm.calculateScore(next).points,16);assert.deepEqual(strategy.deletions(observe(),4,'learned'),[]);
+});
+test('木の学習は固定乱数で再現し、特徴版の不一致を拒否する',async()=>{
+ const rows=Array.from({length:160},(_,i)=>({x:VALUE_FEATURES.map((n,j)=>j===5?i%20:0),y:3+(i%20)*.3,weight:1}));
+ const options={iterations:25,depth:2,minRows:5,minWeight:3,l2:.1,featureFraction:1,rowFraction:1,learningRate:.2,monotone:true};
+ const a=await trainValueModel(rows,options),b=await trainValueModel(rows,options);assert.deepEqual(a,b);
+ const predictions=Array.from({length:20},(_,v)=>predictValue(a,VALUE_FEATURES.map((n,j)=>j===5?v:0)));
+ assert.ok(predictions.every((p,i)=>!i||p>=predictions[i-1]));assert.ok(predictions.at(-1)-predictions[0]>4);
+ assert.throws(()=>predictValue({...a,schema:'different'},rows[0].x),/特徴版/);
+});
+test('学習用の記録は取得後・解決後・削除後を分け、ゲームごとの重みを1にする',()=>{
+ const {observe}=setup(),ob=observe([card(13),card(15)],{pickCount:1,allowSkip:true});ob.tokens.inspiration=2;
+ const rec={metadata:{difficulty:'pro',seed:'audit:0'},result:{score:{displayScore:12}},events:[
+  {type:'research-acquisition-decision',observation:ob,chosenIndices:[0]},
+  {type:'research-placement-decision',turn:0,observation:ob},
+  {type:'resolve',turn:0,afterStats:{experience:5,enrollment:2,satisfaction:7,accounting:8},afterTokens:{passion:2,fatigue:1,inspiration:2,organize:1}},
+  {type:'research-deletion-decision',turn:0,decisions:[{cardNo:1}]}]};
+ const rows=extractValueRows(rec);assert.equal(rows.reduce((s,r)=>s+r.weight,0),1);assert.equal(rows[0].observation.tokens[2],1);
+ assert.deepEqual(rows[1].observation.stats,[5,2,7,8]);assert.equal(rows[2].observation.turn,1);assert.deepEqual(rows[2].observation.tokens,[2,1,2,0]);assert.equal(rows[2].observation.owned.filter(c=>c[0]===1).length,0);
+ const restored=unpackValueObservation(rows[2].observation,{catalog:cm.allCards,rankTable:sm.rankTable,turns:ob.turns});assert.equal(restored.tokens.inspiration,2);
+ assert.throws(()=>extractValueRows({...rec,metadata:{...rec.metadata,reroll:{}}}),/リセマラなし/);
 });
