@@ -16,3 +16,13 @@ test('仮想専用の軽量適用は全51カード・全配置先・全ターン
   assert.equal(light.applied,original.applied,`${card.cardNo}/${slot}/${turn}`);assert.deepEqual(b.player,a.player);assert.deepEqual(b.tokens,a.tokens);
  }
 });
+
+test('同じ公開状態の再利用は、元の手札・乱数を読まず、条件とコストも正確に適用する',()=>{
+ const state={turn:2,totalTurns:8,player:{experience:20,enrollment:10,satisfaction:14,accounting:1},tokens:{passion:0,fatigue:0,inspiration:0,organize:0}};
+ for(const key of ['seed','rng','deckOrder','trainingDecks'])Object.defineProperty(state,key,{get(){throw Error('private');}});
+ Object.defineProperty(state.player,'deck',{enumerable:true,get(){throw Error('private deck');}});
+ const make=()=>({turn:state.turn,totalTurns:state.totalTurns,player:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,state.player[k]])),tokens:{...state.tokens}}),card=cm.allCards.find(c=>Number(c.cardNo)===49);
+ const a=make(),b=make();kernel(card,'staff',a);kernel(card,'staff',b);assert.deepEqual(a,b);assert.equal(a.player.satisfaction,14);assert.equal(a.tokens.inspiration,0);
+ kernel(card,'staff',state);assert.equal(state.tokens.inspiration,0);
+ const cost=cm.allCards.find(c=>Number(c.cardNo)===43),before=make();assert.equal(kernel(cost,'leader',state).applied,false);assert.deepEqual(make(),before);
+});
