@@ -1,0 +1,217 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "learned-acq": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json"
+  },
+  "learned12": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 12
+  },
+  "learned13": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13
+  },
+  "learned14": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 14
+  },
+  "learned13-sat25": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13,
+    "caps": {
+      "satisfaction": 25
+    }
+  },
+  "learned12-caps": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 12,
+    "caps": {
+      "experience": 40,
+      "enrollment": 40,
+      "satisfaction": 25
+    }
+  },
+  "learned13-en6": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13,
+    "weights": {
+      "enrollment": 6.5
+    }
+  },
+  "learned13-focus": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13,
+    "weights": {
+      "experience": 2,
+      "enrollment": 6,
+      "satisfaction": 1.8
+    },
+    "caps": {
+      "satisfaction": 25
+    }
+  },
+  "learned13-buffer": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13,
+    "signedGrowth": true,
+    "safetyBuffer": 2
+  },
+  "learned13-horizon": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "targetScore": 13,
+    "signedGrowth": true,
+    "tokenHorizon": true,
+    "weights": {
+      "draw": 6,
+      "inspiration": 4
+    }
+  },
+  "learned-buffer": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth4-model.json",
+    "signedGrowth": true,
+    "safetyBuffer": 2
+  },
+  "learned-acq-monotone": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/monotone3-model.json"
+  },
+  "learned-acq-depth3": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json"
+  }
+}

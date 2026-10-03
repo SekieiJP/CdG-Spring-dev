@@ -164,3 +164,8 @@ test('学習用の記録は取得後・解決後・削除後を分け、ゲー�
  const restored=unpackValueObservation(rows[2].observation,{catalog:cm.allCards,rankTable:sm.rankTable,turns:ob.turns});assert.equal(restored.tokens.inspiration,2);
  assert.throws(()=>extractValueRows({...rec,metadata:{...rec.metadata,reroll:{}}}),/リセマラなし/);
 });
+
+test('平均目標とは別に13点等の経路を設定でき、公式到達点と一致する',()=>{
+ for(const target of [12,13,14]){const {state,strategy,observe}=setup({targetScore:target});for(const route of targetRoutes(sm.rankTable,target)){Object.assign(state.player,route);assert.ok(sm.calculateScore(state).points>=target);}assert.ok(Number.isFinite(strategy.value(observe().stats,observe(),'engine')));}
+ assert.throws(()=>setup({targetScore:17}),/1〜16/);
+});

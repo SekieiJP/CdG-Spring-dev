@@ -51,13 +51,14 @@ export function targetRoutes(rankTable, target=15) {
 }
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null,valueModel=null}) {
+    if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
     const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
     const tableKey=table=>{if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));return tableKeys.get(table);};
     function score(stats,table){const key=tableKey(table)+'|'+KEYS.map(k=>stats[k]).join(',');
         if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
     const weights = mode => ({...(RESEARCH_MODES[mode] || RESEARCH_MODES.median),...(config.weights||{})});
     function routes(observation,mode) {
-        const target=mode==='median'?14:15,key=target+'|'+tableKey(observation.rankTable);
+        const target=config.targetScore??(mode==='median'?14:15),key=target+'|'+tableKey(observation.rankTable);
         if(!routeCache.has(key))routeCache.set(key,targetRoutes(observation.rankTable,target));
         return routeCache.get(key);
     }
