@@ -52,20 +52,22 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null,valueModel=null}) {
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
+    if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
     const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
     const tableKey=table=>{if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));return tableKeys.get(table);};
     function score(stats,table){const key=tableKey(table)+'|'+KEYS.map(k=>stats[k]).join(',');
         if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
-    const weights = mode => ({...(RESEARCH_MODES[mode] || RESEARCH_MODES.median),...(config.weights||{})});
+    const baseMode=mode=>mode?.replace(/^acq-/,''),weights=mode=>({...RESEARCH_MODES[baseMode(mode)]||RESEARCH_MODES.median,...config.weights,...(mode?.startsWith('acq-')?config.acquisitionWeights:{})});
     function routes(observation,mode) {
-        const target=config.targetScore??(mode==='median'?14:15),key=target+'|'+tableKey(observation.rankTable);
+        const target=config.targetScore??(baseMode(mode)==='median'?14:15),key=target+'|'+tableKey(observation.rankTable);
         if(!routeCache.has(key))routeCache.set(key,targetRoutes(observation.rankTable,target));
         return routeCache.get(key);
     }
     function value(stats,observation,mode='median') {
-        const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:mode==='median'?25:35,accounting:18,...config.caps};
-        const scoredStats={...stats,accounting:Math.max(0,stats.accounting-(config.safetyBuffer||0))};
+        const w=weights(mode),caps={experience:50,enrollment:48,satisfaction:baseMode(mode)==='median'?25:35,accounting:18,...config.caps};
+        const buffers={accounting:config.safetyBuffer||0,...config.statBuffers},scoredStats=Object.fromEntries(KEYS.map(k=>[k,Math.max(0,stats[k]-(buffers[k]||0))]));
+        if(config.statBuffers)scoredStats.enrollment=Math.min(scoredStats.enrollment,scoredStats.experience);
         const goal=score(scoredStats,observation.rankTable);
         const completion=Math.max(0,...routes(observation,mode).map(r=>KEYS.reduce((v,k)=>v*clamp(stats[k]/Math.max(1,r[k])),1)));
         return (config.statScale??1)*KEYS.reduce((sum,k)=>sum+w[k]*(Math.min(stats[k],caps[k])+.05*Math.max(0,stats[k]-caps[k])),0)+
@@ -94,6 +96,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     function acquisition(observation,mode) {
         if(mode==='rollout')return riskPolicy.acquisition(observation);
         if(mode==='learned')return learnedPolicy.acquisition(observation);
+        if(config.acquisitionWeights)mode='acq-'+mode;
         const before=deckValue(observation,observation.owned,mode),choices=[];
         const n=observation.candidates.length;
         function add(indices) {

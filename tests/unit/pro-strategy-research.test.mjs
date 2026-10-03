@@ -211,3 +211,14 @@ test('学習得点と固定式投影の校正は主研修を使い、追加研�
  const f=forecastStatsCalibration(records);assert.equal(f[0].axes.experience.bias,-2);assert.equal(f[0].axes.accounting.bias,1);
  const d=deletionCoverage(records);assert.equal(d.gamesBelow5,10);assert.equal(d.byTurn[0].below5Count,10);assert.ok(!d.byTurn[1].minimum250);
 });
+
+test('取得の比重と基準の余裕を別に調整し、入力を変更せず有限値で評価する',()=>{
+ const base=setup(),adjusted=setup({acquisitionWeights:{enrollment:6.5}}),ob=base.observe([card(45),card(46),card(48)]),snapshot=JSON.stringify(ob);
+ assert.deepEqual(base.strategy.forecast(ob,ob.owned,'engine'),adjusted.strategy.forecast(ob,ob.owned,'engine'));
+ assert.equal(base.strategy.value(ob.stats,ob,'engine'),adjusted.strategy.value(ob.stats,ob,'engine'));
+ const advice=adjusted.strategy.acquisition(ob,'engine');assert.ok(advice.evaluations.every(e=>Number.isFinite(e.score)));
+ for(const statBuffers of [{experience:3},{enrollment:2},{satisfaction:3},{experience:2,enrollment:2,satisfaction:2}]){
+  const changed=setup({statBuffers});assert.ok(Number.isFinite(changed.strategy.value({experience:50,enrollment:48,satisfaction:35,accounting:15},ob,'engine')));
+  assert.ok(changed.strategy.acquisition(ob,'engine').evaluations.every(e=>Number.isFinite(e.score)));}
+ assert.equal(JSON.stringify(ob),snapshot);assert.throws(()=>setup({statBuffers:{satisfaction:-1}}),/0〜12/);
+});
