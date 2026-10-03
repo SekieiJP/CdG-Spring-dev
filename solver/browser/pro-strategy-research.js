@@ -187,6 +187,6 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     }
     const baseline={acquisition,placements,deletions,value,forecast};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
-    const learnedPolicy=valueModel?createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model:valueModel,config}):null;
+    const learnedPolicy=valueModel?createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     return {...baseline,initial,riskPolicy,learnedPolicy};
 }

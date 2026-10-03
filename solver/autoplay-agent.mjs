@@ -2380,6 +2380,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         function maybeRefreshTrainingCandidates({ rarity, candidates, drawCount, pickCount, phaseTag }) {
+            if(research?.refresh==='learned')return refreshByLearnedValue({rarity,candidates,drawCount,pickCount,phaseTag});
             if(research?.refresh&&['seek49','seek13-49'].includes(research.refresh))return refreshForResearch({rarity,candidates,drawCount,phaseTag});
             if(effectiveRefreshPolicy==='none')return candidates;
             if(effectiveRefreshPolicy==='public') return refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag});
@@ -2449,6 +2450,18 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             return current;
         }
 
+        function refreshByLearnedValue({rarity,candidates,drawCount,pickCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining||rarity==='N'||phaseTag==='inspiration')return candidates;
+            let current=candidates;
+            while(game.gameState.trainingRefreshRemaining>0){
+                const observation=publicObservation(current,{pickCount,allowSkip:false}),advice=researchPolicy.learnedPolicy.refresh(observation,rarity,drawCount,pickCount);
+                game.gameState.record('research-refresh-decision',{observation,rarity,drawCount,pickCount,advice});if(!advice.shouldRefresh)break;
+                const refreshed=game.cardManager.refreshTrainingCards(rarity,current,drawCount);if(!refreshed.length)break;current=refreshed;
+                game.gameState.trainingRefreshRemaining--;episodeRefreshUsage[phaseTag]++;
+                decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;
+            }
+            return current;
+        }
         function refreshForResearch({rarity,candidates,drawCount,phaseTag}) {
             if(!game.gameState.trainingRefreshRemaining||phaseTag==='inspiration')return candidates;
             const owned=game.gameState.getOwnedCards(),target=rarity==='SSR'?49:
@@ -3783,7 +3796,7 @@ async function main() {
         // 過去の結果・学習用シード・ソースパスは実行中の評価器に渡さない。
         valueModel=data.model;
     }
-    if(research&&[research.acquisition,research.placement,research.deletion].includes('learned')&&!valueModel)throw Error('学習済みモデルが必要');
+    if(research&&([research.acquisition,research.placement,research.deletion].includes('learned')||research.refresh==='learned')&&!valueModel)throw Error('学習済みモデルが必要');
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 

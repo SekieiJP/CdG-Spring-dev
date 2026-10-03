@@ -9,6 +9,7 @@ import {createAdvisorObservation} from '../../game/js/acquisitionAdvisor.js';
 import {proGoal,projectProDeck} from '../../game/js/proAcquisitionAdvisor.js';
 import {createResearchPolicy,targetRoutes} from '../../solver/browser/pro-strategy-research.js';
 import {VALUE_FEATURES,VALUE_SCHEMA,encodeValueFeatures,predictValue,trainValueModel,unpackValueObservation} from '../../solver/browser/pro-value-model.js';
+import {remainingTrainingNames} from '../../solver/browser/pro-learned-research.js';
 import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
 import {median,wilson,retryEstimate,summarizeOutcomes,pairedOutcomes} from '../../solver/pro-strategy-metrics.mjs';
 const cm=new CardManager(null);cm.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
@@ -168,4 +169,21 @@ test('学習用の記録は取得後・解決後・削除後を分け、ゲー�
 test('平均目標とは別に13点等の経路を設定でき、公式到達点と一致する',()=>{
  for(const target of [12,13,14]){const {state,strategy,observe}=setup({targetScore:target});for(const route of targetRoutes(sm.rankTable,target)){Object.assign(state.player,route);assert.ok(sm.calculateScore(state).points>=target);}assert.ok(Number.isFinite(strategy.value(observe().stats,observe(),'engine')));}
  assert.throws(()=>setup({targetScore:17}),/1〜16/);
+});
+
+test('学習リフレッシュの残り種類は、公開提示・永久除外・再構成だけで決める',()=>{
+ const catalog=[6,7,8,9].map(card),event=(type,nos)=>({type,cards:nos.map(n=>({cardNo:n}))});
+ const history=[event('offer',[6,7,8]),event('refresh',[6,7,8]),event('offer',[6,7,8])];
+ assert.deepEqual(remainingTrainingNames(catalog,history,'R').map(c=>Number(c.cardNo)),[9]);
+ assert.deepEqual(remainingTrainingNames(catalog,[...history,event('offer',[9,9])],'R').map(c=>Number(c.cardNo)),[6,7,8,9]);
+ assert.ok(!remainingTrainingNames(catalog,[...history,event('refresh',[6])],'R').some(c=>Number(c.cardNo)===6));
+});
+test('リフレッシュ判断は見えている候補と残り回数で変わり、非公開状態を読まない',()=>{
+ const {state,strategy,observe}=setup({learned:{blend:0,refreshCost:0,reserveCost:0}},tinyModel('count-15'));
+ const bad=observe([card(6),card(7),card(8),card(9)],{pickCount:2});
+ for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(bad,key,{enumerable:true,get(){throw Error('private');}});
+ const before=JSON.stringify(state),advice=strategy.learnedPolicy.refresh(bad,'R',4,2);assert.ok(advice.shouldRefresh);assert.ok(advice.combinations>0);
+ assert.equal(JSON.stringify(state),before);
+ const good=observe([card(6),card(7),card(8),card(15)],{pickCount:2});assert.ok(!strategy.learnedPolicy.refresh(good,'R',4,2).shouldRefresh);
+ bad.refreshRemaining=0;assert.ok(!strategy.learnedPolicy.refresh(bad,'R',4,2).shouldRefresh);
 });

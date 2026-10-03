@@ -1,7 +1,15 @@
 import {encodeValueFeatures,predictValue,publicValueObservation} from './pro-value-model.js';
 /** 学習済みの固定木を計算する研究用の判断。未来ゲームの反復は行わない。 */
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
-export function createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model,config={}}){
+/** 実物の研修山札を読まず、公開提示と永久除外から残りの種類を復元する。 */
+export function remainingTrainingNames(catalog,history,rarity){
+ const all=catalog.filter(c=>c.rarity===rarity),counts=new Map(all.map(c=>[String(c.cardNo),2])),removed=new Map();
+ const refill=()=>{if(![...counts.values()].some(n=>n>0))for(const [n]of counts)counts.set(n,Math.max(0,2-(removed.get(n)||0)));};
+ for(const event of history||[])for(const c of event.cards||[]){const n=String(c.cardNo);if(!counts.has(n))continue;
+  if(event.type==='refresh')removed.set(n,(removed.get(n)||0)+1);else{refill();counts.set(n,Math.max(0,counts.get(n)-1));}}
+ refill();return all.filter(c=>counts.get(String(c.cardNo))>0);
+}
+export function createLearnedPolicy({baseline,score,cloneState,resolve,enumerateOptions,model,catalog=[],config={}}){
  const settings={blend:.005,beam:72,minDeleteGain:.01,...config.learned},cache=new Map();
  function estimate(observation,phase){
   const key=JSON.stringify([phase,observation.turn,KEYS.map(k=>observation.stats[k]),observation.tokens,observation.owned.map(c=>c.cardNo).sort((a,b)=>a-b),observation.refreshRemaining,observation.offerHistory]);
@@ -50,5 +58,23 @@ export function createLearnedPolicy({baseline,score,cloneState,resolve,enumerate
   }
   return decisions;
  }
- return {acquisition,placements,deletions,estimate,settings};
+ function refresh(observation,rarity,drawCount,pickCount=1){
+  const root=publicValueObservation(observation),current=acquisition(observation).recommended.score;
+  if(root.refreshRemaining<=0)return {shouldRefresh:false,currentScore:current,reason:'no-remaining'};
+  const pool=remainingTrainingNames(catalog,root.offerHistory,rarity),take=Math.min(drawCount,pool.length);
+  if(take<pickCount)return {shouldRefresh:false,currentScore:current,reason:'pool-shortage'};
+  const after={...root,refreshRemaining:root.refreshRemaining-1,offerHistory:[...root.offerHistory,{type:'refresh',cards:observation.candidates}]},special=rarity==='SR'?40:rarity==='SSR'?49:null,lookup=[];
+  for(const include of [false,true]){const history=[...after.offerHistory,...(include&&special?[{type:'offer',cards:[{cardNo:special}]}]:[])];
+   const advice=acquisition({...after,offerHistory:history,candidates:pool,pickCount,allowSkip:false});lookup.push(new Map(advice.evaluations.map(e=>[e.indices.join(','),e.score])));}
+  let total=0,combinations=0;
+  function visit(indices,next){if(indices.length===take){const scores=lookup[Number(special!==null&&indices.some(i=>Number(pool[i].cardNo)===special))];let best=-Infinity;
+   if(pickCount===2)for(let a=0;a<indices.length;a++)for(let b=a+1;b<indices.length;b++)best=Math.max(best,scores.get([indices[a],indices[b]].join(',')));
+   else for(const i of indices)best=Math.max(best,scores.get(String(i)));total+=best;combinations++;return;}
+   for(let i=next;i<=pool.length-(take-indices.length);i++)visit([...indices,i],i+1);}
+  visit([],0);
+  const expected=total/combinations,cost=(settings.refreshCost??.12)+(root.turn<4&&root.refreshRemaining<2?(settings.reserveCost??.25):0);
+  return {shouldRefresh:expected-current>cost,currentScore:current,expectedScore:expected,gain:expected-current,opportunityCost:cost,poolCount:pool.length,combinations,
+   method:'既知の残り種類から異なる候補集合を列挙。途中でプールが尽きる候補提示は先頭の残り種類までで近似。'};
+ }
+ return {acquisition,placements,deletions,estimate,refresh,settings};
 }
