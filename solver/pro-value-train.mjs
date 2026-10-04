@@ -13,7 +13,7 @@ async function main(){
  if(dataset.counts.trainSeeds<250||dataset.counts.validationSeeds<250)throw Error('各群250シード以上が必要');
  const trainSeeds=new Set(dataset.train.map(r=>r.seed)),validationSeeds=new Set(dataset.validation.map(r=>r.seed));
  if([...trainSeeds].some(s=>validationSeeds.has(s)))throw Error('学習・検証シードが重複');
- const modelSources=await Promise.all(['solver/pro-value-dataset.mjs','solver/pro-value-train.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
+ const modelSources=await Promise.all(['solver/pro-value-dataset.mjs','solver/pro-value-scene-dataset.mjs','solver/pro-value-train.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
  const provenance={datasetSha256:sha(datasetBytes),implementationSha256:sha(Buffer.concat(modelSources)),versions:dataset.versions,counts:dataset.counts,sources:dataset.sources};
  const root=path.resolve('game'),port=18680,server=http.createServer(async(req,res)=>{try{
   const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);

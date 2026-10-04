@@ -6,7 +6,7 @@ import path from 'node:path';
 import {pathToFileURL} from 'node:url';
 import {readRunBytes} from './pro-strategy-metrics.mjs';
 const KEYS=['experience','enrollment','satisfaction','accounting'],TOKENS=['passion','fatigue','inspiration','organize'];
-function pack(observation,phase){
+export function packValueObservation(observation,phase){
  const history=new Map();for(const e of observation.offerHistory||[])for(const c of e.cards||[]){const no=Number(c.cardNo),counts=history.get(no)||[no,0,0];counts[e.type==='refresh'?2:1]++;history.set(no,counts);}
  return {phase,turn:observation.turn,stats:KEYS.map(k=>observation.stats[k]),tokens:TOKENS.map(k=>observation.tokens[k]||0),
   owned:observation.owned.map(c=>[Number(c.cardNo),Number(c.acquiredTurn||0)]),history:[...history.values()],refreshRemaining:observation.refreshRemaining||0};
@@ -17,16 +17,16 @@ export function extractValueRows(record){
  for(const e of events.filter(e=>e.type==='research-acquisition-decision')){
   const o=e.observation,chosen=e.chosenIndices||e.advice.recommended.indices;
   const after={...o,owned:[...o.owned,...chosen.map(i=>o.candidates[i])],tokens:{...o.tokens,inspiration:Math.max(0,o.tokens.inspiration-Number(o.allowSkip))}};
-  rows.push(pack(after,'acquisition'));
+  rows.push(packValueObservation(after,'acquisition'));
  }
  for(const e of events.filter(e=>e.type==='research-placement-decision')){
   const resolved=events.filter(r=>r.type==='resolve'&&r.turn===e.turn),last=resolved.at(-1),stats=last?.afterStats||e.observation.stats,tokens=last?.afterTokens||e.observation.tokens;
   const after={...e.observation,stats:{...stats},tokens:{...tokens},owned:[...e.observation.owned]};
-  rows.push(pack(after,'after-action'));
+  rows.push(packValueObservation(after,'after-action'));
   if(e.turn>=7)continue;
   const deletion=events.find(d=>d.type==='research-deletion-decision'&&d.turn===e.turn);
   for(const d of deletion?.decisions||[]){const i=after.owned.findIndex(c=>String(c.cardNo)===String(d.cardNo));if(i>=0)after.owned.splice(i,1);}
-  after.turn++;after.tokens.organize=0;rows.push(pack(after,'before-training'));
+  after.turn++;after.tokens.organize=0;rows.push(packValueObservation(after,'before-training'));
  }
  if(!rows.length)throw Error('公開状態の研究記録がない');
  return rows.map(observation=>({seed:record.metadata.seed,target:record.result.score.displayScore,weight:1/rows.length,observation}));
