@@ -1,0 +1,110 @@
+{
+  "baseline": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8
+  },
+  "v5-depth3": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v5-both2-policy/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8
+  },
+  "v5-depth4": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v5-both2-policy/depth4-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8
+  }
+}
