@@ -25,7 +25,7 @@ function setup(config={},valueModel=null){const state=new GameState(null);state.
  updateStatus(k,d){const old=this.player[k];this.player[k]=Math.max(0,old+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-old;}});
  const enumerate=(hand,counts)=>hand.flatMap((c,i)=>{const p=cm.parseEffect(c.effect),slots=p.staffRestrictions.length?p.staffRestrictions:['leader','teacher','staff'];
  return slots.filter(slot=>c.effect.includes('並行')||counts[slot]===0).map(slot=>({cardIndex:i,card:c,slot}));});
- const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,turns:state.config.turns,publicActionParser:config.fastPublicActions?new CardManager(null):null,config,valueModel});
+ const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,turns:state.config.turns,publicActionParser:config.fastPublicActions||config.effectRecoveryProtection?new CardManager(null):null,config,valueModel});
  return {state,tm,clone,enumerate,strategy,observe:(cs=[],options={})=>createAdvisorObservation(state,cs,{rankTable:sm.rankTable,...options})};}
 test('15点の経路は公式ScoreManagerに一致し、14点目標と異なる',()=>{
  const {state}=setup(),routes=targetRoutes(sm.rankTable,15);
@@ -288,4 +288,38 @@ test('条件札を保有した序盤の配置で満足15へ到達し、最終得
  const final=clone(state),last=[card(42),card(25),card(30),card(15)];for(const step of strategy.placements(observe(),last,state,'engine'))tm.resolveCardAction(last[step.cardIndex],step.slot,final);
  assert.equal(sm.calculateScore(final).points,16);assert.equal(strategy.activationValue(observe(),state.player),0);
  assert.throws(()=>setup({activationGoals:[{...goals[0],stat:'futureResult'}]}),/目標指定/);
+});
+
+test('No40が残っていても、最後の直接の経理回復役No5を保護する',()=>{
+ const {state,clone,enumerate,observe}=setup();state.turn=2;state.player.deck=[];
+ for(const n of [5,40,13,49,23,35])state.addToDeck({...card(n)});
+ Object.assign(state.player,{experience:25,enrollment:12,satisfaction:12,accounting:10});
+ const projected=(ob,{cards})=>({end:{...ob.stats},engine:cards.some(c=>Number(c.cardNo)===5)?0:1000,risk:0,draw:4,outputs:[]});
+ const args={projectDeck:projected,score:proGoal,cloneState:clone,resolve:()=>({applied:false}),enumerateOptions:enumerate,publicActionParser:cm,turns:state.config.turns};
+ const old=createResearchPolicy({...args,config:{deleteFloor:4}}),checked=createResearchPolicy({...args,config:{deleteFloor:4,effectRecoveryProtection:true}});
+ const ob=observe(),snapshot=JSON.stringify(state);
+ for(const key of ['seed','rng','deckOrder','trainingDecks'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ assert.equal(Number(old.deletions(ob,1,'aggressive','engine')[0].cardNo),5);
+ assert(checked.deletions(ob,1,'aggressive','engine').every(d=>Number(d.cardNo)!==5));
+ assert.equal(JSON.stringify(state),snapshot);
+});
+test('配置候補の分散方式を有効にしても、最終配置は公式得点を優先する',()=>{
+ const {state,strategy,observe,tm,clone}=setup({fastPublicActions:true,planning:{worlds:2,candidateDiversity:'axes'}});state.turn=7;
+ Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});
+ const hand=[card(42),card(25),card(30),card(15)],ob=observe(),before=JSON.stringify(state);
+ for(const key of ['seed','rng','deckOrder'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ const next=clone(state);for(const p of strategy.placements(ob,hand,state,'rollout'))assert(tm.resolveCardAction(hand[p.cardIndex],p.slot,next).applied);
+ assert.equal(sm.calculateScore(next).points,16);assert.equal(JSON.stringify(state),before);
+});
+
+test('将来の学習リフレッシュを使う条件は、序盤SRの残り1回も判断へ渡す',()=>{
+ const {state,strategy,observe,tm,clone,enumerate}=setup({},tinyModel('count-15'));state.turn=0;
+ Object.assign(state.player,{experience:10,enrollment:4,satisfaction:10,accounting:10});
+ const ob=observe();ob.refreshRemaining=1;ob.offerHistory=[];
+ for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ const calls=[];
+ const make=consistent=>createRiskPolicy({baseline:{...strategy,futureRefresh:(o)=>{calls.push({turn:o.turn,remaining:o.refreshRemaining});return {shouldRefresh:true};}},score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,
+  refreshAdvice:o=>strategy.acquisition(o,'engine'),config:{planning:{worlds:1,valueHorizon:1,futurePolicy:'baseline',futureBeam:8,futureRefresh:'learned',consistentFutureRefresh:consistent}}});
+ make(false).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,0);
+ make(true).evaluate(ob,ob.owned,clone(state),'after-action');assert.deepEqual(calls,[{turn:1,remaining:1}]);
 });

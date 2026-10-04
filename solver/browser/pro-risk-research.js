@@ -1,3 +1,4 @@
+import {selectActionCandidates} from './pro-action-candidates.js';
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
 export const RISK_VERSION='pro-public-rollout-v3';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
@@ -11,6 +12,8 @@ export function publicDraw(cards,count,world,turn,salt='pro-risk-v1',method='leg
 export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}){
  const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,smooth:.12,salt:'pro-risk-v1',...config.planning};
  if(cfg.valueHorizon!==undefined&&(!Number.isInteger(cfg.valueHorizon)||cfg.valueHorizon<1||cfg.valueHorizon>8||!baseline.futureValue))throw Error('固定評価までの先読みは1〜8ターン');
+ if(cfg.candidateDiversity!==undefined&&cfg.candidateDiversity!=='axes')throw Error('配置候補の分散方式はaxes');
+ if(cfg.consistentFutureRefresh!==undefined&&typeof cfg.consistentFutureRefresh!=='boolean')throw Error('将来リフレッシュの一致条件は真偽値');
  const scoreCache=new Map(),tableKeys=new WeakMap();
  function score(stats,table){if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));const key=tableKeys.get(table)+'|'+KEYS.map(k=>stats[k]).join(',');
   if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
@@ -58,7 +61,8 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    expanded.sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length);frontier=expanded.slice(0,width);
    for(const node of frontier){const key=JSON.stringify([node.state.player,node.state.tokens]);if(!endings.has(key)||endings.get(key).value<node.value)endings.set(key,node);}
   }
-  return [...endings.values()].sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length).slice(0,count);
+  const ranked=[...endings.values()].sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length);
+  return cfg.candidateDiversity==='axes'&&count>1?selectActionCandidates(ranked,count,observation):ranked.slice(0,count);
  }
  // プールはカタログ・見た候補・恒久除外だけから再構成する。実物の研修デッキにアクセスしない。
  function makePool(root){
@@ -81,7 +85,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   const observation=()=>({...observe(root,state,owned,pool.history),refreshRemaining:pool.refreshRemaining});
   let candidates=offer(pool,rarity,world,state.turn,round);if(!candidates.length)return owned;
   if(cfg.futureRefresh&&refreshAdvice&&pool.refreshRemaining>0&&!allowSkip&&
-      !(rarity!=='SSR'&&pool.refreshRemaining<2&&state.turn<4)){
+      (cfg.futureRefresh==='learned'&&cfg.consistentFutureRefresh||!(rarity!=='SSR'&&pool.refreshRemaining<2&&state.turn<4))){
    const catalog=pool.available.filter(c=>c.rarity===rarity&&(pool.removed[c.cardNo]||0)<2);
    const reference=refreshAdvice({...observation(),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
    const current=refreshAdvice({...observation(),candidates,pickCount:1,allowSkip:false}).recommended.score;

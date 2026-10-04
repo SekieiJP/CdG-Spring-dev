@@ -214,7 +214,7 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js'].includes(relPath);
+            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js','/research/pro-intrinsic-recovery.js','/research/pro-action-candidates.js'].includes(relPath);
             const absPath = researchPath ? path.join(__dirname, 'browser',path.basename(relPath)) : path.resolve(rootDir, `.${relPath}`);
 
             if (!researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
@@ -3804,7 +3804,7 @@ async function main() {
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).update(await readFile(path.join(__dirname,'browser/pro-intrinsic-recovery.js'))).update(await readFile(path.join(__dirname,'browser/pro-action-candidates.js'))).digest('hex'),
         ...await readGitProvenance() };
     const sceneVersions=[provenance.codeHash,'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex'),'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex')];
     const decisionBatch=args.decisionBatch?prepareSceneBatch(await readFile(path.resolve(repoRoot,args.decisionBatch)),args.sceneArm,{episodes:args.episodes,offset:args.episodeOffset,versions:sceneVersions}):null;

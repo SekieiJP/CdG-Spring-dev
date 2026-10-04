@@ -1,6 +1,7 @@
 import {createRiskPolicy} from './pro-risk-research.js';
 import {createPublicActionKernel} from './pro-public-action-kernel.js';
 import {createLearnedPolicy} from './pro-learned-research.js';
+import {createIntrinsicRecoveryCheck} from './pro-intrinsic-recovery.js';
 /** PRO攻略の仮説をブラウザ内で検証する分析用方略。本体の推薦には接続しない。 */
 export const RESEARCH_VERSION = 'pro-human-strategy-v1';
 const KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
@@ -59,6 +60,9 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
+    if(config.effectRecoveryProtection!==undefined&&typeof config.effectRecoveryProtection!=='boolean')throw Error('実効果による回復役保護は真偽値');
+    if(config.effectRecoveryProtection&&!publicActionParser)throw Error('回復効果のパーサーが必要');
+    const recoveryCheck=config.effectRecoveryProtection?createIntrinsicRecoveryCheck(publicActionParser):null;
     const activationGoals=config.activationGoals??[];
     if(!Array.isArray(activationGoals)||activationGoals.length>12||activationGoals.some(g=>!g||!Number.isInteger(g.cardNo)||g.cardNo<1||g.cardNo>51||!KEYS.includes(g.stat)||!Number.isFinite(g.threshold)||g.threshold<1||g.threshold>60||!Number.isFinite(g.weight)||g.weight<0||g.weight>50||!Number.isInteger(g.minRemaining)||g.minRemaining<2||g.minRemaining>8))throw Error('条件発動の目標指定が不正');
     // 保有している条件付き札を早く働かせる仮説。最終ターンの得点評価には足さない。
@@ -192,7 +196,11 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
                     // 最後の回復役を消すとまだ不足する場面では残す。名前・レア度の一律削除を避ける。
                     const losesRole=(status,category,target)=>next.stats[status]<target&&card.category===category&&
                         !after.some(c=>c.category===category)&&evaluated.forecast.end[status]<target;
-                    if(losesRole('accounting','庶務',15)||losesRole('satisfaction','応対',15)||losesRole('experience','動員',40)||config.protectEnrollment&&losesRole('enrollment','教務',Number(config.protectEnrollment)))continue;
+                    const losesEffect=(status,target)=>next.stats[status]<target&&evaluated.forecast.end[status]<target&&
+                        recoveryCheck(card,status,next,target,evaluated.forecast.end)&&!after.some(c=>recoveryCheck(c,status,next,target,evaluated.forecast.end));
+                    if(recoveryCheck?
+                        losesEffect('accounting',15)||losesEffect('satisfaction',15)||losesEffect('experience',40)||config.protectEnrollment&&losesEffect('enrollment',Number(config.protectEnrollment)):
+                        losesRole('accounting','庶務',15)||losesRole('satisfaction','応対',15)||losesRole('experience','動員',40)||config.protectEnrollment&&losesRole('enrollment','教務',Number(config.protectEnrollment)))continue;
                 }
                 candidates.push({index,cardNo:card.cardNo,gain:evaluated.score-baseline.score,after:evaluated.forecast.end});
             }
