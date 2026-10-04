@@ -4,6 +4,7 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {pairedOutcomes} from './pro-strategy-metrics.mjs';
 export function diagnoseDistribution(group,{target=12.5,maxScore=16}={}){
  const {n,scoreDistribution}=group;
  if(!Number.isInteger(n)||n<250||group.resets!==0||!Number.isFinite(target)||target<0||target>maxScore)throw Error('全開始250以上・リセマラなしの完走集計が必要');
@@ -20,6 +21,16 @@ export function diagnoseDistribution(group,{target=12.5,maxScore=16}={}){
   onePointUpgradesNeeded:Math.ceil(Math.max(0,(target-mean)*n)-1e-9),
   eligibleForOnePointCount:rows.filter(r=>r.score<maxScore).reduce((a,r)=>a+r.count,0),
   interpretation:'全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。'};
+}
+export function scoreMigration(before,after){
+ if(before.length!==after.length||[...before,...after].some(r=>!Number.isInteger(r.score)||r.score>16||r.reroll||r.research?.initial))throw Error('選別なしの同数の開始が必要');
+ const comparison=pairedOutcomes(before,after);
+ if(comparison.n!==before.length||comparison.firstOfferMismatches!==0)throw Error('全開始と初回提示の一致が必要');
+ const lookup=new Map(after.map(r=>[r.seed,r])),n=before.length,pairs=before.map(a=>[a,lookup.get(a.seed)]);
+ const bands=[['below8',s=>s<8],['8-9',s=>s>=8&&s<10],['10-11',s=>s>=10&&s<12],['12',s=>s===12],['13',s=>s===13],['14',s=>s===14],['15-16',s=>s>=15]];
+ const byBefore=bands.map(([id,test])=>{const rows=pairs.filter(([a])=>test(a.score)),gained=rows.reduce((s,[a,b])=>s+Math.max(0,b.score-a.score),0),lost=rows.reduce((s,[a,b])=>s+Math.max(0,a.score-b.score),0);return {id,count:rows.length,improvedCount:rows.filter(([a,b])=>b.score>a.score).length,declinedCount:rows.filter(([a,b])=>b.score<a.score).length,gainedPoints:gained,lostPoints:lost,netContributionPerStart:(gained-lost)/n};});
+ return {n,comparison,byBefore,score13:{before:before.filter(r=>r.score>=13).length,after:after.filter(r=>r.score>=13).length},score14:{before:before.filter(r=>r.score>=14).length,after:after.filter(r=>r.score>=14).length},score15:{before:before.filter(r=>r.score>=15).length,after:after.filter(r=>r.score>=15).length},
+  interpretation:'全開始の対応差を変更前の得点帯に分解した事後診断。帯の少数例での優位や、プレイ前に得点帯を識別できることを証明しない。各帯の寄与の和は全開始の対平均差に一致する。'};
 }
 async function main(){
  const [manifestFile,outFile]=process.argv.slice(2);if(!manifestFile||!outFile)throw Error('集計参照manifestと出力先を指定');

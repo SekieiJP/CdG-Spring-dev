@@ -4,7 +4,8 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {readRunBytes,compactRecord,summarizeOutcomes,pairedOutcomes} from './pro-strategy-metrics.mjs';
+import {readRunBytes,compactRecord,summarizeOutcomes} from './pro-strategy-metrics.mjs';
+import {scoreMigration} from './pro-score-distribution.mjs';
 const mean=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:null;
 export function meanInterval(scores,iterations=2000){let n=0x1235125,values=[];const rand=()=>((n=(Math.imul(n,1664525)+1013904223)>>>0)/4294967296);
  if(!scores.length)return [null,null];for(let i=0;i<iterations;i++){let total=0;for(let j=0;j<scores.length;j++)total+=scores[Math.floor(rand()*scores.length)];values.push(total/scores.length);}values.sort((a,b)=>a-b);return [values[Math.ceil(iterations*.025)-1],values[Math.ceil(iterations*.975)-1]];}
@@ -56,12 +57,12 @@ async function main(){
    if(manifest.fingerprints&&batch.some(r=>r.metadata.provenance.strategyVersion!==manifest.fingerprints.strategyVersion||r.metadata.provenance.codeHash!==manifest.fingerprints.codeHash||r.metadata.cardVersion!==manifest.fingerprints.cardVersion||r.metadata.rankVersion!==manifest.fingerprints.rankVersion))throw Error('実行設定と記録の版が異なる');
    summary.audit.push({id:run.id,file,sha256:createHash('sha256').update(bytes).digest('hex'),n:batch.length,version:data.settings.provenance.strategyVersion});records.push(...batch);}
   const outcomes=records.map(compactRecord),stats=summarizeOutcomes(outcomes),cat=outcomes.filter(r=>r.score<8),w0=outcomes.filter(r=>r.stats.withdrawal===0),w1=outcomes.filter(r=>r.stats.withdrawal>0);
-  outcomesByGroup[run.id]=outcomes;summary.groups[run.id]={description:run.description,...stats,mean95:meanInterval(outcomes.map(r=>r.score)),resets:0,predictionCalibration:predictionCalibration(records),forecastStatsCalibration:forecastStatsCalibration(records),deletionCoverage:deletionCoverage(records),
+  outcomesByGroup[run.id]=outcomes;summary.groups[run.id]={description:run.description,...stats,score13:{count:outcomes.filter(r=>r.score>=13).length,rate:outcomes.filter(r=>r.score>=13).length/outcomes.length},mean95:meanInterval(outcomes.map(r=>r.score)),resets:0,predictionCalibration:predictionCalibration(records),forecastStatsCalibration:forecastStatsCalibration(records),deletionCoverage:deletionCoverage(records),
    failure:{below8Count:cat.length,below8Mean:mean(cat.map(r=>r.score)),noWithdrawalCount:w0.length,noWithdrawalMean:mean(w0.map(r=>r.score)),withdrawalCount:w1.length,withdrawalMean:mean(w1.map(r=>r.score))},
    analysis:'developmentは方略の選択用。mean125達成は独立した1000シード以上の検証で判断する。',cards:observedCards(records),
    examplesHigh:outcomes.filter(r=>r.score>=14).slice(0,5).map(r=>({seed:r.seed,score:r.score,stats:r.stats,turnStats:r.turnStats,deck:r.finalDeck}))};
  }
- for(const c of manifest.comparisons||[])summary.comparisons[c.id]={...c,...pairedOutcomes(outcomesByGroup[c.before],outcomesByGroup[c.after])};
+ for(const c of manifest.comparisons||[]){const {comparison,...migration}=scoreMigration(outcomesByGroup[c.before],outcomesByGroup[c.after]);summary.comparisons[c.id]={...c,...comparison,migration};}
  await mkdir(outDir,{recursive:true});await writeFile(path.join(outDir,'summary.json'),JSON.stringify(summary,null,2)+'\n');
  console.log(JSON.stringify({groups:Object.fromEntries(Object.entries(summary.groups).map(([id,s])=>[id,{n:s.n,mean:s.mean,mean95:s.mean95,median:s.median,p10:s.p10,below8:s.failure.below8Count,withdrawal:s.failure.withdrawalCount,score15:s.score15.count,stats:s.meanStats,activity:s.activity}])),comparisons:summary.comparisons},null,2));
 }
