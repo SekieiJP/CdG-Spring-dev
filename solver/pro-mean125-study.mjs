@@ -18,7 +18,7 @@ async function main(){
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
- const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js'];
+ const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs'];
  const strategyVersion=sha(Buffer.concat(await Promise.all(files.map(file=>readFile(file)))));
  const sources=await Promise.all((await readdir('game/js')).filter(name=>name.endsWith('.js')).sort().map(async name=>name+await readFile(`game/js/${name}`,'utf8')));
  const fingerprints={strategyVersion,codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
@@ -31,9 +31,9 @@ async function main(){
  async function worker(index){while(next<jobs.length){const job=jobs[next++],started=Date.now();
   if(process.argv.includes('--resume'))try{const d=JSON.parse(await readRunBytes(job.output)),s=d.settings,records=d.simulations?.[0]?.playRecords;
    if(s?.seed===seed&&s.episodeOffset===job.b*250&&s.episodes===250&&JSON.stringify(s.research)===JSON.stringify(job.config)&&s.provenance?.strategyVersion===fingerprints.strategyVersion&&s.provenance?.codeHash===fingerprints.codeHash&&records?.length===250&&records.every(r=>r.metadata.cardVersion===fingerprints.cardVersion&&r.metadata.rankVersion===fingerprints.rankVersion&&!r.metadata.reroll)){console.log(`reuse ${job.id}/${job.b}`);done++;continue;}}catch{}
-  console.log(`start ${stage}/${job.id} batch${job.b}`);let log='';
+  console.log(`start ${stage}/${job.id} batch${job.b}`);let log='',progressBuffer='';
   await new Promise((resolve,reject)=>{const child=spawn(process.execPath,['solver/autoplay-agent.mjs','--difficulty','pro','--episodes','250','--episode-offset',String(job.b*250),'--seed',seed,'--policies','pro_goal','--acquisition-model','pro_splus','--refresh-policy','public','--refresh-model','pro_splus','--research-config',job.configPath,'--port',String(portBase+index),'--output',job.output,'--trace-samples','0','--no-report'],{stdio:['ignore','pipe','pipe']});
-   child.stdout.on('data',s=>log+=s);child.stderr.on('data',s=>log+=s);child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error(`${job.id}: ${code}\n${log}`)));});
+   child.stdout.on('data',s=>{log+=s;progressBuffer+=s;const lines=progressBuffer.split('\n');progressBuffer=lines.pop();for(const line of lines)if(line.startsWith('CDG_RESEARCH_PROGRESS '))console.log(`[${job.id}/${job.b}] ${line}`);});child.stderr.on('data',s=>log+=s);child.on('error',reject);child.on('exit',code=>code===0?resolve():reject(Error(`${job.id}: ${code}\n${log}`)));});
   await writeFile(`${root}/${job.id}-batch${job.b}.log`,log);
   const data=JSON.parse(await readRunBytes(job.output)),sim=data.simulations[0];console.log(`done ${++done}/${jobs.length} ${job.id}/${job.b}: mean=${sim.scoreSummary.mean.toFixed(3)} median=${sim.scoreSummary.p50} minutes=${((Date.now()-started)/60000).toFixed(2)}`);
   await compressRun(job.output);

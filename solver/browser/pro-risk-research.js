@@ -42,7 +42,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    return g.smoothPoints*20+g.points*2+Math.min(end.experience,50)*.5+Math.min(end.enrollment,48)*.8+
     Math.min(end.satisfaction,35)*.3+Math.min(end.accounting,19)*.35+
     Math.min(drawRoom,Math.max(-4,next.tokens.passion-next.tokens.fatigue))*12+
-    next.tokens.inspiration*7+next.tokens.organize*Math.min(5,(remaining-1)*1.5)-Math.max(0,3-next.player.accounting)*3;
+    next.tokens.inspiration*7+next.tokens.organize*Math.min(5,(remaining-1)*1.5)-Math.max(0,3-next.player.accounting)*3+(baseline.activationValue?.(observation,next.player)||0);
   }
   let frontier=[{state:cloneState(state),counts:{leader:0,teacher:0,staff:0},used:0n,seq:[],value:evaluate(state)}],endings=new Map();
   for(let depth=0;depth<hand.length;depth++){

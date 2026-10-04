@@ -7,6 +7,7 @@ import { chromium } from 'playwright';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readdir } from 'node:fs/promises';
+import {prepareSceneBatch} from './pro-card-scene-input.mjs';
 import { buildNaturalLanguageReport } from './reportBuilder.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -111,6 +112,8 @@ function parseArgs(argv) {
         acquisitionAblation: null,
         episodeOffset: 0,
         decisionFile: null,
+        decisionBatch: null,
+        sceneArm: null,
         forcedChoice: null,
         policies: null,
         output: 'solver/latest-simulation.json',
@@ -134,6 +137,11 @@ function parseArgs(argv) {
             i += 1;
         } else if (key === '--decision-file' && next) {
             args.decisionFile = next; i++;
+        } else if (key === '--decision-batch' && next) {
+            args.decisionBatch=next; i++;
+        } else if (key === '--scene-arm' && next) {
+            if(!['target','reference'].includes(next))throw Error('--scene-arm はtargetまたはreference');
+            args.sceneArm=next; i++;
         } else if (key === '--forced-choice' && next) {
             if (next !== 'skip' && !/^\d+(,\d+)*$/.test(next)) throw new Error('--forced-choice は候補番号0,1など、またはskip');
             args.forcedChoice = next === 'skip' ? [] : next.split(',').map(Number); i++;
@@ -235,8 +243,8 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
@@ -251,6 +259,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         // 余計なUI/ログ処理を抑制
         window.alert = () => {};
         window.confirm = () => true;
+        const reportProgress=console.log.bind(console);
         console.log = () => {};
         if (game.logger) {
             game.logger.log = () => {};
@@ -259,6 +268,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
         await game.setDifficulty(diff);
         if (game.cardLoadFailed) throw new Error(`難易度データを読み込めません: ${diff}`);
+        if(decisionBatch){const publicTurns=game.gameState.config.turns.map(({recommended,recommendedStatus,training,delete:deletion})=>({recommended,recommendedStatus,training,deletion}));
+            if(decisionBatch.scenes.some(s=>JSON.stringify(s.observation.turns)!==JSON.stringify(publicTurns)))throw Error('局面集と実ゲームのターン設定が異なる');}
         if (replacement) {
             const [from, to] = replacement.split(':');
             const target = game.cardManager.getCardByNo(to);
@@ -3191,6 +3202,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         let episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
 
         for (let episode = 0; episode < epCount; episode += 1) {
+            const scene=decisionBatch?.scenes[episode+(episodeOffset||0)];
+            if(decisionBatch){if(!scene)throw Error('実行する公開局面がない');initialObservation=scene.observation;forcedChoice=scene.forcedChoice;}
             const episodeTrace = traceSampleCount > 0
                 ? {
                     episode: episode + 1,
@@ -3221,7 +3234,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 strategy: acquisitionModel ? `formula:${acquisitionModel}:${acquisitionAblation || 'full'}@${strategyPolicy}` : strategyPolicy,
                 acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
                 research,
-                source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null });
+                source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null,
+                ...(scene?{sceneId:scene.sceneId,sceneArm:decisionBatch.arm,sceneTurn:initialObservation.turn,sceneCardNo:decisionBatch.cardNo,sceneBankSha256:decisionBatch.sha256,sceneObservationSha256:scene.observationSha256}:{}) });
             if(research?.initial) {
                 game.gameState.playRecord.metadata.reroll={sessionSeed,rejectedStarts,attempts:rejectedStarts.length+1,
                     initialCards:initialCandidatesForRule.map(c=>c.cardNo),chosenIndices:initialDecision.chosenIndices,initialRefreshUsed:0};
@@ -3236,6 +3250,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
 
             if (initialObservation) {
                 game.gameState.turn = initialObservation.turn;
+                game.gameState.record('research-counterfactual-start',{sceneId:scene?.sceneId||null,observation:initialObservation,forcedChoice});
                 Object.assign(game.gameState.player, initialObservation.stats);
                 game.gameState.tokens = { ...initialObservation.tokens };
                 game.gameState.trainingRefreshRemaining=initialObservation.refreshRemaining ?? game.gameState.trainingRefreshRemaining;
@@ -3445,6 +3460,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 if(event.observation){delete event.observation.catalog;delete event.observation.rankTable;}
             }
             playRecords.push(exportedRecord);
+            if((episode+1)%25===0||episode+1===epCount)reportProgress('CDG_RESEARCH_PROGRESS '+JSON.stringify({policy,completed:episode+1,total:epCount}));
             const displayScore = Number(score.displayScore ?? score.points ?? 0);
             const scorePoints = Number(score.points ?? 0);
             const thresholdMetric = diff === 'pro' ? scorePoints : displayScore;
@@ -3762,7 +3778,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, research, valueModel });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel });
 }
 
 async function readGitProvenance() {
@@ -3781,14 +3797,17 @@ async function main() {
     if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout','learned'].includes(research.acquisition) ||
         !['control','median','ceiling','engine','myopic','rollout','learned'].includes(research.placement) ||
         !['control','adaptive','basic','aggressive','off','rollout','learned'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
-    if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile)throw new Error('局面再試行とリセマラは同時指定できません');}
+    if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile||args.decisionBatch)throw new Error('局面再試行とリセマラは同時指定できません');}
+    if(args.decisionBatch&&(args.decisionFile||args.forcedChoice!==null||args.difficulty!=='pro')||args.sceneArm&&!args.decisionBatch||args.decisionBatch&&!args.sceneArm)throw Error('局面集はPROで単独指定し、scene-armを指定');
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
     const initialObservation = decision?.observation || decision;
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).digest('hex'),
         ...await readGitProvenance() };
+    const sceneVersions=[provenance.codeHash,'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex'),'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex')];
+    const decisionBatch=args.decisionBatch?prepareSceneBatch(await readFile(path.resolve(repoRoot,args.decisionBatch)),args.sceneArm,{episodes:args.episodes,offset:args.episodeOffset,versions:sceneVersions}):null;
     let valueModel=null;
     if(research?.valueModelPath){
         const bytes=await readFile(path.resolve(repoRoot,research.valueModelPath)),hash=createHash('sha256').update(bytes).digest('hex'),data=JSON.parse(bytes);
@@ -3802,6 +3821,7 @@ async function main() {
 
     try {
         const page = await browser.newPage();
+        page.on('console',message=>{const line=message.text();if(line.startsWith('CDG_RESEARCH_PROGRESS '))console.log(line);});
         // 自動評価から実際のスコア送信・解析サービスへ通信しない。
         await page.route('**/*', route => new URL(route.request().url()).origin === `http://127.0.0.1:${args.port}`
             ? route.continue() : route.abort());
@@ -3817,7 +3837,7 @@ async function main() {
                 policyName: normalized,
                 traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
                 acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice, research, valueModel
+                initialObservation, forcedChoice: args.forcedChoice, decisionBatch, research, valueModel
             });
             simulations.push(result);
         }
@@ -3829,7 +3849,7 @@ async function main() {
                 episodes: args.episodes,
                 seed: args.seed, provenance, replacement: args.replacement, acquisitionModel: args.acquisitionModel,
                 acquisitionAblation: args.acquisitionAblation,refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice, research,
+                initialObservation, forcedChoice: args.forcedChoice, sceneBatch:decisionBatch?{cardNo:decisionBatch.cardNo,sha256:decisionBatch.sha256,arm:decisionBatch.arm,n:args.episodes,offset:args.episodeOffset}:null,research,
                 difficulty: args.difficulty,
                 scoreTargets: getScoreTargets(args.difficulty),
                 policies: args.policies.map(normalizePolicyName)

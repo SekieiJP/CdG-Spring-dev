@@ -274,3 +274,18 @@ test('配置の短い先読みは全期間に使え、再帰・非公開参照�
  state.turn=7;Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});const finalHand=[card(42),card(25),card(30),card(15)],final=clone(state);for(const p of strategy.placements(observe(),finalHand,state,'engine'))assert.ok(tm.resolveCardAction(finalHand[p.cardIndex],p.slot,final).applied);assert.equal(sm.calculateScore(final).points,16);
  assert.throws(()=>setup({...config,placementRolloutTurns:1},model),/2〜8/);
 });
+
+test('条件札を保有した序盤の配置で満足15へ到達し、最終得点の優先を変えない',()=>{
+ const goals=[{cardNo:49,stat:'satisfaction',threshold:15,weight:50,minRemaining:5}];
+ const {state,strategy,observe,tm,clone}=setup({activationGoals:goals,fastPublicActions:true});
+ state.turn=2;state.addToDeck({...card(49)});Object.assign(state.player,{experience:30,enrollment:10,satisfaction:12,accounting:15});
+ const ob=observe(),hand=[card(13),card(49)],next=clone(state);
+ for(const key of ['seed','rng','trainingDecks'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ for(const step of strategy.placements(ob,hand,state,'engine'))tm.resolveCardAction(hand[step.cardIndex],step.slot,next);
+ assert.equal(next.player.satisfaction,15);assert.equal(next.tokens.passion,2);assert.equal(next.tokens.inspiration,1);
+ assert.equal(strategy.activationValue({...ob,owned:[]},ob.stats),0);
+ state.turn=7;Object.assign(state.player,{experience:47,enrollment:40,satisfaction:35,accounting:15});
+ const final=clone(state),last=[card(42),card(25),card(30),card(15)];for(const step of strategy.placements(observe(),last,state,'engine'))tm.resolveCardAction(last[step.cardIndex],step.slot,final);
+ assert.equal(sm.calculateScore(final).points,16);assert.equal(strategy.activationValue(observe(),state.player),0);
+ assert.throws(()=>setup({activationGoals:[{...goals[0],stat:'futureResult'}]}),/目標指定/);
+});

@@ -59,6 +59,10 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
+    const activationGoals=config.activationGoals??[];
+    if(!Array.isArray(activationGoals)||activationGoals.length>12||activationGoals.some(g=>!g||!Number.isInteger(g.cardNo)||g.cardNo<1||g.cardNo>51||!KEYS.includes(g.stat)||!Number.isFinite(g.threshold)||g.threshold<1||g.threshold>60||!Number.isFinite(g.weight)||g.weight<0||g.weight>50||!Number.isInteger(g.minRemaining)||g.minRemaining<2||g.minRemaining>8))throw Error('条件発動の目標指定が不正');
+    // 保有している条件付き札を早く働かせる仮説。最終ターンの得点評価には足さない。
+    function activationValue(observation,stats){return activationGoals.reduce((sum,g)=>sum-(observation.totalTurns-observation.turn>=g.minRemaining&&observation.owned.some(c=>Number(c.cardNo)===g.cardNo)?g.weight*Math.max(0,g.threshold-stats[g.stat]):0),0);}
     const routeCache=new Map(),scoreCache=new Map(),tableKeys=new WeakMap();
     const tableKey=table=>{if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));return tableKeys.get(table);};
     function score(stats,table){const key=tableKey(table)+'|'+KEYS.map(k=>stats[k]).join(',');
@@ -146,6 +150,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
             const inspirationFactor=config.tokenHorizon?Math.min(1.5,(remaining-1)/3):1;
             v+=w.draw*drawFactor*(clamp(4+next.tokens.passion-next.tokens.fatigue,0,maxDraw)-4);
             v+=w.inspiration*inspirationFactor*next.tokens.inspiration+Math.min(4,(remaining-1)*1.3)*next.tokens.organize;
+            v+=activationValue(observation,next.player);
             v-=Math.max(0,3-next.player.accounting)*3;
             return v;
         }
@@ -197,7 +202,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return removed;
     }
-    const baseline={acquisition,placements,deletions,value,forecast,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8};}};
+    const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     return {...baseline,initial,riskPolicy,learnedPolicy};

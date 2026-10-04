@@ -6,20 +6,8 @@ import {pathToFileURL,fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {readRunBytes} from './pro-strategy-metrics.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
-/** 判断時に公開される項目だけを取り出す。元記録のシードや結果は渡さない。 */
-export function publicScene(ob){
- const card=c=>({cardNo:c.cardNo,cardName:c.cardName,rarity:c.rarity,category:c.category,effect:c.effect});
- return {
-  schema:ob.schema,difficulty:ob.difficulty,mode:ob.mode,turn:ob.turn,totalTurns:ob.totalTurns,
-  stats:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,ob.stats[k]])),
-  tokens:Object.fromEntries(['passion','fatigue','inspiration','organize'].map(k=>[k,ob.tokens[k]])),
-  owned:ob.owned.map(c=>({...card(c),acquiredTurn:c.acquiredTurn})),
-  candidates:ob.candidates.map(card),pickCount:ob.pickCount,allowSkip:ob.allowSkip,
-  turns:ob.turns.map(t=>({recommended:t.recommended,recommendedStatus:t.recommendedStatus,training:t.training,deletion:t.deletion})),
-  offerHistory:ob.offerHistory.map(e=>({type:e.type,turn:e.turn,rarity:e.rarity,cards:e.cards.map(card)})),
-  refreshRemaining:ob.refreshRemaining
- };
-}
+import {publicScene} from './pro-card-scene-input.mjs';
+export {publicScene} from './pro-card-scene-input.mjs';
 
 async function main(){
  const [manifestFile,groupId,outDir,nosText='43,51']=process.argv.slice(2),nos=nosText.split(',').map(Number),perTurn=250;
