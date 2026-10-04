@@ -2,12 +2,20 @@
 /** 記録の公開局面を配布し、結果を集計する。全探索・解決・得点はブラウザ内。 */
 import http from 'node:http';
 import path from 'node:path';
+import {pathToFileURL} from 'node:url';
 import {readFile,writeFile,mkdir,readdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {chromium} from 'playwright';
 import {readRunBytes,compactRecord,summarizeOutcomes} from './pro-strategy-metrics.mjs';
 import {meanInterval} from './pro-mean125-metrics.mjs';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex'),mean=a=>a.reduce((s,n)=>s+n,0)/a.length;
+export function packTerminalFrame(event,catalog){
+ const o=event.observation;
+ if(o.difficulty!=='pro'||o.mode!=='normal'||o.turn!==7||o.totalTurns!==8)throw Error('PRO通常ゲームの最終公開局面が必要');
+ const observation={difficulty:o.difficulty,mode:o.mode,turn:o.turn,totalTurns:o.totalTurns,stats:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,o.stats[k]])),tokens:Object.fromEntries(['passion','fatigue','inspiration','organize'].map(k=>[k,o.tokens[k]||0]))};
+ const hand=event.hand.map(c=>{const d=catalog.get(String(c.cardNo));if(!d)throw Error('未知の手札');return {cardNo:d.cardNo,cardName:d.cardName,rarity:d.rarity,category:d.category,effect:d.effect};});
+ return {observation,hand};
+}
 async function main(){
  const [sourceFile='solver/research-scenarios/pro-terminal-audit-sources.json',outDir='solver/local-evaluation/pro-mean125/terminal-exact-audit']=process.argv.slice(2),spec=JSON.parse(await readFile(sourceFile));
  const gameRoot=path.resolve('game'),browserRoot=path.resolve('solver/browser'),port=18891;
@@ -17,10 +25,8 @@ async function main(){
  for(const source of spec.runs){let records=[],audit=[];for(const file of source.files){const bytes=await readRunBytes(file),d=JSON.parse(bytes);if(d.simulations.length!==1)throw Error('1ファイル1方略');records.push(...d.simulations[0].playRecords);audit.push({file,sha256:sha(bytes)});}
   const metrics=summarizeOutcomes(records.map(compactRecord));
   for(const r of records){const m=r.metadata;if(m.reroll||m.research?.initial||m.source!=='autoplay'||JSON.stringify([m.provenance.codeHash,m.cardVersion,m.rankVersion])!==JSON.stringify(versions))throw Error('同じ本体の一発勝負の記録が必要');
-   const events=r.events.filter(e=>e.type==='research-placement-decision'&&e.turn===7);if(events.length!==1)throw Error('最終の公開配置局面が1つ必要');const e=events[0],o=e.observation,catalog=new Map(m.catalog.map(c=>[String(c.cardNo),c]));
-   const frame={difficulty:'pro',mode:'normal',turn:o.turn,totalTurns:o.totalTurns,stats:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,o.stats[k]])),tokens:Object.fromEntries(['passion','fatigue','inspiration','organize'].map(k=>[k,o.tokens[k]||0]))};
-   const hand=e.hand.map(c=>{const d=catalog.get(String(c.cardNo));if(!d)throw Error('未知の手札');return {cardNo:d.cardNo,cardName:d.cardName,rarity:d.rarity,category:d.category,effect:d.effect};});
-   const index=inputs.length;inputs.push({observation:frame,hand});observations.push({index,id:source.id,seed:m.seed,sequence:e.placements,actualScore:r.result.score.displayScore,actualWithdrawal:r.result.score.withdrawal,actualStats:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,r.result.score[k]]))});
+   const events=r.events.filter(e=>e.type==='research-placement-decision'&&e.turn===7);if(events.length!==1)throw Error('最終の公開配置局面が1つ必要');const e=events[0],catalog=new Map(m.catalog.map(c=>[String(c.cardNo),c]));
+   const index=inputs.length;inputs.push(packTerminalFrame(e,catalog));observations.push({index,id:source.id,seed:m.seed,sequence:e.placements,actualScore:r.result.score.displayScore,actualWithdrawal:r.result.score.withdrawal,actualStats:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,r.result.score[k]]))});
   }
   groups.push({id:source.id,n:records.length,actualMean:metrics.mean,audit});
  }
@@ -54,7 +60,7 @@ async function main(){
     actualWithdrawalGames:rows.filter(r=>r.actualWithdrawal>0).length,minimumWithdrawalGamesAtMaxScore:rows.filter(r=>r.optimized.score.withdrawal>0).length,withdrawalAvoidableAtMaxScore:rows.filter(r=>r.actualWithdrawal>0&&r.optimized.score.withdrawal===0).length,
     actualBelow8:rows.filter(r=>r.actualScore<8).length,minimumBelow8SameHistory:rows.filter(r=>r.optimized.score.displayScore<8).length}:{}),interpretation:complete?'250以上の同じ公開最終手札での配置の取りこぼしを診断。以前の取得・配置・削除は固定。新方略の独立完走検証ではない。':'上限到達があるので全体の最大値と改善傾向を集計しない。'};}
   await mkdir(outDir,{recursive:true});await writeFile(path.join(outDir,'summary.json'),JSON.stringify(summary,null,2)+'\n');await writeFile(path.join(outDir,'frames.json'),JSON.stringify(outputs)+'\n');
-  console.log(JSON.stringify({groups:summary.groups},null,2));
+  console.log(JSON.stringify({groups:Object.fromEntries(Object.entries(summary.groups).map(([id,{states,audit,...g}])=>[id,{...g,maxVisited:Math.max(...states)}]))},null,2));
  }finally{if(browser)await browser.close();await new Promise(resolve=>server.close(resolve));}
 }
-main().catch(e=>{console.error(e);process.exitCode=1;});
+if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href)main().catch(e=>{console.error(e);process.exitCode=1;});
