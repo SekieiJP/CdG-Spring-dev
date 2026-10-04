@@ -1,0 +1,67 @@
+{
+  "purpose": "two-game technical check; no score trend inference",
+  "source": "solver/local-runs/pro-mean125/opening-integration-check/games.json",
+  "sourceSha256": "118897b147c7080cdae70494d2aa518c295e1fe491c414e91719420dc79860f0",
+  "strategyVersion": "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da",
+  "n": 2,
+  "checks": [
+    {
+      "initialTableUsed": true,
+      "subsequentTableUses": 0,
+      "rerolls": 0,
+      "truncated": false,
+      "completed": true
+    },
+    {
+      "initialTableUsed": true,
+      "subsequentTableUses": 0,
+      "rerolls": 0,
+      "truncated": false,
+      "completed": true
+    }
+  ],
+  "tableSha256": "7cb748adb5a3f44ac8c871abdcb192911f6ad01736595fbca9137a3a9f467958",
+  "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+  "resourceAudit": {
+    "startedAt": "2026-10-04T04:38:21.549285+00:00",
+    "reason": "keep at most three active research browsers during a two-game integration check; retain the existing game state",
+    "root": 15718,
+    "tag": "short-policy-value-development/both2-config.json",
+    "processes": [
+      {
+        "pid": 15718,
+        "ppid": 14803,
+        "name": "node"
+      },
+      {
+        "pid": 15723,
+        "ppid": 15718,
+        "name": "chrome-headless-shell"
+      },
+      {
+        "pid": 15727,
+        "ppid": 15723,
+        "name": "chrome-headless-shell"
+      },
+      {
+        "pid": 15728,
+        "ppid": 15723,
+        "name": "chrome-headless-shell"
+      },
+      {
+        "pid": 15730,
+        "ppid": 15723,
+        "name": "chrome-headless-shell"
+      }
+    ],
+    "exitCode": 0,
+    "finishedAt": "2026-10-04T04:38:52.462968+00:00",
+    "resumedPids": [
+      15723,
+      15727,
+      15728,
+      15730,
+      15718
+    ]
+  }
+}
