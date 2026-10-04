@@ -8,6 +8,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { readdir } from 'node:fs/promises';
 import {prepareSceneBatch} from './pro-card-scene-input.mjs';
+import {prepareOpeningTableInput} from './pro-opening-table-input.mjs';
 import { buildNaturalLanguageReport } from './reportBuilder.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -214,7 +215,7 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js','/research/pro-intrinsic-recovery.js','/research/pro-action-candidates.js'].includes(relPath);
+            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js','/research/pro-intrinsic-recovery.js','/research/pro-action-candidates.js','/research/pro-opening-table.js'].includes(relPath);
             const absPath = researchPath ? path.join(__dirname, 'browser',path.basename(relPath)) : path.resolve(rootDir, `.${relPath}`);
 
             if (!researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
@@ -243,8 +244,8 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
@@ -331,7 +332,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
         const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
         const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
-            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,turns:game.gameState.config.turns,publicActionParser:research.fastPublicActions?new game.cardManager.constructor(null):null,config:research,valueModel,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,turns:game.gameState.config.turns,publicActionParser:research.fastPublicActions?new game.cardManager.constructor(null):null,config:research,valueModel,openingTable,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
 
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
         const SLOT_KEYS = game.gameState.slotIds;
@@ -3778,7 +3779,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable });
 }
 
 async function readGitProvenance() {
@@ -3804,7 +3805,7 @@ async function main() {
     const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
         .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
     const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
-        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).update(await readFile(path.join(__dirname,'browser/pro-intrinsic-recovery.js'))).update(await readFile(path.join(__dirname,'browser/pro-action-candidates.js'))).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).update(await readFile(path.join(__dirname,'browser/pro-intrinsic-recovery.js'))).update(await readFile(path.join(__dirname,'browser/pro-action-candidates.js'))).update(await readFile(path.join(__dirname,'browser/pro-opening-table.js'))).update(await readFile(path.join(__dirname,'pro-opening-table-input.mjs'))).digest('hex'),
         ...await readGitProvenance() };
     const sceneVersions=[provenance.codeHash,'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex'),'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex')];
     const decisionBatch=args.decisionBatch?prepareSceneBatch(await readFile(path.resolve(repoRoot,args.decisionBatch)),args.sceneArm,{episodes:args.episodes,offset:args.episodeOffset,versions:sceneVersions}):null;
@@ -3816,6 +3817,8 @@ async function main() {
         valueModel=data.model;
     }
     if(research&&([research.acquisition,research.placement,research.deletion,research.planning?.futureAcquisition,research.planning?.futureRefresh].includes('learned')||research.refresh==='learned'||research.planning?.valueHorizon)&&!valueModel)throw Error('学習済みモデルが必要');
+    if(research?.openingTablePath&&(research.initial||research.acquisition!=='learned'||research.refresh!=='learned'||!valueModel))throw Error('初回表はリセマラなしの学習リフレッシュ方略専用');
+    const openingTable=research?.openingTablePath?prepareOpeningTableInput(await readFile(path.resolve(repoRoot,research.openingTablePath)),{expectedSha256:research.openingTableSha256,versions:sceneVersions,modelSha256:research.valueModelSha256}):null;
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
@@ -3837,7 +3840,7 @@ async function main() {
                 policyName: normalized,
                 traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
                 acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
-                initialObservation, forcedChoice: args.forcedChoice, decisionBatch, research, valueModel
+                initialObservation, forcedChoice: args.forcedChoice, decisionBatch, research, valueModel, openingTable
             });
             simulations.push(result);
         }

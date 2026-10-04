@@ -18,11 +18,11 @@ async function main(){
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`pro-mean125-${stage}`,jobs=[],runs=[];
  await mkdir(root,{recursive:true});
  const sha=buffer=>createHash('sha256').update(buffer).digest('hex');
- const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs','solver/browser/pro-intrinsic-recovery.js','solver/browser/pro-action-candidates.js'];
+ const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs','solver/browser/pro-intrinsic-recovery.js','solver/browser/pro-action-candidates.js','solver/browser/pro-opening-table.js','solver/pro-opening-table-input.mjs'];
  const strategyVersion=sha(Buffer.concat(await Promise.all(files.map(file=>readFile(file)))));
  const sources=await Promise.all((await readdir('game/js')).filter(name=>name.endsWith('.js')).sort().map(async name=>name+await readFile(`game/js/${name}`,'utf8')));
  const fingerprints={strategyVersion,codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
- for(const id of ids){const config={id,...configs[id]};if(config.valueModelPath)config.valueModelSha256=sha(await readFile(config.valueModelPath));const configPath=`${root}/${id}-config.json`,batchFiles=[];await writeFile(configPath,JSON.stringify(config,null,2)+'\n');
+ for(const id of ids){const config={id,...configs[id]};if(config.valueModelPath)config.valueModelSha256=sha(await readFile(config.valueModelPath));if(config.openingTablePath)config.openingTableSha256=sha(await readFile(config.openingTablePath));const configPath=`${root}/${id}-config.json`,batchFiles=[];await writeFile(configPath,JSON.stringify(config,null,2)+'\n');
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;batchFiles.push(path.resolve(output));jobs.push({id,config,configPath,b,output});}
   runs.push({id,description:JSON.stringify(config),files:batchFiles});}
  const comparisons=['baseline','champion-v1'].filter(reference=>ids.includes(reference)).flatMap(reference=>ids.filter(id=>id!==reference&&(reference==='baseline'||id!=='baseline')).map(id=>({id:`${reference}-to-${id}`,before:reference,after:id})));

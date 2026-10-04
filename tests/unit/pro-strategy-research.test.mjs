@@ -19,13 +19,13 @@ const sm=new ScoreManager(null),savedFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});
 await sm.loadRankData('test');globalThis.fetch=savedFetch;
 const card=n=>cm.allCards.find(c=>Number(c.cardNo)===n);
-function setup(config={},valueModel=null){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
+function setup(config={},valueModel=null,openingTable=null){const state=new GameState(null);state.reset('pro',{seed:'test'});cm.getBasicCards().forEach(c=>state.addToDeck({...c}));
  const tm=new TurnManager(state,cm,null);
  const clone=s=>({difficulty:'pro',turn:s.turn,totalTurns:8,player:Object.fromEntries(['experience','enrollment','satisfaction','accounting'].map(k=>[k,s.player[k]])),tokens:{...s.tokens},
  updateStatus(k,d){const old=this.player[k];this.player[k]=Math.max(0,old+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-old;}});
  const enumerate=(hand,counts)=>hand.flatMap((c,i)=>{const p=cm.parseEffect(c.effect),slots=p.staffRestrictions.length?p.staffRestrictions:['leader','teacher','staff'];
  return slots.filter(slot=>c.effect.includes('並行')||counts[slot]===0).map(slot=>({cardIndex:i,card:c,slot}));});
- const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,turns:state.config.turns,publicActionParser:config.fastPublicActions||config.effectRecoveryProtection?new CardManager(null):null,config,valueModel});
+ const strategy=createResearchPolicy({projectDeck:projectProDeck,score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,turns:state.config.turns,publicActionParser:config.fastPublicActions||config.effectRecoveryProtection?new CardManager(null):null,config,valueModel,openingTable});
  return {state,tm,clone,enumerate,strategy,observe:(cs=[],options={})=>createAdvisorObservation(state,cs,{rankTable:sm.rankTable,...options})};}
 test('15点の経路は公式ScoreManagerに一致し、14点目標と異なる',()=>{
  const {state}=setup(),routes=targetRoutes(sm.rankTable,15);
@@ -322,4 +322,18 @@ test('将来の学習リフレッシュを使う条件は、序盤SRの残り1�
   refreshAdvice:o=>strategy.acquisition(o,'engine'),config:{planning:{worlds:1,valueHorizon:1,futurePolicy:'baseline',futureBeam:8,futureRefresh:'learned',consistentFutureRefresh:consistent}}});
  make(false).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,0);
  make(true).evaluate(ob,ob.owned,clone(state),'after-action');assert.deepEqual(calls,[{turn:1,remaining:1}]);
+});
+
+test('初回表は実際の初回取得とリフレッシュだけを置き換え、後続の先読みを維持する',()=>{
+ const names=cm.allCards.filter(c=>c.rarity==='R').map(c=>Number(c.cardNo)).sort((a,b)=>a-b),rows=[];
+ for(const remaining of [0,1,2])for(let i=0;i<names.length;i++)for(let j=i+1;j<names.length;j++)rows.push({pair:[names[i],names[j]],remaining,score:names[i]===6&&names[j]===7?100:1});
+ const table={schema:'pro-initial-pair-value-v1',estimated:true,initial:{totalTurns:8,stats:{experience:0,enrollment:0,satisfaction:3,accounting:5},basicNos:[1,2,3,4,5]},cardNos:names,rows};
+ const {state,strategy,observe}=setup({lateAcquisitionRollout:8,learned:{blend:0}},tinyModel('count-6'),table);
+ let calls=0;strategy.riskPolicy.acquisition=()=>{calls++;return {mode:'sentinel'};};
+ const o=observe([card(6),card(7),card(8),card(9)],{pickCount:2});
+ for(const name of ['seed','rng','deckOrder','finalScore'])Object.defineProperty(o,name,{get(){throw Error('private');}});
+ assert.equal(strategy.acquisition(o,'learned').mode,'opening-table');assert.deepEqual(strategy.acquisition(o,'learned').recommended.indices,[0,1]);assert.equal(calls,0);
+ assert.equal(strategy.learnedPolicy.refresh(o,'R',4,2).shouldRefresh,false);
+ assert.equal(strategy.acquisition({...o,turn:1,pickCount:1},'learned').mode,'sentinel');assert.equal(calls,1);
+ state.turn=7;assert.ok(strategy.placements(observe(),[card(7)],state,'engine').length);
 });

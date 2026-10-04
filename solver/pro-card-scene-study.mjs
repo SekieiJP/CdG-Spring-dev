@@ -17,13 +17,14 @@ async function main(){
  const at=process.argv.indexOf('--port-base'),port=at>=0?Number(process.argv[at+1]):18820;
  if(!Number.isInteger(port)||port<1024||port>65534)throw Error('安全なポートが必要');
  await mkdir(root,{recursive:true});
- const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs','solver/browser/pro-intrinsic-recovery.js','solver/browser/pro-action-candidates.js'];
+ const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs','solver/browser/pro-intrinsic-recovery.js','solver/browser/pro-action-candidates.js','solver/browser/pro-opening-table.js','solver/pro-opening-table-input.mjs'];
  const sources=await Promise.all((await readdir('game/js')).filter(n=>n.endsWith('.js')).sort().map(async n=>n+await readFile(`game/js/${n}`,'utf8')));
  const fingerprints={strategyVersion:sha(Buffer.concat(await Promise.all(files.map(f=>readFile(f))))),codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
  const configs=JSON.parse(await readFile(option('--configs','solver/research-scenarios/pro-mean125-leaf-configs.json'),'utf8')),continuation=option('--continuation','champion-v1');
  if(!configs[continuation]||configs[continuation].initial)throw Error('リセマラなしの後続方略が必要');
  const config={...configs[continuation],id:continuation==='champion-v1'?'card-scene-continuation-v1':`card-scene-continuation-${continuation}`,fastPublicActions:true};
  config.valueModelSha256=sha(await readFile(config.valueModelPath));
+ if(config.openingTablePath)config.openingTableSha256=sha(await readFile(config.openingTablePath));
  const configFile=`${root}/continuation-config.json`;await writeFile(configFile,JSON.stringify(config,null,2)+'\n');
  const jobs=[],runs=[],banks={},comparisons=[];
  for(const no of nos){

@@ -1,3 +1,4 @@
+import {createOpeningTablePolicy} from './pro-opening-table.js';
 import {createRiskPolicy} from './pro-risk-research.js';
 import {createPublicActionKernel} from './pro-public-action-kernel.js';
 import {createLearnedPolicy} from './pro-learned-research.js';
@@ -52,7 +53,7 @@ export function targetRoutes(rankTable, target=15) {
         (KEYS.some(k=>s[k]<r[k])||j<i)));
 }
 
-export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null}) {
+export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null,openingTable=null}) {
     if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
     if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
     if(config.placementRolloutTurns!==undefined&&(!Number.isInteger(config.placementRolloutTurns)||config.placementRolloutTurns<2||config.placementRolloutTurns>8))throw Error('配置の先読み範囲は残り2〜8ターン');
@@ -213,5 +214,11 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
-    return {...baseline,initial,riskPolicy,learnedPolicy};
+    const opening=openingTable?createOpeningTablePolicy({table:openingTable,catalog,refreshCost:config.openingRefreshCost??0}):null;
+    if(!opening)return {...baseline,initial,riskPolicy,learnedPolicy};
+    if(!learnedPolicy)throw Error('初回表の後続学習評価が必要');
+    // 実際の初回だけを置き換え、仮想将来とそれ以外の操作は固定する。
+    return {...baseline,initial,riskPolicy,
+        acquisition:(ob,mode,skipRollout=false)=>(skipRollout?null:opening.acquisition(ob))??acquisition(ob,mode,skipRollout),
+        learnedPolicy:{...learnedPolicy,refresh:(ob,...args)=>opening.refresh(ob)||learnedPolicy.refresh(ob,...args)}};
 }
