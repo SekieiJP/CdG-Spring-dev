@@ -1,0 +1,12 @@
+{
+  "purpose": "Learn remaining-score values from four distinct-seed completed lookahead policies; no score-filtered games. Validation uses a different completed stage and model.",
+  "train": [
+    "solver/local-runs/pro-mean125/leaf-development/leaf2-v1-8-batch0.json",
+    "solver/local-runs/pro-mean125/place-leaf-development/place2-v1-8-batch0.json",
+    "solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+    "solver/local-runs/pro-mean125/risk2-development/both-late48-batch0.json"
+  ],
+  "validation": [
+    "solver/local-runs/pro-mean125/scene-value-development/both2-v2-batch0.json"
+  ]
+}
