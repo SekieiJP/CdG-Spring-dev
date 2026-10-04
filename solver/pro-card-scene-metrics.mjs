@@ -12,6 +12,23 @@ const policy=m=>JSON.stringify({research:m.research,acquisitionModel:m.acquisiti
  acquisitionAblation:m.acquisitionAblation??null,continuationPolicy:m.continuationPolicy??null,
  refreshPolicy:m.refreshPolicy??null,refreshModel:m.refreshModel??null});
 const version=m=>JSON.stringify([m.provenance?.strategyVersion,m.provenance?.codeHash,m.cardVersion,m.rankVersion]);
+function continuationRecord(record){
+ const start=record.events.find(e=>e.type==='research-counterfactual-start');
+ if(!start||createHash('sha256').update(JSON.stringify(start.observation)).digest('hex')!==record.metadata.sceneObservationSha256||JSON.stringify(start.forcedChoice)!==JSON.stringify(record.metadata.forcedChoice))throw Error('公開局面の開始記録が一致しない');
+ const owned=start.observation.owned;let restored=0;
+ const events=record.events.filter(e=>{if(e.type!=='acquire'||restored>=owned.length)return true;
+  if(String(e.card.cardNo)!==String(owned[restored].cardNo))throw Error('復元した所持札が一致しない');restored++;return false;});
+ if(restored!==owned.length)throw Error('所持札の復元記録が不足');
+ const actual=events.filter(e=>e.type==='acquire').slice(0,start.forcedChoice.length);
+ if(actual.length!==start.forcedChoice.length||actual.some((e,i)=>String(e.card.cardNo)!==String(start.observation.candidates[start.forcedChoice[i]].cardNo)))throw Error('強制取得と実際の取得が一致しない');
+ return {...record,events};
+}
+function continuationCards(records){
+ const rows=observedCards(records.map(continuationRecord));
+ return rows.map(row=>({...row,gamesOwnedInitially:records.filter(r=>r.events.find(e=>e.type==='research-counterfactual-start').observation.owned.some(c=>String(c.cardNo)===row.cardNo)).length,
+  scope:'局面復元後の新規取得・ドロー・配置・解決。復元した所持札を新規取得に数えない。直接解決には元から保有した同Noも含む。'}));
+}
+
 function arm(records,name,minimumSeeds){
  if(records.length<minimumSeeds)throw Error(`各群で最低${minimumSeeds}局面が必要`);
  if(new Set(records.map(r=>r.metadata?.sceneId)).size!==records.length)throw Error('局面IDの欠落・重複');
@@ -23,7 +40,7 @@ function arm(records,name,minimumSeeds){
  if(new Set(records.map(r=>r.metadata.sceneBankSha256)).size!==1||new Set(records.map(r=>policy(r.metadata))).size!==1||
   new Set(records.map(r=>version(r.metadata))).size!==1)throw Error('局面集・後続方略・版の混在');
  // 先頭の強制取得は局面ごとに異なる。同じ選択規則と後続方略であることを上で検査する。
- const outcomes=records.map(r=>({...compactRecord(r),policy:policy(r.metadata)+name}));
+ const outcomes=records.map(r=>({...compactRecord(continuationRecord(r)),policy:policy(r.metadata)+name}));
  return {outcomes,summary:{...summarizeOutcomes(outcomes,{minimumSeeds}),mean95:meanInterval(outcomes.map(r=>r.score))}};
 }
 export function compareSceneArms(reference,target,{minimumSeeds=250}={}){
@@ -45,7 +62,7 @@ export function compareSceneArms(reference,target,{minimumSeeds=250}={}){
   comparison:pairedOutcomes(a.outcomes,b.outcomes,{minimumSeeds}),
   score14RateDifference:delta(s=>s.displayScore>=14),below8RateDifference:delta(s=>s.displayScore<8),
   withdrawalRateDifference:delta(s=>s.withdrawal>0),byTurn,
-  referenceCards:observedCards(reference),targetCards:observedCards(target),
+  referenceCards:continuationCards(reference),targetCards:continuationCards(target),activityScope:'局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。',
   interpretation:'旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。'};
 }
 async function main(){
