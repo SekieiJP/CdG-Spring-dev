@@ -2792,6 +2792,18 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         function performMeetingDeletion() {
             const deleteMax = game.turnManager.getCurrentDeleteMax();
             decisionTelemetry.meeting.phaseCount += 1;
+            if (meetingIntervention) {
+                const instruction=meetingIntervention;meetingIntervention=null;
+                const card=game.gameState.player.deck[instruction.ownedIndex];
+                if(deleteMax!==instruction.deleteMax||deleteMax<1||Number(card?.cardNo)!==instruction.cardNo)
+                    throw Error('会議対照試験の対象札・合法削除枠が復元されていません');
+                const observation=publicObservation([],{pickCount:0});
+                // この会議の他の削除を両群で固定して、対象1枚の差だけを作る。
+                const removed=instruction.action==='delete'?[card.cardName]:[];
+                if(instruction.action==='delete'&&!game.gameState.removeFromDeck(card))throw Error('指定した会議削除が失敗');
+                game.gameState.record('research-meeting-intervention',{observation,instruction,removedCardNo:removed.length?String(card.cardNo):null});
+                decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;
+            }
             if (deleteMax <= 0 || game.gameState.player.deck.length === 0) {
                 game.gameState.tokens.organize = 0;
                 return [];
@@ -3201,10 +3213,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
         }
 
         let episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
+        let meetingIntervention=null;
 
         for (let episode = 0; episode < epCount; episode += 1) {
             const scene=decisionBatch?.scenes[episode+(episodeOffset||0)];
             if(decisionBatch){if(!scene)throw Error('実行する公開局面がない');initialObservation=scene.observation;forcedChoice=scene.forcedChoice;}
+            meetingIntervention=scene?.kind==='meeting'?scene.forcedMeeting:null;
             const episodeTrace = traceSampleCount > 0
                 ? {
                     episode: episode + 1,
@@ -3236,7 +3250,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
                 research,
                 source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null,
-                ...(scene?{sceneId:scene.sceneId,sceneArm:decisionBatch.arm,sceneTurn:initialObservation.turn,sceneCardNo:decisionBatch.cardNo,sceneBankSha256:decisionBatch.sha256,sceneObservationSha256:scene.observationSha256}:{}) });
+                ...(scene?{sceneId:scene.sceneId,sceneArm:decisionBatch.arm,sceneTurn:initialObservation.turn,sceneCardNo:decisionBatch.cardNo,sceneBankSha256:decisionBatch.sha256,sceneObservationSha256:scene.observationSha256,
+                    ...(scene.kind==='meeting'?{sceneKind:'meeting',forcedMeeting:scene.forcedMeeting}:{})}:{}) });
             if(research?.initial) {
                 game.gameState.playRecord.metadata.reroll={sessionSeed,rejectedStarts,attempts:rejectedStarts.length+1,
                     initialCards:initialCandidatesForRule.map(c=>c.cardNo),chosenIndices:initialDecision.chosenIndices,initialRefreshUsed:0};
@@ -3268,12 +3283,14 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                     }
                     game.gameState.record(offer.type||'offer',{rarity:offer.rarity,cards:offer.cards,restoredPublicHistory:true});
                 }
+                if(scene?.kind!=='meeting') {
                 forcedChoice.forEach(index => game.gameState.addToDeck({ ...initialObservation.candidates[index] }));
                 if (initialObservation.allowSkip) game.gameState.tokens.inspiration = Math.max(0, game.gameState.tokens.inspiration - 1);
                 while (game.gameState.tokens.inspiration > 0) {
                     const extra = game.cardManager.drawTrainingCards('SR', 3);
                     pickTrainingCards(extra,1,true).forEach(card => game.gameState.addToDeck({ ...card }));
                     game.gameState.tokens.inspiration--;
+                }
                 }
             } else {
             // 初期デッキ
@@ -3312,9 +3329,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
             }
 
             }
-            // training -> action
-            game.gameState.phase = 'training';
-            game.turnManager.advancePhase();
+            // 会議局面の再開では取得・ドロー・配置をもう一度行わない。
+            game.gameState.phase = scene?.kind==='meeting'?'meeting':'training';
+            if(scene?.kind!=='meeting')game.turnManager.advancePhase();
 
             const playedCardsInEpisode = new Set();
             let phaseGuard = 0;

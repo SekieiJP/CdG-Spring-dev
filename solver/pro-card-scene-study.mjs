@@ -13,9 +13,10 @@ async function main(){
  if(!/^[a-z0-9-]+$/.test(stage))throw Error('安全なstage名が必要');
  const option=(key,fallback)=>{const i=process.argv.indexOf(key);return i>=0?process.argv[i+1]:fallback;};
  const root=`solver/local-runs/pro-mean125/${stage}`,bankRoot=option('--bank-root','solver/local-runs/pro-mean125/card-scenes-development'),nos=option('--cards','43,51').split(',').map(Number);
- if(!nos.length||new Set(nos).size!==nos.length||nos.some(n=>!Number.isInteger(n)||n<6||n>51))throw Error('有効なカードNoが必要');
+ if(!nos.length||new Set(nos).size!==nos.length||nos.some(n=>!Number.isInteger(n)||n<1||n>51))throw Error('有効なカードNoが必要');
  const at=process.argv.indexOf('--port-base'),port=at>=0?Number(process.argv[at+1]):18820;
  if(!Number.isInteger(port)||port<1024||port>65534)throw Error('安全なポートが必要');
+ const workers=Number(option('--workers','2'));if(![1,2].includes(workers))throw Error('workersは1または2');
  await mkdir(root,{recursive:true});
  const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs','solver/browser/pro-intrinsic-recovery.js','solver/browser/pro-action-candidates.js','solver/browser/pro-opening-table.js','solver/pro-opening-table-input.mjs'];
  const sources=await Promise.all((await readdir('game/js')).filter(n=>n.endsWith('.js')).sort().map(async n=>n+await readFile(`game/js/${n}`,'utf8')));
@@ -29,8 +30,8 @@ async function main(){
  const jobs=[],runs=[],banks={},comparisons=[];
  for(const no of nos){
   const bankFile=`${bankRoot}/card-${no}.json`,bytes=await readFile(bankFile),bank=JSON.parse(bytes),n=bank.scenes.length;
-  if(bank.cardNo!==no||n<500||n%250)throw Error('各カードの時期別250局面が必要');
-  banks[no]={file:path.resolve(bankFile),sha256:sha(bytes),n,referenceMode:bank.referenceMode||'original-other',originalTargetCount:bank.scenes.filter(s=>s.referenceWasOriginalChoice===false).length};
+  if(bank.cardNo!==no||n<(bank.kind==='meeting'?250:500)||n%250)throw Error('各カードの所定250局面が必要');
+  banks[no]={file:path.resolve(bankFile),sha256:sha(bytes),n,kind:bank.kind||'acquisition',referenceMode:bank.referenceMode||'original-other',originalTargetCount:bank.scenes.filter(s=>s.referenceWasOriginalChoice===false).length};
   for(const arm of ['reference','target']){
    const input=prepareSceneBatch(bytes,arm,{episodes:n,versions:[fingerprints.codeHash,fingerprints.cardVersion,fingerprints.rankVersion]});
    const id=`card-${no}-${arm}`,outputs=[];
@@ -44,7 +45,8 @@ async function main(){
   return s?.seed===j.seed&&s.episodeOffset===j.b*250&&s.episodes===250&&JSON.stringify(s.research)===JSON.stringify(config)&&
    s.provenance?.strategyVersion===fingerprints.strategyVersion&&rs?.length===250&&rs.every((r,i)=>{const m=r.metadata,expected=j.input.scenes[j.b*250+i];
     return !!r.result?.score&&!r.truncated&&m.seed===`${j.seed}:${j.b*250+i}`&&m.provenance.strategyVersion===fingerprints.strategyVersion&&m.source==='counterfactual'&&!m.reroll&&m.sceneArm===j.arm&&m.sceneId===expected.sceneId&&m.sceneBankSha256===j.input.sha256&&m.sceneObservationSha256===expected.observationSha256&&
-     JSON.stringify(m.forcedChoice)===JSON.stringify(expected.forcedChoice)&&m.provenance.codeHash===fingerprints.codeHash&&m.cardVersion===fingerprints.cardVersion&&m.rankVersion===fingerprints.rankVersion;});};
+     JSON.stringify(m.forcedChoice)===JSON.stringify(expected.forcedChoice)&&
+     (expected.kind!=='meeting'||m.sceneKind==='meeting'&&JSON.stringify(m.forcedMeeting)===JSON.stringify(expected.forcedMeeting))&&m.provenance.codeHash===fingerprints.codeHash&&m.cardVersion===fingerprints.cardVersion&&m.rankVersion===fingerprints.rankVersion;});};
  let next=0,done=0;
  async function worker(w){while(next<jobs.length){const j=jobs[next++],started=Date.now();
   if(process.argv.includes('--resume'))try{if(valid(JSON.parse(await readRunBytes(j.output)),j)){console.log(`reuse ${j.id}/${j.b}`);done++;continue;}}catch{}
@@ -59,6 +61,6 @@ async function main(){
   console.log(`done ${++done}/${jobs.length} ${j.id}/${j.b}: minutes=${((Date.now()-started)/60000).toFixed(2)}`);
   await compressRun(j.output);
  }}
- await Promise.all([worker(0),worker(1)]);
+ await Promise.all(Array.from({length:workers},(_,w)=>worker(w)));
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});

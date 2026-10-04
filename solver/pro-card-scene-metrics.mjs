@@ -19,6 +19,15 @@ function continuationRecord(record){
  const events=record.events.filter(e=>{if(e.type!=='acquire'||restored>=owned.length)return true;
   if(String(e.card.cardNo)!==String(owned[restored].cardNo))throw Error('復元した所持札が一致しない');restored++;return false;});
  if(restored!==owned.length)throw Error('所持札の復元記録が不足');
+ if(record.metadata.sceneKind==='meeting'){
+  const instruction=record.metadata.forcedMeeting,e=events.find(e=>e.type==='research-meeting-intervention');
+  if(!instruction||!e||JSON.stringify(e.instruction)!==JSON.stringify(instruction)||instruction.deleteMax<1||
+   Number(owned[instruction.ownedIndex]?.cardNo)!==instruction.cardNo||
+   instruction.action!==(record.metadata.sceneArm==='target'?'delete':'keep'))throw Error('会議での保持・削除指定が一致しない');
+  const until=events.indexOf(e),deletes=events.slice(0,until).filter(e=>e.type==='delete');
+  if(instruction.action==='delete'?(deletes.length!==1||Number(deletes[0].card.cardNo)!==instruction.cardNo||Number(e.removedCardNo)!==instruction.cardNo):
+   (deletes.length!==0||e.removedCardNo!==null))throw Error('指定した会議の1枚だけの削除・保持でない');
+ }
  const actual=events.filter(e=>e.type==='acquire').slice(0,start.forcedChoice.length);
  if(actual.length!==start.forcedChoice.length||actual.some((e,i)=>String(e.card.cardNo)!==String(start.observation.candidates[start.forcedChoice[i]].cardNo)))throw Error('強制取得と実際の取得が一致しない');
  return {...record,events};
@@ -38,7 +47,7 @@ function arm(records,name,minimumSeeds){
    !Number.isInteger(m.sceneTurn)||m.sceneTurn<0||m.sceneTurn>7||!Array.isArray(m.forcedChoice))throw Error('局面対照試験の記録が不正');
  }
  if(new Set(records.map(r=>r.metadata.sceneBankSha256)).size!==1||new Set(records.map(r=>policy(r.metadata))).size!==1||
-  new Set(records.map(r=>version(r.metadata))).size!==1)throw Error('局面集・後続方略・版の混在');
+  new Set(records.map(r=>version(r.metadata))).size!==1||new Set(records.map(r=>r.metadata.sceneKind||'acquisition')).size!==1)throw Error('局面集・後続方略・版の混在');
  // 先頭の強制取得は局面ごとに異なる。同じ選択規則と後続方略であることを上で検査する。
  const outcomes=records.map(r=>({...compactRecord(continuationRecord(r)),policy:policy(r.metadata)+name}));
  return {outcomes,summary:{...summarizeOutcomes(outcomes,{minimumSeeds}),mean95:meanInterval(outcomes.map(r=>r.score))}};
@@ -50,7 +59,9 @@ export function compareSceneArms(reference,target,{minimumSeeds=250}={}){
  if(bySeed.size!==reference.length)throw Error('参照群のシード重複');
  const pairs=target.map(r=>{const old=bySeed.get(r.metadata.seed),m=r.metadata,n=old?.metadata;
   if(!old||m.sceneId!==n.sceneId||m.sceneTurn!==n.sceneTurn||m.sceneBankSha256!==n.sceneBankSha256||
-   m.sceneObservationSha256!==n.sceneObservationSha256||policy(m)!==policy(n)||version(m)!==version(n))throw Error('同一公開局面・同一未来シード・同一後続方略の対でない');
+   m.sceneObservationSha256!==n.sceneObservationSha256||policy(m)!==policy(n)||version(m)!==version(n)||
+   (m.sceneKind||'acquisition')!==(n.sceneKind||'acquisition')||m.sceneKind==='meeting'&&
+   (m.forcedMeeting.ownedIndex!==n.forcedMeeting.ownedIndex||m.forcedMeeting.cardNo!==n.forcedMeeting.cardNo||m.forcedMeeting.deleteMax!==n.forcedMeeting.deleteMax))throw Error('同一公開局面・同一未来シード・同一後続方略の対でない');
   return [old,r];});
  const changes=predicate=>pairs.map(([x,y])=>Number(predicate(y.result.score))-Number(predicate(x.result.score)));
  const delta=predicate=>{const values=changes(predicate);return {mean:mean(values),interval95:meanInterval(values)};};
@@ -63,7 +74,8 @@ export function compareSceneArms(reference,target,{minimumSeeds=250}={}){
   score14RateDifference:delta(s=>s.displayScore>=14),below8RateDifference:delta(s=>s.displayScore<8),
   withdrawalRateDifference:delta(s=>s.withdrawal>0),byTurn,
   referenceCards:continuationCards(reference),targetCards:continuationCards(target),activityScope:'局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。',
-  interpretation:'旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。'};
+  intervention:reference[0].metadata.sceneKind==='meeting'?'target=対象1枚を合法削除、reference=保持。この会議の他の削除は両群で固定。その後は同じ方略。':'target=対象取得、reference=同じ提示の別札取得。その後は同じ方略。',
+  interpretation:'指定方略の公開局面分布に対する取得または保持/削除変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。'};
 }
 async function main(){
  const [manifestFile,outFile]=process.argv.slice(2);if(!manifestFile||!outFile)throw Error('manifest output-file が必要');

@@ -1,0 +1,127 @@
+{
+  "createdAt": "2026-10-04T12:13:49.216Z",
+  "purpose": "接続確認のみ。目標達成版のカード評価や少数ゲームからの傾向ではない。",
+  "sourceGames": 250,
+  "sharedSourceGamesAcrossFiveCards": true,
+  "coverage": [
+    {
+      "cardNo": 1,
+      "n": 250,
+      "turn": 0,
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-scenes-v1/card-1.json",
+      "sha256": "87194c0fce88e4d63d611be485c7f7951ab6be4ce739d243cc5ff1a3fa38df59"
+    },
+    {
+      "cardNo": 2,
+      "n": 250,
+      "turn": 0,
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-scenes-v1/card-2.json",
+      "sha256": "97d739ceb090824e13384163710901272883aed60879ecfebd3e0f1f80869824"
+    },
+    {
+      "cardNo": 3,
+      "n": 250,
+      "turn": 0,
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-scenes-v1/card-3.json",
+      "sha256": "c1afeacdb77a945f1f330c094a5c40566f94db16d940e84db878609c7150e084"
+    },
+    {
+      "cardNo": 4,
+      "n": 250,
+      "turn": 0,
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-scenes-v1/card-4.json",
+      "sha256": "8edf48faeddee4b8f3dc6a0b5deefb9b83a22cc2708714977550125d3bf459d5"
+    },
+    {
+      "cardNo": 5,
+      "n": 250,
+      "turn": 0,
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-scenes-v1/card-5.json",
+      "sha256": "f3347bf454d6b2431ecd54fbee9711f446df7017827ee5c5619cfa5aae23c8a2"
+    }
+  ],
+  "sourceAuditSha256": "cb483b299fb90ec64dddf584de2abfa142b7844d9de643898e288f9c882806b5",
+  "tests": 12,
+  "checks": [
+    {
+      "cardNo": 1,
+      "arm": "reference",
+      "sceneId": "meeting-card-1-turn-0-0",
+      "sceneBankSha256": "87194c0fce88e4d63d611be485c7f7951ab6be4ce739d243cc5ff1a3fa38df59",
+      "sceneObservationSha256": "b82cf40703a4b90e60c0f28eb0662ca99ac7fd5c7ebce2a1b1fdcbc3fb782233",
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-check/card-1-reference.json",
+      "sha256": "b3ba2265cf19969f91f6ac05b7e99e003a861570698d7da09c2ade5347d5420a",
+      "remainingPlacementTurns": 7,
+      "interventionCount": 1,
+      "firstMeetingDeletes": 0,
+      "rerolls": 0,
+      "complete": true,
+      "actor11": "fbeb59668d3e58fad26dcad275589d8347d8ec08c0e3e691a0d6f333ef6f7838",
+      "physical": [
+        "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      ]
+    },
+    {
+      "cardNo": 1,
+      "arm": "target",
+      "sceneId": "meeting-card-1-turn-0-0",
+      "sceneBankSha256": "87194c0fce88e4d63d611be485c7f7951ab6be4ce739d243cc5ff1a3fa38df59",
+      "sceneObservationSha256": "b82cf40703a4b90e60c0f28eb0662ca99ac7fd5c7ebce2a1b1fdcbc3fb782233",
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-check/card-1-target.json",
+      "sha256": "a26c91cff5bdc1ed91984ca8cf3a388b8ad2244246af82dd49b9049537ae3adf",
+      "remainingPlacementTurns": 7,
+      "interventionCount": 1,
+      "firstMeetingDeletes": 1,
+      "rerolls": 0,
+      "complete": true,
+      "actor11": "fbeb59668d3e58fad26dcad275589d8347d8ec08c0e3e691a0d6f333ef6f7838",
+      "physical": [
+        "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      ]
+    },
+    {
+      "cardNo": 5,
+      "arm": "reference",
+      "sceneId": "meeting-card-5-turn-0-0",
+      "sceneBankSha256": "f3347bf454d6b2431ecd54fbee9711f446df7017827ee5c5619cfa5aae23c8a2",
+      "sceneObservationSha256": "b82cf40703a4b90e60c0f28eb0662ca99ac7fd5c7ebce2a1b1fdcbc3fb782233",
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-check/card-5-reference.json",
+      "sha256": "0f993a0fb4a50a406d34d976edf4804dbf0a457530ea275075e732abda61ac86",
+      "remainingPlacementTurns": 7,
+      "interventionCount": 1,
+      "firstMeetingDeletes": 0,
+      "rerolls": 0,
+      "complete": true,
+      "actor11": "fbeb59668d3e58fad26dcad275589d8347d8ec08c0e3e691a0d6f333ef6f7838",
+      "physical": [
+        "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      ]
+    },
+    {
+      "cardNo": 5,
+      "arm": "target",
+      "sceneId": "meeting-card-5-turn-0-0",
+      "sceneBankSha256": "f3347bf454d6b2431ecd54fbee9711f446df7017827ee5c5619cfa5aae23c8a2",
+      "sceneObservationSha256": "b82cf40703a4b90e60c0f28eb0662ca99ac7fd5c7ebce2a1b1fdcbc3fb782233",
+      "file": "solver/local-runs/pro-mean125/basic-card-technical-check/card-5-target.json",
+      "sha256": "51e1726cc1c21abb1454ba5d567252c0eeb3073934d9b2507092aa59708a2112",
+      "remainingPlacementTurns": 7,
+      "interventionCount": 1,
+      "firstMeetingDeletes": 1,
+      "rerolls": 0,
+      "complete": true,
+      "actor11": "fbeb59668d3e58fad26dcad275589d8347d8ec08c0e3e691a0d6f333ef6f7838",
+      "physical": [
+        "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      ]
+    }
+  ]
+}
