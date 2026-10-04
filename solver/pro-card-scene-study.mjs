@@ -11,22 +11,25 @@ const sha=b=>createHash('sha256').update(b).digest('hex');
 async function main(){
  const [stage='card-scenes-development-trials']=process.argv.slice(2);
  if(!/^[a-z0-9-]+$/.test(stage))throw Error('安全なstage名が必要');
- const root=`solver/local-runs/pro-mean125/${stage}`,bankRoot='solver/local-runs/pro-mean125/card-scenes-development';
+ const option=(key,fallback)=>{const i=process.argv.indexOf(key);return i>=0?process.argv[i+1]:fallback;};
+ const root=`solver/local-runs/pro-mean125/${stage}`,bankRoot=option('--bank-root','solver/local-runs/pro-mean125/card-scenes-development'),nos=option('--cards','43,51').split(',').map(Number);
+ if(!nos.length||new Set(nos).size!==nos.length||nos.some(n=>!Number.isInteger(n)||n<6||n>51))throw Error('有効なカードNoが必要');
  const at=process.argv.indexOf('--port-base'),port=at>=0?Number(process.argv[at+1]):18820;
  if(!Number.isInteger(port)||port<1024||port>65534)throw Error('安全なポートが必要');
  await mkdir(root,{recursive:true});
  const files=['solver/autoplay-agent.mjs','solver/browser/pro-strategy-research.js','solver/browser/pro-risk-research.js','solver/browser/pro-value-model.js','solver/browser/pro-learned-research.js','solver/browser/pro-public-action-kernel.js','solver/pro-card-scene-input.mjs'];
  const sources=await Promise.all((await readdir('game/js')).filter(n=>n.endsWith('.js')).sort().map(async n=>n+await readFile(`game/js/${n}`,'utf8')));
  const fingerprints={strategyVersion:sha(Buffer.concat(await Promise.all(files.map(f=>readFile(f))))),codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
- const configs=JSON.parse(await readFile('solver/research-scenarios/pro-mean125-leaf-configs.json','utf8'));
- const config={...configs['champion-v1'],id:'card-scene-continuation-v1',fastPublicActions:true};
+ const configs=JSON.parse(await readFile(option('--configs','solver/research-scenarios/pro-mean125-leaf-configs.json'),'utf8')),continuation=option('--continuation','champion-v1');
+ if(!configs[continuation]||configs[continuation].initial)throw Error('リセマラなしの後続方略が必要');
+ const config={...configs[continuation],id:continuation==='champion-v1'?'card-scene-continuation-v1':`card-scene-continuation-${continuation}`,fastPublicActions:true};
  config.valueModelSha256=sha(await readFile(config.valueModelPath));
  const configFile=`${root}/continuation-config.json`;await writeFile(configFile,JSON.stringify(config,null,2)+'\n');
  const jobs=[],runs=[],banks={},comparisons=[];
- for(const no of [43,51]){
+ for(const no of nos){
   const bankFile=`${bankRoot}/card-${no}.json`,bytes=await readFile(bankFile),bank=JSON.parse(bytes),n=bank.scenes.length;
-  if(n<500||n%250)throw Error('各カードの時期別250局面が必要');
-  banks[no]={file:path.resolve(bankFile),sha256:sha(bytes),n};
+  if(bank.cardNo!==no||n<500||n%250)throw Error('各カードの時期別250局面が必要');
+  banks[no]={file:path.resolve(bankFile),sha256:sha(bytes),n,referenceMode:bank.referenceMode||'original-other',originalTargetCount:bank.scenes.filter(s=>s.referenceWasOriginalChoice===false).length};
   for(const arm of ['reference','target']){
    const input=prepareSceneBatch(bytes,arm,{episodes:n,versions:[fingerprints.codeHash,fingerprints.cardVersion,fingerprints.rankVersion]});
    const id=`card-${no}-${arm}`,outputs=[];
