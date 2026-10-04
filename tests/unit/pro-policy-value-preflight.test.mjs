@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {extractValueRows} from '../../solver/pro-value-dataset.mjs';
 import {policyIdentity,auditPolicyRecord} from '../../solver/pro-policy-value-preflight.mjs';
 const versions=['code','cards','ranks','autoplay'];
 const config={id:'baseline',acquisition:'learned',planning:{worlds:8,valueHorizon:2},deletion:'aggressive'};
@@ -19,4 +20,9 @@ test('8ターンの完走公開状態を抽出し、同一seedの学習検証混
 test('リセマラ・打ち切り・配置欠落・版差・方略差を拒む',()=>{
  const mutations=[r=>{r.metadata.reroll={attempts:2};},r=>{r.truncated=true;},r=>{r.events.pop();},r=>{r.metadata.cardVersion='new-cards';},r=>{r.metadata.research.deletion='rollout';}];
  for(const mutate of mutations){const r=record();mutate(r);assert.throws(()=>auditPolicyRecord(r,options()));}
+});
+
+test('公式得点内訳を教師としてコピーし、公開状態の判断入力には混ぜない',()=>{
+ const r=record();r.result.score.breakdown={mobilizationPoints:4,enrollmentDiffPoints:6,satisfactionPoints:1,withdrawalPoints:1};
+ const rows=extractValueRows(r);for(const row of rows){assert.deepEqual(row.targetComponents,r.result.score.breakdown);assert.equal(row.target,12);assert.equal(row.observation.targetComponents,undefined);assert.equal(row.observation.target,undefined);}
 });

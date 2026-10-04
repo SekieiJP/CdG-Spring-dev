@@ -8,7 +8,7 @@ import {chromium} from 'playwright';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function main(){
  const [dir='solver/local-runs/pro-mean125/value-v1',idsText='depth3,depth4,monotone3']=process.argv.slice(2),datasetBytes=await readFile(path.join(dir,'dataset.json'));
- const dataset=JSON.parse(datasetBytes),specs={depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
+ const dataset=JSON.parse(datasetBytes),specs={scalar3x4:{depth:3,iterations:640},component3:{depth:3,iterations:160,componentwise:true},depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
  if(ids.some(id=>!specs[id]))throw Error('学習条件の指定が不正');
  if(dataset.counts.trainSeeds<250||dataset.counts.validationSeeds<250)throw Error('各群250シード以上が必要');
  const trainSeeds=new Set(dataset.train.map(r=>r.seed)),validationSeeds=new Set(dataset.validation.map(r=>r.seed));
@@ -30,7 +30,7 @@ async function main(){
    const data=await(await fetch('/value-dataset.json')).json(),vm=await import('/research/pro-value-model.js'),formula=await import('/js/proAcquisitionAdvisor.js');
    const forecast=vm.createValueForecaster(formula.projectProDeck);
    const context={forecast,score:formula.proGoal};let done=0;
-   const encode=rows=>rows.map(r=>{if(++done%10000===0)console.log('VALUE features '+done);return {x:vm.encodeValueFeatures(vm.unpackValueObservation(r.observation,data),r.observation.phase,context),y:r.target,weight:r.weight,phase:r.observation.phase,turn:r.observation.turn,seed:r.seed};});
+   const encode=rows=>rows.map(r=>{if(++done%10000===0)console.log('VALUE features '+done);return {x:vm.encodeValueFeatures(vm.unpackValueObservation(r.observation,data),r.observation.phase,context),y:r.target,targetComponents:r.targetComponents,weight:r.weight,phase:r.observation.phase,turn:r.observation.turn,seed:r.seed};});
    window.valueResearch={train:encode(data.train),validation:encode(data.validation),vm};
    window.valueResearch.metrics=model=>{const {train,validation}=window.valueResearch;
     const byTurn={};for(let turn=0;turn<8;turn++){const rows=validation.filter(r=>r.turn===turn);byTurn[turn]={seeds:new Set(rows.map(r=>r.seed)).size,...vm.valueMetrics(model,rows)};}
@@ -42,10 +42,24 @@ async function main(){
   for(const reference of referenceModels){const metrics=await page.evaluate(model=>window.valueResearch.metrics(model),reference.model);summary.references[reference.id]={file:reference.file,sha256:reference.sha256,metrics,interpretation:'同じ検証250開始の同じ公開状態に対する固定モデルの誤差。実ゲーム改善の証明ではない。'};}
   for(const id of ids){console.log(`start training ${id}`);const start=Date.now();
    const trained=await page.evaluate(async({id,spec})=>{const {train,validation,vm}=window.valueResearch;
-    const model=await vm.trainValueModel(train,{...spec,onProgress:p=>console.log('VALUE '+id+' '+JSON.stringify(p))});
-    return {model,metrics:window.valueResearch.metrics(model)};
+    let model,components=null,componentAudit=null;
+    if(spec.componentwise){
+     const keys=['mobilizationPoints','enrollmentDiffPoints','satisfactionPoints','withdrawalPoints'];
+     for(const row of [...train,...validation])if(!row.targetComponents||keys.some(key=>!Number.isFinite(row.targetComponents[key]))||Math.abs(keys.reduce((sum,key)=>sum+row.targetComponents[key],0)-row.y)>1e-9)throw Error('公式内訳と実得点が一致する教師データが必要');
+     components={};const {componentwise,...settings}=spec;
+     for(const key of keys){const rows=train.map(row=>({...row,y:row.targetComponents[key]}));
+      const part=await vm.trainValueModel(rows,{...settings,onProgress:p=>console.log('VALUE '+id+' '+key+' '+JSON.stringify(p))});
+      components[key]={model:part,validation:vm.valueMetrics(part,validation.map(row=>({...row,y:row.targetComponents[key]})))};
+     }
+     const parts=keys.map(key=>components[key].model),first=parts[0];
+     model={...first,base:parts.reduce((sum,part)=>sum+part.base,0),trees:parts.flatMap(part=>part.trees),settings:{...first.settings,iterations:parts.reduce((sum,part)=>sum+part.trees.length,0),targetKind:'sum-of-official-components',componentIterations:first.settings.iterations,components:keys}};
+     const errors=validation.map(row=>Math.abs(vm.predictValue(model,row.x)-parts.reduce((sum,part)=>sum+vm.predictValue(part,row.x),0)));
+     componentAudit={validationRows:validation.length,validationSeeds:new Set(validation.map(row=>row.seed)).size,maxSumDifference:Math.max(...errors),labelsMatchOfficialScore:true,combinationComputedInBrowser:true,prediction:'unclipped component sum; same fixed scalar model evaluator'};
+     if(componentAudit.maxSumDifference>1e-9)throw Error('成分別予測と固定木の合成結果が異なる');
+    }else model=await vm.trainValueModel(train,{...spec,onProgress:p=>console.log('VALUE '+id+' '+JSON.stringify(p))});
+    return {model,metrics:window.valueResearch.metrics(model),...(components?{components,componentAudit}:{})};
    },{id,spec:specs[id]});
-   const file=path.join(dir,id+'-model.json');await writeFile(file,JSON.stringify({...trained,provenance,id})+'\n');summary.models[id]={file:path.resolve(file),sha256:sha(await readFile(file)),settings:trained.model.settings,metrics:trained.metrics,seconds:(Date.now()-start)/1000};await writeFile(path.join(dir,'training-summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(`done ${id}: ${JSON.stringify(summary.models[id])}`);
+   const file=path.join(dir,id+'-model.json');await writeFile(file,JSON.stringify({...trained,provenance,id})+'\n');summary.models[id]={file:path.resolve(file),sha256:sha(await readFile(file)),settings:trained.model.settings,metrics:trained.metrics,...(trained.componentAudit?{componentAudit:trained.componentAudit,componentMetrics:Object.fromEntries(Object.entries(trained.components).map(([key,value])=>[key,value.validation]))}:{}),seconds:(Date.now()-start)/1000};await writeFile(path.join(dir,'training-summary.json'),JSON.stringify(summary,null,2)+'\n');console.log(`done ${id}: ${JSON.stringify(summary.models[id])}`);
   }
  }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
 }

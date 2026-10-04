@@ -29,7 +29,9 @@ export function extractValueRows(record){
   after.turn++;after.tokens.organize=0;rows.push(packValueObservation(after,'before-training'));
  }
  if(!rows.length)throw Error('公開状態の研究記録がない');
- return rows.map(observation=>({seed:record.metadata.seed,target:record.result.score.displayScore,weight:1/rows.length,observation}));
+ const breakdown=record.result.score.breakdown,componentKeys=['mobilizationPoints','enrollmentDiffPoints','satisfactionPoints','withdrawalPoints'];
+ const targetComponents=breakdown&&componentKeys.every(key=>Number.isFinite(breakdown[key]))?Object.fromEntries(componentKeys.map(key=>[key,breakdown[key]])):null;
+ return rows.map(observation=>({seed:record.metadata.seed,target:record.result.score.displayScore,...(targetComponents?{targetComponents}:{}),weight:1/rows.length,observation}));
 }
 async function main(){
  const outputDir=process.argv[2]||'solver/local-runs/pro-mean125/value-v1';await mkdir(outputDir,{recursive:true});
