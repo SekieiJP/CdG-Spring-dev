@@ -60,10 +60,12 @@ export function predictValue(model,features){
 }
 const prng=seed=>()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
 /** 学習もブラウザ内。ヒストグラム分割による小さな木を固定回数積み重ねる。 */
-export async function trainValueModel(rows,{iterations=140,depth=3,learningRate=.07,bins=16,featureFraction=.65,rowFraction=.8,minRows=100,minWeight=3,l2=2,monotone=false,seed=904125,onProgress=()=>{}}={}){
- if(!rows.length||rows.some(r=>r.x.length!==VALUE_FEATURES.length||!Number.isFinite(r.y)||!(r.weight>0)))throw Error('学習データが不正');
- const n=rows.length,m=VALUE_FEATURES.length,random=prng(seed),weights=Float64Array.from(rows,r=>r.weight),targets=Float64Array.from(rows,r=>r.y),sumWeight=weights.reduce((s,w)=>s+w,0);
- const model={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:rows.reduce((s,r)=>s+r.y*r.weight,0)/sumWeight,learningRate,trees:[],settings:{iterations,depth,learningRate,bins,featureFraction,rowFraction,minRows,minWeight,l2,monotone,seed}};
+export async function trainValueModel(rows,{iterations=140,depth=3,learningRate=.07,bins=16,featureFraction=.65,rowFraction=.8,minRows=100,minWeight=3,l2=2,monotone=false,seed=904125,onProgress=()=>{},featureNames=VALUE_FEATURES,schema=VALUE_SCHEMA}={}){
+ if(!Array.isArray(featureNames)||!featureNames.length||new Set(featureNames).size!==featureNames.length||typeof schema!=='string'||!schema||
+  monotone&&(schema!==VALUE_SCHEMA||featureNames.join('|')!==VALUE_FEATURES.join('|'))||
+  !rows.length||rows.some(r=>r.x.length!==featureNames.length||r.x.some(v=>!Number.isFinite(v))||!Number.isFinite(r.y)||!(r.weight>0)))throw Error('学習データが不正');
+ const n=rows.length,m=featureNames.length,random=prng(seed),weights=Float64Array.from(rows,r=>r.weight),targets=Float64Array.from(rows,r=>r.y),sumWeight=weights.reduce((s,w)=>s+w,0);
+ const model={schema,features:[...featureNames],base:rows.reduce((s,r)=>s+r.y*r.weight,0)/sumWeight,learningRate,trees:[],settings:{iterations,depth,learningRate,bins,featureFraction,rowFraction,minRows,minWeight,l2,monotone,seed}};
  const cuts=[],encoded=[];
  for(let f=0;f<m;f++){
   const values=rows.map(r=>r.x[f]).sort((a,b)=>a-b),unique=[...new Set(values)];let edges=[];

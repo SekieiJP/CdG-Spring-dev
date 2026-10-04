@@ -1,0 +1,95 @@
+{
+  "createdAt": "2026-10-04T12:49:12.422Z",
+  "purpose": "得点差学習の材料準備。平均12.5達成やカードの因果パワーの結論ではない。",
+  "counts": {
+    "train": 500,
+    "validation": 250
+  },
+  "sourceAudits": [
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/enrollment-emphasis-development/baseline-batch0.json",
+      "sha256": "fbad2e903c325e376159da53a2a8c12e8b59ef2c090b672059e68b41321cd1d9",
+      "n": 250,
+      "actor": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d"
+    },
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/policy-value5-development/baseline-batch0.json",
+      "sha256": "5a88633730def18ea446638f718a43e4a8d6d1f83e62c8930804f67616c41ee9",
+      "n": 250,
+      "actor": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d"
+    },
+    {
+      "split": "validation",
+      "file": "solver/local-runs/pro-mean125/component-value6-development/baseline-batch0.json",
+      "sha256": "55e42178e30162703b1b8bc2eaf33b708349441505f1f95d9c8bd71584770c6d",
+      "n": 250,
+      "actor": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d"
+    }
+  ],
+  "policy": {
+    "acquisition": "learned",
+    "cacheEffects": true,
+    "deleteFloor": 4,
+    "deletion": "aggressive",
+    "fastPublicActions": true,
+    "lateAcquisitionRollout": 8,
+    "learned": {
+      "beam": 72,
+      "blend": 0.005,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "objective": "engine",
+    "placement": "engine",
+    "placementRolloutTurns": 8,
+    "planning": {
+      "actionCandidates": 8,
+      "contextSalt": true,
+      "drawSampler": "keyed",
+      "futureAcquisition": "learned",
+      "futureBeam": 64,
+      "futurePolicy": "baseline",
+      "futureRefresh": "learned",
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "valueHorizon": 2,
+      "worlds": 8
+    },
+    "refresh": "learned",
+    "safetyBuffer": 2,
+    "signedGrowth": true,
+    "targetScore": 13,
+    "uiTrainingStreams": true,
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "versions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+    "autoplay"
+  ],
+  "sourceActor": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d",
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "sourceSeedsDisjoint": true,
+  "byTurn": {
+    "0": 188,
+    "2": 188,
+    "4": 187,
+    "6": 187
+  },
+  "bank": {
+    "file": "solver/local-runs/pro-mean125/paired-value-scenes-v1/choices.json",
+    "sha256": "651185d9e32ae4fad28a44b4e76cdcc02aba06a983757584d7d07dc2adb63657",
+    "n": 750
+  },
+  "generatorSha256": "bad8548d80e7c8e35ac97658178d7a7bae17e61bc4c94b298f5224c20f132f94",
+  "selection": "各元ゲームから1局面。元記録順にT1/T3/T5/T7を巡回割当。基準は実選択、別取得は同じ観測でブラウザが計算済みの次順位をコピー。実得点で選別しない。実シードは実行用局面に含めない。",
+  "sourceSeedCount": 750,
+  "uniqueSourceSeedsSha256": "9c4152edb995e0e272d2909ab7d4290a7893134afe5bd41cea58e2229ede19ae",
+  "privateSceneAuditSha256": "5f921f8d5e5ee1baf4794a4f0a487ca5d646c10eb0859cbaa37e7003ca09cf6c",
+  "phaseSubgroupsBelow250": true
+}

@@ -3251,7 +3251,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 research,
                 source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null,
                 ...(scene?{sceneId:scene.sceneId,sceneArm:decisionBatch.arm,sceneTurn:initialObservation.turn,sceneCardNo:decisionBatch.cardNo,sceneBankSha256:decisionBatch.sha256,sceneObservationSha256:scene.observationSha256,
-                    ...(scene.kind==='meeting'?{sceneKind:'meeting',forcedMeeting:scene.forcedMeeting}:{})}:{}) });
+                    ...(scene.kind?{sceneKind:scene.kind,...(scene.kind==='meeting'?{forcedMeeting:scene.forcedMeeting}:{})}:{})}:{}) });
             if(research?.initial) {
                 game.gameState.playRecord.metadata.reroll={sessionSeed,rejectedStarts,attempts:rejectedStarts.length+1,
                     initialCards:initialCandidatesForRule.map(c=>c.cardNo),chosenIndices:initialDecision.chosenIndices,initialRefreshUsed:0};
@@ -3287,10 +3287,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples,
                 forcedChoice.forEach(index => game.gameState.addToDeck({ ...initialObservation.candidates[index] }));
                 if (initialObservation.allowSkip) game.gameState.tokens.inspiration = Math.max(0, game.gameState.tokens.inspiration - 1);
                 while (game.gameState.tokens.inspiration > 0) {
+                    if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='inspiration';
                     const extra = game.cardManager.drawTrainingCards('SR', 3);
                     pickTrainingCards(extra,1,true).forEach(card => game.gameState.addToDeck({ ...card }));
                     game.gameState.tokens.inspiration--;
                 }
+                if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='normal';
                 }
             } else {
             // 初期デッキ

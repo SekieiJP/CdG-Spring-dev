@@ -19,6 +19,7 @@ export function publicScene(ob){
 export function prepareSceneBatch(bytes,arm,{episodes,offset=0,versions}){
  const bank=JSON.parse(bytes);
  if(bank.kind==='meeting')return prepareMeetingSceneBatch(bytes,arm,{episodes,offset,versions});
+ if(bank.kind==='choices')return prepareChoiceSceneBatch(bytes,arm,{episodes,offset,versions});
  if(!['target','reference'].includes(arm)||!Number.isInteger(episodes)||episodes<1||!Number.isInteger(offset)||offset<0||
   !Array.isArray(bank.scenes)||bank.scenes.length<250||episodes+offset>bank.scenes.length||
   new Set(bank.scenes.map(s=>s.sceneId)).size!==bank.scenes.length||JSON.stringify(bank.versions)!==JSON.stringify(versions)||
@@ -58,4 +59,27 @@ export function prepareMeetingSceneBatch(bytes,arm,{episodes,offset=0,versions})
    forcedMeeting:{ownedIndex:index,cardNo:bank.cardNo,deleteMax:s.deleteMax,action:arm==='target'?'delete':'keep'}};
  });
  return {kind:'meeting',cardNo:bank.cardNo,sha256:sha(bytes),arm,scenes};
+}
+
+
+/** 同じ公開研修で、記録済みの基準取得と次順位の取得を比較する。 */
+export function prepareChoiceSceneBatch(bytes,arm,{episodes,offset=0,versions}){
+ const bank=JSON.parse(bytes);
+ if(bank.kind!=='choices'||!['target','reference'].includes(arm)||!Number.isInteger(episodes)||episodes<1||
+  !Number.isInteger(offset)||offset<0||!Array.isArray(bank.scenes)||bank.scenes.length<250||
+  episodes+offset>bank.scenes.length||new Set(bank.scenes.map(s=>s.sceneId)).size!==bank.scenes.length||
+  JSON.stringify(bank.versions)!==JSON.stringify(versions))throw Error('取得差局面集・版・実行範囲が不正');
+ const key=a=>[...a].sort((a,b)=>a-b).join(',');
+ const scenes=bank.scenes.map(s=>{
+  const o=publicScene(s.observation),target=s.targetIndices,reference=s.referenceIndices;
+  const valid=a=>Array.isArray(a)&&a.length===o.pickCount&&new Set(a).size===a.length&&a.every(i=>Number.isInteger(i)&&i>=0&&o.candidates[i]);
+  if(typeof s.sceneId!=='string'||!s.sceneId||o.difficulty!=='pro'||o.mode!=='normal'||o.totalTurns!==8||
+   !Number.isInteger(o.turn)||o.turn<0||o.turn>7||o.pickCount!==(o.turn===0?2:1)||o.allowSkip||o.turns.length!==8||
+   !Object.values(o.stats).every(v=>Number.isFinite(v)&&v>=0)||!Object.values(o.tokens).every(v=>Number.isInteger(v)&&v>=0)||
+   !Number.isInteger(o.refreshRemaining)||o.refreshRemaining<0||!valid(target)||!valid(reference)||key(target)===key(reference)||
+   o.candidates.some(c=>!Number.isInteger(Number(c.cardNo))||Number(c.cardNo)<6||Number(c.cardNo)>51))
+   throw Error('取得差の公開研修・2群の合法選択が不正');
+  return {kind:'choices',sceneId:s.sceneId,observation:o,observationSha256:sha(JSON.stringify(o)),forcedChoice:[...(arm==='target'?target:reference)]};
+ });
+ return {kind:'choices',cardNo:null,sha256:sha(bytes),arm,scenes};
 }
