@@ -1,0 +1,3254 @@
+{
+  "schema": "pro-initial-pair-value-v1",
+  "estimated": true,
+  "initial": {
+    "totalTurns": 8,
+    "stats": {
+      "experience": 0,
+      "enrollment": 0,
+      "satisfaction": 3,
+      "accounting": 5
+    },
+    "basicNos": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "cardNos": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ],
+  "provenance": {
+    "fingerprints": {
+      "implementation": "3764ff0937bef576cc7ca7dd5ea095ecc406a9f8f0894404c21a490c05d72a2a",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+    },
+    "config": {
+      "acquisition": "learned",
+      "placement": "engine",
+      "deletion": "aggressive",
+      "objective": "engine",
+      "uiTrainingStreams": true,
+      "cacheEffects": true,
+      "learned": {
+        "blend": 0.005,
+        "beam": 72,
+        "refreshCost": 0.12,
+        "reserveCost": 0.25
+      },
+      "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+      "refresh": "learned",
+      "signedGrowth": true,
+      "safetyBuffer": 2,
+      "targetScore": 13,
+      "deleteFloor": 4,
+      "fastPublicActions": true,
+      "placementRolloutTurns": 8,
+      "planning": {
+        "worlds": 250,
+        "valueHorizon": 2,
+        "leafBlend": 0.002,
+        "realBeam": 128,
+        "actionCandidates": 8,
+        "futurePolicy": "baseline",
+        "futureBeam": 64,
+        "futureAcquisition": "learned",
+        "futureRefresh": "learned",
+        "contextSalt": false,
+        "drawSampler": "keyed",
+        "salt": "pro-opening-table-v1"
+      },
+      "lateAcquisitionRollout": 8
+    },
+    "worlds": 250,
+    "method": "two public hypothetical turns then fixed learned value; utility is not an actual final score",
+    "actualGames": 0
+  },
+  "rows": [
+    {
+      "pair": [
+        6,
+        7
+      ],
+      "remaining": 0,
+      "score": 11.342712357862196,
+      "predictedFinalScore": 10.765689513039764,
+      "forecast": {
+        "experience": 47.226529752488545,
+        "enrollment": 11.788334773722228,
+        "satisfaction": 16.48895939747208,
+        "accounting": 15.303156222760292
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        8
+      ],
+      "remaining": 0,
+      "score": 11.247812646109178,
+      "predictedFinalScore": 10.672303937149076,
+      "forecast": {
+        "experience": 40.113391094177835,
+        "enrollment": 12.432163729302953,
+        "satisfaction": 19.31185896178218,
+        "accounting": 15.48028978018326
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        9
+      ],
+      "remaining": 0,
+      "score": 11.076648031676115,
+      "predictedFinalScore": 10.459658944696466,
+      "forecast": {
+        "experience": 29.977687182563706,
+        "enrollment": 21.522486926307582,
+        "satisfaction": 18.016968159227805,
+        "accounting": 15.717990800701372
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        10
+      ],
+      "remaining": 0,
+      "score": 11.077044034800318,
+      "predictedFinalScore": 10.466929321359567,
+      "forecast": {
+        "experience": 28.574211048150097,
+        "enrollment": 23.84406752395253,
+        "satisfaction": 16.832181422599387,
+        "accounting": 15.770121845808331
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        11
+      ],
+      "remaining": 0,
+      "score": 11.05912163580129,
+      "predictedFinalScore": 10.44638660264608,
+      "forecast": {
+        "experience": 28.941991069514277,
+        "enrollment": 19.32312387409199,
+        "satisfaction": 22.311703817831138,
+        "accounting": 16.46253907990315
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.805514993481639,
+      "predictedFinalScore": 10.215340572510678,
+      "forecast": {
+        "experience": 30.33296090143224,
+        "enrollment": 13.351552610464955,
+        "satisfaction": 25.213045284705174,
+        "accounting": 17.168733526852417
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.39162517048863,
+      "predictedFinalScore": 10.775935728423574,
+      "forecast": {
+        "experience": 30.525093865656338,
+        "enrollment": 13.650321886553568,
+        "satisfaction": 29.69233972054906,
+        "accounting": 16.165488039483108
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.302405623904171,
+      "predictedFinalScore": 10.695654872502997,
+      "forecast": {
+        "experience": 35.59924139786991,
+        "enrollment": 12.364257501707897,
+        "satisfaction": 26.36170411253148,
+        "accounting": 16.89412823149598
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.177339519613577,
+      "predictedFinalScore": 10.563636005315505,
+      "forecast": {
+        "experience": 30.112214397979702,
+        "enrollment": 14.00805139495798,
+        "satisfaction": 18.955663079352842,
+        "accounting": 23.085665010655326
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.546555279802357,
+      "predictedFinalScore": 10.916541267937212,
+      "forecast": {
+        "experience": 29.579323389966145,
+        "enrollment": 14.408903899899654,
+        "satisfaction": 20.732923046359847,
+        "accounting": 26.838573498551913
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.631358726358169,
+      "predictedFinalScore": 10.978494793458914,
+      "forecast": {
+        "experience": 28.80215587711672,
+        "enrollment": 19.10091185236109,
+        "satisfaction": 18.109615559995564,
+        "accounting": 20.80350316173632
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        8
+      ],
+      "remaining": 0,
+      "score": 11.174612728868048,
+      "predictedFinalScore": 10.62680065589106,
+      "forecast": {
+        "experience": 44.0568571428572,
+        "enrollment": 10.7717,
+        "satisfaction": 17.419315283814683,
+        "accounting": 14.986
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        9
+      ],
+      "remaining": 0,
+      "score": 11.219432040596384,
+      "predictedFinalScore": 10.585625725809926,
+      "forecast": {
+        "experience": 37.214680470425435,
+        "enrollment": 21.01520870571437,
+        "satisfaction": 17.009293152653346,
+        "accounting": 15.361368135593224
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        10
+      ],
+      "remaining": 0,
+      "score": 10.997516929148633,
+      "predictedFinalScore": 10.405195380555707,
+      "forecast": {
+        "experience": 32.78064285714289,
+        "enrollment": 22.893229813664586,
+        "satisfaction": 15.300271510568075,
+        "accounting": 14.996
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        11
+      ],
+      "remaining": 0,
+      "score": 10.983799210625026,
+      "predictedFinalScore": 10.386099302103123,
+      "forecast": {
+        "experience": 33.852603105590084,
+        "enrollment": 18.278946341463417,
+        "satisfaction": 20.005097560104048,
+        "accounting": 15.486
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.903863759562574,
+      "predictedFinalScore": 10.298173354324417,
+      "forecast": {
+        "experience": 38.06861328870526,
+        "enrollment": 12.548655028003466,
+        "satisfaction": 23.780473044113748,
+        "accounting": 16.92895263732611
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.540015321934634,
+      "predictedFinalScore": 10.908660306257266,
+      "forecast": {
+        "experience": 38.456019408102186,
+        "enrollment": 12.44386960927666,
+        "satisfaction": 27.961911273646187,
+        "accounting": 16.425953639082753
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.261785738313904,
+      "predictedFinalScore": 10.674177021831834,
+      "forecast": {
+        "experience": 40.29800000000005,
+        "enrollment": 11.088246601941748,
+        "satisfaction": 23.459881327045576,
+        "accounting": 16.03
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.399535496835686,
+      "predictedFinalScore": 10.751850346066746,
+      "forecast": {
+        "experience": 38.15674286797102,
+        "enrollment": 12.989579115590223,
+        "satisfaction": 18.181930208133096,
+        "accounting": 21.769356987051257
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.57793963898743,
+      "predictedFinalScore": 10.942034612962159,
+      "forecast": {
+        "experience": 35.66295248351646,
+        "enrollment": 12.41689076923077,
+        "satisfaction": 19.07554038281979,
+        "accounting": 23.624231648351632
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.602541122146732,
+      "predictedFinalScore": 10.94729247022854,
+      "forecast": {
+        "experience": 34.00163518060367,
+        "enrollment": 18.22275115633673,
+        "satisfaction": 16.801065102736075,
+        "accounting": 18.824251063829788
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        9
+      ],
+      "remaining": 0,
+      "score": 11.161163428758389,
+      "predictedFinalScore": 10.541968069615695,
+      "forecast": {
+        "experience": 30.706727153234223,
+        "enrollment": 20.67836271936641,
+        "satisfaction": 19.673751391890637,
+        "accounting": 15.83240400322841
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        10
+      ],
+      "remaining": 0,
+      "score": 10.984246444430893,
+      "predictedFinalScore": 10.407817273278381,
+      "forecast": {
+        "experience": 26.943970109890145,
+        "enrollment": 21.760284395604387,
+        "satisfaction": 17.905948151104557,
+        "accounting": 15.325686153846155
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        11
+      ],
+      "remaining": 0,
+      "score": 10.905816283541286,
+      "predictedFinalScore": 10.331718561451527,
+      "forecast": {
+        "experience": 26.964085093167746,
+        "enrollment": 17.785291428571426,
+        "satisfaction": 22.97520978084143,
+        "accounting": 16.05
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.683475101820097,
+      "predictedFinalScore": 10.10257554256055,
+      "forecast": {
+        "experience": 30.64340774818409,
+        "enrollment": 12.630185092538484,
+        "satisfaction": 27.009173289870933,
+        "accounting": 17.25857129943502
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.389796432047108,
+      "predictedFinalScore": 10.786128390676907,
+      "forecast": {
+        "experience": 31.04752597411853,
+        "enrollment": 12.591538316961806,
+        "satisfaction": 30.83892455730431,
+        "accounting": 17.084340144328912
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.126251148385345,
+      "predictedFinalScore": 10.558387822228475,
+      "forecast": {
+        "experience": 33.58500000000002,
+        "enrollment": 11.356867768595043,
+        "satisfaction": 26.685442455333103,
+        "accounting": 16.321
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.383194187004399,
+      "predictedFinalScore": 10.740197253279273,
+      "forecast": {
+        "experience": 31.82278771745991,
+        "enrollment": 14.372232834904986,
+        "satisfaction": 20.557282788305656,
+        "accounting": 21.548380824194073
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.47833066286559,
+      "predictedFinalScore": 10.855822508183348,
+      "forecast": {
+        "experience": 29.664194932874405,
+        "enrollment": 13.708334263884808,
+        "satisfaction": 21.325048872598675,
+        "accounting": 22.84898416523234
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.582190923384912,
+      "predictedFinalScore": 10.934950236771103,
+      "forecast": {
+        "experience": 28.520939877332022,
+        "enrollment": 18.007041538461543,
+        "satisfaction": 19.162868967781957,
+        "accounting": 18.73468615384615
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        10
+      ],
+      "remaining": 0,
+      "score": 10.824542996972616,
+      "predictedFinalScore": 10.336250925833266,
+      "forecast": {
+        "experience": 20.132620498657417,
+        "enrollment": 19.958906212943134,
+        "satisfaction": 16.346629196125928,
+        "accounting": 15.554790665684108
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        11
+      ],
+      "remaining": 0,
+      "score": 10.888911574755152,
+      "predictedFinalScore": 10.343653056086762,
+      "forecast": {
+        "experience": 20.006341256822864,
+        "enrollment": 19.408569378307664,
+        "satisfaction": 22.211440579503726,
+        "accounting": 16.33637211126203
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.684247690872008,
+      "predictedFinalScore": 10.086874227592956,
+      "forecast": {
+        "experience": 20.71674064165163,
+        "enrollment": 18.84603735942447,
+        "satisfaction": 25.434343817494973,
+        "accounting": 17.420355546464076
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.306578958309114,
+      "predictedFinalScore": 10.678510506742207,
+      "forecast": {
+        "experience": 21.55863192439137,
+        "enrollment": 19.544445391496488,
+        "satisfaction": 29.04602580274205,
+        "accounting": 16.851562281963865
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.237408041193127,
+      "predictedFinalScore": 10.597946751390754,
+      "forecast": {
+        "experience": 26.34889107805837,
+        "enrollment": 19.929790191917856,
+        "satisfaction": 26.680718540792267,
+        "accounting": 17.11438844229216
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.061855921872503,
+      "predictedFinalScore": 10.45283396486104,
+      "forecast": {
+        "experience": 21.145123800883244,
+        "enrollment": 18.828980600874537,
+        "satisfaction": 18.69035200521919,
+        "accounting": 23.347496158911703
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.406259452826657,
+      "predictedFinalScore": 10.783487042161173,
+      "forecast": {
+        "experience": 21.357377675680443,
+        "enrollment": 18.65088812772983,
+        "satisfaction": 20.357541784774188,
+        "accounting": 27.207250734463226
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.384155802769962,
+      "predictedFinalScore": 10.801580506062352,
+      "forecast": {
+        "experience": 19.938259448824336,
+        "enrollment": 19.038816369670474,
+        "satisfaction": 17.826203529476988,
+        "accounting": 21.04756529880338
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        11
+      ],
+      "remaining": 0,
+      "score": 10.686217777858374,
+      "predictedFinalScore": 10.20371930187729,
+      "forecast": {
+        "experience": 18.234369231968405,
+        "enrollment": 18.06336923196841,
+        "satisfaction": 19.6720290511011,
+        "accounting": 15.74664578313253
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.583917439205484,
+      "predictedFinalScore": 10.021687655283388,
+      "forecast": {
+        "experience": 20.019376905044734,
+        "enrollment": 19.062647996158343,
+        "satisfaction": 23.54832740003113,
+        "accounting": 17.433921937045998
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.24511297584431,
+      "predictedFinalScore": 10.650600181706666,
+      "forecast": {
+        "experience": 20.998289322864238,
+        "enrollment": 19.987057565594956,
+        "satisfaction": 26.320813504672547,
+        "accounting": 16.74252057465698
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.062944529930549,
+      "predictedFinalScore": 10.463329205485241,
+      "forecast": {
+        "experience": 23.191154566744757,
+        "enrollment": 21.07191803051318,
+        "satisfaction": 23.680770774497155,
+        "accounting": 16.321
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.051268336782554,
+      "predictedFinalScore": 10.465653968886377,
+      "forecast": {
+        "experience": 19.908462610055555,
+        "enrollment": 18.81105660270913,
+        "satisfaction": 17.998529278373887,
+        "accounting": 22.403227402416615
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.263952610859297,
+      "predictedFinalScore": 10.679305219694182,
+      "forecast": {
+        "experience": 19.365218799228533,
+        "enrollment": 17.93621879922854,
+        "satisfaction": 18.88227835164294,
+        "accounting": 24.394807472527457
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.21845148130862,
+      "predictedFinalScore": 10.68846063058787,
+      "forecast": {
+        "experience": 18.164656871376145,
+        "enrollment": 17.835156871376146,
+        "satisfaction": 16.352973226802632,
+        "accounting": 19.213429787234045
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        12
+      ],
+      "remaining": 0,
+      "score": 10.58280448793284,
+      "predictedFinalScore": 9.9979889003156,
+      "forecast": {
+        "experience": 19.46160178132272,
+        "enrollment": 17.22596241451086,
+        "satisfaction": 30.51139571544582,
+        "accounting": 18.087997804681187
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        13
+      ],
+      "remaining": 0,
+      "score": 11.242422337093476,
+      "predictedFinalScore": 10.626436438237498,
+      "forecast": {
+        "experience": 20.85528101653526,
+        "enrollment": 17.835519206593776,
+        "satisfaction": 33.04861385107625,
+        "accounting": 17.70140081786386
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        14
+      ],
+      "remaining": 0,
+      "score": 10.968528763259966,
+      "predictedFinalScore": 10.37744282536362,
+      "forecast": {
+        "experience": 22.769404968944126,
+        "enrollment": 17.04494737923946,
+        "satisfaction": 30.321175177977057,
+        "accounting": 16.684
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.138647995891162,
+      "predictedFinalScore": 10.500736235456294,
+      "forecast": {
+        "experience": 21.02977912002669,
+        "enrollment": 17.988708639943116,
+        "satisfaction": 23.615030379167,
+        "accounting": 21.872912455409597
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.269350176837872,
+      "predictedFinalScore": 10.653331986502131,
+      "forecast": {
+        "experience": 19.92658466340494,
+        "enrollment": 16.90346715134371,
+        "satisfaction": 24.38390398023602,
+        "accounting": 23.490914568599695
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.289477968067386,
+      "predictedFinalScore": 10.685270469775896,
+      "forecast": {
+        "experience": 19.653430520667392,
+        "enrollment": 18.48383539871619,
+        "satisfaction": 21.227275397612598,
+        "accounting": 18.796361445783127
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        13
+      ],
+      "remaining": 0,
+      "score": 10.944093196159729,
+      "predictedFinalScore": 10.34419224086073,
+      "forecast": {
+        "experience": 22.532219674443052,
+        "enrollment": 13.333207301212994,
+        "satisfaction": 35.41880905646703,
+        "accounting": 18.21197318279704
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        14
+      ],
+      "remaining": 0,
+      "score": 10.770416481817522,
+      "predictedFinalScore": 10.180560668618659,
+      "forecast": {
+        "experience": 26.33424497175145,
+        "enrollment": 12.199774463276844,
+        "satisfaction": 34.32163364530637,
+        "accounting": 18.105488748991117
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        15
+      ],
+      "remaining": 0,
+      "score": 10.951501198271368,
+      "predictedFinalScore": 10.337476958258907,
+      "forecast": {
+        "experience": 21.713239289148017,
+        "enrollment": 13.91524937202558,
+        "satisfaction": 27.14789798116242,
+        "accounting": 23.059360702079015
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.176954931507458,
+      "predictedFinalScore": 10.566413171457361,
+      "forecast": {
+        "experience": 21.269878669776727,
+        "enrollment": 13.518483995752822,
+        "satisfaction": 29.052082817684354,
+        "accounting": 26.762835104978546
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.236266693159305,
+      "predictedFinalScore": 10.59173008756039,
+      "forecast": {
+        "experience": 21.353092748561508,
+        "enrollment": 17.61219650222915,
+        "satisfaction": 25.326485380112363,
+        "accounting": 20.91306361007532
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        14
+      ],
+      "remaining": 0,
+      "score": 11.460986112804019,
+      "predictedFinalScore": 10.826138850609938,
+      "forecast": {
+        "experience": 27.287761573255196,
+        "enrollment": 13.772753948155922,
+        "satisfaction": 35.53952105417631,
+        "accounting": 17.950194738409106
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.454663089372056,
+      "predictedFinalScore": 10.813167317966322,
+      "forecast": {
+        "experience": 21.98506710887164,
+        "enrollment": 13.933525564287677,
+        "satisfaction": 30.865658926431028,
+        "accounting": 23.000234883381722
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.703664935444598,
+      "predictedFinalScore": 11.064780714196777,
+      "forecast": {
+        "experience": 22.56064200465926,
+        "enrollment": 13.49731030879547,
+        "satisfaction": 31.672552920952445,
+        "accounting": 26.54989625782745
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.896860031369114,
+      "predictedFinalScore": 11.22169571963869,
+      "forecast": {
+        "experience": 22.111455189669083,
+        "enrollment": 17.98036199829547,
+        "satisfaction": 28.408021989903286,
+        "accounting": 20.77371747424393
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        15
+      ],
+      "remaining": 0,
+      "score": 11.387479489166171,
+      "predictedFinalScore": 10.726183429742521,
+      "forecast": {
+        "experience": 27.78053468111618,
+        "enrollment": 14.004289578256795,
+        "satisfaction": 28.39894772959737,
+        "accounting": 21.581100816782186
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.521397875991294,
+      "predictedFinalScore": 10.885133775513472,
+      "forecast": {
+        "experience": 25.429896140515265,
+        "enrollment": 13.145534426229508,
+        "satisfaction": 29.11566057368686,
+        "accounting": 23.106631381733003
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.65544188572021,
+      "predictedFinalScore": 10.988827647026152,
+      "forecast": {
+        "experience": 24.655966726297,
+        "enrollment": 17.593530310466242,
+        "satisfaction": 25.996358705677306,
+        "accounting": 18.89616923076923
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        16
+      ],
+      "remaining": 0,
+      "score": 11.198160904196566,
+      "predictedFinalScore": 10.645708505754024,
+      "forecast": {
+        "experience": 20.212950616856933,
+        "enrollment": 12.993978156690593,
+        "satisfaction": 21.321062229664477,
+        "accounting": 36.16013327952642
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.335246866483239,
+      "predictedFinalScore": 10.774981407857478,
+      "forecast": {
+        "experience": 19.66728233651015,
+        "enrollment": 16.597683328540235,
+        "satisfaction": 18.206322625022246,
+        "accounting": 30.150428048332575
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        16,
+        17
+      ],
+      "remaining": 0,
+      "score": 11.499937596763726,
+      "predictedFinalScore": 10.94721103973092,
+      "forecast": {
+        "experience": 18.639944129823668,
+        "enrollment": 15.519492967032985,
+        "satisfaction": 18.860043600557255,
+        "accounting": 31.56069758241756
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        7
+      ],
+      "remaining": 1,
+      "score": 11.342712357862196,
+      "predictedFinalScore": 10.765689513039764,
+      "forecast": {
+        "experience": 47.226529752488545,
+        "enrollment": 11.788334773722228,
+        "satisfaction": 16.48895939747208,
+        "accounting": 15.303156222760292
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        8
+      ],
+      "remaining": 1,
+      "score": 11.251106126041039,
+      "predictedFinalScore": 10.675597417080933,
+      "forecast": {
+        "experience": 40.113391094177835,
+        "enrollment": 12.432163729302953,
+        "satisfaction": 19.31185896178218,
+        "accounting": 15.48028978018326
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        9
+      ],
+      "remaining": 1,
+      "score": 11.10171671878513,
+      "predictedFinalScore": 10.48475905650398,
+      "forecast": {
+        "experience": 29.977687182563706,
+        "enrollment": 21.50544692630758,
+        "satisfaction": 17.971848159227804,
+        "accounting": 15.776870800701372
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        10
+      ],
+      "remaining": 1,
+      "score": 11.105722499117732,
+      "predictedFinalScore": 10.49639545941857,
+      "forecast": {
+        "experience": 28.383353905292953,
+        "enrollment": 23.78892466680967,
+        "satisfaction": 16.832181422599387,
+        "accounting": 15.951836131522617
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        11
+      ],
+      "remaining": 1,
+      "score": 11.085527168578178,
+      "predictedFinalScore": 10.472873432259727,
+      "forecast": {
+        "experience": 28.772785863703135,
+        "enrollment": 19.25169530266342,
+        "satisfaction": 22.281845926598006,
+        "accounting": 16.660824794188862
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.83303619733937,
+      "predictedFinalScore": 10.242696183703373,
+      "forecast": {
+        "experience": 30.297518717524195,
+        "enrollment": 13.36105858747645,
+        "satisfaction": 25.177337123785634,
+        "accounting": 17.229279503863907
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.415608505078296,
+      "predictedFinalScore": 10.799400548237118,
+      "forecast": {
+        "experience": 30.44914002384843,
+        "enrollment": 13.392648517018166,
+        "satisfaction": 29.571668400291163,
+        "accounting": 16.64494883044356
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.316123663264321,
+      "predictedFinalScore": 10.709372911863149,
+      "forecast": {
+        "experience": 35.59924139786991,
+        "enrollment": 12.364257501707897,
+        "satisfaction": 26.36170411253148,
+        "accounting": 16.89412823149598
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.221494061048706,
+      "predictedFinalScore": 10.608224552808945,
+      "forecast": {
+        "experience": 29.922253889505125,
+        "enrollment": 13.947091394957981,
+        "satisfaction": 19.11574307935284,
+        "accounting": 23.091049078451935
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.594179864513517,
+      "predictedFinalScore": 10.96550775639712,
+      "forecast": {
+        "experience": 29.47881275504551,
+        "enrollment": 14.206572471328226,
+        "satisfaction": 20.758534474931274,
+        "accounting": 26.80154492712334
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.675354741583854,
+      "predictedFinalScore": 11.023446233190123,
+      "forecast": {
+        "experience": 28.567958734259573,
+        "enrollment": 19.068622568693467,
+        "satisfaction": 18.155981274281274,
+        "accounting": 20.79998316173632
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        8
+      ],
+      "remaining": 1,
+      "score": 11.175630367804066,
+      "predictedFinalScore": 10.627818294827076,
+      "forecast": {
+        "experience": 44.0568571428572,
+        "enrollment": 10.7717,
+        "satisfaction": 17.419315283814683,
+        "accounting": 14.986
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        9
+      ],
+      "remaining": 1,
+      "score": 11.227777193237324,
+      "predictedFinalScore": 10.594552074263143,
+      "forecast": {
+        "experience": 37.09696618471114,
+        "enrollment": 21.010637277142944,
+        "satisfaction": 17.037864581224774,
+        "accounting": 15.436225278450367
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        10
+      ],
+      "remaining": 1,
+      "score": 11.020247695054524,
+      "predictedFinalScore": 10.428496626989416,
+      "forecast": {
+        "experience": 32.736000000000026,
+        "enrollment": 22.767372670807447,
+        "satisfaction": 15.29142244961363,
+        "accounting": 15.077
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        11
+      ],
+      "remaining": 1,
+      "score": 10.999102768124951,
+      "predictedFinalScore": 10.401534658881513,
+      "forecast": {
+        "experience": 33.83728757763977,
+        "enrollment": 18.240946341463417,
+        "satisfaction": 19.993670230911498,
+        "accounting": 15.496
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.914051033611475,
+      "predictedFinalScore": 10.308238002096315,
+      "forecast": {
+        "experience": 37.99235043156241,
+        "enrollment": 12.562415028003464,
+        "satisfaction": 23.76648411736262,
+        "accounting": 16.993569780183254
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.547152163806501,
+      "predictedFinalScore": 10.915469007747376,
+      "forecast": {
+        "experience": 38.37368797953076,
+        "enrollment": 12.358635323562375,
+        "satisfaction": 27.96460409217901,
+        "accounting": 16.561862210511325
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.263999799896276,
+      "predictedFinalScore": 10.676645111481783,
+      "forecast": {
+        "experience": 40.29121428571433,
+        "enrollment": 11.045246601941747,
+        "satisfaction": 23.46085947830608,
+        "accounting": 16.04
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.41176983737104,
+      "predictedFinalScore": 10.764084686602091,
+      "forecast": {
+        "experience": 38.15674286797102,
+        "enrollment": 12.989579115590223,
+        "satisfaction": 18.181930208133096,
+        "accounting": 21.769356987051257
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.597748428205664,
+      "predictedFinalScore": 10.962641914162845,
+      "forecast": {
+        "experience": 35.40497072527471,
+        "enrollment": 12.367266153846154,
+        "satisfaction": 19.2685017273576,
+        "accounting": 23.606487472527455
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.62299125099633,
+      "predictedFinalScore": 10.968378966736502,
+      "forecast": {
+        "experience": 33.69185511415849,
+        "enrollment": 18.303036870622446,
+        "satisfaction": 16.953207959878934,
+        "accounting": 18.796251063829786
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        9
+      ],
+      "remaining": 1,
+      "score": 11.189021617445514,
+      "predictedFinalScore": 10.568964235108854,
+      "forecast": {
+        "experience": 30.706727153234223,
+        "enrollment": 20.620077005080695,
+        "satisfaction": 19.726202723609763,
+        "accounting": 15.953546860371269
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        10
+      ],
+      "remaining": 1,
+      "score": 11.014339644728038,
+      "predictedFinalScore": 10.438118151675836,
+      "forecast": {
+        "experience": 26.829470109890146,
+        "enrollment": 21.74728439560439,
+        "satisfaction": 17.89993090972525,
+        "accounting": 15.430686153846155
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        11
+      ],
+      "remaining": 1,
+      "score": 10.935568257762329,
+      "predictedFinalScore": 10.361470535672566,
+      "forecast": {
+        "experience": 26.964085093167746,
+        "enrollment": 17.785291428571426,
+        "satisfaction": 22.97520978084143,
+        "accounting": 16.05
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.709920961111788,
+      "predictedFinalScore": 10.12921569261025,
+      "forecast": {
+        "experience": 30.610836319612662,
+        "enrollment": 12.591327949681343,
+        "satisfaction": 27.037744718442365,
+        "accounting": 17.29057129943502
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.42018584656052,
+      "predictedFinalScore": 10.815992296674034,
+      "forecast": {
+        "experience": 30.838165268480342,
+        "enrollment": 12.53050038314421,
+        "satisfaction": 30.831913257869285,
+        "accounting": 17.2570164962256
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.152865788881737,
+      "predictedFinalScore": 10.584076920205751,
+      "forecast": {
+        "experience": 33.350428571428594,
+        "enrollment": 11.308867768595043,
+        "satisfaction": 26.533620356881322,
+        "accounting": 16.576
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.42451154455317,
+      "predictedFinalScore": 10.781528099585248,
+      "forecast": {
+        "experience": 31.648254545547083,
+        "enrollment": 14.349876130998908,
+        "satisfaction": 20.751749640605894,
+        "accounting": 21.514588717656547
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.51970684693214,
+      "predictedFinalScore": 10.89823155895497,
+      "forecast": {
+        "experience": 29.43533779001726,
+        "enrollment": 13.549334263884807,
+        "satisfaction": 21.500850459900263,
+        "accounting": 22.85555559380377
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.621193706772466,
+      "predictedFinalScore": 10.974055254413939,
+      "forecast": {
+        "experience": 28.441939877332022,
+        "enrollment": 18.061641538461547,
+        "satisfaction": 19.126507856670848,
+        "accounting": 18.743686153846152
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        10
+      ],
+      "remaining": 1,
+      "score": 10.856428272512154,
+      "predictedFinalScore": 10.367260165296901,
+      "forecast": {
+        "experience": 20.120019256421394,
+        "enrollment": 19.946304970707107,
+        "satisfaction": 16.216850910411637,
+        "accounting": 15.835943460715166
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        11
+      ],
+      "remaining": 1,
+      "score": 10.917178303306038,
+      "predictedFinalScore": 10.371275883434269,
+      "forecast": {
+        "experience": 19.99891268539429,
+        "enrollment": 19.40114080687909,
+        "satisfaction": 22.176662264448893,
+        "accounting": 16.440943539833462
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.714715649256256,
+      "predictedFinalScore": 10.117342185977202,
+      "forecast": {
+        "experience": 20.71674064165163,
+        "enrollment": 18.84603735942447,
+        "satisfaction": 25.434343817494973,
+        "accounting": 17.420355546464076
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.338396361220179,
+      "predictedFinalScore": 10.71067408081197,
+      "forecast": {
+        "experience": 21.352313732300978,
+        "enrollment": 19.47610957228745,
+        "satisfaction": 29.01914782971224,
+        "accounting": 17.049103072924318
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.2629293566692,
+      "predictedFinalScore": 10.622956171890502,
+      "forecast": {
+        "experience": 26.28374822091551,
+        "enrollment": 19.91239336652103,
+        "satisfaction": 26.697578231420106,
+        "accounting": 17.190959870863594
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.113675526591976,
+      "predictedFinalScore": 10.504598487968106,
+      "forecast": {
+        "experience": 21.088243800883244,
+        "enrollment": 18.852180600874537,
+        "satisfaction": 18.693392005219188,
+        "accounting": 23.352880226708315
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.459517295863542,
+      "predictedFinalScore": 10.837846200908144,
+      "forecast": {
+        "experience": 21.20755044878969,
+        "enrollment": 18.59523457030686,
+        "satisfaction": 20.312908007534478,
+        "accounting": 27.216393591606085
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.434932548229243,
+      "predictedFinalScore": 10.853160424291728,
+      "forecast": {
+        "experience": 19.871973734538624,
+        "enrollment": 18.987387798241908,
+        "satisfaction": 17.79356975223728,
+        "accounting": 21.041851013089094
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        11
+      ],
+      "remaining": 1,
+      "score": 10.715082085800544,
+      "predictedFinalScore": 10.231962162700945,
+      "forecast": {
+        "experience": 18.22259694281178,
+        "enrollment": 18.05159694281178,
+        "satisfaction": 19.679258248181387,
+        "accounting": 15.800069879518073
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.618349202513086,
+      "predictedFinalScore": 10.05611815532733,
+      "forecast": {
+        "experience": 20.00125119075902,
+        "enrollment": 19.04052228187263,
+        "satisfaction": 23.48978158292657,
+        "accounting": 17.53501907990314
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.276805835987332,
+      "predictedFinalScore": 10.681865401683643,
+      "forecast": {
+        "experience": 20.988575037149953,
+        "enrollment": 19.977343279880667,
+        "satisfaction": 26.234981172304572,
+        "accounting": 16.890520574656975
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.093652363499054,
+      "predictedFinalScore": 10.493680889240018,
+      "forecast": {
+        "experience": 23.183011709601903,
+        "enrollment": 21.063346601941753,
+        "satisfaction": 23.62544155006477,
+        "accounting": 16.378
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.103623644811465,
+      "predictedFinalScore": 10.51816452249094,
+      "forecast": {
+        "experience": 19.867319752912696,
+        "enrollment": 18.769913745566274,
+        "satisfaction": 18.05852927837389,
+        "accounting": 22.37673533892455
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.317918033503883,
+      "predictedFinalScore": 10.733905519786097,
+      "forecast": {
+        "experience": 19.295147370657105,
+        "enrollment": 17.896647370657114,
+        "satisfaction": 18.916762478627067,
+        "accounting": 24.386236043956025
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.268881847202904,
+      "predictedFinalScore": 10.739537579588644,
+      "forecast": {
+        "experience": 18.147015378480123,
+        "enrollment": 17.817515378480127,
+        "satisfaction": 16.25674306807247,
+        "accounting": 19.208429787234042
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        12
+      ],
+      "remaining": 1,
+      "score": 10.616739058835137,
+      "predictedFinalScore": 10.031850183123042,
+      "forecast": {
+        "experience": 19.444047495608437,
+        "enrollment": 17.19926527165372,
+        "satisfaction": 30.48669508811678,
+        "accounting": 18.195952090395473
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        13
+      ],
+      "remaining": 1,
+      "score": 11.27605025271657,
+      "predictedFinalScore": 10.659974820627344,
+      "forecast": {
+        "experience": 20.817416572090814,
+        "enrollment": 17.850648095482665,
+        "satisfaction": 33.05293333841189,
+        "accounting": 17.71744970675275
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.004565241631457,
+      "predictedFinalScore": 10.413349127096781,
+      "forecast": {
+        "experience": 22.682404968944127,
+        "enrollment": 17.00094737923946,
+        "satisfaction": 30.34475210105398,
+        "accounting": 16.785
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.194250978406437,
+      "predictedFinalScore": 10.557212826598153,
+      "forecast": {
+        "experience": 20.831703446096096,
+        "enrollment": 17.932347251726814,
+        "satisfaction": 23.679088490547148,
+        "accounting": 21.862244734128996
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.323902044753213,
+      "predictedFinalScore": 10.708460196522871,
+      "forecast": {
+        "experience": 19.868941806262086,
+        "enrollment": 16.88032429420085,
+        "satisfaction": 24.364146043728084,
+        "accounting": 23.465771711456842
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.340905930189043,
+      "predictedFinalScore": 10.738178278173287,
+      "forecast": {
+        "experience": 19.55962155056773,
+        "enrollment": 18.42252642861652,
+        "satisfaction": 21.15940238173958,
+        "accounting": 18.765361445783128
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        13
+      ],
+      "remaining": 1,
+      "score": 10.976286294074773,
+      "predictedFinalScore": 10.376394437367795,
+      "forecast": {
+        "experience": 22.483179674443054,
+        "enrollment": 13.342395872641564,
+        "satisfaction": 35.4162018657518,
+        "accounting": 18.264544611368468
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        14
+      ],
+      "remaining": 1,
+      "score": 10.807003011504309,
+      "predictedFinalScore": 10.216973859635978,
+      "forecast": {
+        "experience": 26.183387828894308,
+        "enrollment": 12.15748874899113,
+        "satisfaction": 34.34379745483019,
+        "accounting": 18.214060177562544
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.001494716373442,
+      "predictedFinalScore": 10.387447699496455,
+      "forecast": {
+        "experience": 21.636199289148017,
+        "enrollment": 13.93028937202558,
+        "satisfaction": 27.213897981162418,
+        "accounting": 23.059360702079015
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.225110094987569,
+      "predictedFinalScore": 10.615061460580938,
+      "forecast": {
+        "experience": 21.156356525257905,
+        "enrollment": 13.499403218085822,
+        "satisfaction": 29.025176794167603,
+        "accounting": 26.76657926962746
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.284718404839419,
+      "predictedFinalScore": 10.641062381274187,
+      "forecast": {
+        "experience": 21.255798543557475,
+        "enrollment": 17.63775944008226,
+        "satisfaction": 25.22299326898543,
+        "accounting": 20.858746773917126
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        14
+      ],
+      "remaining": 1,
+      "score": 11.491803591381725,
+      "predictedFinalScore": 10.855996291390698,
+      "forecast": {
+        "experience": 27.207832291576423,
+        "enrollment": 13.826889024830658,
+        "satisfaction": 35.399346086036964,
+        "accounting": 18.0944726722267
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.506059891998511,
+      "predictedFinalScore": 10.864564120592753,
+      "forecast": {
+        "experience": 21.98506710887164,
+        "enrollment": 13.933525564287677,
+        "satisfaction": 30.865658926431028,
+        "accounting": 23.000234883381722
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.754682194663797,
+      "predictedFinalScore": 11.116166068255902,
+      "forecast": {
+        "experience": 22.314927718944976,
+        "enrollment": 13.5458817373669,
+        "satisfaction": 31.799135554005666,
+        "accounting": 26.54589625782745
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.946761233194295,
+      "predictedFinalScore": 11.272114185658058,
+      "forecast": {
+        "experience": 21.96936161657883,
+        "enrollment": 17.995278537250034,
+        "satisfaction": 28.413854117488786,
+        "accounting": 20.78175003655699
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        15
+      ],
+      "remaining": 1,
+      "score": 11.434977291181548,
+      "predictedFinalScore": 10.775231579876255,
+      "forecast": {
+        "experience": 27.457757538259035,
+        "enrollment": 13.885386721113939,
+        "satisfaction": 28.468067729597376,
+        "accounting": 21.66099114357957
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.574276482364738,
+      "predictedFinalScore": 10.938642737365596,
+      "forecast": {
+        "experience": 25.34125328337241,
+        "enrollment": 13.063534426229507,
+        "satisfaction": 29.149073272099557,
+        "accounting": 23.082059953161572
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.700322715934282,
+      "predictedFinalScore": 11.03383742916389,
+      "forecast": {
+        "experience": 24.59818101201128,
+        "enrollment": 17.639387453323387,
+        "satisfaction": 25.877755531074133,
+        "accounting": 18.894169230769233
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        16
+      ],
+      "remaining": 1,
+      "score": 11.250169080758932,
+      "predictedFinalScore": 10.698041105795397,
+      "forecast": {
+        "experience": 20.212950616856933,
+        "enrollment": 12.969406728119166,
+        "satisfaction": 21.278205086807336,
+        "accounting": 36.16285550174864
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.386875472114513,
+      "predictedFinalScore": 10.82655200869075,
+      "forecast": {
+        "experience": 19.606139479367297,
+        "enrollment": 16.603397614254522,
+        "satisfaction": 18.273179767879387,
+        "accounting": 30.136142334046863
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        16,
+        17
+      ],
+      "remaining": 1,
+      "score": 11.552789728157443,
+      "predictedFinalScore": 11.001618184063746,
+      "forecast": {
+        "experience": 18.48572984410938,
+        "enrollment": 15.471778681318698,
+        "satisfaction": 18.828329314842968,
+        "accounting": 31.52698329670328
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        7
+      ],
+      "remaining": 2,
+      "score": 11.569575355761438,
+      "predictedFinalScore": 10.982738200476597,
+      "forecast": {
+        "experience": 47.457898232445515,
+        "enrollment": 12.042446616020413,
+        "satisfaction": 16.7628931397028,
+        "accounting": 14.746273058918478
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        8
+      ],
+      "remaining": 2,
+      "score": 11.427636670730937,
+      "predictedFinalScore": 10.84767427443518,
+      "forecast": {
+        "experience": 40.705874010508204,
+        "enrollment": 12.293528020506784,
+        "satisfaction": 19.11224169194468,
+        "accounting": 15.137062210511319
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        9
+      ],
+      "remaining": 2,
+      "score": 11.234637796945462,
+      "predictedFinalScore": 10.601972920666055,
+      "forecast": {
+        "experience": 30.768714358824756,
+        "enrollment": 21.16122147998627,
+        "satisfaction": 18.20424672642624,
+        "accounting": 15.013491774790598
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        10
+      ],
+      "remaining": 2,
+      "score": 11.21174744501723,
+      "predictedFinalScore": 10.59113360555288,
+      "forecast": {
+        "experience": 28.93415246077288,
+        "enrollment": 23.59311657987421,
+        "satisfaction": 17.0967196695136,
+        "accounting": 15.502263696529456
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        11
+      ],
+      "remaining": 2,
+      "score": 11.196521215557635,
+      "predictedFinalScore": 10.58027403379125,
+      "forecast": {
+        "experience": 29.33670391241414,
+        "enrollment": 18.95498624241559,
+        "satisfaction": 21.994743906169692,
+        "accounting": 16.712066376109757
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        12
+      ],
+      "remaining": 2,
+      "score": 10.928879340032664,
+      "predictedFinalScore": 10.329147261315287,
+      "forecast": {
+        "experience": 30.333735806039225,
+        "enrollment": 13.162623246964086,
+        "satisfaction": 25.143664326866567,
+        "accounting": 17.52127258783039
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.534334483071719,
+      "predictedFinalScore": 10.909946600340348,
+      "forecast": {
+        "experience": 31.161103207321034,
+        "enrollment": 12.36622211816301,
+        "satisfaction": 29.898020624309723,
+        "accounting": 16.5688521968934
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.447241359220296,
+      "predictedFinalScore": 10.838562264784757,
+      "forecast": {
+        "experience": 36.21835266122269,
+        "enrollment": 11.793593280746643,
+        "satisfaction": 26.151332693735476,
+        "accounting": 16.837720935289358
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.344612687124119,
+      "predictedFinalScore": 10.713218104064035,
+      "forecast": {
+        "experience": 30.58587151552084,
+        "enrollment": 13.743791153918933,
+        "satisfaction": 19.95727546850112,
+        "accounting": 22.901867423425735
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.681541127622781,
+      "predictedFinalScore": 11.046815127970113,
+      "forecast": {
+        "experience": 29.898146100881018,
+        "enrollment": 13.908541320532393,
+        "satisfaction": 21.359771955705586,
+        "accounting": 26.497772154963638
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        6,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.76774519679572,
+      "predictedFinalScore": 11.10330126772445,
+      "forecast": {
+        "experience": 28.766147293516237,
+        "enrollment": 18.599851575838752,
+        "satisfaction": 19.171040757924096,
+        "accounting": 20.444674995964483
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        8
+      ],
+      "remaining": 2,
+      "score": 11.381334634748914,
+      "predictedFinalScore": 10.831827049954486,
+      "forecast": {
+        "experience": 44.66585714285721,
+        "enrollment": 10.519699999999998,
+        "satisfaction": 17.542340321645902,
+        "accounting": 14.538
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        9
+      ],
+      "remaining": 2,
+      "score": 11.37539578997356,
+      "predictedFinalScore": 10.73387277759948,
+      "forecast": {
+        "experience": 37.636467658249714,
+        "enrollment": 20.729907771695576,
+        "satisfaction": 17.031671285234808,
+        "accounting": 15.048421630347049
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        10
+      ],
+      "remaining": 2,
+      "score": 11.101228599233815,
+      "predictedFinalScore": 10.501107612210829,
+      "forecast": {
+        "experience": 33.131214285714314,
+        "enrollment": 22.70479503105589,
+        "satisfaction": 15.506260307997003,
+        "accounting": 14.701
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        11
+      ],
+      "remaining": 2,
+      "score": 11.101555432863748,
+      "predictedFinalScore": 10.498402021167523,
+      "forecast": {
+        "experience": 34.4804043478261,
+        "enrollment": 18.002368292682927,
+        "satisfaction": 19.92420479434273,
+        "accounting": 15.391
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        12
+      ],
+      "remaining": 2,
+      "score": 11.0578824256334,
+      "predictedFinalScore": 10.44577005575764,
+      "forecast": {
+        "experience": 38.44660553055117,
+        "enrollment": 11.797542621619389,
+        "satisfaction": 23.326211698917025,
+        "accounting": 17.586685067654162
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.704381758035735,
+      "predictedFinalScore": 11.073139486056268,
+      "forecast": {
+        "experience": 39.30102169491521,
+        "enrollment": 11.83721412727145,
+        "satisfaction": 27.742892050313262,
+        "accounting": 16.20827099273607
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.425657236026863,
+      "predictedFinalScore": 10.837437597535592,
+      "forecast": {
+        "experience": 40.80421428571434,
+        "enrollment": 10.647141747572814,
+        "satisfaction": 23.539088281979446,
+        "accounting": 15.875
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.552977003317656,
+      "predictedFinalScore": 10.89362175949375,
+      "forecast": {
+        "experience": 38.294998699411934,
+        "enrollment": 12.743711961259084,
+        "satisfaction": 18.916741636937154,
+        "accounting": 21.530432569276282
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.683264330328512,
+      "predictedFinalScore": 11.041981464271199,
+      "forecast": {
+        "experience": 35.88057599999998,
+        "enrollment": 12.336200000000002,
+        "satisfaction": 19.319121895424825,
+        "accounting": 23.626999999999985
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        7,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.706217294353776,
+      "predictedFinalScore": 11.03676566300736,
+      "forecast": {
+        "experience": 33.74190431893689,
+        "enrollment": 17.939941614906843,
+        "satisfaction": 17.693950108135233,
+        "accounting": 18.418
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        9
+      ],
+      "remaining": 2,
+      "score": 11.283891495019747,
+      "predictedFinalScore": 10.65808323308312,
+      "forecast": {
+        "experience": 31.261829194050566,
+        "enrollment": 20.484052843547495,
+        "satisfaction": 19.1579783957038,
+        "accounting": 15.954415431799834
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        10
+      ],
+      "remaining": 2,
+      "score": 11.096677469824597,
+      "predictedFinalScore": 10.51022146003537,
+      "forecast": {
+        "experience": 27.486742857142904,
+        "enrollment": 21.535214285714275,
+        "satisfaction": 17.818549822619072,
+        "accounting": 15.278
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        11
+      ],
+      "remaining": 2,
+      "score": 11.026894906855414,
+      "predictedFinalScore": 10.4476086720948,
+      "forecast": {
+        "experience": 27.13631768033951,
+        "enrollment": 17.391537680339457,
+        "satisfaction": 22.77958914565566,
+        "accounting": 16.4073702970297
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        12
+      ],
+      "remaining": 2,
+      "score": 10.815832120110883,
+      "predictedFinalScore": 10.230051786811474,
+      "forecast": {
+        "experience": 30.83123680387416,
+        "enrollment": 12.055173179705546,
+        "satisfaction": 26.32146936913962,
+        "accounting": 18.552702243744946
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.513057834895074,
+      "predictedFinalScore": 10.9059071216835,
+      "forecast": {
+        "experience": 31.603807748184085,
+        "enrollment": 11.911235202018934,
+        "satisfaction": 30.437898128269083,
+        "accounting": 17.57539415657787
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.25587625596328,
+      "predictedFinalScore": 10.683005082054235,
+      "forecast": {
+        "experience": 33.642000000000024,
+        "enrollment": 10.766846280991734,
+        "satisfaction": 26.332124006826145,
+        "accounting": 16.831
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.510880944799078,
+      "predictedFinalScore": 10.862552083453123,
+      "forecast": {
+        "experience": 31.986349083362217,
+        "enrollment": 14.092110684479271,
+        "satisfaction": 21.09283842237374,
+        "accounting": 21.377957124183002
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.57851095823081,
+      "predictedFinalScore": 10.954668951290099,
+      "forecast": {
+        "experience": 29.84800000000005,
+        "enrollment": 13.628965853658537,
+        "satisfaction": 21.364647058823525,
+        "accounting": 22.907999999999987
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        8,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.665259676817481,
+      "predictedFinalScore": 11.01013049753501,
+      "forecast": {
+        "experience": 28.89196312292364,
+        "enrollment": 17.96275714285715,
+        "satisfaction": 19.46233346450065,
+        "accounting": 18.371
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        10
+      ],
+      "remaining": 2,
+      "score": 10.968150217510802,
+      "predictedFinalScore": 10.45444382832547,
+      "forecast": {
+        "experience": 20.821451708977403,
+        "enrollment": 20.593451708977394,
+        "satisfaction": 16.475341575348477,
+        "accounting": 15.456759257465695
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        11
+      ],
+      "remaining": 2,
+      "score": 11.031811281812464,
+      "predictedFinalScore": 10.467906482010271,
+      "forecast": {
+        "experience": 20.544117043127695,
+        "enrollment": 19.677658550439265,
+        "satisfaction": 22.493346754147492,
+        "accounting": 16.543407651331716
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        12
+      ],
+      "remaining": 2,
+      "score": 10.83374722716913,
+      "predictedFinalScore": 10.216192954315133,
+      "forecast": {
+        "experience": 20.92208762426062,
+        "enrollment": 19.05845382701616,
+        "satisfaction": 25.7413265717614,
+        "accounting": 17.68864101694917
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.46990471378275,
+      "predictedFinalScore": 10.822137528737061,
+      "forecast": {
+        "experience": 21.60533775525396,
+        "enrollment": 19.601675975089908,
+        "satisfaction": 29.43350920911237,
+        "accounting": 17.060364722384584
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.365772807917836,
+      "predictedFinalScore": 10.7208751358089,
+      "forecast": {
+        "experience": 26.65941260463512,
+        "enrollment": 19.619897963062197,
+        "satisfaction": 26.563399831039668,
+        "accounting": 17.28569336561742
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.229155719658904,
+      "predictedFinalScore": 10.59570808124519,
+      "forecast": {
+        "experience": 21.616192869862722,
+        "enrollment": 18.953113995972505,
+        "satisfaction": 19.520327660529286,
+        "accounting": 23.088293634605765
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.552215937245146,
+      "predictedFinalScore": 10.920250767947563,
+      "forecast": {
+        "experience": 21.609805373725028,
+        "enrollment": 18.830804322102935,
+        "satisfaction": 20.302885854816473,
+        "accounting": 27.038076093623847
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        9,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.510379429016956,
+      "predictedFinalScore": 10.905395143191331,
+      "forecast": {
+        "experience": 20.336742985907968,
+        "enrollment": 19.199158144818192,
+        "satisfaction": 18.65599079366733,
+        "accounting": 20.70691849949117
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        11
+      ],
+      "remaining": 2,
+      "score": 10.805758249728251,
+      "predictedFinalScore": 10.303373867823895,
+      "forecast": {
+        "experience": 18.73028321044725,
+        "enrollment": 18.513783210447254,
+        "satisfaction": 20.029654233110843,
+        "accounting": 15.868
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        12
+      ],
+      "remaining": 2,
+      "score": 10.73596288083453,
+      "predictedFinalScore": 10.156420975937955,
+      "forecast": {
+        "experience": 20.213070654725623,
+        "enrollment": 19.122727347639,
+        "satisfaction": 23.587925470687924,
+        "accounting": 18.063078288942688
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.392814623544405,
+      "predictedFinalScore": 10.784416704169725,
+      "forecast": {
+        "experience": 21.438669436961774,
+        "enrollment": 20.184937350994637,
+        "satisfaction": 26.474597768688746,
+        "accounting": 16.71122435512509
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.198085074316952,
+      "predictedFinalScore": 10.585785395330747,
+      "forecast": {
+        "experience": 23.300190163934463,
+        "enrollment": 21.062741747572822,
+        "satisfaction": 23.463595627533692,
+        "accounting": 16.88
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.207612711870883,
+      "predictedFinalScore": 10.600746583236887,
+      "forecast": {
+        "experience": 20.38012452213439,
+        "enrollment": 18.97743639089416,
+        "satisfaction": 19.02246022542922,
+        "accounting": 22.043620425541864
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.410352429389626,
+      "predictedFinalScore": 10.810476436523217,
+      "forecast": {
+        "experience": 19.772885968897935,
+        "enrollment": 18.297885968897948,
+        "satisfaction": 18.84638924539513,
+        "accounting": 24.195147692307685
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        10,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.331932940296765,
+      "predictedFinalScore": 10.782304787251286,
+      "forecast": {
+        "experience": 18.7881834032952,
+        "enrollment": 18.3761834032952,
+        "satisfaction": 16.487731978643712,
+        "accounting": 19.3
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        12
+      ],
+      "remaining": 2,
+      "score": 10.73119502464955,
+      "predictedFinalScore": 10.132091533187364,
+      "forecast": {
+        "experience": 19.402406176927112,
+        "enrollment": 17.13415373008793,
+        "satisfaction": 30.239127245512474,
+        "accounting": 19.053712090395468
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.373224560047055,
+      "predictedFinalScore": 10.746896306371815,
+      "forecast": {
+        "experience": 20.524214688023847,
+        "enrollment": 17.52667424560374,
+        "satisfaction": 33.09512983785933,
+        "accounting": 18.249767328490712
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.079128368818985,
+      "predictedFinalScore": 10.476209387708124,
+      "forecast": {
+        "experience": 22.728285714285743,
+        "enrollment": 16.56478499486125,
+        "satisfaction": 29.679749014992304,
+        "accounting": 17.854
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.292328870864388,
+      "predictedFinalScore": 10.643012661030898,
+      "forecast": {
+        "experience": 21.490962337268552,
+        "enrollment": 18.13311025666784,
+        "satisfaction": 23.518475925901978,
+        "accounting": 21.791364764876857
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.40225566712717,
+      "predictedFinalScore": 10.77805372129933,
+      "forecast": {
+        "experience": 19.962697618213358,
+        "enrollment": 17.01527342061117,
+        "satisfaction": 24.504233112233045,
+        "accounting": 23.420587553041006
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        11,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.408314002026517,
+      "predictedFinalScore": 10.789324900196696,
+      "forecast": {
+        "experience": 20.105807328377686,
+        "enrollment": 18.822249411883273,
+        "satisfaction": 21.132169376446228,
+        "accounting": 18.55344578313253
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        13
+      ],
+      "remaining": 2,
+      "score": 11.083662180285522,
+      "predictedFinalScore": 10.46935672348273,
+      "forecast": {
+        "experience": 22.643356245804757,
+        "enrollment": 13.216152726825095,
+        "satisfaction": 34.991613796468414,
+        "accounting": 19.370609983959774
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        14
+      ],
+      "remaining": 2,
+      "score": 10.898639804124645,
+      "predictedFinalScore": 10.301972327547887,
+      "forecast": {
+        "experience": 26.012804971751443,
+        "enrollment": 11.330311606133984,
+        "satisfaction": 34.09306242044362,
+        "accounting": 19.746883034705387
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.085405645084343,
+      "predictedFinalScore": 10.459371383142978,
+      "forecast": {
+        "experience": 22.175450937281557,
+        "enrollment": 14.097618535826912,
+        "satisfaction": 27.772406154079096,
+        "accounting": 22.72519480675519
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.293806077772839,
+      "predictedFinalScore": 10.677099132860967,
+      "forecast": {
+        "experience": 21.858166585572718,
+        "enrollment": 13.439017916391423,
+        "satisfaction": 29.04381836460312,
+        "accounting": 26.522829700708662
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        12,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.364669147236723,
+      "predictedFinalScore": 10.706417714047948,
+      "forecast": {
+        "experience": 22.087721346569207,
+        "enrollment": 17.885377397155608,
+        "satisfaction": 25.206004576904153,
+        "accounting": 20.712189006112027
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        14
+      ],
+      "remaining": 2,
+      "score": 11.568927318380211,
+      "predictedFinalScore": 10.930244972514169,
+      "forecast": {
+        "experience": 27.732451731985357,
+        "enrollment": 13.163860145731238,
+        "satisfaction": 35.43440019045327,
+        "accounting": 18.597361087615457
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.58935982012688,
+      "predictedFinalScore": 10.936674921299982,
+      "forecast": {
+        "experience": 22.382371050075733,
+        "enrollment": 13.861129210995284,
+        "satisfaction": 31.556152000908508,
+        "accounting": 22.654718228598156
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.817193410888743,
+      "predictedFinalScore": 11.174032836243546,
+      "forecast": {
+        "experience": 22.48064436919128,
+        "enrollment": 13.43290124475606,
+        "satisfaction": 32.11766166448855,
+        "accounting": 26.47444404107869
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        13,
+        17
+      ],
+      "remaining": 2,
+      "score": 12.014881362359619,
+      "predictedFinalScore": 11.329227867195298,
+      "forecast": {
+        "experience": 22.429978987988413,
+        "enrollment": 18.093763189669104,
+        "satisfaction": 28.512501651869773,
+        "accounting": 20.60900914931396
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        15
+      ],
+      "remaining": 2,
+      "score": 11.504482659740306,
+      "predictedFinalScore": 10.839093123913253,
+      "forecast": {
+        "experience": 27.934496908181785,
+        "enrollment": 13.806882158960013,
+        "satisfaction": 28.644866143679103,
+        "accounting": 21.38918830122054
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.627498037548749,
+      "predictedFinalScore": 10.9870302620056,
+      "forecast": {
+        "experience": 25.596004571428622,
+        "enrollment": 13.134067768595042,
+        "satisfaction": 29.309380859010293,
+        "accounting": 23.111714285714267
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        14,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.738501384094576,
+      "predictedFinalScore": 11.06653554527672,
+      "forecast": {
+        "experience": 25.186800332225957,
+        "enrollment": 17.389466019417483,
+        "satisfaction": 26.293514116357702,
+        "accounting": 18.422
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        16
+      ],
+      "remaining": 2,
+      "score": 11.339608842431891,
+      "predictedFinalScore": 10.777997250101484,
+      "forecast": {
+        "experience": 20.457674205004054,
+        "enrollment": 13.058532703793398,
+        "satisfaction": 21.995509409221754,
+        "accounting": 35.82196222760286
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        15,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.471045555552896,
+      "predictedFinalScore": 10.893126154331458,
+      "forecast": {
+        "experience": 19.503128678725737,
+        "enrollment": 16.329973720742583,
+        "satisfaction": 19.680925179518425,
+        "accounting": 29.952704051654553
+      },
+      "estimated": true
+    },
+    {
+      "pair": [
+        16,
+        17
+      ],
+      "remaining": 2,
+      "score": 11.620140784682544,
+      "predictedFinalScore": 11.055787648912128,
+      "forecast": {
+        "experience": 18.816499074878607,
+        "enrollment": 15.56754791208793,
+        "satisfaction": 19.269692840498518,
+        "accounting": 31.3416602197802
+      },
+      "estimated": true
+    }
+  ],
+  "complete": true
+}
