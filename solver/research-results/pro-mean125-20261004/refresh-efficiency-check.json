@@ -1,0 +1,49 @@
+{
+  "purpose": "same 250 public initial states, browser calculation equivalence; not a new scoring policy result",
+  "n": 250,
+  "browserCalculation": true,
+  "actualNewFullGames": 0,
+  "allOutputsEqual": true,
+  "sourceManifest": "solver/local-runs/pro-mean125/action-coverage-development/manifest.json",
+  "groupId": "both2",
+  "sourceAudit": [
+    {
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+      "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390"
+    }
+  ],
+  "versions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  ],
+  "oldStrategyVersion": "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da",
+  "newStrategyVersion": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d",
+  "referenceCommit": "6593b20",
+  "oldRiskSha256": "3147a32105a70bdfc4d2f721b236e6a4cb565f0cd3977376740371202399c906",
+  "newRiskSha256": "312a8eaa4abd6446f471443ad95987b3341c4a854efc43ae730fe0404c1afe3f",
+  "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+  "publicInputSha256": "ed2971b1dee313e9f4e900c85410585f81fe750f4bb6bdfd344213b116121401",
+  "adviceSha256": "4280b87931b1187e24b825cb5a90304da38974694f062abc0beec0aef9890054",
+  "counters": {
+    "old": {
+      "formula": 24000,
+      "learned": 12000
+    },
+    "new": {
+      "formula": 0,
+      "learned": 12000
+    }
+  },
+  "timing": {
+    "oldTotalMs": 170237.79999994487,
+    "newTotalMs": 158772.9999999404,
+    "ratio": 0.9326542048827688,
+    "interpretation": "同時に他の研究計算が動く端末上の参考値。順序は交互で、独立した方略キャッシュを使う。スマートフォンの性能や得点の改善を示さない。"
+  },
+  "auditRecordedAfterRun": {
+    "helperSha256": "1acd474060b4caa0cdc1b3846078ae6c24e5cc34ff39f823270ef790966d8679",
+    "actorSourceMatchesResult": true,
+    "referenceMatchesSavedCommit": true
+  }
+}

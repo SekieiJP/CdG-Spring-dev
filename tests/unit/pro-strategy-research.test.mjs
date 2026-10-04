@@ -337,3 +337,14 @@ test('初回表は実際の初回取得とリフレッシュだけを置き換�
  assert.equal(strategy.acquisition({...o,turn:1,pickCount:1},'learned').mode,'sentinel');assert.equal(calls,1);
  state.turn=7;assert.ok(strategy.placements(observe(),[card(7)],state,'engine').length);
 });
+
+
+test('学習リフレッシュの判断がある場合は使わない固定式を計算せず、代替判断は残す',()=>{
+ const {state,strategy,observe,tm,clone,enumerate}=setup();state.turn=0;
+ const ob={...observe(),refreshRemaining:2,offerHistory:[]},calls=[];
+ const make=(futureRefresh,learned)=>createRiskPolicy({baseline:{...strategy,futureRefresh:()=>learned,futureValue:o=>({mean:12,forecast:o.stats,tie:0})},score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,
+  refreshAdvice:o=>{calls.push(o.candidates.length);return {evaluations:o.candidates.map(()=>({score:10})),recommended:{score:0}};},config:{planning:{worlds:1,valueHorizon:1,futurePolicy:'baseline',futureBeam:8,futureRefresh}}});
+ make('learned',{shouldRefresh:false}).evaluate(ob,ob.owned,clone(state),'after-action');assert.deepEqual(calls,[]);
+ make('learned',null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
+ calls.length=0;make(true,null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
+});

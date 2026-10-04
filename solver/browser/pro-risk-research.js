@@ -86,12 +86,17 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
   let candidates=offer(pool,rarity,world,state.turn,round);if(!candidates.length)return owned;
   if(cfg.futureRefresh&&refreshAdvice&&pool.refreshRemaining>0&&!allowSkip&&
       (cfg.futureRefresh==='learned'&&cfg.consistentFutureRefresh||!(rarity!=='SSR'&&pool.refreshRemaining<2&&state.turn<4))){
-   const catalog=pool.available.filter(c=>c.rarity===rarity&&(pool.removed[c.cardNo]||0)<2);
-   const reference=refreshAdvice({...observation(),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
-   const current=refreshAdvice({...observation(),candidates,pickCount:1,allowSkip:false}).recommended.score;
-   const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))]?.score;
    const learnedAdvice=cfg.futureRefresh==='learned'?baseline.futureRefresh({...observation(),candidates,pickCount:1,allowSkip:false},rarity,3,1):null;
-   if(learnedAdvice?learnedAdvice.shouldRefresh:current<cutoff){pool.history.push({type:'refresh',turn:state.turn,rarity,cards:candidates});for(const card of candidates)pool.removed[card.cardNo]=(pool.removed[card.cardNo]||0)+1;pool.refreshRemaining--;candidates=offer(pool,rarity,world,state.turn,round+100);}
+   let shouldRefresh;
+   if(learnedAdvice)shouldRefresh=learnedAdvice.shouldRefresh;
+   else {
+    const catalog=pool.available.filter(c=>c.rarity===rarity&&(pool.removed[c.cardNo]||0)<2);
+    const reference=refreshAdvice({...observation(),candidates:catalog,pickCount:1,allowSkip:false}).evaluations;
+    const current=refreshAdvice({...observation(),candidates,pickCount:1,allowSkip:false}).recommended.score;
+    const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))]?.score;
+    shouldRefresh=current<cutoff;
+   }
+   if(shouldRefresh){pool.history.push({type:'refresh',turn:state.turn,rarity,cards:candidates});for(const card of candidates)pool.removed[card.cardNo]=(pool.removed[card.cardNo]||0)+1;pool.refreshRemaining--;candidates=offer(pool,rarity,world,state.turn,round+100);}
   }
   const ob={...observation(),candidates,pickCount:1,allowSkip};
   const choice=baseline.acquisition(ob,cfg.futureAcquisition||'engine',true).recommended;
