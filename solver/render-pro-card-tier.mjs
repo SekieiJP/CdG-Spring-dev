@@ -17,7 +17,7 @@ assert.deepEqual(report.cards.map(c=>c.cardNo).sort((a,b)=>a-b),Array.from({leng
 assert.deepEqual(report.criteria.tierSizes,{S:13,A:13,B:13,C:12});
 assert.equal(report.criteria.rarityBonus,0);
 assert.ok(report.cards.every(c=>c.commentLength>=20 && c.commentLength<=50 && c.commentLength===Array.from(c.comment).length));
-assert.ok(report.cards.every(c=>c.adjustment && c.reason && c.effect));
+assert.ok(report.cards.every(c=>c.adjustment && c.reason && c.effect && c.topText));
 assert.ok(report.cards.every(c=>c.total===Number((11*c.universality+9*c.power).toFixed(1))));
 assert.equal(sha(await readFile(path.join(root,'game/data/cards_pro.csv'))), report.provenance.cardsSha256);
 for(const c of report.cards) assert.equal(sha(await readFile(path.resolve(out,c.image))),c.imageSha256);
@@ -39,6 +39,9 @@ for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]) {
   counts:[...document.querySelectorAll('.tier-row')].map(e=>({tier:e.querySelector('.rank b').textContent,count:e.querySelectorAll('.tile').length})),
   images:[...document.querySelectorAll('.tile img')].every(i=>i.complete&&i.naturalWidth>0&&i.naturalHeight===i.naturalWidth),
   overflowingNames:[...document.querySelectorAll('.card-name')].filter(e=>e.scrollWidth>e.clientWidth+1 || e.scrollHeight>e.clientHeight+1).map(e=>e.textContent),
+  shortTextCount:document.querySelectorAll('.card-toptext').length,
+  shortTextMatches:[...document.querySelectorAll('.tile')].every(e=>e.querySelector('.card-toptext').textContent===JSON.parse(document.getElementById('tier-data').textContent).cards.find(c=>c.cardNo===Number(e.dataset.card)).topText),
+  overflowingShortText:[...document.querySelectorAll('.card-toptext')].filter(e=>e.scrollWidth>e.clientWidth+1 || e.scrollHeight>e.clientHeight+1).map(e=>e.textContent),
   horizontalOverflow:document.documentElement.scrollWidth>innerWidth,
   chart:{width:document.getElementById('tier-chart').getBoundingClientRect().width,height:document.getElementById('tier-chart').getBoundingClientRect().height}
  }));
@@ -47,6 +50,9 @@ for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]) {
  assert.ok(snapshot.images);
  assert.deepEqual(snapshot.overflowingNames,[]);
  assert.equal(snapshot.horizontalOverflow,false);
+ assert.equal(snapshot.shortTextCount,51);
+ assert.equal(snapshot.shortTextMatches,true);
+ assert.deepEqual(snapshot.overflowingShortText,[]);
  let dialogs=0;
  for(const c of report.cards) {
   await page.locator('.tile[data-card="'+c.cardNo+'"]').click();
@@ -67,12 +73,16 @@ for(const [name,engine] of [['chromium',chromium],['webkit',webkit]]) {
  await mp.evaluate(async()=>{await document.fonts.ready;await Promise.all([...document.querySelectorAll('.tile img')].map(i=>i.decode()));});
  const mobileLayout=await mp.evaluate(()=>({
   width:innerWidth,height:innerHeight,documentWidth:document.documentElement.scrollWidth,
+  shortTextCount:document.querySelectorAll('.card-toptext').length,
+  overflowingShortText:[...document.querySelectorAll('.card-toptext')].filter(e=>e.scrollWidth>e.clientWidth+1 || e.scrollHeight>e.clientHeight+1).map(e=>e.textContent),
   overflowingNames:[...document.querySelectorAll('.card-name')].filter(e=>e.scrollWidth>e.clientWidth+1).map(e=>e.textContent),
   images:[...document.querySelectorAll('.tile img')].every(i=>i.complete&&i.naturalWidth>0)
  }));
  assert.ok(mobileLayout.documentWidth<=mobileLayout.width);
  assert.deepEqual(mobileLayout.overflowingNames,[]);
  assert.ok(mobileLayout.images);
+ assert.equal(mobileLayout.shortTextCount,51);
+ assert.deepEqual(mobileLayout.overflowingShortText,[]);
  for(const number of [45,49,51]) {
   await mp.locator('.tile[data-card="'+number+'"]').tap();
   assert.equal(await mp.locator('dialog[open]').count(),1);
@@ -96,7 +106,7 @@ for(const match of md.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)){
 assert.equal([...md.matchAll(/^\| \d{2} \|/gm)].length,51);
 const png=await readFile(path.join(out,'tier-list.png'));
 const audit={createdAt:new Date().toISOString(),scope:'PRO全51枚のティア資料の表示・完全性検証。新規ゲーム試行なし。',passed:true,
- coverage:{cards:51,rarities:[...new Set(report.cards.map(c=>c.rarity))],tiers:report.criteria.tierSizes,comments:{min:Math.min(...report.cards.map(c=>c.commentLength)),max:Math.max(...report.cards.map(c=>c.commentLength))},balanceAdvice:51},
+ coverage:{cards:51,shortTexts:51,rarities:[...new Set(report.cards.map(c=>c.rarity))],tiers:report.criteria.tierSizes,comments:{min:Math.min(...report.cards.map(c=>c.commentLength)),max:Math.max(...report.cards.map(c=>c.commentLength))},balanceAdvice:51},
  hashes:{data:sha(bytes),png:sha(png),markdown:sha(await readFile(mdPath))},engines,unavailable,localReportLinks:localLinks};
 await writeFile(path.join(auditDir,'artifact-audit.json'),JSON.stringify(audit,null,2)+'\n');
 console.log(JSON.stringify({passed:audit.passed,cards:51,tiers:audit.coverage.tiers,engines:engines.map(e=>e.engine),unavailable,pngBytes:png.length},null,2));

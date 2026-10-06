@@ -1,0 +1,315 @@
+{
+  "date": "2026-10-06",
+  "method": "本体のCardManager.parseEffectが返す配置制限・基本効果・条件付き効果から短縮表示を作成し、再解析して全51枚の効果を照合。",
+  "cardsSha256": "15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+  "parserSha256": "7f7623f3a41d3df038f05eca6888b70aa93e81336f00f13ca72f00e1b8ccf731",
+  "legend": "長=室長、講=講師、事=事務。体=体験、入=入塾、満=満足、経=経理。［］は配置制限、〈〉は発動条件。条件付きの行は基本効果に追加する。[!]は支払い、×は個数。",
+  "cards": [
+    {
+      "cardNo": 1,
+      "effect": "体験+2。",
+      "topText": "体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 2,
+      "effect": "体験+2。",
+      "topText": "体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 3,
+      "effect": "入塾+2。",
+      "topText": "入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 4,
+      "effect": "満足+2。",
+      "topText": "満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 5,
+      "effect": "経理+2。",
+      "topText": "経2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 6,
+      "effect": "[並行🤹]体験+2。",
+      "topText": "🤹, 体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 7,
+      "effect": "体験+3。\n〈室長〉さらに体験+2。",
+      "topText": "体3\n〈長〉体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 8,
+      "effect": "体験+3、満足+1。",
+      "topText": "体3, 満1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 9,
+      "effect": "[並行🤹]入塾+2。",
+      "topText": "🤹, 入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 10,
+      "effect": "【室長・講師】入塾+3。〈室長〉さらに入塾+1。",
+      "topText": "[長講] 入3\n〈長〉入1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 11,
+      "effect": "【室長・講師】入塾+2、満足+2。",
+      "topText": "[長講] 入2, 満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 12,
+      "effect": "[並行🤹]満足+2。",
+      "topText": "🤹, 満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 13,
+      "effect": "[並行🤹] 〈室長〉[発想💡]。\n〈講師〉さらに体験+2。\n〈事務〉さらに満足+3。",
+      "topText": "🤹\n〈長〉💡\n〈講〉体2\n〈事〉満3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 14,
+      "effect": "満足+3、体験+2。",
+      "topText": "満3, 体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 15,
+      "effect": "[並行🤹]経理+2。",
+      "topText": "🤹, 経2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 16,
+      "effect": "【事務】経理+4、満足+1。",
+      "topText": "[事] 経4, 満1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 17,
+      "effect": "経理+2、入塾+2。",
+      "topText": "経2, 入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 18,
+      "effect": "【室長・講師】体験+3、入塾+1。\n〈室長〉さらに入塾+2。",
+      "topText": "[長講] 体3, 入1\n〈長〉入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 19,
+      "effect": "【室長】体験+5、入塾+1、満足+1。",
+      "topText": "[長] 体5, 入1, 満1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 20,
+      "effect": "【室長・講師】\n〈満足10以上〉体験+3、入塾+3、経理-1。",
+      "topText": "[長講]\n〈満≥10〉体3, 入3, [!]経−1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 21,
+      "effect": "[並行🤹]体験+2。\n〈満足7以上〉さらに入塾+2。",
+      "topText": "🤹, 体2\n〈満≥7〉入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 22,
+      "effect": "【室長・講師】\n[疲労💤]体験+7、経理-1。\n〈室長〉さらに入塾+2。",
+      "topText": "[長講] 💤, 体7, [!]経−1\n〈長〉入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 23,
+      "effect": "[発想💡][整理🗑️]",
+      "topText": "💡, 🗑️",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 24,
+      "effect": "【室長・講師】入塾+3。\n〈講師〉さらに満足+3。",
+      "topText": "[長講] 入3\n〈講〉満3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 25,
+      "effect": "【室長・講師】入塾+5。",
+      "topText": "[長講] 入5",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 26,
+      "effect": "[疲労💤]入塾+6。",
+      "topText": "💤, 入6",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 27,
+      "effect": "【室長・講師】\n〈入塾15以下〉入塾+4、満足+2。",
+      "topText": "[長講]\n〈入≤15〉入4, 満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 28,
+      "effect": "【室長】[情熱✊]\n入塾+2、体験+1、満足+1。",
+      "topText": "[長] ✊, 入2, 体1, 満1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 29,
+      "effect": "[発想💡]〈室長・講師〉さらに入塾+3。",
+      "topText": "💡\n〈長講〉入3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 30,
+      "effect": "【室長・講師】[並行🤹]入塾+3。\n〈入塾10以上〉さらに満足+2。",
+      "topText": "[長講] 🤹, 入3\n〈入≥10〉満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 31,
+      "effect": "[並行🤹][情熱✊]満足+2。",
+      "topText": "🤹, ✊, 満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 32,
+      "effect": "満足+5、入塾+3、経理-1。",
+      "topText": "満5, 入3, [!]経−1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 33,
+      "effect": "満足+5。\n〈入塾10以上〉さらに体験+2。",
+      "topText": "満5\n〈入≥10〉体2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 34,
+      "effect": "【室長】満足+5、入塾+2。",
+      "topText": "[長] 満5, 入2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 35,
+      "effect": "[情熱✊][整理🗑️]〈事務〉さらに満足+2。",
+      "topText": "✊, 🗑️\n〈事〉満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 36,
+      "effect": "経理+2。\n〈事務〉[整理🗑️]さらに満足+2。",
+      "topText": "経2\n〈事〉🗑️, 満2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 37,
+      "effect": "経理+3、入塾+1。\n〈事務〉さらに経理+2。",
+      "topText": "経3, 入1\n〈事〉経2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 38,
+      "effect": "【事務】経理+6。\n〈満足10以下〉満足-2。",
+      "topText": "[事] 経6\n〈満≤10〉[!]満−2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 39,
+      "effect": "経理+4。\n〈満足12以下〉さらに満足+3。",
+      "topText": "経4\n〈満≤12〉満3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 40,
+      "effect": "【室長】[情熱✊][情熱✊]\n体験+1、入塾+1、満足+1。",
+      "topText": "[長] ✊×2, 体1, 入1, 満1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 41,
+      "effect": "【室長・事務】経理+2、入塾+2。\n〈室長〉さらに経理+3。",
+      "topText": "[長事] 経2, 入2\n〈長〉経3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 42,
+      "effect": "体験+8、経理-1。\n〈入塾10以上〉さらに満足+3。",
+      "topText": "体8, [!]経−1\n〈入≥10〉満3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 43,
+      "effect": "【室長】体験+8、入塾+2、満足+5、経理-4。",
+      "topText": "[長] 体8, 入2, 満5, [!]経−4",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 44,
+      "effect": "【室長】体験+7、入塾+3、経理-2。",
+      "topText": "[長] 体7, 入3, [!]経−2",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 45,
+      "effect": "【室長・講師】\n〈室長〉体験+8、経理-2。\n〈講師〉入塾+8、経理-1。",
+      "topText": "[長講]\n〈長〉体8, [!]経−2\n〈講〉入8, [!]経−1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 46,
+      "effect": "【室長】[疲労💤]体験+2、入塾+6、満足+3。",
+      "topText": "[長] 💤, 体2, 入6, 満3",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 47,
+      "effect": "【室長・講師】入塾+5、経理-1。\n〈入塾25以下〉さらに入塾+4。",
+      "topText": "[長講] 入5, [!]経−1\n〈入≤25〉入4",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 48,
+      "effect": "体験+3、満足+7、経理-1。",
+      "topText": "体3, 満7, [!]経−1",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 49,
+      "effect": "[並行🤹]\n〈満足15以上〉[情熱✊][情熱✊][発想💡]",
+      "topText": "🤹\n〈満≥15〉✊×2, 💡",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 50,
+      "effect": "[並行🤹]\n〈経理13以下〉経理を14にする。",
+      "topText": "🤹\n〈経≤13〉経=14",
+      "roundTripVerified": true
+    },
+    {
+      "cardNo": 51,
+      "effect": "〈残り2ターン以上〉[疲労💤][疲労💤][発想💡][整理🗑️][整理🗑️]体験+3、入塾+3、満足+7、経理-4。",
+      "topText": "〈残≥2T〉💤×2, 💡, 🗑️×2, 体3, 入3, 満7, [!]経−4",
+      "roundTripVerified": true
+    }
+  ]
+}
