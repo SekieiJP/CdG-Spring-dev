@@ -16,7 +16,7 @@ async function main(){
  const actorHash=async()=>sha(Buffer.concat(await Promise.all(ACTOR_FILES.map(f=>readFile(f))))),sources=await Promise.all((await readdir('game/js')).filter(f=>f.endsWith('.js')).sort().map(async f=>f+await readFile(`game/js/${f}`,'utf8')));
  const fingerprints={strategyVersion:await actorHash(),codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
  const root=`solver/local-runs/pro-mean125/${stage}`,seed=`ahiru-pro-${stage}`,jobs=[],runs=[];await mkdir(root,{recursive:true});
- for(const id of ids){const config={id,...configs[id]};config.valueModelSha256=sha(await readFile(config.valueModelPath));const configPath=`${root}/${id}-config.json`;await writeFile(configPath,JSON.stringify(config,null,2)+'\n');const files=[];
+ for(const id of ids){const config={id,...configs[id]},modelSha=sha(await readFile(config.valueModelPath));if(config.valueModelSha256&&config.valueModelSha256!==modelSha)throw Error('固定されたモデルSHAと異なる');config.valueModelSha256=modelSha;const configPath=`${root}/${id}-config.json`;await writeFile(configPath,JSON.stringify(config,null,2)+'\n');const files=[];
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;files.push(path.resolve(output));jobs.push({id,b,output,config,configPath});}runs.push({id,config,files});
  }
  const manifest={stage,n,phase:n===2000?'validation':'development',seed,fingerprints,actorFiles:ACTOR_FILES,requirement:'all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%',configFile,configSha256:sha(await readFile(configFile)),runs};
