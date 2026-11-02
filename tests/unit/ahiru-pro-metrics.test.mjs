@@ -20,7 +20,7 @@ function fixture(){const config={id:'frozen'},fingerprints={strategyVersion:'act
 }
 test('全開始の順序と8配置を監査し、欠落・リセット・局面継続・版違いを拒否',()=>{
  const f=fixture();assert.equal(auditAhiruBatch(f.data,f.expected).length,250);
- for(const change of [d=>d.simulations[0].playRecords.pop(),d=>d.simulations[0].playRecords[0].metadata.seed='replaced',d=>d.simulations[0].playRecords[0].metadata.reroll={attempts:2},d=>d.simulations[0].playRecords[0].metadata.source='counterfactual',d=>d.simulations[0].playRecords[0].metadata.provenance.strategyVersion='other',d=>d.simulations[0].playRecords[0].events.pop(),d=>d.simulations[0].playRecords[0].truncated=true]){
+ for(const change of [d=>d.simulations[0].playRecords.pop(),d=>d.simulations[0].playRecords[0].metadata.seed='replaced',d=>d.simulations[0].playRecords[0].metadata.reroll={attempts:2},d=>d.simulations[0].playRecords[0].metadata.source='counterfactual',d=>d.simulations[0].playRecords[0].metadata.provenance.strategyVersion='other',d=>d.simulations[0].playRecords[0].events.pop(),d=>d.simulations[0].playRecords[0].truncated=true,d=>d.simulations[0].playRecords[0].metadata.calcMode=true,d=>d.simulations[0].playRecords[0].metadata.eventId='event']){
   const x=fixture();change(x.data);assert.throws(()=>auditAhiruBatch(x.data,x.expected));
  }
 });
