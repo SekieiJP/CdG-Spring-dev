@@ -7,7 +7,7 @@ export function createAhiruRoleInspector(observation,forecast){
     function contexts(card){
         const p=effect(card),slots=p.staffRestrictions.length?p.staffRestrictions:SLOTS,rows=[];
         for(let turn=observation.turn;turn<observation.totalTurns;turn++)for(const source of [observation.stats,forecast])for(const slot of slots){
-            const stats=Object.fromEntries(AXES.map(k=>[k,source[k]])),state={difficulty:'pro',turn,totalTurns:observation.totalTurns,player:stats,tokens:{...observation.tokens}};
+            const stats=Object.fromEntries(AXES.map(k=>[k,source[k]])),state={difficulty:observation.difficulty,turn,totalTurns:observation.totalTurns,player:stats,tokens:{...observation.tokens}};
             const out=parser.simulateCardEffect(card,slot,stats,null,state);
             if(out.applied)rows.push({stats,out,effects:parser.getApplicableEffects(p,slot,stats,state)});
         }

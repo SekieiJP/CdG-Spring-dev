@@ -6,10 +6,10 @@ import { isEventActive } from './eventManager.js?v=20260815-0055';
 import { fingerprint } from './playRecord.js?v=20260815-0055';
 
 export class ScoreManager {
-    constructor(logger) {
+    constructor(logger, { migrateHighScore = true } = {}) {
         this.logger = logger;
         this.rankTable = null;
-        this.migrateOldHighScore();
+        if (migrateHighScore) this.migrateOldHighScore();
     }
 
     /**
