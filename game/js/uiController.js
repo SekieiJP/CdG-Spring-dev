@@ -1,3 +1,4 @@
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0055';
 import { bindCardInteraction } from './cardInteraction.js?v=20260815-0055';
 import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0055';
 import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0055';
@@ -77,6 +78,7 @@ export class UIController {
         this.actionAnimation = new ActionAnimationController(this);
         this.mobileLayout = new MobileLayoutController(gameState);
         this.acquisitionAssist = new AcquisitionAssistController(this);
+        this.ahiruAdvice = new AhiruAdviceController(this);
     }
 
     /**
@@ -101,6 +103,7 @@ export class UIController {
         this.setupScrollListener();
         this.resultController.init();
         this.acquisitionAssist.init();
+        this.ahiruAdvice.init();
     }
 
     /**
@@ -299,6 +302,7 @@ export class UIController {
 
         // ランク表示更新
         this.updateRankDisplay();
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -408,6 +412,7 @@ export class UIController {
      */
     showPhaseArea(phase) {
         if (phase !== 'training') this.acquisitionAssist.leave();
+        this.ahiruAdvice?.setPhase(phase);
         document.body.dataset.phase = phase;
         document.body.dataset.calcMode = String(this.gameState.calcMode);
         this.mobileLayout.schedule({ resetScroll: phase === 'action' });
@@ -783,6 +788,7 @@ export class UIController {
         if (confirmBtn) {
             confirmBtn.disabled = this.selectedInitialCards.length !== 2;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -1675,6 +1681,7 @@ export class UIController {
         if (maxDeleteElem) maxDeleteElem.textContent = maxDelete;
 
         this.selectedCardsForDeletion = [];
+        this.ahiruAdvice?.setDeleteMax(maxDelete);
         // Bug3修正: 選択済み枚数の表示を0にリセット
         const selectedCountElem = document.getElementById('selected-count');
         if (selectedCountElem) selectedCountElem.textContent = '0';
@@ -1735,6 +1742,7 @@ export class UIController {
         if (selectedCountElem) {
             selectedCountElem.textContent = this.selectedCardsForDeletion.length;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -2008,6 +2016,7 @@ export class UIController {
         if (confirmBtn) {
             confirmBtn.disabled = false;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -4044,6 +4053,7 @@ export class UIController {
      * ゲームをリセット（中断データ削除＋リロード）
      */
     resetGame() {
+        this.ahiruAdvice?.reset();
         this.saveManager?.clear();
         this.logger?.log('ゲームをリセットします', 'info');
         location.reload();

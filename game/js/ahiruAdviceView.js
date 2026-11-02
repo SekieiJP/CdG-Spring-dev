@@ -1,8 +1,8 @@
-/** 表示のみを担当する。パラメータ評価やカード選択は行わない。統合前の準備用。 */
+/** 表示のみを担当する。パラメータ評価やカード選択は行わない。 */
 const FACES=Object.freeze({red:{file:'worried.svg',name:'心配'},yellow:{file:'notice.svg',name:'気づき'},green:{file:'happy.svg',name:'順調'}});
 let nextId=0;
 export class AhiruAdviceView {
-    constructor(statusPanel,{assetBase='../game/data/ahiru/'}={}) {
+    constructor(statusPanel,{assetBase=new URL('../data/ahiru/',import.meta.url).href}={}) {
         if(!statusPanel?.parentNode)throw new Error('パラメータ欄が必要です');
         const doc=statusPanel.ownerDocument;
         this.host=doc.createElement('div');

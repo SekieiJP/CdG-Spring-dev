@@ -3,7 +3,7 @@
 import {chromium} from 'playwright';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-const origin='http://127.0.0.1:19110',root='solver/local-runs/pro-mean125/ahiru-view',html=(await readFile('solver/ahiru-advice-preview.html','utf8')).replaceAll('../game/data/ahiru/',origin+'/data/ahiru/'),moduleSource=await readFile('solver/ui/ahiru-advice-view.js','utf8'),css=await readFile('solver/ui/ahiru-advice.css','utf8');
+const origin=process.env.CDG_PREVIEW_ORIGIN||'http://127.0.0.1:19120',root='solver/local-runs/pro-mean125/ahiru-view',html=(await readFile('solver/ahiru-advice-preview.html','utf8')).replaceAll('../game/data/ahiru/',origin+'/data/ahiru/'),moduleSource=await readFile('game/js/ahiruAdviceView.js','utf8'),css=await readFile('game/css/ahiru-advice.css','utf8');
 await mkdir(root,{recursive:true});const browser=await chromium.launch({headless:true}),checks=[];
 try{for(const width of [320,360,390,430]){
  const page=await browser.newPage({viewport:{width,height:844},hasTouch:true,isMobile:true,deviceScaleFactor:2});
@@ -31,5 +31,5 @@ try{for(const width of [320,360,390,430]){
  });
  checks.push({width,browser:'Chromium with touch emulation',setup,layout,lifecycle,screenshot});await page.close();
 }}finally{await browser.close();}
-const sha=b=>createHash('sha256').update(b).digest('hex'),files=['solver/ui/ahiru-advice-view.js','solver/ui/ahiru-advice.css','solver/ahiru-view-check.mjs'];
+const sha=b=>createHash('sha256').update(b).digest('hex'),files=['game/js/ahiruAdviceView.js','game/css/ahiru-advice.css','solver/ahiru-view-check.mjs'];
 await writeFile('solver/research-results/ahiru-advice-20261103/view-component.json',JSON.stringify({createdAt:new Date().toISOString(),purpose:'表示部品のみの固定データ検査。実際の不足/余剰判定・本体統合・Safari実機は未検証。',sources:await Promise.all(files.map(async file=>({file,sha256:sha(await readFile(file))}))),checks},null,2)+'\n');console.log(JSON.stringify({widths:checks.map(c=>c.width),allPassed:true,viewOnly:true}));

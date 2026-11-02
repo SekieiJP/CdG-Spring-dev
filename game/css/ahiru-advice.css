@@ -1,4 +1,4 @@
-/* 表示のみの準備用。本体への読み込みは方略検証後に行う。 */
+/* パラメータ欄の直後に置く、操作を覆わない助言。 */
 .ahiru-advice {
     display:flex;
     align-items:center;
@@ -54,3 +54,5 @@
     border-left:1px solid #6B7280;
     border-bottom:1px solid #6B7280;
 }
+
+.font-normal .ahiru-advice__speech {font-size:14px;}
