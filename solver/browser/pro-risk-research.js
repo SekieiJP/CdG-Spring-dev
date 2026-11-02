@@ -1,6 +1,6 @@
 import {selectActionCandidates} from './pro-action-candidates.js';
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
-export const RISK_VERSION='pro-public-rollout-v3';
+export const RISK_VERSION='pro-public-rollout-v4';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
 function rng(text){let n=2166136261;for(const c of text)n=Math.imul(n^c.charCodeAt(0),16777619);return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
@@ -9,8 +9,17 @@ export function publicDraw(cards,count,world,turn,salt='pro-risk-v1',method='leg
  const copies=new Map();
  return ordered.map((card,i)=>{const no=String(card.cardNo),copy=copies.get(no)||0;copies.set(no,copy+1);let order=random();if(method==='keyed'){const keyed=rng(`${salt}:hand:${world}:${turn}:${no}:${copy}`);keyed();keyed();order=keyed();}return {card,order,i};}).sort((a,b)=>a.order-b.order||a.i-b.i).slice(0,Math.max(0,count)).map(x=>x.card);
 }
+/** 公開情報で生成した仮想結果だけを集約する。実ゲームの結果・seedは入力しない。 */
+export function planningOutcomeScore(outcomes,{tailMeanWeight=0,tailFraction=.25}={}){
+ if(!outcomes.length||!Number.isFinite(tailMeanWeight)||tailMeanWeight<0||tailMeanWeight>2||!Number.isFinite(tailFraction)||tailFraction<=0||tailFraction>1||outcomes.some(o=>!Number.isFinite(o.score)||!Number.isFinite(o.utility)))throw Error('仮想結果と下側評価の条件が不正');
+ const utility=mean(outcomes.map(o=>o.utility));
+ if(tailMeanWeight===0)return utility;
+ const values=outcomes.map(o=>o.score).sort((a,b)=>a-b),lower=values.slice(0,Math.max(1,Math.ceil(values.length*tailFraction)));
+ return utility-tailMeanWeight*(mean(values)-mean(lower));
+}
 export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}){
- const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,smooth:.12,salt:'pro-risk-v1',...config.planning};
+ const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,riskFloor:8,tailMeanWeight:0,tailFraction:.25,smooth:.12,salt:'pro-risk-v1',...config.planning};
+ if(!Number.isFinite(cfg.riskFloor)||cfg.riskFloor<0||cfg.riskFloor>16||!Number.isFinite(cfg.tailPenalty)||cfg.tailPenalty<0||cfg.tailPenalty>8||!Number.isFinite(cfg.tailMeanWeight)||cfg.tailMeanWeight<0||cfg.tailMeanWeight>2||!Number.isFinite(cfg.tailFraction)||cfg.tailFraction<=0||cfg.tailFraction>1)throw Error('下側評価の条件が不正');
  if(cfg.valueHorizon!==undefined&&(!Number.isInteger(cfg.valueHorizon)||cfg.valueHorizon<1||cfg.valueHorizon>8||!baseline.futureValue))throw Error('固定評価までの先読みは1〜8ターン');
  if(cfg.candidateDiversity!==undefined&&cfg.candidateDiversity!=='axes')throw Error('配置候補の分散方式はaxes');
  if(cfg.consistentFutureRefresh!==undefined&&typeof cfg.consistentFutureRefresh!=='boolean')throw Error('将来リフレッシュの一致条件は真偽値');
@@ -32,7 +41,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    if(transitionCache.size>60000)transitionCache.clear();transitionCache.set(key,saved);}
   if(!saved.applied)return null;const next=cloneState(state);next.player={...saved.stats};next.tokens={...saved.tokens};return next;
  }
- function endpointUtility(stats,table){const g=score(stats,table);return g.points+cfg.smooth*g.smoothPoints-cfg.tailPenalty*Math.max(0,8-g.points);}
+ function endpointUtility(stats,table){const g=score(stats,table);return g.points+cfg.smooth*g.smoothPoints-cfg.tailPenalty*Math.max(0,cfg.riskFloor-g.points);}
  function plan(observation,hand,state,width=cfg.rolloutBeam,count=1){
   const remaining=observation.totalTurns-state.turn;
   const forecast=remaining>1?baseline.forecast({...observation,turn:state.turn+1},observation.owned,'engine').end:state.player;
@@ -121,7 +130,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    const ob=observe(root,state,cards);
    if(cfg.futurePolicy==='baseline'){const seq=baseline.placements(ob,hand,state,'engine',cfg.futureBeam||64,true);for(const step of seq){const next=transition(state,hand[step.cardIndex],step.slot);if(next)state=next;}}
    else {const best=plan(ob,hand,state)[0];if(best)state=best.state;}
-   if(++played>=cfg.valueHorizon&&state.turn<root.totalTurns-1){const ob={...observe(root,state,cards,pool.history),refreshRemaining:pool.refreshRemaining},leaf=baseline.futureValue(ob,'after-action');return {score:leaf.mean,utility:leaf.mean+(cfg.leafBlend??.002)*leaf.tie,stats:leaf.forecast,estimated:true};}
+   if(++played>=cfg.valueHorizon&&state.turn<root.totalTurns-1){const ob={...observe(root,state,cards,pool.history),refreshRemaining:pool.refreshRemaining},leaf=baseline.futureValue(ob,'after-action');return {score:leaf.mean,utility:leaf.mean+(cfg.leafBlend??.002)*leaf.tie-cfg.tailPenalty*Math.max(0,cfg.riskFloor-leaf.mean),stats:leaf.forecast,estimated:true};}
    if(state.turn<root.totalTurns-1)cards=deleteFuture(root,state,cards,(root.turns[state.turn].deletion||0)+(state.tokens.organize||0));
    state.tokens.organize=0;
   }
@@ -130,7 +139,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  function evaluate(root,owned,state,phase){
   if((phase==='after-action'||phase==='after-meeting')&&state.turn===root.totalTurns-1)return {score:endpointUtility(state.player,root.rankTable),mean:score(state.player,root.rankTable).points,below8:Number(score(state.player,root.rankTable).points<8),forecast:{...state.player}};
   const outcomes=Array.from({length:cfg.worlds},(_,world)=>rollout(root,owned,state,phase,world));
-  return {score:mean(outcomes.map(o=>o.utility)),mean:mean(outcomes.map(o=>o.score)),below8:outcomes.some(o=>o.estimated)?null:mean(outcomes.map(o=>Number(o.score<8))),estimated:outcomes.some(o=>o.estimated),
+  return {score:planningOutcomeScore(outcomes,cfg),mean:mean(outcomes.map(o=>o.score)),below8:outcomes.some(o=>o.estimated)?null:mean(outcomes.map(o=>Number(o.score<8))),estimated:outcomes.some(o=>o.estimated),
    forecast:Object.fromEntries(KEYS.map(k=>[k,mean(outcomes.map(o=>o.stats[k]))]))};
  }
  function acquisition(root){
