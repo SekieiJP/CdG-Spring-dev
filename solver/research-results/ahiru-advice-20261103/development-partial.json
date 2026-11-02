@@ -1,0 +1,391 @@
+{
+  "createdAt": "2026-11-02T17:02:37.115Z",
+  "purpose": "完走した2条件各250開始の途中結果。候補選択は全3条件の完走後。独立2000開始の達成確認ではない。",
+  "manifest": "solver/local-runs/pro-mean125/ahiru-stability-dev-20261103/manifest.json",
+  "phase": "development-partial",
+  "complete": [
+    "baseline",
+    "downside025"
+  ],
+  "pending": [
+    "downside050"
+  ],
+  "candidateSelectionDeferred": true,
+  "groups": {
+    "baseline": {
+      "n": 250,
+      "mean": 12.148,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -2,
+      "max": 15,
+      "score15": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "score14": {
+        "count": 38,
+        "rate": 0.152
+      },
+      "score12Rate": 0.728,
+      "scoreBelow8Rate": 0.004,
+      "withdrawalZeroRate": 0.944,
+      "meanStats": {
+        "experience": 46.336,
+        "enrollment": 33.332,
+        "satisfaction": 32.488,
+        "accounting": 18.556,
+        "withdrawal": 0.092,
+        "difference": 33.24
+      },
+      "milestones": {
+        "experience50": 0.384,
+        "difference40": 0.212,
+        "difference48": 0.008,
+        "satisfaction25": 0.888,
+        "satisfaction35": 0.456
+      },
+      "activity": {
+        "deckSize": 9.816,
+        "acquisitions": 9.804,
+        "deleted": 4.988,
+        "drawn": 37.028,
+        "placed": 29.992,
+        "applied": 29.992,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "8": 2,
+        "9": 6,
+        "10": 18,
+        "11": 41,
+        "12": 72,
+        "13": 72,
+        "14": 32,
+        "15": 6,
+        "-2": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 41.666666666666664,
+        "expectedAttempts95": [
+          19.469345106403555,
+          90.54176600470754
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.21567117403507274,
+            "interval95": [
+              0.10511558438326751,
+              0.40979684068487254
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.7031815565015263,
+            "interval95": [
+              0.4261019823502049,
+              0.9283843975651833
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.9118988115991433,
+            "interval95": [
+              0.6706410653376355,
+              0.9948712054878983
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 3,
+        "rate": 0.012,
+        "interval95": [
+          0.004089245839774545,
+          0.034681389075857876
+        ]
+      },
+      "requirements": {
+        "seeds": 2000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.932,
+        12.332
+      ]
+    },
+    "downside025": {
+      "n": 250,
+      "mean": 12.024,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -2,
+      "max": 15,
+      "score15": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "score14": {
+        "count": 40,
+        "rate": 0.16
+      },
+      "score12Rate": 0.708,
+      "scoreBelow8Rate": 0.012,
+      "withdrawalZeroRate": 0.928,
+      "meanStats": {
+        "experience": 45.904,
+        "enrollment": 33.436,
+        "satisfaction": 32.208,
+        "accounting": 18.26,
+        "withdrawal": 0.128,
+        "difference": 33.308
+      },
+      "milestones": {
+        "experience50": 0.376,
+        "difference40": 0.196,
+        "difference48": 0.012,
+        "satisfaction25": 0.88,
+        "satisfaction35": 0.444
+      },
+      "activity": {
+        "deckSize": 9.864,
+        "acquisitions": 9.852,
+        "deleted": 4.988,
+        "drawn": 37.144,
+        "placed": 29.892,
+        "applied": 29.892,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 1,
+        "8": 3,
+        "9": 7,
+        "10": 17,
+        "11": 43,
+        "12": 74,
+        "13": 63,
+        "14": 34,
+        "15": 6,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 41.666666666666664,
+        "expectedAttempts95": [
+          19.469345106403555,
+          90.54176600470754
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.21567117403507274,
+            "interval95": [
+              0.10511558438326751,
+              0.40979684068487254
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.7031815565015263,
+            "interval95": [
+              0.4261019823502049,
+              0.9283843975651833
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.9118988115991433,
+            "interval95": [
+              0.6706410653376355,
+              0.9948712054878983
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "requirements": {
+        "seeds": 2000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.772,
+        12.24
+      ]
+    }
+  },
+  "comparisons": {
+    "downside025": {
+      "n": 250,
+      "meanDifference": -0.124,
+      "meanDifference95": [
+        -0.316,
+        0.052
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        -0.012,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    }
+  },
+  "audit": [
+    {
+      "id": "baseline",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-dev-20261103/baseline-batch0.json",
+      "sha256": "7096aa11f77cb900d451fbf6b1010d45fe79f971d4cfc9a20eedd634de93b775",
+      "n": 250,
+      "config": {
+        "id": "baseline",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed"
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+      },
+      "fingerprints": {
+        "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      },
+      "rerolls": 0,
+      "allStartsAccepted": true
+    },
+    {
+      "id": "downside025",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-dev-20261103/downside025-batch0.json",
+      "sha256": "43f52da8c76f6d5918413b92fdd5ebecb4cffd7e6957214892ad01199822b2d8",
+      "n": 250,
+      "config": {
+        "id": "downside025",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "riskFloor": 9,
+          "tailPenalty": 1,
+          "tailMeanWeight": 0.25,
+          "tailFraction": 0.25
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+      },
+      "fingerprints": {
+        "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+        "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+      },
+      "rerolls": 0,
+      "allStartsAccepted": true
+    }
+  ]
+}
