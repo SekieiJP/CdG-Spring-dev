@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-11-03T04:21:19.271Z",
+  "purpose": "頻度予測の接続準備。単体検査と固定モデル組立のみであり、実ブラウザ接続確認や実ゲームの強さの証拠ではない。",
+  "actorFiles": [
+    "solver/autoplay-agent.mjs",
+    "solver/browser/pro-strategy-research.js",
+    "solver/browser/pro-risk-research.js",
+    "solver/browser/pro-value-model.js",
+    "solver/browser/pro-learned-research.js",
+    "solver/browser/pro-public-action-kernel.js",
+    "solver/pro-card-scene-input.mjs",
+    "solver/browser/pro-intrinsic-recovery.js",
+    "solver/browser/pro-action-candidates.js",
+    "solver/browser/pro-opening-table.js",
+    "solver/pro-opening-table-input.mjs"
+  ],
+  "actorSha256": "33bfd42943ee74cca6a2b81629f0d7cfe8e2990273783fed757da140c6e14ba5",
+  "gameSha256": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+  "unit": {
+    "relatedPassed": 51,
+    "fullPassed": 177,
+    "failed": 0,
+    "command": "npm run test:unit",
+    "logFile": "/private/tmp/cdg-pro-failure-analysis-unit-approved.log",
+    "logSha256": "38e1710ea4b7b83b76f59b16922d5f829f24459e444cad882121cd5eef5d4794",
+    "firstAttempt": "共通保存先への一時検査データ作成がEPERMで停止。正規のアクセス許可後に全件再実行して通過。"
+  },
+  "models": {
+    "createdAt": "2026-11-03T04:15:39.770Z",
+    "meanFile": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "meanSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+    "failureFile": "solver/local-runs/pro-mean125/ahiru-failure-v1/failure3-model.json",
+    "failureSha256": "2f46603bff7c4b506ae3b00f1cea808aea9b2728d0de20f28771bec2cd1fb512",
+    "output": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+    "outputSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb",
+    "meanCoefficientsUnchanged": true,
+    "targetKind": "pro-failure8",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ]
+  },
+  "semantics": {
+    "learnedLeaf": "mean + original tie terms - failureWeight * clipped predicted P(score<=8)",
+    "actualEndpoint": "original utility - failureWeight * Number(official score<=8)",
+    "frequencyRange": [
+      0,
+      1
+    ],
+    "meanCoefficientsUnchanged": true,
+    "zeroWeightBrowserTraceNotYetVerified": true,
+    "newFullGameTrials": 0
+  },
+  "liveValidation": "別作業場所のV3独立1000開始は変更せず継続。新しいブラウザ接続確認と多数比較はその完走後に判断する。"
+}
