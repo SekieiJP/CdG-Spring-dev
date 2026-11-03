@@ -27,7 +27,7 @@ test('初回の2枚選択と行動画面への切替で助言を更新・非表�
 test('削除で最後の経理回復札を選ぶと、実効果から残すように案内する',async({page})=>{
     await startPro(page);
     await page.evaluate(()=>{const g=window.game,s=g.gameState;s.turn=5;s.phase='meeting';s.player.deck=[];s.player.hand=[];for(const slot of Object.keys(s.player.placed))s.player.placed[slot]=[];
-        for(const n of [5,40,45])s.addToDeck({...g.cardManager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});Object.assign(s.player,{experience:40,enrollment:32,satisfaction:25,accounting:15});s.tokens.organize=1;g.uiController.showMeetingPhase();});
+        for(const n of [5,40,45])s.addToDeck({...g.cardManager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});Object.assign(s.player,{experience:40,enrollment:24,satisfaction:25,accounting:15});s.tokens.organize=1;g.uiController.showMeetingPhase();});
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.deleteMax)).toBe(1);
     const before=await page.evaluate(()=>JSON.stringify(window.game.gameState));
     await page.locator('#deck-cards .card').filter({hasText:'経理精算の基本'}).click();

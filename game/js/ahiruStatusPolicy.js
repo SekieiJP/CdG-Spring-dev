@@ -24,6 +24,8 @@ export function createAhiruStatusPolicy({difficulty,weights,getGoals,projectStat
         if(!axis){const deficits=SAFETY.filter(k=>estimated[k]<safetyTargets(forecast)[k]).sort((a,b)=>(safetyTargets(forecast)[b]-estimated[b])-(safetyTargets(forecast)[a]-estimated[a]));axis=deficits[0];}
         if(!axis&&current.points<goals.targetPoints){const route=chooseRoute(goals,estimated,weights);axis=estimated.enrollment>=estimated.experience-1e-8&&route.enrollment>estimated.enrollment?'experience':AXES.filter(k=>estimated[k]<route[k]).sort((a,b)=>weights[b]*(route[b]-estimated[b])-weights[a]*(route[a]-estimated[a]))[0];}
         if(axis){
+            // 通常FRESH/PROは置かずに進められるため、既に確保した総合Sを予測だけで不足と呼ばない。
+            if(root.mode==='normal'&&score(root.stats).points>=goals.targetPoints)return result('yellow',`S圏内だよ。${LABELS[axis]}を守って伸ばそう`,axis,'current-s-protect',forecast);
             const safety=SAFETY.includes(axis),label=LABELS[axis],route=chooseRoute(goals,estimated,weights),needsHigherMilestone=estimated[axis]>=goals.sThresholds[axis]&&current.points<goals.targetPoints&&!structuralMissing(forecast);
             if(needsHigherMilestone)return result('red',phase==='deletion'?`Sには${label}${route[axis]}へ。伸ばす札は残そう`:`Sには${label}${route[axis]}へ。伸ばせる札を取ろう`,axis,'next-score-milestone',forecast);
             if(phase==='deletion')return result('red',safety?`${label}が心配。回復札は残そう`:`${label}が不足気味。伸ばせる札は残そう`,axis,'shortage-keep-role',forecast);

@@ -17,7 +17,8 @@ test('庶務カテゴリのNo40や経理14固定のNo50を経理15の回復役�
  assert.equal(r.supportsHand(card(40)),true);assert.equal(r.supportsHand(card(51)),false);
 });
 test('経理回復できる最後の札を選んでしまった時は、残すように案内する',()=>{
- const o=observation([5,40,45,50]);o.turn=5;o.stats={experience:40,enrollment:32,satisfaction:25,accounting:15};
+ const o=observation([5,40,45,50]);o.turn=5;o.stats={experience:40,enrollment:24,satisfaction:25,accounting:15};
+ assert.ok(scorer.calculateScore({difficulty:'pro',player:o.stats}).points<12);
  const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1,selectedIndices:[0]});
  assert.equal(advice.tone,'red');assert.equal(advice.axis,'accounting');assert.match(advice.text,/残そう/);
 });
@@ -62,4 +63,11 @@ test('イベントの最終会議は公式の上限超過加点を含め、成�
  assert.equal(official.points,12);assert.equal(recommendProStatus(o,{phase:'deletion'}).reason,'final-score-ready');
  o.stats={experience:80,enrollment:70,satisfaction:65,accounting:15};
  const growth=recommendProStatus(o);assert.equal(growth.tone,'green');assert.notEqual(growth.reason,'surplus-redirect-acquisition');assert.ok(growth.axis);
+});
+
+test('現在の総合Sを確保済みなら、コストで下がる予測を不足と呼ばず守るように案内する',()=>{
+ const o=observation([45]);o.turn=5;o.stats={experience:50,enrollment:40,satisfaction:25,accounting:15};
+ assert.ok(scorer.calculateScore({difficulty:'pro',player:o.stats}).points>=12);const before=JSON.stringify(o);
+ for(const phase of ['acquisition','deletion']){const advice=recommendProStatus(o,{phase,deleteMax:1});assert.equal(advice.tone,'yellow');assert.equal(advice.axis,'accounting');assert.equal(advice.reason,'current-s-protect');assert.match(advice.text,/S圏内.*経理を守/);assert.ok(advice.forecast.rawEnd.accounting<15);assert.ok(Array.from(advice.text).length<=25);}
+ assert.equal(JSON.stringify(o),before);
 });
