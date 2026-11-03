@@ -11,6 +11,11 @@ export const VALUE_FEATURES=Object.freeze([
  'refresh-remaining','offered40','offered49','removed40','removed49',
  ...Array.from({length:51},(_,i)=>'count-'+(i+1))
 ]);
+/** 平均と危険の種類・公開特徴をそろえ、異なる教師のモデルを混ぜない。 */
+export function hasCompatibleRiskHead(model,kind){
+ const field=kind==='pro-failure8'?'failureHead':kind==='pro-shortfall9'?'shortfallHead':null,head=field?model?.[field]:null;
+ return !!head&&model.schema===VALUE_SCHEMA&&head.schema===VALUE_SCHEMA&&head.targetKind===kind&&Array.isArray(model.features)&&model.features.join('|')===VALUE_FEATURES.join('|')&&Array.isArray(head.features)&&head.features.join('|')===VALUE_FEATURES.join('|')&&Number.isFinite(head.base)&&Number.isFinite(head.learningRate)&&Array.isArray(head.trees);
+}
 const MONOTONE=Object.fromEntries(VALUE_FEATURES.map((n,i)=>[i,n.startsWith('now-')&&!['now-points','now-smooth'].includes(n)||['token-passion','token-inspiration','token-organize'].includes(n)?1:n==='token-fatigue'?-1:0]));
 function finite(n){if(!Number.isFinite(n))throw Error('状態特徴に有限数が必要');return n;}
 export function publicValueObservation(o){

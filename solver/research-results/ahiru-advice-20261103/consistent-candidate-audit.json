@@ -1,0 +1,89 @@
+{
+  "createdAt": "2026-11-03T05:39:46.379Z",
+  "purpose": "条件付き次候補の元250開始の再監査。現在の4条件の結果が揃う前に採用しない。",
+  "preparedOnly": true,
+  "conditionalUse": "進行中の全4条件が各250開始完走し、事前規則で変更候補が選ばれない場合のみ。選ばれる頻度候補があればそちらを優先する。",
+  "source": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+  "sourceSha256": "6671b5aacbee37d96390b11ff40e1794517efe8bfc09838ba345bf74d4d204dd",
+  "rawFile": "solver/local-runs/pro-mean125/action-coverage-development/both2-consistent-batch0.json",
+  "rawSha256": "3b42cb3ce4e8e309a341f53c2748caa3b8381f9214822cf13d2360df69d00686",
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "n": 250,
+  "mean": 12.224,
+  "atMost8": 4,
+  "sourceFingerprints": {
+    "strategyVersion": "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "config": {
+    "id": "consistent-v1",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed",
+      "consistentFutureRefresh": true
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "onlyStrategyChangeFromRejectedV1": "planning.consistentFutureRefresh=true",
+  "configFile": "solver/research-scenarios/ahiru-pro-consistent-validation.json",
+  "configSha256": "2bdc94653a8dc58be78e660e9a369bb7fb75eb88e10387b9eb824b29033e5539",
+  "model": {
+    "file": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "sha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+    "datasetFile": "solver/local-runs/pro-mean125/value-v1/dataset.json",
+    "datasetSha256": "b0cc7acc5760f00509dc979c5a1c8627fef3e460e486581af69bfe809ad1786c",
+    "counts": {
+      "trainSeeds": 3000,
+      "validationSeeds": 250,
+      "trainRows": 73261,
+      "validationRows": 6071
+    }
+  },
+  "nextValidation": {
+    "seedPrefix": "ahiru-pro-ahiru-stability-validation-v3-20261103",
+    "n": 1000,
+    "offsets": [
+      0,
+      250,
+      500,
+      750
+    ],
+    "overlapWithModelRows": 0,
+    "allStartsAccepted": true,
+    "requirement": "mean >=12; score <=8 count <=19; no rerolls; all 0..999 accepted"
+  },
+  "limitations": "旧230条件を見た探索のバイアスがある。旧250は独立1000の達成ではない。新しい開始群を見て条件や採用開始を変えず、変更のないV1基準の再抽選はしない。技術接続の少数ゲームは強さの証拠に使わない。"
+}

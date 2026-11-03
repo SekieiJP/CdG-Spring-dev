@@ -1,4 +1,4 @@
-import {encodeValueFeatures,predictValue,publicValueObservation,createValueForecaster} from './pro-value-model.js';
+import {encodeValueFeatures,predictValue,publicValueObservation,createValueForecaster,hasCompatibleRiskHead} from './pro-value-model.js';
 /** 学習済みの固定木を計算する研究用の判断。未来ゲームの反復は行わない。 */
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 /** 実物の研修山札を読まず、公開提示と永久除外から残りの種類を復元する。 */
@@ -11,17 +11,29 @@ export function remainingTrainingNames(catalog,history,rarity){
 }
 export function createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model,catalog=[],config={}}){
  const valueForecast=createValueForecaster(projectDeck);
- const settings={blend:.005,beam:72,minDeleteGain:.01,...config.learned},cache=new Map();
- function estimate(observation,phase){
+ const settings={blend:.005,beam:72,minDeleteGain:.01,acquisitionFailureWeight:0,...config.learned},cache=new Map();
+ if(!Number.isFinite(settings.acquisitionFailureWeight)||settings.acquisitionFailureWeight<0||settings.acquisitionFailureWeight>40)throw Error('取得の低得点頻度の係数は0〜40');
+ if(settings.acquisitionFailureWeight>0&&!hasCompatibleRiskHead(model,'pro-failure8'))throw Error('取得の頻度係数には互換な低得点頻度モデルが必要');
+ function estimates(observation,phase){
   const key=JSON.stringify([phase,observation.turn,KEYS.map(k=>observation.stats[k]),observation.tokens,observation.owned.map(c=>c.cardNo).sort((a,b)=>a-b),observation.refreshRemaining,observation.offerHistory]);
-  if(!cache.has(key)){if(cache.size>40000)cache.clear();cache.set(key,predictValue(model,encodeValueFeatures(observation,phase,{forecast:valueForecast,score})));}return cache.get(key);
+  if(!cache.has(key)){
+   if(cache.size>40000)cache.clear();
+   const features=encodeValueFeatures(observation,phase,{forecast:valueForecast,score});
+   const mean=predictValue(model,features),shortfall=model.shortfallHead?Math.max(0,predictValue(model.shortfallHead,features)):0,failure=model.failureHead?Math.min(1,Math.max(0,predictValue(model.failureHead,features))):0;
+   if(!Number.isFinite(mean)||!Number.isFinite(shortfall)||!Number.isFinite(failure))throw Error('固定予測が有限値ではない');
+   cache.set(key,{mean,shortfall,failure});
+  }
+  return cache.get(key);
  }
+ const estimate=(observation,phase)=>estimates(observation,phase).mean;
+ const shortfall=(observation,phase)=>estimates(observation,phase).shortfall;
+ const failure=(observation,phase)=>estimates(observation,phase).failure;
  function acquisition(observation){
   const root=publicValueObservation(observation),candidates=observation.candidates,n=candidates.length,indices=[];
   if(observation.pickCount===2)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)indices.push([i,j]);else for(let i=0;i<n;i++)indices.push([i]);if(observation.allowSkip)indices.push([]);
   const formula=baseline.acquisition(observation,'engine'),lookup=new Map(formula.evaluations.map(e=>[e.indices.join(','),e]));
-  const choices=indices.map(chosen=>{const next={...root,owned:[...root.owned,...chosen.map(i=>candidates[i])],tokens:{...root.tokens,inspiration:Math.max(0,root.tokens.inspiration-Number(observation.allowSkip))}},value=estimate(next,'acquisition'),reference=lookup.get(chosen.join(','));
-   return {indices:chosen,score:value+settings.blend*reference.score,predictedScore:value,formulaGain:reference.score,forecast:reference.forecast};});
+  const choices=indices.map(chosen=>{const next={...root,owned:[...root.owned,...chosen.map(i=>candidates[i])],tokens:{...root.tokens,inspiration:Math.max(0,root.tokens.inspiration-Number(observation.allowSkip))}},predictedScore=estimate(next,'acquisition'),value=predictedScore-(settings.acquisitionFailureWeight?settings.acquisitionFailureWeight*failure(next,'acquisition'):0),reference=lookup.get(chosen.join(','));
+   return {indices:chosen,score:value+settings.blend*reference.score,predictedScore,formulaGain:reference.score,forecast:reference.forecast};});
   choices.sort((a,b)=>b.score-a.score||a.indices.length-b.indices.length||String(a.indices).localeCompare(String(b.indices)));
   return {version:'pro-learned-value-v1',mode:'learned',evaluations:choices,recommended:choices[0]};
  }
@@ -77,5 +89,5 @@ export function createLearnedPolicy({baseline,projectDeck,score,cloneState,resol
   return {shouldRefresh:expected-current>cost,currentScore:current,expectedScore:expected,gain:expected-current,opportunityCost:cost,poolCount:pool.length,combinations,
    method:'既知の残り種類から異なる候補集合を列挙。途中でプールが尽きる候補提示は先頭の残り種類までで近似。'};
  }
- return {acquisition,placements,deletions,estimate,refresh,settings};
+ return {acquisition,placements,deletions,estimate,shortfall,failure,refresh,settings};
 }

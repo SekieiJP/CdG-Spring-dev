@@ -1,0 +1,47 @@
+{
+  "createdAt": "2026-11-03T04:53:41.371Z",
+  "purpose": "頻度予測を使う取得/リフレッシュの追加条件を準備。成績比較ではない。",
+  "actorSha256": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+  "actorFiles": [
+    "solver/autoplay-agent.mjs",
+    "solver/browser/pro-strategy-research.js",
+    "solver/browser/pro-risk-research.js",
+    "solver/browser/pro-value-model.js",
+    "solver/browser/pro-learned-research.js",
+    "solver/browser/pro-public-action-kernel.js",
+    "solver/pro-card-scene-input.mjs",
+    "solver/browser/pro-intrinsic-recovery.js",
+    "solver/browser/pro-action-candidates.js",
+    "solver/browser/pro-opening-table.js",
+    "solver/pro-opening-table-input.mjs"
+  ],
+  "unit": {
+    "related": 53,
+    "all": 180,
+    "failed": 0,
+    "log": "/private/tmp/cdg-pro-failure-analysis-unit-refresh.log",
+    "logSha256": "9be019a2b13417f5bbad9412361ff31424fe4e834c64d019a894989ed9ed0a3e"
+  },
+  "behavior": "learned.acquisitionFailureWeightだけを任意に追加。平均予測は保持して、取得の直接評価をmean-weight*failureへ変える。これを使う実リフレッシュと仮想将来の学習取得にも同じ尺度を使う。",
+  "configSha256": "c64165edf7ceba1612017a7abc4110c48b120ecc044586a248271c411c3ccdd1",
+  "development": {
+    "n": 250,
+    "ids": [
+      "baseline",
+      "failure5",
+      "failure15",
+      "failure5-refresh"
+    ],
+    "seed": "ahiru-pro-ahiru-failure-development-v1-20261103",
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "selection": "各250を全て完走後、平均>=12かつ8点以下<=4、低得点件数の少ない順・平均の高い順。変更のない基準が残るなら新しい1000を再抽選しない。"
+  },
+  "futureValidation": {
+    "n": 1000,
+    "seed": "ahiru-pro-ahiru-stability-validation-v3-20261103",
+    "allStartsAccepted": true,
+    "scoreAtMost8Maximum": 19,
+    "meanMinimum": 12
+  }
+}

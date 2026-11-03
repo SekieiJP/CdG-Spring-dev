@@ -3816,7 +3816,7 @@ async function main() {
     const research = args.researchConfig ? JSON.parse(await readFile(path.resolve(repoRoot,args.researchConfig),'utf8')) : null;
     if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout','learned'].includes(research.acquisition) ||
         !['control','median','ceiling','engine','myopic','rollout','learned'].includes(research.placement) ||
-        !['control','adaptive','basic','aggressive','off','rollout','learned'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
+        !['control','adaptive','basic','aggressive','off','rollout','learned','player-basic'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
     if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile||args.decisionBatch)throw new Error('局面再試行とリセマラは同時指定できません');}
     if(args.decisionBatch&&(args.decisionFile||args.forcedChoice!==null||args.difficulty!=='pro')||args.sceneArm&&!args.decisionBatch||args.decisionBatch&&!args.sceneArm)throw Error('局面集はPROで単独指定し、scene-armを指定');
     const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;

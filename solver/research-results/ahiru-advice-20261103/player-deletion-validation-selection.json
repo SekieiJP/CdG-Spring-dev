@@ -1,0 +1,19 @@
+{
+  "createdAt": "2026-11-03T12:25:58.626Z",
+  "metrics": "solver/research-results/ahiru-advice-20261103/player-deletion-development.json",
+  "metricsSha256": "e8ee310e88bd72cd809e5981fe78fbb3470648ca8b695dfbe15c98be6a83e462",
+  "executionAudit": "solver/research-results/ahiru-advice-20261103/player-deletion-execution-audit.json",
+  "executionAuditSha256": "183bab01d21355796ab7bf7fb87e25612ef8db54f55090122c5a192a55366781",
+  "selectedCandidate": "baseline",
+  "allThreeArmsComplete": true,
+  "nextValidation": {
+    "stage": "ahiru-stability-validation-v4-20261103",
+    "seed": "ahiru-pro-ahiru-stability-validation-v4-20261103",
+    "n": 1000,
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "requirement": "mean >=12; score <=8 count <=19; exact 1000 starts",
+    "transition": "not-requested"
+  },
+  "reason": "事前規則で変更候補が残らないため、新しい独立確認は開始しない。変更のない基準の1,000を再抽選しない。"
+}

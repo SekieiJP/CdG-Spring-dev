@@ -1,0 +1,38 @@
+{
+  "createdAt": "2026-11-03T14:39:30.527Z",
+  "metrics": "solver/research-results/ahiru-advice-20261103/player-components-development.json",
+  "metricsSha256": "0d614e60380d1c5c9319dfe38ed5b50e0038f6b735c057d25c32a4035696722e",
+  "executionAudit": "solver/research-results/ahiru-advice-20261103/player-components-execution-audit.json",
+  "executionAuditSha256": "1818a16da4768a05b66ca33c7c628aa180b1ccaba01a9c395d3e2f8b72a58ed6",
+  "allFourArmsComplete": true,
+  "allArmsReferenceSelection": null,
+  "selectionScope": {
+    "eligibleIds": [
+      "forecast-cash",
+      "opening-only"
+    ],
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 4,
+    "order": [
+      "atMost8.count ascending",
+      "mean descending"
+    ],
+    "controlsNotEligible": [
+      "baseline",
+      "strict-control"
+    ],
+    "interpretation": "既に独立検証で未達の基準や、今回変更しない旧報告方針を再抽選しない。2つの新仮説から目標に近い候補を選ぶ探索で、対照より優れるという証明ではない。"
+  },
+  "selectedNewCandidate": null,
+  "nextValidation": {
+    "stage": "ahiru-stability-validation-v4-20261103",
+    "seed": "ahiru-pro-ahiru-stability-validation-v4-20261103",
+    "n": 1000,
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 19,
+    "transition": "not-requested"
+  },
+  "reason": "事前基準を満たす新仮説が残らないため、対照の1,000を再抽選しない。"
+}

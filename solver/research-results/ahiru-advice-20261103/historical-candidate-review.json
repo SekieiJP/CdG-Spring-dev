@@ -1,0 +1,2507 @@
+{
+  "createdAt": "2026-11-03T03:33:43.310Z",
+  "purpose": "過去の平均12.5点研究を、現在の平均12・8点以下2%未満の候補探索として再点検する。開始群が異なるため候補間の因果比較や達成判定には使わない。",
+  "reviewedGroups": 230,
+  "sources": [
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "sha256": "6671b5aacbee37d96390b11ff40e1794517efe8bfc09838ba345bf74d4d204dd",
+      "includedGroups": 7
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "sha256": "76bfdf9c82c3e72c1452415c8e4c99ecd0105a99962573f054e45be82ac3c8a7",
+      "includedGroups": 10
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/growth-deletion-development.json",
+      "sha256": "06a56d03ff037dd8c3de511a4f101d32fa01f89b8dd471fe9d7bc83f5f581b43",
+      "includedGroups": 4
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "sha256": "7a1b5172037984d594c6e649ac541cd8bd6cae2fb060157181f7a3b3090ad32f",
+      "includedGroups": 9
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "sha256": "f4a8517602e235b5d4476c5c0dbfb14d15671d6a8e276d20bf139ca68b640b32",
+      "includedGroups": 3
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "sha256": "bd69cf4c7dea04ff347ab932a3d629d88b1583eaf6f2f91c6ed454cc345470d4",
+      "includedGroups": 8
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "sha256": "380d4c41da643a7f970fcb4b83951a35dce65a39f4ca9d46b250b5a21f1964cd",
+      "includedGroups": 9
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "sha256": "7578b1108cd26b5161423de17333b4e6461a695fb0cef37991c75fe609383f9f",
+      "includedGroups": 9
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "sha256": "273d7f63b760007d6a8595454dc098dd1473646bcca550e1c42ce297d4bef3b3",
+      "includedGroups": 8
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "sha256": "9bb6cceb900c534acb735371da589e528f5ec2420d490cf0a9ae58598b29a1e2",
+      "includedGroups": 5
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v1-development.json",
+      "sha256": "ac7439b1072d061b3db4772ed7e0b69eb63997799447078b119851f37a300e7e",
+      "includedGroups": 4
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "sha256": "0aad79689e67ad5ba390603627ccb4e894632735659b50bd79d153d0207aaa89",
+      "includedGroups": 11
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "sha256": "8d3222c254212b72e818f10c6b31e4941ba90e76bcd7edb7a02fac5bdae5146a",
+      "includedGroups": 12
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "sha256": "d72ad1fb9de714c56270ff118e99c22cbec54abe4dd68aac352a13bd7b580fd4",
+      "includedGroups": 10
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "sha256": "62db2ebc18362568ff5f2a92501a52c9927404aaf20ef4042370c599910e728c",
+      "includedGroups": 9
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "sha256": "6b8fe78a67241126369f39d20ef8354ee43fee65b35951872664270b99a884db",
+      "includedGroups": 8
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "sha256": "54dfb72621a05415b3028c568e3d716c8947bd09c3be61ff519362319b437022",
+      "includedGroups": 14
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "sha256": "4e78b3478a0e1b369dc8f707308b90826d8724d397df80e8a2df5baef21135ce",
+      "includedGroups": 9
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "sha256": "3466d441039ae50e6607fd9ad004378957d2569bc5c717e53fa70141c32e90e7",
+      "includedGroups": 14
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "sha256": "34ba3aef7274e647af60e0504bb5eaead85d237dc5e873dd41a3f4179da71bef",
+      "includedGroups": 12
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "sha256": "dc8fcf4055438d2a86439393a9814dcb21ebf688679bdf5df31ba312a1f4bb0b",
+      "includedGroups": 16
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "sha256": "2237c028d9887a64d6faf7f28303c828ce0963738912e40579b3b493d7a6745b",
+      "includedGroups": 16
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "sha256": "e177368e388cf1eb509634ef917c97c2e8b532facb87fb2eb5e52cd6e7bba9ee",
+      "includedGroups": 15
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "sha256": "0bf66398fe9d305d96ff880d9d70261d580224e69221948cd662f1eb560c571d",
+      "includedGroups": 8
+    }
+  ],
+  "groups": [
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.832,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "champion-recovery",
+      "n": 250,
+      "mean": 11.844,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "631cd0873550b28918ae8d32233621684ef5148e17dc86370d7dada66c9c8a59",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2",
+      "n": 250,
+      "mean": 12.252,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "c3ce8f2496153bec779bd3c693afe3d8d25bbd926cd624b9e90a53ba9fb387f3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2-recovery",
+      "n": 250,
+      "mean": 12.26,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "19e88ecbbc21190aabe3d5e0ec8fb27eeff949b904c99f4396bda2643af8091f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2-diverse",
+      "n": 250,
+      "mean": 12.208,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "9cc75d84ce003932de645d7c55539e753641257ec2d999b37b2cd585bfba09ea",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2-consistent",
+      "n": 250,
+      "mean": 12.224,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "b32302f701ffb55820ec20b8fa276a19f1cb701d9d38001638656fb2b96fb60a",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2-combined",
+      "n": 250,
+      "mean": 12.176,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "76322b9bd81580efb03de92522d69db4fc8f3e167b6717e520f66caff74b7cc7",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.984,
+      "atMost8": 19,
+      "resets": 0,
+      "configSha256": "286a11044f89cabbe6d2fa5de77aad8c416cdba353c4935556b4718b10a293ab",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.784,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "acq2",
+      "n": 250,
+      "mean": 12.128,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "1957aef5d3ba286c5e95edb8eaead789f3d040912bbdd6d419ebb1626b801d75",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "place2",
+      "n": 250,
+      "mean": 11.98,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "30bcd6ac44e954484d172f4ce3a336ddf664f1bc4647d34601e71f77069c8fb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "both2",
+      "n": 250,
+      "mean": 12.244,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "c3ce8f2496153bec779bd3c693afe3d8d25bbd926cd624b9e90a53ba9fb387f3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "both2-world16",
+      "n": 250,
+      "mean": 12.276,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "40eff82c3eaef4d00a13915a435d0ba30b4d12cb04b4113ffba1326cd9c870dc",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "both2-model-v2",
+      "n": 250,
+      "mean": 12.128,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "6bfa789bad4b070f12ff071e5b9a21226e5423c0a4ccdb0292edae942d3cd02b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "activate49-12",
+      "n": 250,
+      "mean": 11.82,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "9b7ad94e703835bbe2558d9cc27586fce9425c3f075877303b2ab46b640eff1f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "both2-activate49-6",
+      "n": 250,
+      "mean": 12.228,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "4fc90cbbf955ca7281fc90297733415ce4b504074f53d088f84b7e80ca9391e7",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+      "id": "both2-activate49-12",
+      "n": 250,
+      "mean": 12.252,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "472abf1cd502f1dbb4242cb7a6c7f78d32cfdd5ad3aba8eeda7e4e7af7c15fe0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/growth-deletion-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.996,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "d194c6a349a6360e4aa9aca79a147f3dc33212c357b3fcd5d2aa1cec21f35832",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/growth-deletion-development.json",
+      "id": "delete-rollout",
+      "n": 250,
+      "mean": 11.968,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "4f0c88b863844b03d62fbe8e77344a25af9de2486110301814279ff6df3387c0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/growth-deletion-development.json",
+      "id": "horizon3",
+      "n": 250,
+      "mean": 12.092,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "57d7ae4ffc3a160cfd1e77e4f2fc2c417f91b650c4a9da7662bf4fc8012e550b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/growth-deletion-development.json",
+      "id": "horizon3-delete-rollout",
+      "n": 250,
+      "mean": 11.968,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "0a9bda85772c77fd34d5e1d1d7a18aae6ccf14384ef6ee7631590f2ccba4ad2f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.912,
+      "atMost8": 23,
+      "resets": 0,
+      "configSha256": "286a11044f89cabbe6d2fa5de77aad8c416cdba353c4935556b4718b10a293ab",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.944,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "avoid-set14",
+      "n": 250,
+      "mean": 11.98,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "fe381a30b36c98965a28e51de57758dfbe3f9cd3a336790678c98d1fe0cce142",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "leaf1-v1-16",
+      "n": 250,
+      "mean": 11.972,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "a5c9748abad965515aea8e2b231d3d8aa831dc522fa710fa21e9b2a1bf29adf6",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "leaf1-v1-32",
+      "n": 250,
+      "mean": 12.048,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "a572ae4c3ad599290299570e312c6912930534e421b28bf322824a0c01f04a22",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "leaf1-v1-no-tie",
+      "n": 250,
+      "mean": 11.868,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "a11176a13dfa25620ffffe1d55eb8f550dfb5ab169cf6d89b96e5c8e50da2de1",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "leaf1-v2-16",
+      "n": 250,
+      "mean": 12.052,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "8978b96bbd32c5e62b9c2fd83be66533c09282ae9faf7adef59a56865041aa01",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "leaf2-v1-8",
+      "n": 250,
+      "mean": 12.168,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "634c8b7e295f92099e1cab25732b8c255d08ab53f21a8801a160d5841eed9160",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/leaf-development.json",
+      "id": "full-acq8",
+      "n": 250,
+      "mean": 11.476,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "d1c24f9687c2cc2b3bbb1cc09bb5cd9e6a0f28fe286ed2e381f2a2e9f9b229e8",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 12,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "d194c6a349a6360e4aa9aca79a147f3dc33212c357b3fcd5d2aa1cec21f35832",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "opening0",
+      "n": 250,
+      "mean": 12.056,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "ec3d3b1956ac11aced91b95f81e5cf3553b97765375dd238b9826cd785019226",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "opening012",
+      "n": 250,
+      "mean": 12.004,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "f5f61b4d2146ef2ccd8c8eed4728457d3d1e4d99652854b98d791b16358f6914",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.976,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "286a11044f89cabbe6d2fa5de77aad8c416cdba353c4935556b4718b10a293ab",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.696,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "place-v1-8",
+      "n": 250,
+      "mean": 11.94,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "32c6f629787e13fd48a818a43cf99163d3622a3790b898a56da0cec070e42411",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "place-v1-16",
+      "n": 250,
+      "mean": 11.912,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "44cebd5867e6249707b356626ed57079e90efea0ef3f62737920d08e015e1bf6",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "place-v2-8",
+      "n": 250,
+      "mean": 11.88,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "3533bc8ade82b76c4154807621844584c14acba46ccd0f4b5a29d9349017ed38",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "both-v1-8",
+      "n": 250,
+      "mean": 11.976,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "174e7f85266139618d26480ba766cc488fc70aa2abfd51e58805a2e7c55a0e52",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "late4-v1-16",
+      "n": 250,
+      "mean": 11.748,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "7e924d4dede6563a28e6a3cfe856116002eb402e87b2897dea328efd3e9c3b33",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/place-leaf-development.json",
+      "id": "place2-v1-8",
+      "n": 250,
+      "mean": 12.044,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "9d294b172def40e28fe58cf99b26ba756238d10aa66fe14eae22a716d2bd8c53",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.84,
+      "atMost8": 21,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.804,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 11.596,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "place-legacy16",
+      "n": 250,
+      "mean": 11.824,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "64e79749e2a9efacd12839fcfc473ead865d6b199a3e80f88cb394422d83fb64",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "place-keyed16",
+      "n": 250,
+      "mean": 11.8,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "fa61ebaad27fb670cddae1f6f0a53dedc2063ae47a3a5eec4be72d5aa3dde115",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "place-keyed48",
+      "n": 250,
+      "mean": 11.848,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "90b77d638aeab68e558534f290a50becfe8b860f79385264233e28cceb9292dc",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "acq-last48",
+      "n": 250,
+      "mean": 11.872,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "eee19a17e199d16ee52c3743fbe84a8fe3d3a8008dbd6ae85c3e7ebdc3999e39",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "acq-late48",
+      "n": 250,
+      "mean": 11.892,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "d46ee55e99db3182854a3884f35bce6e337080da739bb254ecb09322315becef",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/risk2-development.json",
+      "id": "both-late48",
+      "n": 250,
+      "mean": 11.988,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "9ca18815883f3fae988a27515838bd23cdcb95dc77d94faf2dbc37045e854cd0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.836,
+      "atMost8": 24,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.884,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "parallel-finance",
+      "n": 250,
+      "mean": 11.788,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "39eb71fad6763679f35a96b4b51149f08d9a8a2bb7b6b941bdc4c0ab2ece03a9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "parallel-enrollment",
+      "n": 250,
+      "mean": 11.872,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "3917b40f13aff4c2396e402596f7a56aa20cad5f518fc8f3ea444aa21af7c6e1",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "flexible-exam",
+      "n": 250,
+      "mean": 11.856,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "9da044f2268d324a3ab77559e6f6057f31d5b26b95e268acbe557e4454f0b997",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "avoid-set14",
+      "n": 250,
+      "mean": 11.96,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "772818c95165df04209e50ac5764fa0a14ed7b92c013eacc49e93e167db475c5",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "finance-exam",
+      "n": 250,
+      "mean": 11.836,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "d50fb4d0c3a92fa7336b020bf4a14ae4ab794a19b093424e0eeb4fbd6394fb1f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "bundle",
+      "n": 250,
+      "mean": 11.744,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "e20a915c1c7d076633d0ec6bfe6e4377a71cce7755493e3790a7f4bf6556cb83",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/role-development.json",
+      "id": "v2-bundle",
+      "n": 250,
+      "mean": 11.492,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "ed3c18abff133161b48d56863035c8f048eec22b242a011318f6e2b04f13a99e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.744,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "v2-d3",
+      "n": 250,
+      "mean": 11.808,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "cecfed44894a0495f68eb913d55134c74e8101e597ad2fc8f4c9308d91891b6c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "v3-d3",
+      "n": 250,
+      "mean": 11.7,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "33a15e913c157bf08a2938fbabe9d57e25d6ed180d67efc345f7ab6ccc52b07e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "v2-d4",
+      "n": 250,
+      "mean": 11.572,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "8ecc24dcab2bc0d3c4860acef7300255ffbae8523a5a7ee6f12454ae3c0c980c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "v3-d4",
+      "n": 250,
+      "mean": 11.616,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "a89f323fb5c58937b089d59e9a3b8bb73473b646644e8af629c5f4b7bcd9b6ac",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "acq2-v3",
+      "n": 250,
+      "mean": 11.864,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "2da14e31ce1e09537d2a9e52cc6623c661408ba7bbc725b584a5b992b25d4b90",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "both2-v2",
+      "n": 250,
+      "mean": 11.896,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "2a6fe66ac564dca732c1cb6428a82d03ad62a075299947a148fa07589333a0f0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "both2-v3",
+      "n": 250,
+      "mean": 12.16,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "ce996ffc2cfeb0ed053215f54eb53584473500095f52882318b79788107f9226",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.652,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "f8820d18772a66964dbfc81cfe393677e1683458a17b9174ad84228173889eb9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "id": "v4-d3",
+      "n": 250,
+      "mean": 11.604,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "eecc8ea49f8a4a5fd6d6bcd280fdc0c161917a393dd4120cabd4f84a63f6bd94",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "id": "v4-d4",
+      "n": 250,
+      "mean": 11.624,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "133b1e7cb1f1eaa602d928dd0c1c3eae301d57b5b53bfc26e7fc446ec7073dc4",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "id": "both2",
+      "n": 250,
+      "mean": 12.06,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "c3ce8f2496153bec779bd3c693afe3d8d25bbd926cd624b9e90a53ba9fb387f3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+      "id": "both2-v4",
+      "n": 250,
+      "mean": 11.864,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "dc6c2a4a78c5a764ffc87a66d3ba34c3876aa818fc05b50b76a359f26e2e71a9",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v1-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.052,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "9a64a032e40186341424dd4fbcb23eb46fa9a127da11f0ec840383ee5b1eb0db",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v1-development.json",
+      "id": "rollout-acq",
+      "n": 250,
+      "mean": 11.108,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "1b23da9080c2f5b4a69bc5f637949654d793bcdeec666cff8e3ad372aa726938",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v1-development.json",
+      "id": "rollout-all",
+      "n": 250,
+      "mean": 10.888,
+      "atMost8": 15,
+      "resets": 0,
+      "configSha256": "d56c3d08c9eb5b5dc896e95aac06971ad8dc3c09a5186ab8c1944f79043672b2",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v1-development.json",
+      "id": "rollout-risk",
+      "n": 250,
+      "mean": 10.868,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "4ec1cc60f48330e220483a00dd4e117814950f63c90784170e5f94105c7dcdca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.78,
+      "atMost8": 25,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "signed",
+      "n": 250,
+      "mean": 10.796,
+      "atMost8": 24,
+      "resets": 0,
+      "configSha256": "b2a4f48754c98f6dbf4a63246440ee61d12684ebd374f8a35cbeb83fbf5b9c7e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "buffer2",
+      "n": 250,
+      "mean": 11.228,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "8cfe43b1d9cd9b1402a3bd8f4e43504b720d16c9e2cb7340a560e74ae40b9235",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "engine14",
+      "n": 250,
+      "mean": 10.944,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "fdb71b204cd693ccce05b2d915b258161f27cb019b01f489091188c38e705ec6",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "engine24",
+      "n": 250,
+      "mean": 10.544,
+      "atMost8": 23,
+      "resets": 0,
+      "configSha256": "632485c277531c82e718c4e226030d9c839b67c559aba7d8aae02a15b91ea69b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "combo",
+      "n": 250,
+      "mean": 10.8,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "89f2becd2aab4925884c18c924b1d987e6696e4d5dd3c593924900501cb28af5",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "seek49",
+      "n": 250,
+      "mean": 10.612,
+      "atMost8": 28,
+      "resets": 0,
+      "configSha256": "e59cb3b83d774c8d9df8e97e9f8a4690f53ac2215e8ae7e8919743a25ec6b8ce",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "combo-seek49",
+      "n": 250,
+      "mean": 10.44,
+      "atMost8": 31,
+      "resets": 0,
+      "configSha256": "77c09ee8e48b16f823896a32263ee2ca80b9d668b0e621313197a90d71c96626",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "combo-seek13",
+      "n": 250,
+      "mean": 10.388,
+      "atMost8": 30,
+      "resets": 0,
+      "configSha256": "e5c7a0ec0a13c733e14a23cceb8662aaf2e259f931330902c0dfb765b2cf5d3f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "combo-guard",
+      "n": 250,
+      "mean": 10.544,
+      "atMost8": 27,
+      "resets": 0,
+      "configSha256": "3c2d2e459391f237d43d4732171219d2f2dfdd9c672cf2abc1de2b63ec541fcf",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v2-development.json",
+      "id": "sigma",
+      "n": 250,
+      "mean": 10.896,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "38b79feb0315ad97ecd81ea972cff72db79dcbbb1ffa576718f8c01c3b85b65f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.852,
+      "atMost8": 26,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "buffer2",
+      "n": 250,
+      "mean": 11.096,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "8cfe43b1d9cd9b1402a3bd8f4e43504b720d16c9e2cb7340a560e74ae40b9235",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "horizon",
+      "n": 250,
+      "mean": 11.048,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "91a7369b801be139c5b22f5aed3e5b25003836d089df428a56ff44b7d873f031",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "allowance",
+      "n": 250,
+      "mean": 11.096,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "374315eca8e8706fd581fd98b7328b0d688fcbcb1d1fda995d3665cb6fa49d4e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "allowance-half",
+      "n": 250,
+      "mean": 11.08,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "c648d0ac8d36e75c04b3c810e4c84d62d35cc217d82a870a6557f7e09d787865",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "payload",
+      "n": 250,
+      "mean": 10.54,
+      "atMost8": 31,
+      "resets": 0,
+      "configSha256": "b1a6e03a24cf3114bee52ce526f869b91a193ff9614ac65f6ef7a4c659dc94a2",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "payload-allowance",
+      "n": 250,
+      "mean": 10.308,
+      "atMost8": 30,
+      "resets": 0,
+      "configSha256": "b385105cc964f0243d53c5a76937d31368b2ed502ca54f49a64848a9eaba11b5",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "scored",
+      "n": 250,
+      "mean": 10.816,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "10a4d68e8760d898ff6c48b05bb1d95e4b498ea75325e6180fefd700dcdac91f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "scored-allowance",
+      "n": 250,
+      "mean": 10.848,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "4cb5d892b041875c11ce0781a38018f81463544f92bd8d449a17cb88e82a6946",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "caps25",
+      "n": 250,
+      "mean": 10.944,
+      "atMost8": 19,
+      "resets": 0,
+      "configSha256": "03ac048ccebef2e8dbf2b6b56c88770c4aab2d75133338e1660604c5f40f9108",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "caps25-allowance",
+      "n": 250,
+      "mean": 10.724,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "09115b7de56c96b05dbbc0722228b8a7cee444219500189a05dc9d6bb432f264",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v3-development.json",
+      "id": "endgame",
+      "n": 250,
+      "mean": 11.088,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "464ecbd658200150acc046b00426e6c48cfd77a5e55896eb554ce24a8bcc6298",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.212,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "buffer2",
+      "n": 250,
+      "mean": 11.204,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "8cfe43b1d9cd9b1402a3bd8f4e43504b720d16c9e2cb7340a560e74ae40b9235",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "adaptive-draw",
+      "n": 250,
+      "mean": 11.224,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "7d5c9928831c2a737f848a045e344725be7c6bab49d8f74bb57657b4d6a9085c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "adaptive-horizon",
+      "n": 250,
+      "mean": 11.052,
+      "atMost8": 19,
+      "resets": 0,
+      "configSha256": "1a1e4b8fb833cb3855b10dabc0d82d1a98bc44b1071dd2f50eb99417e0b56e05",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "draw6-insp4",
+      "n": 250,
+      "mean": 11.256,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "9ae27e1d3ff581dd812f093a56b96366cae0df93514c87b4a5dace9d71dd41fc",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "draw4-engine4",
+      "n": 250,
+      "mean": 11.156,
+      "atMost8": 15,
+      "resets": 0,
+      "configSha256": "d90646cd24df4acd356f593ce7269931a33542a373ce028b59afbc6677b98eaf",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "draw8-engine4",
+      "n": 250,
+      "mean": 11.216,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "2339bd70432ad4aed10dcc854534fd74fd79e5ada39473d8afe51b8522b13840",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "adaptive-engine4",
+      "n": 250,
+      "mean": 11.164,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "ea94a62752522063a3d0cbdc81d6b898ce5000cf057570280d7d0967c15cbd5d",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "adaptive-allowance",
+      "n": 250,
+      "mean": 11.044,
+      "atMost8": 21,
+      "resets": 0,
+      "configSha256": "26c30e8f2337ae0589aed1278804e5ff70a663f359d47958b612474b62a00606",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4-development.json",
+      "id": "rollout-acq-baseline",
+      "n": 250,
+      "mean": 11.14,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "a2ce959f2de819c6459be303dde3e1a0e248ef4c09920ded027d1c06809c77e3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.82,
+      "atMost8": 24,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "seek49-alone",
+      "n": 250,
+      "mean": 10.896,
+      "atMost8": 23,
+      "resets": 0,
+      "configSha256": "821b0dd3bcf97954bc3f666d2f6302aea7e692a584a68f481f5a1f03a999b525",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "seek13-alone",
+      "n": 250,
+      "mean": 10.816,
+      "atMost8": 27,
+      "resets": 0,
+      "configSha256": "4d2fb265708f2c8c7eb1bdce8814faa843ca27d9e318037060199e8fc1cb7b46",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "bonus49-alone",
+      "n": 250,
+      "mean": 10.844,
+      "atMost8": 24,
+      "resets": 0,
+      "configSha256": "8e5773444b451e17b4b7055460c80843ed294d94cd2683bf1c449bbf877c7c5b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "bonus49-40",
+      "n": 250,
+      "mean": 10.808,
+      "atMost8": 25,
+      "resets": 0,
+      "configSha256": "7db0f22920ce9fe4297023794eaa642485399630e774fc1f3ec0fe81a8b5884a",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "bonus-parallel",
+      "n": 250,
+      "mean": 10.712,
+      "atMost8": 27,
+      "resets": 0,
+      "configSha256": "1e52edd8f2e0d78147e3d9aff8b75f97a8758afafb14bf20e76f00f266bc4cb7",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "inspiration12",
+      "n": 250,
+      "mean": 10.628,
+      "atMost8": 26,
+      "resets": 0,
+      "configSha256": "3e39cfe53173f6a21f9e43ae316582f31145eba630d41d7fcaa5b9e9d69d4fc7",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "inspiration-support",
+      "n": 250,
+      "mean": 10.54,
+      "atMost8": 29,
+      "resets": 0,
+      "configSha256": "e204bf9ae3e9d3e30bbd44d42eead85c0c11efc696cdb4e50d70c3bb55a3ad2a",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/v4b-development.json",
+      "id": "bonus49-buffer",
+      "n": 250,
+      "mean": 11.236,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "b121ef49fa7272d8a371f78e234dcf9d17480ab52c3f2d9f3edc6c1175655327",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.692,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-acq",
+      "n": 250,
+      "mean": 11.38,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "71e8e2024cd9e0393b5af9d2f07ac1bd5d802a73cdd0173853966e70ad14eb89",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-acq-zero",
+      "n": 250,
+      "mean": 10.908,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "0e6113612e99062c20c001f85866630ed2ac1b81077c472d18493ceb2e167c6a",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-acq-blend",
+      "n": 250,
+      "mean": 11.26,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "ea0572ad6d860753e153d433f15588f9a7d1698042ffb03bb3043a2f3b91aa84",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-all",
+      "n": 250,
+      "mean": 11.276,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "64d4c5589c5119afc76498576d3fa761d62beaa228978caf430dd8f43659c41b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-place",
+      "n": 250,
+      "mean": 10.716,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "4a09f40bda2cf71c43ba3342ebeb725061cc510f058d3afabadc8de16229007f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "learned-delete",
+      "n": 250,
+      "mean": 10.604,
+      "atMost8": 21,
+      "resets": 0,
+      "configSha256": "f2dffb32e6fbf7ee1a52d7795663a10192fb1a05104f0063ec8be42f8d3ce348",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value-development.json",
+      "id": "monotone-all",
+      "n": 250,
+      "mean": 11.32,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "a5d1fe84a11f4f081e5a26707f424708ac0a9c443a5168e21bbb773759f1b2f5",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.244,
+      "atMost8": 19,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned-acq",
+      "n": 250,
+      "mean": 11.324,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "71e8e2024cd9e0393b5af9d2f07ac1bd5d802a73cdd0173853966e70ad14eb89",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned12",
+      "n": 250,
+      "mean": 11.408,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "bdd850d1122242baa2d9702b8d91762ab5d38d3f6a3dc145908359791fd23d9c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13",
+      "n": 250,
+      "mean": 11.392,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "818f7c9dd6fb34969d1064af0985973f6fcd2af51d8017c368b2343ff8d9d306",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned14",
+      "n": 250,
+      "mean": 11.332,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "0d9adafa67f9a88f18f4745e532c979b915f9a640855d8478812a4f04e1d0a26",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13-sat25",
+      "n": 250,
+      "mean": 11.084,
+      "atMost8": 15,
+      "resets": 0,
+      "configSha256": "7a2a8027a373a3c80343a6eed46c0105ab1564f18d0d1f00d2e87f9d502610b8",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned12-caps",
+      "n": 250,
+      "mean": 11.132,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "663c0d4a0a49101dc9f04ade7b6464f5989d8e402b385c1bacd9b23a02fc8287",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13-en6",
+      "n": 250,
+      "mean": 11.488,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "efc706642fd65e6a8f83fd3b055ea3fdaa7377d9cada3efd117c05418274a3e5",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13-focus",
+      "n": 250,
+      "mean": 11.06,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "5ed52499d41085e7bb2798982245eb69fbc7643970b771b59e3e4142d9791648",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13-buffer",
+      "n": 250,
+      "mean": 11.492,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "74a7304fee8e997daacf3feeb80177e958c66203beadfb644bcb18913a8e86e1",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned13-horizon",
+      "n": 250,
+      "mean": 11.348,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "1d099adc8eea59118c2d7e3f9a276760c6578a512f2d1f69548058121a693a9d",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned-buffer",
+      "n": 250,
+      "mean": 11.412,
+      "atMost8": 15,
+      "resets": 0,
+      "configSha256": "d2ebcd0988c16ef9f0ce3cd84cfe29b08d7ce781fca9e3001d46657313292911",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned-acq-monotone",
+      "n": 250,
+      "mean": 11.44,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "1f8b7782d3686a228b185bbf43823245d4d5c12a7b8975fe5622cccf0313479d",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value2-development.json",
+      "id": "learned-acq-depth3",
+      "n": 250,
+      "mean": 11.468,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "62ce321fd497e9182c9721477eebab5caa89882f022d4b8accf003f5ac380882",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.836,
+      "atMost8": 25,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "learned-acq",
+      "n": 250,
+      "mean": 11.24,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "71e8e2024cd9e0393b5af9d2f07ac1bd5d802a73cdd0173853966e70ad14eb89",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh12",
+      "n": 250,
+      "mean": 11.54,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "64ce84aed1e7dab99fe90a09757d9d1f7fcf0dcf45d50af12f91c75196e6e45e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh0",
+      "n": 250,
+      "mean": 11.656,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "2ef2a7b8035a5ff4f6c5633b07764d37934b58825972b4cdb8876ee06f237836",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh30",
+      "n": 250,
+      "mean": 11.352,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "033afffa9230005bd74da80e12cb797cbca6c292eb8d6123b39b09bb2896c815",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh0-noreserve",
+      "n": 250,
+      "mean": 11.508,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "0eb29c98a041bc76d98b5fba71cb31ead515254be363ea9de707e306b388498c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh13-buffer",
+      "n": 250,
+      "mean": 11.684,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "3794c3e67646cb9ec7bebc1dab124c2b9d3320fee04c13c577ab10f06666083c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh13-en6",
+      "n": 250,
+      "mean": 11.292,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "d7ff35deb546c5f8f1edeff9b70ca6f0406af77f0a61c8e792c9aa75e4e40256",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value3-development.json",
+      "id": "refresh-depth3",
+      "n": 250,
+      "mean": 11.8,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "416f2bcb050ae2323a054632aa34f67afd9681d9a183a4975007c7238e04b851",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.076,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "refresh-depth3",
+      "n": 250,
+      "mean": 11.612,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "416f2bcb050ae2323a054632aa34f67afd9681d9a183a4975007c7238e04b851",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "refresh-depth3-buffer",
+      "n": 250,
+      "mean": 11.792,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "45d2096a17e7df43cdbb04aae2a6e135592cb73facfdb5409637e262f1a2036f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor4",
+      "n": 250,
+      "mean": 11.632,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "87c127a5806620a6052242773425b9b5740ddd665d5b6ffea02df2fe0f7efc25",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor3",
+      "n": 250,
+      "mean": 11.664,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "4deb5d8693ef893d05794d56e3bb7065d0c2cfc10e4f6fb0e78c40ba7851c698",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor2",
+      "n": 250,
+      "mean": 11.664,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "43794771e8d4c97b2d911be5543c1669412100ff9dd0b65411a7ccc5d5d6d01c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor4-buffer",
+      "n": 250,
+      "mean": 11.828,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "d3843e913839cb759b47509a603bc5f3eef351a6b7176f52e0a3ea9a1129c28c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor3-buffer",
+      "n": 250,
+      "mean": 11.8,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "0844eea1d0d7ac731388565d48fd5e47b8676e3df2705372bf12a34a2f6f5a26",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "adaptive4",
+      "n": 250,
+      "mean": 11.52,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "92675f28ed5d41c58e0e1f51c37b708c01935e7f76620605f9c6063a69a4a2ba",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "adaptive3",
+      "n": 250,
+      "mean": 11.52,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "03ed1b85368e9f7e60703f29823945b2894674f070558418a2c1f1728e69b567",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "org35-floor3",
+      "n": 250,
+      "mean": 11.592,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "2dff3d63b948fab6fb1d7223a3671f56331abf5e076af677cc3115287d8ae862",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "org23-floor3",
+      "n": 250,
+      "mean": 11.672,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "5187d2601461ad35c9903e5ed225aafa7eee3c7086cc883d1d117a65ad5eb43d",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor3-en6",
+      "n": 250,
+      "mean": 11.592,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "682319d78765e6d5793d945f271b6790ed2429a84f20431b185169aab83835d2",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value4-development.json",
+      "id": "floor3-protect",
+      "n": 250,
+      "mean": 11.804,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "1dd90f6e0a7d2115ca06e1782028e0074478952440bf545d068627dabecb01cc",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.148,
+      "atMost8": 16,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.848,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-depth3",
+      "n": 250,
+      "mean": 11.768,
+      "atMost8": 13,
+      "resets": 0,
+      "configSha256": "45aa2ce389448bf12a5beffd918ae982f6459604b977ff2a1ee9eb8628ef039b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-depth4",
+      "n": 250,
+      "mean": 11.684,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "75d974781a96fcf2b9582675b55729f9a5b765c309a94babb772dd0fbd424bdf",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-monotone",
+      "n": 250,
+      "mean": 11.792,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "482a2d87e438505f55b025240c06455c8e76b74c2aa29129014d94647cc84500",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-blend002",
+      "n": 250,
+      "mean": 11.54,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "c9d7e4247adab8914f29f65facf743db800012bbb72019f2c1182732f1151234",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-blend010",
+      "n": 250,
+      "mean": 11.968,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "bd287410ab5abecc7d2cf6b8bef9cf1705f2e5e156c96305e0433ecedc069dec",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 12,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-all",
+      "n": 250,
+      "mean": 11.908,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "5189337e249654b7d69211bb2bbf16d72cde8a9051c5a8a23618d92f1b898b32",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-place",
+      "n": 250,
+      "mean": 11.956,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "5badfda1091deba9a2f2415b813f7d2af8aa49cc54760752ad93ca3e1b079fdf",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-delete",
+      "n": 250,
+      "mean": 11.828,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "ddd0210ebe3b5205bbf776ca0788caf57c895673e2f0d3ddb5b0fd3aa72e4317",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-depth3-all",
+      "n": 250,
+      "mean": 11.724,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "25a1d108715c60ff8c43c38477538ab43eb964f6550d4be68551b0d650d8e41a",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.148,
+      "atMost8": 20,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.956,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 11.928,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "blend040",
+      "n": 250,
+      "mean": 11.652,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "88daef3de9c9807983aa5b0d965f299f175dfaa0a7660138a5d2a61fabd0bac0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "blend060",
+      "n": 250,
+      "mean": 11.54,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "c648ab86be74a7a574a1fdb8b478ba9fd2dcc6de9791979721276064e78671e6",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "acq-en6",
+      "n": 250,
+      "mean": 11.556,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "a50cb407c918964b25d42e2bc25a2121fbae0aa7cf612f6acec2a617fbd52324",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "acq-en8",
+      "n": 250,
+      "mean": 11.264,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "de8af57353148950614554896f3b7be53e6728aa4d1772912ef2a2bf26de1e3e",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "acq-sat4",
+      "n": 250,
+      "mean": 11.876,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "ca9bb8d99ef51728d34d53be6bd0c24180dfe0f228347a726032475ad5c732cd",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "acq-xp4",
+      "n": 250,
+      "mean": 11.724,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "8bf9d63ffb5df399c7bd6ecd40f86c6512b520197c7d5816c03f3b5d5df89cab",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "sat-buffer2",
+      "n": 250,
+      "mean": 11.804,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "95ecdcfb47b816219d5644d0f28fe6429d2bf8902979045b4e4adeea3eb862c2",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "sat-buffer4",
+      "n": 250,
+      "mean": 12.004,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "84a31310307835e6d67c50ec357278c60e0617b596e1bff416d7926afa2f5a22",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "xp-buffer3",
+      "n": 250,
+      "mean": 11.88,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "88e0c518f6054fee01a73c4b1e5171805834fe2e202dd3eb258adcddeceedba8",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "en-buffer3",
+      "n": 250,
+      "mean": 11.876,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "880f05b508cf8b7444b190f0489a72ede2e67e8079d96c824f404623a9010a4c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "all-buffer2",
+      "n": 250,
+      "mean": 11.864,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "413bd4bf801f70307f16afaa525e2f72c4af558f37abac06bc13a9b2a3876f5b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "bonus-en-parallel",
+      "n": 250,
+      "mean": 11.468,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "5dddc86a02a534417725b14580f8279bf0696377d38957aed4344d80ac1ed4cb",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value6-development.json",
+      "id": "bonus49",
+      "n": 250,
+      "mean": 11.812,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "af6429da48190e177f4bef312fd7bb10ad7df12576931defab3d586892695d02",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.856,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.86,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 11.764,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "common",
+      "n": 250,
+      "mean": 11.484,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "9471da7b68e130f03fe8a236be7930a9e4a9da06b051bf89adb5247f21ee0cc4",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "common-margin",
+      "n": 250,
+      "mean": 11.592,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "060450b1a26a26214cdac618454d7d6e74c76d96be70a86f25d862f2c1e360db",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "experience",
+      "n": 250,
+      "mean": 11.636,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "a77f4501cd353159160252056ab1f3832bc1589b1830b1568e4c2aad9458b880",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "experience-margin",
+      "n": 250,
+      "mean": 11.6,
+      "atMost8": 11,
+      "resets": 0,
+      "configSha256": "ba08a6609092eb9fa223b042500935cb28c034a49910ec1b463b213fb9ce82c1",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "enrollment",
+      "n": 250,
+      "mean": 11.484,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "d2ebb9b3fda7a8b7688d4eb43d2ce2e286e958e0a7fc4b37c2359df14ec0932f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "enrollment-margin",
+      "n": 250,
+      "mean": 11.512,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "2d7d33d9ccf4d08e48f13c2b854d57c1b56ada8ecf30064350f968eab933a008",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "high-enrollment",
+      "n": 250,
+      "mean": 11.132,
+      "atMost8": 17,
+      "resets": 0,
+      "configSha256": "14e91d88b80a27dc4ba44bff5da6d0a94088bc5d69a663fd632fef78a716c450",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "high-enrollment-margin",
+      "n": 250,
+      "mean": 11.304,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "8d09aa9601bd7d5177c2598087d549b92fc19f7224fcd35384ff30d1e5c3ba30",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v1-common",
+      "n": 250,
+      "mean": 11.644,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "d04932259177d7dc3a2c1df520bc5582050814b0f9a8dbb405f0eae45dcee04f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v1-common-margin",
+      "n": 250,
+      "mean": 11.708,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "e2ac8ada8b8c99b2965c37bba14304a93eb039737aaa23978a3e415cd81f23e3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v1-experience",
+      "n": 250,
+      "mean": 11.316,
+      "atMost8": 12,
+      "resets": 0,
+      "configSha256": "072839e04d25f44168de64b391830ddcca193927feb6b48853215b39d106e8e4",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v1-enrollment",
+      "n": 250,
+      "mean": 11.176,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "3202020e6b89db08b8e81c270c691e1b147c1ee00a0ec52cb8173c172affc000",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value7-development.json",
+      "id": "v1-high-enrollment",
+      "n": 250,
+      "mean": 11.364,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "fc2916304d30919372b0e23f80cc6b0135029b1642f8744eca3f88aa3527c20f",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 10.784,
+      "atMost8": 22,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.772,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 11.676,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep13",
+      "n": 250,
+      "mean": 11.756,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "037248bffbb838d4c052d89d57d0381c10619cec5c1c5f70a7fe758e13c1d0a0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep13-30",
+      "n": 250,
+      "mean": 11.756,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "53aa6d475e25b1d04b9630ceec54a70b54e0693a4cc2f6109ac5b9f90c031238",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep-engine",
+      "n": 250,
+      "mean": 11.796,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "5021232c94225c7e41c3be240ac7a7c3d969469ec87250b2a18b8b4ca262c2c0",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep-en32",
+      "n": 250,
+      "mean": 11.724,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "78c6218ee9498f4f2e1ea02b31d1c29c6f2fa79bf0cca430223fffdfee251525",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep-en40",
+      "n": 250,
+      "mean": 11.708,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "4f87e0e07f96c7d6427727768ca2342f0635643e90f3df9be5279412351b140c",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "keep13-en32",
+      "n": 250,
+      "mean": 11.72,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "e6d4c13bf3f76fe10e50dfd2f80a4c6c5cf98d80a82147f13e9f37da72862d27",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "inspiration13",
+      "n": 250,
+      "mean": 11.812,
+      "atMost8": 8,
+      "resets": 0,
+      "configSha256": "85318fb4fa37fe59e04c411e14bcd7382ccef73108111493a86104e23b948d80",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "v2-inspiration13",
+      "n": 250,
+      "mean": 11.732,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "ff2906e1ea1d0061661b4195fba015dbc62d03ac54635706cff14d1e3484268b",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "beam360",
+      "n": 250,
+      "mean": 11.788,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "01b85d03543436b1ad899d7ca7e754987ca7638d9f0a9003a841793289271433",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "beam720",
+      "n": 250,
+      "mean": 11.788,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "eeabed257f5b522a9b0fcdf35991b50841a993e44d20390c0176a28f61323f39",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "late720",
+      "n": 250,
+      "mean": 11.78,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "71a2fe4a5b213d44efcece2977dff222007641cafa29b9be14cc50a1b3d46f29",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value8-development.json",
+      "id": "v2-late720",
+      "n": 250,
+      "mean": 11.672,
+      "atMost8": 6,
+      "resets": 0,
+      "configSha256": "4b5ceaa812a0cc573bd4f8e49c2f4bc949c0a1750610b8900309af7434e85408",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 11.028,
+      "atMost8": 18,
+      "resets": 0,
+      "configSha256": "0a7d33b5634922d2f50bc75488e8dd9b3549dbe55cc0738d1a4907822f47f393",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "champion-v1",
+      "n": 250,
+      "mean": 11.696,
+      "atMost8": 14,
+      "resets": 0,
+      "configSha256": "af0059969e98c48d3cd91f1a6995ed24fbcf425b46a3c8b0c98d731ae8f464ca",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 11.66,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "depth5-small",
+      "n": 250,
+      "mean": 11.728,
+      "atMost8": 10,
+      "resets": 0,
+      "configSha256": "3cdbfd0f763646bebe2632cc127a79d6cf2bafe3685fe0495d90519554eff8d1",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "depth5-blend020",
+      "n": 250,
+      "mean": 11.748,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "0763f344d24c80b871ff8021369f29561f499f84f7f623e0cc6a9e44a06509b2",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "depth6-small",
+      "n": 250,
+      "mean": 11.752,
+      "atMost8": 9,
+      "resets": 0,
+      "configSha256": "221e9f0b7f23a64064ccafaed4470584fbbf77fd024e8559b4bcb978754dc1bc",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "depth6-blend020",
+      "n": 250,
+      "mean": 11.74,
+      "atMost8": 5,
+      "resets": 0,
+      "configSha256": "12a833087dbd03d10c7f41b0af83769a7e8b6e674ee00fe4902ea04282dc3fcf",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value9-development.json",
+      "id": "monotone5-blend020",
+      "n": 250,
+      "mean": 11.696,
+      "atMost8": 7,
+      "resets": 0,
+      "configSha256": "f7516b87751b3878b353064b9c443fa0eccc30acaa6dbe77d92c1dc6451a32ab",
+      "physicallySame": true
+    }
+  ],
+  "candidates": [
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "opening012",
+      "n": 250,
+      "mean": 12.004,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "f5f61b4d2146ef2ccd8c8eed4728457d3d1e4d99652854b98d791b16358f6914",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "baseline",
+      "n": 250,
+      "mean": 12,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "d194c6a349a6360e4aa9aca79a147f3dc33212c357b3fcd5d2aa1cec21f35832",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/value5-development.json",
+      "id": "v2-blend020",
+      "n": 250,
+      "mean": 12,
+      "atMost8": 2,
+      "resets": 0,
+      "configSha256": "ab0bcea03672e4a1664a141212c3ba73438a2b3aef320336ac84eadc81f4a522",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+      "id": "both2-v3",
+      "n": 250,
+      "mean": 12.16,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "ce996ffc2cfeb0ed053215f54eb53584473500095f52882318b79788107f9226",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+      "id": "opening0",
+      "n": 250,
+      "mean": 12.056,
+      "atMost8": 3,
+      "resets": 0,
+      "configSha256": "ec3d3b1956ac11aced91b95f81e5cf3553b97765375dd238b9826cd785019226",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2",
+      "n": 250,
+      "mean": 12.252,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "c3ce8f2496153bec779bd3c693afe3d8d25bbd926cd624b9e90a53ba9fb387f3",
+      "physicallySame": true
+    },
+    {
+      "file": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+      "id": "both2-consistent",
+      "n": 250,
+      "mean": 12.224,
+      "atMost8": 4,
+      "resets": 0,
+      "configSha256": "b32302f701ffb55820ec20b8fa276a19f1cb701d9d38001638656fb2b96fb60a",
+      "physicallySame": true
+    }
+  ],
+  "selectedForNewValidation": {
+    "file": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+    "id": "both2-v3",
+    "reason": "探索上の選択。基準と異なる固定評価モデルで、旧250開始では平均12.160・8点以下3回。旧候補のうち平均に0.1点以上の余裕がある変更候補で低得点件数が少ないため、別1000開始で試す。事前に決めた古い順位規則とは呼ばない。",
+    "limitations": "230条件を見た探索の選択バイアスがある。旧250の成績を新方略達成とは扱わず、選択と異なる固定1000開始を全採用する。変更のない基準の1000再抽選はしない。"
+  }
+}

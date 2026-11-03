@@ -1,3 +1,4 @@
+import {hasCompatibleRiskHead} from './pro-value-model.js';
 import {createOpeningTablePolicy} from './pro-opening-table.js';
 import {createRiskPolicy} from './pro-risk-research.js';
 import {createPublicActionKernel} from './pro-public-action-kernel.js';
@@ -55,12 +56,16 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null,openingTable=null}) {
     if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
+    if(config.planning?.shortfallWeight>0&&!hasCompatibleRiskHead(valueModel,'pro-shortfall9'))throw Error('損失係数には互換な低得点損失モデルが必要');
+    if((config.planning?.failureWeight>0||config.learned?.acquisitionFailureWeight>0)&&!hasCompatibleRiskHead(valueModel,'pro-failure8'))throw Error('頻度係数には互換な低得点頻度モデルが必要');
     if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
     if(config.placementRolloutTurns!==undefined&&(!Number.isInteger(config.placementRolloutTurns)||config.placementRolloutTurns<2||config.placementRolloutTurns>8))throw Error('配置の先読み範囲は残り2〜8ターン');
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
+    if(config.playerBasicScope!==undefined&&!['all','opening'].includes(config.playerBasicScope))throw Error('報告削除の範囲はall/opening');
+    if(config.playerBasicAccounting!==undefined&&!['current-and-forecast','forecast'].includes(config.playerBasicAccounting))throw Error('報告削除の経理条件はcurrent-and-forecast/forecast');
     if(config.effectRecoveryProtection!==undefined&&typeof config.effectRecoveryProtection!=='boolean')throw Error('実効果による回復役保護は真偽値');
     if(config.effectRecoveryProtection&&!publicActionParser)throw Error('回復効果のパーサーが必要');
     const recoveryCheck=config.effectRecoveryProtection?createIntrinsicRecoveryCheck(publicActionParser):null;
@@ -178,11 +183,39 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return frontier[0]?.seq||[];
     }
+    /** ユーザー報告の順序。追加枠も基本札に使い、面談は2ターン目まで残す。 */
+    function playerBasicDeletions(observation,deleteMax,objective) {
+        if(config.playerBasicScope==='opening'&&observation.turn>=2)return deletions(observation,deleteMax,'aggressive',objective);
+        const isBasic=card=>card.rarity==='N'&&Number(card.cardNo)>=1&&Number(card.cardNo)<=5;
+        const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
+        let owned=[...observation.owned];const removed=[];
+        while(removed.length<deleteMax) {
+            // 基本5枚を消し終えた後の残り枠は、既存の積極削除へ戻す。
+            if(!owned.some(isBasic))return [...removed,...deletions({...observation,owned},deleteMax-removed.length,'aggressive',objective)];
+            const order=observation.turn===0?[3,1,2]:observation.turn===1?[4,3,1,2]:[5,1,2,3,4];
+            let chosen=null;
+            for(const no of order) {
+                const index=owned.findIndex(card=>isBasic(card)&&Number(card.cardNo)===no);
+                if(index<0)continue;
+                const after=[...owned];after.splice(index,1);
+                const evaluated=deckValue(next,after,objective);
+                // 既定は現在値も15以上。別仮説では、公開デッキの投影だけで判断する。
+                if(no===5&&(config.playerBasicAccounting!=='forecast'&&observation.stats.accounting<15||evaluated.forecast.end.accounting<15))continue;
+                chosen={index,cardNo:owned[index].cardNo,gain:evaluated.score-deckValue(next,owned,objective).score,after:evaluated.forecast.end,rule:'player-basic'};
+                break;
+            }
+            // 経理札などを保留しても、基本以外を代わりに消すことはしない。
+            if(!chosen)break;
+            removed.push(chosen);owned.splice(chosen.index,1);
+        }
+        return removed;
+    }
     /** 1回の会議の削除順を評価。取得・配置とは独立して切り替える。 */
     function deletions(observation,deleteMax,mode,objective='median') {
         if(mode==='rollout')return riskPolicy.deletions(observation,deleteMax);
         if(mode==='learned')return learnedPolicy.deletions(observation,deleteMax);
         if(mode==='off'||observation.turn>=observation.totalTurns-1)return [];
+        if(mode==='player-basic')return playerBasicDeletions(observation,deleteMax,objective);
         const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
         let owned=[...observation.owned];const removed=[];
         for(let k=0;k<deleteMax&&owned.length>(config.deleteFloor??5);k++) {
@@ -211,7 +244,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return removed;
     }
-    const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
+    const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,shortfall:learnedPolicy.shortfall(ob,phase),failure:learnedPolicy.failure(ob,phase),forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     const opening=openingTable?createOpeningTablePolicy({table:openingTable,catalog,refreshCost:config.openingRefreshCost??0}):null;

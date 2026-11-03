@@ -1,0 +1,60 @@
+{
+  "createdAt": "2026-11-03T04:54:16.964Z",
+  "purpose": "少数のブラウザ接続と全8配置の技術確認。得点から強さの傾向は主張しない。",
+  "fingerprints": {
+    "strategyVersion": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "configPath": "solver/research-scenarios/ahiru-pro-failure-configs.json",
+  "configSha256": "c64165edf7ceba1612017a7abc4110c48b120ecc044586a248271c411c3ccdd1",
+  "checks": [
+    {
+      "id": "legacy-zero",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "e09772088f1279f8aba71dc8511f4f5036aeb78a1dbf50d0990de19a50d82020",
+      "output": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/legacy-zero.json",
+      "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+    },
+    {
+      "id": "baseline",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "2ad028dd82a41068ebb89cba014f9d04ff005942b4f89626f3abe73281216681",
+      "output": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/baseline.json",
+      "modelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+    },
+    {
+      "id": "failure5",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "db73d32cb29836898697c1aacb99d78100501a95750b85694385081573ed049b",
+      "output": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/failure5.json",
+      "modelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+    },
+    {
+      "id": "failure15",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "151725ea9c837227085af60f7218d207a1b77bc9242fd660407f988fdba18ab8",
+      "output": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/failure15.json",
+      "modelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+    },
+    {
+      "id": "failure5-refresh",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "67bca77331d942cc13c5344d0572b07f4b10d24db9eb5d3cf1205e4b64124570",
+      "output": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/failure5-refresh.json",
+      "modelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+    }
+  ],
+  "zeroWeightTraceMatchesLegacy": true
+}

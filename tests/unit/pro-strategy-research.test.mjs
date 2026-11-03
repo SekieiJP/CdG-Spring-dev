@@ -348,3 +348,156 @@ test('学習リフレッシュの判断がある場合は使わない固定式�
  make('learned',null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
  calls.length=0;make(true,null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
 });
+
+
+function constantShortfallModel(value=2){
+ const mean={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:13,learningRate:1,trees:[]};
+ return {...mean,shortfallHead:{...mean,base:value,targetKind:'pro-shortfall9'}};
+}
+test('低得点損失を追加しても平均予測を変えず、負の損失予測を0にする',()=>{
+ const model=constantShortfallModel(),{strategy,observe}=setup({},model),o=observe();
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(o,key,{get(){throw Error('private');}});
+ assert.equal(strategy.learnedPolicy.estimate(o,'after-action'),13);assert.equal(strategy.learnedPolicy.shortfall(o,'after-action'),2);
+ const negative=setup({},constantShortfallModel(-2));assert.equal(negative.strategy.learnedPolicy.shortfall(negative.observe(),'after-action'),0);
+ const plain=setup({}, {...model,shortfallHead:undefined});assert.equal(plain.strategy.learnedPolicy.estimate(plain.observe(),'after-action'),13);assert.equal(plain.strategy.learnedPolicy.shortfall(plain.observe(),'after-action'),0);
+ assert.throws(()=>setup({planning:{valueHorizon:1,shortfallWeight:1}}, {...model,shortfallHead:undefined}),/損失モデル/);
+ assert.throws(()=>setup({planning:{shortfallWeight:NaN}}),/0〜8/);
+});
+test('同じ平均予測でも、学習末端の低得点損失を係数通りに減点する',()=>{
+ const config={planning:{worlds:2,valueHorizon:1,futurePolicy:'baseline',futureBeam:8}},a=setup(config,constantShortfallModel()),b=setup({...config,planning:{...config.planning,shortfallWeight:3}},constantShortfallModel());
+ const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+ assert.equal(x.mean,13);assert.equal(y.mean,13);assert.ok(Math.abs(x.score-y.score-6)<1e-9);assert.deepEqual(x.forecast,y.forecast);
+});
+test('実結果の8点も損失側へ含め、9点では損失減点を足さない',()=>{
+ for(const [stats,points]of [[{experience:40,enrollment:26,satisfaction:15,accounting:14},8],[{experience:35,enrollment:26,satisfaction:15,accounting:15},9]]){
+  const a=setup({planning:{shortfallWeight:0}},constantShortfallModel()),b=setup({planning:{shortfallWeight:3}},constantShortfallModel());
+  a.state.turn=7;b.state.turn=7;Object.assign(a.state.player,stats);Object.assign(b.state.player,stats);assert.equal(sm.calculateScore(a.state).points,points);
+  const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+  assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-3*Math.max(0,9-points))<1e-9);
+ }
+});
+
+
+function constantFailureModel(value=.2){
+ const mean={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:13,learningRate:1,trees:[]};
+ return {...mean,failureHead:{...mean,base:value,targetKind:'pro-failure8'}};
+}
+test('低得点頻度を足しても平均を変えず、頻度を0〜1へ制限し、非公開情報を読まない',()=>{
+ const model=constantFailureModel(),{strategy,observe}=setup({},model),o=observe();
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(o,key,{get(){throw Error('private');}});
+ assert.equal(strategy.learnedPolicy.estimate(o,'after-action'),13);assert.equal(strategy.learnedPolicy.failure(o,'after-action'),.2);
+ for(const [raw,expected]of [[-2,0],[2,1]]){const p=setup({},constantFailureModel(raw));assert.equal(p.strategy.learnedPolicy.failure(p.observe(),'after-action'),expected);assert.equal(p.strategy.learnedPolicy.estimate(p.observe(),'after-action'),13);}
+ const plain=setup({}, {...model,failureHead:undefined});assert.equal(plain.strategy.learnedPolicy.failure(plain.observe(),'after-action'),0);
+ assert.throws(()=>setup({planning:{failureWeight:5}}, {...model,failureHead:undefined}),/頻度モデル/);
+ assert.throws(()=>setup({planning:{failureWeight:5}}, {...model,failureHead:{...model.failureHead,targetKind:'pro-shortfall9'}}),/頻度モデル/);
+ assert.throws(()=>setup({planning:{failureWeight:NaN}}),/0〜40/);
+});
+test('学習末端の頻度は係数通りに減点し、平均と予測数値を変えない',()=>{
+ const config={planning:{worlds:2,valueHorizon:1,futurePolicy:'baseline',futureBeam:8}},a=setup(config,constantFailureModel()),b=setup({...config,planning:{...config.planning,failureWeight:5}},constantFailureModel());
+ const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+ assert.equal(x.mean,13);assert.equal(y.mean,13);assert.ok(Math.abs(x.score-y.score-1)<1e-9);assert.deepEqual(x.forecast,y.forecast);
+});
+test('実結果の8点と大きな失点を同じ1件として減点し、9点は減点しない',()=>{
+ for(const stats of [{experience:40,enrollment:26,satisfaction:15,accounting:14},{experience:35,enrollment:26,satisfaction:15,accounting:15},{experience:0,enrollment:0,satisfaction:3,accounting:5}]){
+  const a=setup({planning:{failureWeight:0}},constantFailureModel()),b=setup({planning:{failureWeight:5}},constantFailureModel());
+  a.state.turn=7;b.state.turn=7;Object.assign(a.state.player,stats);Object.assign(b.state.player,stats);const points=sm.calculateScore(a.state).points;
+  const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+  assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-5*Number(points<=8))<1e-9);
+ }
+});
+
+
+test('取得/リフレッシュ用の頻度評価は平均予測を維持し、同じ平均なら危険が低い取得を選ぶ',()=>{
+ const model=constantFailureModel(0);model.failureHead.trees=[{feature:VALUE_FEATURES.indexOf('count-9'),threshold:.5,left:{value:.4},right:{value:.05}}];
+ const a=setup({learned:{blend:0}},model),b=setup({learned:{blend:0,acquisitionFailureWeight:5}},model);a.state.turn=3;b.state.turn=3;
+ const before=a.strategy.learnedPolicy.acquisition(a.observe([card(6),card(9)],{pickCount:1})),after=b.strategy.learnedPolicy.acquisition(b.observe([card(6),card(9)],{pickCount:1}));
+ assert.deepEqual(before.recommended.indices,[0]);assert.deepEqual(after.recommended.indices,[1]);assert.equal(after.recommended.predictedScore,13);assert.equal(after.recommended.score,12.75);
+ for(const options of [{learned:{acquisitionFailureWeight:5}},{learned:{acquisitionFailureWeight:NaN}}])assert.throws(()=>setup(options,{...model,failureHead:undefined}));
+});
+test('取得と同じ頻度評価をリフレッシュの候補全体にも使い、実乱数や未来を読まない',()=>{
+ const model=constantFailureModel(0);model.failureHead.trees=[{feature:VALUE_FEATURES.indexOf('count-9'),threshold:.5,left:{value:.4},right:{value:.05}}];
+ const zero=setup({learned:{blend:0,refreshCost:0,reserveCost:0}},model),risk=setup({learned:{blend:0,refreshCost:0,reserveCost:0,acquisitionFailureWeight:5}},model);
+ const a=zero.observe([card(6),card(7),card(8)],{pickCount:1}),b=risk.observe([card(6),card(7),card(8)],{pickCount:1});a.refreshRemaining=2;b.refreshRemaining=2;
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(b,key,{get(){throw Error('private');}});
+ const old=zero.strategy.learnedPolicy.refresh(a,'R',3,1),next=risk.strategy.learnedPolicy.refresh(b,'R',3,1);assert.equal(old.shouldRefresh,false);assert.equal(next.shouldRefresh,true);assert.equal(next.currentScore,11);assert.ok(next.expectedScore>next.currentScore);assert.equal(next.opportunityCost,0);
+});
+
+test('報告削除は初回に質問対応、2ターン目に生徒面談を優先し、観測を変えない',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});for(const n of [7,17])state.addToDeck({...card(n)});
+ const ob=observe(),snapshot=JSON.stringify(ob);
+ for(const key of ['seed','rng','deckOrder','trainingDecks','result'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[3]);assert.equal(JSON.stringify(ob),snapshot);
+ state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);state.turn=1;
+ assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[4]);
+});
+test('報告削除の初回追加枠は基本動員札に使い、面談と経理札を翌日以降まで残す',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});for(const n of [7,17])state.addToDeck({...card(n)});state.player.accounting=40;
+ assert.deepEqual(strategy.deletions(observe(),10,'player-basic','engine').map(d=>Number(d.cardNo)),[3,1,2]);
+ state.turn=1;state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);
+ assert.deepEqual(strategy.deletions(observe(),10,'player-basic','engine').map(d=>Number(d.cardNo)),[4,1,2]);
+});
+test('経理の現在値が15未満なら投影が順調でも経理基本を残し、動員基本を消す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=14;state.player.deck=[];for(const n of [1,2,5,16,37])state.addToDeck({...card(n)});
+ const ob=observe(),without=ob.owned.filter(c=>Number(c.cardNo)!==5);
+ assert(strategy.forecast({...ob,turn:3},without,'engine').end.accounting>=15);
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[1]);
+});
+test('経理が現在15でも削除後の投影が15未満なら経理基本を残す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=15;state.player.deck=[];for(const n of [1,2,5,43,50])state.addToDeck({...card(n)});
+ const ob=observe(),without=ob.owned.filter(c=>Number(c.cardNo)!==5);
+ assert(strategy.forecast({...ob,turn:3},without,'engine').end.accounting<15);
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[1]);
+});
+test('3ターン目以降に現在/削除後の投影がともに15以上なら経理基本を先に消す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=15;state.player.deck=[];for(const n of [1,2,5,16,37])state.addToDeck({...card(n)});
+ assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[5]);
+});
+test('経理基本だけが保留なら他のカードを代わりに消さず、最終/削除枠0でも消さない',()=>{
+ const {state,strategy,observe}=setup();state.turn=3;state.player.accounting=10;state.player.deck=[];for(const n of [5,6,7,10,15,17,31])state.addToDeck({...card(n)});
+ assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+ assert.deepEqual(strategy.deletions(observe(),0,'player-basic','engine'),[]);
+ state.turn=7;assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+});
+test('基本5枚がなくなった後の残り削除枠は既存の積極削除と一致する',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});state.turn=3;state.player.deck=[];for(const n of [1,6,7,10,15,17,31,42])state.addToDeck({...card(n)});
+ const ob=observe(),after={...ob,owned:ob.owned.filter(c=>Number(c.cardNo)!==1)};
+ const actual=strategy.deletions(ob,3,'player-basic','engine'),rest=strategy.deletions(after,2,'aggressive','engine');
+ assert.equal(Number(actual[0].cardNo),1);assert.deepEqual(actual.slice(1),rest);
+ assert.deepEqual(strategy.deletions(after,3,'player-basic','engine'),strategy.deletions(after,3,'aggressive','engine'));
+});
+test('報告の基本削除に既存の保持枚数下限を混ぜない',()=>{
+ const {strategy,observe}=setup({deleteFloor:12});assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[3]);
+});
+test('仮想将来の削除は既定の積極削除を維持し、明示時だけ報告方針を使う',()=>{
+ const {state,strategy,observe,tm,clone,enumerate}=setup({},tinyModel('count-5'));const ob=observe(),calls=[];
+ const make=futureDeletion=>createRiskPolicy({baseline:{...strategy,deletions:(o,max,mode)=>{calls.push(mode);return [];}},score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config:{planning:{worlds:1,valueHorizon:1,futurePolicy:'baseline',futureBeam:8,...(futureDeletion?{futureDeletion}:{})}}});
+ make().evaluate(ob,ob.owned,clone(state),'after-action');assert(calls.length>0);assert(calls.every(mode=>mode==='aggressive'));
+ calls.length=0;make('player-basic').evaluate(ob,ob.owned,clone(state),'after-action');assert(calls.length>0);assert(calls.every(mode=>mode==='player-basic'));
+ assert.throws(()=>make('unknown'),/将来の削除方針/);
+});
+
+test('経理条件を投影だけにする仮説は現在15未満でも回復が見込めれば基本経理を消す',()=>{
+ const prepare=config=>{const s=setup(config);s.state.turn=2;s.state.player.accounting=14;s.state.player.deck=[];for(const n of [1,2,5,16,37])s.state.addToDeck({...card(n)});return s;};
+ const strict=prepare({}),projected=prepare({playerBasicAccounting:'forecast'});
+ assert.equal(Number(strict.strategy.deletions(strict.observe(),1,'player-basic','engine')[0].cardNo),1);
+ const ob=projected.observe(),snapshot=JSON.stringify(ob);for(const key of ['seed','rng','deckOrder','result'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ assert.equal(Number(projected.strategy.deletions(ob,1,'player-basic','engine')[0].cardNo),5);assert.equal(JSON.stringify(ob),snapshot);
+ projected.state.player.deck=projected.state.player.deck.filter(c=>![16,37].includes(Number(c.cardNo)));projected.state.player.accounting=10;
+ assert.equal(Number(projected.strategy.deletions(projected.observe(),1,'player-basic','engine')[0].cardNo),1);
+});
+test('初回2回だけ固定する仮説は3ターン目以降を従来の積極削除へ戻す',()=>{
+ const {state,strategy,observe}=setup({playerBasicScope:'opening'});state.turn=3;state.player.accounting=10;state.player.deck=[];for(const n of [5,6,7,10,15,17,31])state.addToDeck({...card(n)});
+ const ob=observe(),expected=strategy.deletions(ob,3,'aggressive','engine');assert(expected.length>0);assert.deepEqual(strategy.deletions(ob,3,'player-basic','engine'),expected);
+ state.turn=7;assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+});
+test('別の経理条件や初回だけの範囲でも最初の2会議の順序と保留を守る',()=>{
+ for(const config of [{playerBasicAccounting:'forecast'},{playerBasicScope:'opening'},{playerBasicScope:'opening',playerBasicAccounting:'forecast'}]){
+  const {state,strategy,observe}=setup(config);state.player.accounting=40;
+  assert.deepEqual(strategy.deletions(observe(),9,'player-basic','engine').map(d=>Number(d.cardNo)),[3,1,2]);
+  state.turn=1;state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);
+  assert.deepEqual(strategy.deletions(observe(),9,'player-basic','engine').map(d=>Number(d.cardNo)),[4,1,2]);
+ }
+});
+test('報告削除の未知の範囲や経理条件を拒否する',()=>{
+ assert.throws(()=>setup({playerBasicScope:'unknown'}),/範囲/);assert.throws(()=>setup({playerBasicAccounting:'current'}),/経理条件/);
+});
