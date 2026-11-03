@@ -405,3 +405,19 @@ test('実結果の8点と大きな失点を同じ1件として減点し、9点�
   assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-5*Number(points<=8))<1e-9);
  }
 });
+
+
+test('取得/リフレッシュ用の頻度評価は平均予測を維持し、同じ平均なら危険が低い取得を選ぶ',()=>{
+ const model=constantFailureModel(0);model.failureHead.trees=[{feature:VALUE_FEATURES.indexOf('count-9'),threshold:.5,left:{value:.4},right:{value:.05}}];
+ const a=setup({learned:{blend:0}},model),b=setup({learned:{blend:0,acquisitionFailureWeight:5}},model);a.state.turn=3;b.state.turn=3;
+ const before=a.strategy.learnedPolicy.acquisition(a.observe([card(6),card(9)],{pickCount:1})),after=b.strategy.learnedPolicy.acquisition(b.observe([card(6),card(9)],{pickCount:1}));
+ assert.deepEqual(before.recommended.indices,[0]);assert.deepEqual(after.recommended.indices,[1]);assert.equal(after.recommended.predictedScore,13);assert.equal(after.recommended.score,12.75);
+ for(const options of [{learned:{acquisitionFailureWeight:5}},{learned:{acquisitionFailureWeight:NaN}}])assert.throws(()=>setup(options,{...model,failureHead:undefined}));
+});
+test('取得と同じ頻度評価をリフレッシュの候補全体にも使い、実乱数や未来を読まない',()=>{
+ const model=constantFailureModel(0);model.failureHead.trees=[{feature:VALUE_FEATURES.indexOf('count-9'),threshold:.5,left:{value:.4},right:{value:.05}}];
+ const zero=setup({learned:{blend:0,refreshCost:0,reserveCost:0}},model),risk=setup({learned:{blend:0,refreshCost:0,reserveCost:0,acquisitionFailureWeight:5}},model);
+ const a=zero.observe([card(6),card(7),card(8)],{pickCount:1}),b=risk.observe([card(6),card(7),card(8)],{pickCount:1});a.refreshRemaining=2;b.refreshRemaining=2;
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(b,key,{get(){throw Error('private');}});
+ const old=zero.strategy.learnedPolicy.refresh(a,'R',3,1),next=risk.strategy.learnedPolicy.refresh(b,'R',3,1);assert.equal(old.shouldRefresh,false);assert.equal(next.shouldRefresh,true);assert.equal(next.currentScore,11);assert.ok(next.expectedScore>next.currentScore);assert.equal(next.opportunityCost,0);
+});

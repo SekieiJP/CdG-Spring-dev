@@ -1,3 +1,4 @@
+import {hasCompatibleRiskHead} from './pro-value-model.js';
 import {createOpeningTablePolicy} from './pro-opening-table.js';
 import {createRiskPolicy} from './pro-risk-research.js';
 import {createPublicActionKernel} from './pro-public-action-kernel.js';
@@ -55,8 +56,8 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null,openingTable=null}) {
     if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
-    if(config.planning?.shortfallWeight>0&&(!valueModel?.shortfallHead||valueModel.shortfallHead.targetKind!=='pro-shortfall9'||valueModel.shortfallHead.schema!==valueModel.schema||valueModel.shortfallHead.features?.join('|')!==valueModel.features?.join('|')))throw Error('損失係数には互換な低得点損失モデルが必要');
-    if(config.planning?.failureWeight>0&&(!valueModel?.failureHead||valueModel.failureHead.targetKind!=='pro-failure8'||valueModel.failureHead.schema!==valueModel.schema||valueModel.failureHead.features?.join('|')!==valueModel.features?.join('|')))throw Error('頻度係数には互換な低得点頻度モデルが必要');
+    if(config.planning?.shortfallWeight>0&&!hasCompatibleRiskHead(valueModel,'pro-shortfall9'))throw Error('損失係数には互換な低得点損失モデルが必要');
+    if((config.planning?.failureWeight>0||config.learned?.acquisitionFailureWeight>0)&&!hasCompatibleRiskHead(valueModel,'pro-failure8'))throw Error('頻度係数には互換な低得点頻度モデルが必要');
     if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
     if(config.placementRolloutTurns!==undefined&&(!Number.isInteger(config.placementRolloutTurns)||config.placementRolloutTurns<2||config.placementRolloutTurns>8))throw Error('配置の先読み範囲は残り2〜8ターン');
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
