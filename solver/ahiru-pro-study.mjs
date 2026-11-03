@@ -16,12 +16,13 @@ async function main(){
  const actorHash=async()=>sha(Buffer.concat(await Promise.all(ACTOR_FILES.map(f=>readFile(f))))),sources=await Promise.all((await readdir('game/js')).filter(f=>f.endsWith('.js')).sort().map(async f=>f+await readFile(`game/js/${f}`,'utf8')));
  const fingerprints={strategyVersion:await actorHash(),codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
  const root=`solver/local-runs/pro-mean125/${stage}`,jobs=[],runs=[];await mkdir(root,{recursive:true});
- for(const id of ids){const config={id,...configs[id]},modelSha=sha(await readFile(config.valueModelPath));if(config.valueModelSha256&&config.valueModelSha256!==modelSha)throw Error('固定されたモデルSHAと異なる');config.valueModelSha256=modelSha;const configPath=`${root}/${id}-config.json`;await writeFile(configPath,JSON.stringify(config,null,2)+'\n');const files=[];
+ for(const id of ids){const config={id,...configs[id]},modelSha=sha(await readFile(config.valueModelPath));if(config.valueModelSha256&&config.valueModelSha256!==modelSha)throw Error('固定されたモデルSHAと異なる');config.valueModelSha256=modelSha;const configPath=`${root}/${id}-config.json`;const files=[];
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;files.push(path.resolve(output));jobs.push({id,b,output,config,configPath});}runs.push({id,config,files});
  }
  const manifest={stage,n,phase:n!==250?'validation':'development',seed,fingerprints,actorFiles:ACTOR_FILES,requirement:'all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%',configFile,configSha256:sha(await readFile(configFile)),runs};
  const manifestPath=`${root}/manifest.json`;
  if(process.argv.includes('--resume')){const old=JSON.parse(await readFile(manifestPath));if(JSON.stringify(old)!==JSON.stringify(manifest))throw Error('再開条件が元の固定計画と異なる');}else{try{await readFile(manifestPath);throw Error('既存の実行がある。変更せず --resume で監査して再開する');}catch(e){if(e.code!=='ENOENT')throw e;}}
+ for(const run of runs)await writeFile(`${root}/${run.id}-config.json`,JSON.stringify(run.config,null,2)+'\n');
  await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n');let next=0,done=0;
  async function worker(w){while(next<jobs.length){const j=jobs[next++],started=Date.now();
   if(await actorHash()!==fingerprints.strategyVersion||sha(await readFile(j.config.valueModelPath))!==j.config.valueModelSha256||sha(await readFile(configFile))!==manifest.configSha256)throw Error('固定した方略・モデル・設定が変わった');

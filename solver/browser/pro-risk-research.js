@@ -1,6 +1,6 @@
 import {selectActionCandidates} from './pro-action-candidates.js';
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
-export const RISK_VERSION='pro-public-rollout-v4';
+export const RISK_VERSION='pro-public-rollout-v5';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
 function rng(text){let n=2166136261;for(const c of text)n=Math.imul(n^c.charCodeAt(0),16777619);return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
@@ -18,7 +18,8 @@ export function planningOutcomeScore(outcomes,{tailMeanWeight=0,tailFraction=.25
  return utility-tailMeanWeight*(mean(values)-mean(lower));
 }
 export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],config={},refreshAdvice=null}){
- const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,riskFloor:8,tailMeanWeight:0,tailFraction:.25,smooth:.12,salt:'pro-risk-v1',...config.planning};
+ const cfg={worlds:16,realBeam:96,rolloutBeam:8,actionCandidates:8,tailPenalty:0,shortfallWeight:0,riskFloor:8,tailMeanWeight:0,tailFraction:.25,smooth:.12,salt:'pro-risk-v1',...config.planning};
+ if(!Number.isFinite(cfg.shortfallWeight)||cfg.shortfallWeight<0||cfg.shortfallWeight>8)throw Error('低得点損失の係数は0〜8');
  if(!Number.isFinite(cfg.riskFloor)||cfg.riskFloor<0||cfg.riskFloor>16||!Number.isFinite(cfg.tailPenalty)||cfg.tailPenalty<0||cfg.tailPenalty>8||!Number.isFinite(cfg.tailMeanWeight)||cfg.tailMeanWeight<0||cfg.tailMeanWeight>2||!Number.isFinite(cfg.tailFraction)||cfg.tailFraction<=0||cfg.tailFraction>1)throw Error('下側評価の条件が不正');
  if(cfg.valueHorizon!==undefined&&(!Number.isInteger(cfg.valueHorizon)||cfg.valueHorizon<1||cfg.valueHorizon>8||!baseline.futureValue))throw Error('固定評価までの先読みは1〜8ターン');
  if(cfg.candidateDiversity!==undefined&&cfg.candidateDiversity!=='axes')throw Error('配置候補の分散方式はaxes');
@@ -41,7 +42,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    if(transitionCache.size>60000)transitionCache.clear();transitionCache.set(key,saved);}
   if(!saved.applied)return null;const next=cloneState(state);next.player={...saved.stats};next.tokens={...saved.tokens};return next;
  }
- function endpointUtility(stats,table){const g=score(stats,table);return g.points+cfg.smooth*g.smoothPoints-cfg.tailPenalty*Math.max(0,cfg.riskFloor-g.points);}
+ function endpointUtility(stats,table){const g=score(stats,table);return g.points+cfg.smooth*g.smoothPoints-cfg.tailPenalty*Math.max(0,cfg.riskFloor-g.points)-cfg.shortfallWeight*Math.max(0,9-g.points);}
  function plan(observation,hand,state,width=cfg.rolloutBeam,count=1){
   const remaining=observation.totalTurns-state.turn;
   const forecast=remaining>1?baseline.forecast({...observation,turn:state.turn+1},observation.owned,'engine').end:state.player;
@@ -130,7 +131,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
    const ob=observe(root,state,cards);
    if(cfg.futurePolicy==='baseline'){const seq=baseline.placements(ob,hand,state,'engine',cfg.futureBeam||64,true);for(const step of seq){const next=transition(state,hand[step.cardIndex],step.slot);if(next)state=next;}}
    else {const best=plan(ob,hand,state)[0];if(best)state=best.state;}
-   if(++played>=cfg.valueHorizon&&state.turn<root.totalTurns-1){const ob={...observe(root,state,cards,pool.history),refreshRemaining:pool.refreshRemaining},leaf=baseline.futureValue(ob,'after-action');return {score:leaf.mean,utility:leaf.mean+(cfg.leafBlend??.002)*leaf.tie-cfg.tailPenalty*Math.max(0,cfg.riskFloor-leaf.mean),stats:leaf.forecast,estimated:true};}
+   if(++played>=cfg.valueHorizon&&state.turn<root.totalTurns-1){const ob={...observe(root,state,cards,pool.history),refreshRemaining:pool.refreshRemaining},leaf=baseline.futureValue(ob,'after-action');if(cfg.shortfallWeight&&(!Number.isFinite(leaf.shortfall)||leaf.shortfall<0))throw Error('末端の低得点損失が不正');const loss=cfg.shortfallWeight?cfg.shortfallWeight*leaf.shortfall:0;return {score:leaf.mean,utility:leaf.mean+(cfg.leafBlend??.002)*leaf.tie-cfg.tailPenalty*Math.max(0,cfg.riskFloor-leaf.mean)-loss,stats:leaf.forecast,estimated:true};}
    if(state.turn<root.totalTurns-1)cards=deleteFuture(root,state,cards,(root.turns[state.turn].deletion||0)+(state.tokens.organize||0));
    state.tokens.organize=0;
   }

@@ -348,3 +348,31 @@ test('学習リフレッシュの判断がある場合は使わない固定式�
  make('learned',null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
  calls.length=0;make(true,null).evaluate(ob,ob.owned,clone(state),'after-action');assert.equal(calls.length,2);
 });
+
+
+function constantShortfallModel(value=2){
+ const mean={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:13,learningRate:1,trees:[]};
+ return {...mean,shortfallHead:{...mean,base:value,targetKind:'pro-shortfall9'}};
+}
+test('低得点損失を追加しても平均予測を変えず、負の損失予測を0にする',()=>{
+ const model=constantShortfallModel(),{strategy,observe}=setup({},model),o=observe();
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(o,key,{get(){throw Error('private');}});
+ assert.equal(strategy.learnedPolicy.estimate(o,'after-action'),13);assert.equal(strategy.learnedPolicy.shortfall(o,'after-action'),2);
+ const negative=setup({},constantShortfallModel(-2));assert.equal(negative.strategy.learnedPolicy.shortfall(negative.observe(),'after-action'),0);
+ const plain=setup({}, {...model,shortfallHead:undefined});assert.equal(plain.strategy.learnedPolicy.estimate(plain.observe(),'after-action'),13);assert.equal(plain.strategy.learnedPolicy.shortfall(plain.observe(),'after-action'),0);
+ assert.throws(()=>setup({planning:{valueHorizon:1,shortfallWeight:1}}, {...model,shortfallHead:undefined}),/損失モデル/);
+ assert.throws(()=>setup({planning:{shortfallWeight:NaN}}),/0〜8/);
+});
+test('同じ平均予測でも、学習末端の低得点損失を係数通りに減点する',()=>{
+ const config={planning:{worlds:2,valueHorizon:1,futurePolicy:'baseline',futureBeam:8}},a=setup(config,constantShortfallModel()),b=setup({...config,planning:{...config.planning,shortfallWeight:3}},constantShortfallModel());
+ const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+ assert.equal(x.mean,13);assert.equal(y.mean,13);assert.ok(Math.abs(x.score-y.score-6)<1e-9);assert.deepEqual(x.forecast,y.forecast);
+});
+test('実結果の8点も損失側へ含め、9点では損失減点を足さない',()=>{
+ for(const [stats,points]of [[{experience:40,enrollment:26,satisfaction:15,accounting:14},8],[{experience:35,enrollment:26,satisfaction:15,accounting:15},9]]){
+  const a=setup({planning:{shortfallWeight:0}},constantShortfallModel()),b=setup({planning:{shortfallWeight:3}},constantShortfallModel());
+  a.state.turn=7;b.state.turn=7;Object.assign(a.state.player,stats);Object.assign(b.state.player,stats);assert.equal(sm.calculateScore(a.state).points,points);
+  const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+  assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-3*Math.max(0,9-points))<1e-9);
+ }
+});

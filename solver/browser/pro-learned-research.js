@@ -12,10 +12,19 @@ export function remainingTrainingNames(catalog,history,rarity){
 export function createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model,catalog=[],config={}}){
  const valueForecast=createValueForecaster(projectDeck);
  const settings={blend:.005,beam:72,minDeleteGain:.01,...config.learned},cache=new Map();
- function estimate(observation,phase){
+ function estimates(observation,phase){
   const key=JSON.stringify([phase,observation.turn,KEYS.map(k=>observation.stats[k]),observation.tokens,observation.owned.map(c=>c.cardNo).sort((a,b)=>a-b),observation.refreshRemaining,observation.offerHistory]);
-  if(!cache.has(key)){if(cache.size>40000)cache.clear();cache.set(key,predictValue(model,encodeValueFeatures(observation,phase,{forecast:valueForecast,score})));}return cache.get(key);
+  if(!cache.has(key)){
+   if(cache.size>40000)cache.clear();
+   const features=encodeValueFeatures(observation,phase,{forecast:valueForecast,score});
+   const mean=predictValue(model,features),shortfall=model.shortfallHead?Math.max(0,predictValue(model.shortfallHead,features)):0;
+   if(!Number.isFinite(mean)||!Number.isFinite(shortfall))throw Error('固定予測が有限値ではない');
+   cache.set(key,{mean,shortfall});
+  }
+  return cache.get(key);
  }
+ const estimate=(observation,phase)=>estimates(observation,phase).mean;
+ const shortfall=(observation,phase)=>estimates(observation,phase).shortfall;
  function acquisition(observation){
   const root=publicValueObservation(observation),candidates=observation.candidates,n=candidates.length,indices=[];
   if(observation.pickCount===2)for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)indices.push([i,j]);else for(let i=0;i<n;i++)indices.push([i]);if(observation.allowSkip)indices.push([]);
@@ -77,5 +86,5 @@ export function createLearnedPolicy({baseline,projectDeck,score,cloneState,resol
   return {shouldRefresh:expected-current>cost,currentScore:current,expectedScore:expected,gain:expected-current,opportunityCost:cost,poolCount:pool.length,combinations,
    method:'既知の残り種類から異なる候補集合を列挙。途中でプールが尽きる候補提示は先頭の残り種類までで近似。'};
  }
- return {acquisition,placements,deletions,estimate,refresh,settings};
+ return {acquisition,placements,deletions,estimate,shortfall,refresh,settings};
 }

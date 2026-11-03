@@ -55,6 +55,7 @@ export function targetRoutes(rankTable, target=15) {
 
 export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,resolve,enumerateOptions,catalog=[],turns=null,publicActionParser=null,config={},refreshAdvice=null,valueModel=null,openingTable=null}) {
     if(config.planning?.valueHorizon&&!valueModel)throw Error('学習済みの固定評価が必要');
+    if(config.planning?.shortfallWeight>0&&(!valueModel?.shortfallHead||valueModel.shortfallHead.targetKind!=='pro-shortfall9'||valueModel.shortfallHead.schema!==valueModel.schema||valueModel.shortfallHead.features?.join('|')!==valueModel.features?.join('|')))throw Error('損失係数には互換な低得点損失モデルが必要');
     if(config.fastPublicActions){if(!turns||!publicActionParser)throw Error('公開効果の適用器とターン設定が必要');resolve=createPublicActionKernel(turns,publicActionParser);}
     if(config.placementRolloutTurns!==undefined&&(!Number.isInteger(config.placementRolloutTurns)||config.placementRolloutTurns<2||config.placementRolloutTurns>8))throw Error('配置の先読み範囲は残り2〜8ターン');
     if(config.targetScore!==undefined&&(!Number.isInteger(config.targetScore)||config.targetScore<1||config.targetScore>16))throw Error('目標経路は1〜16点');
@@ -211,7 +212,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return removed;
     }
-    const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
+    const baseline={acquisition,placements,deletions,value,forecast,activationValue,futureRefresh:(...args)=>learnedPolicy.refresh(...args),futureValue:(ob,phase)=>{const predictedScore=learnedPolicy.estimate(ob,phase),next=phase==='after-action'?{...ob,turn:ob.turn+1}:ob,f=forecast(next,next.owned,'engine');return {mean:predictedScore,shortfall:learnedPolicy.shortfall(ob,phase),forecast:f.end,tie:value(f.end,next,'engine')+f.engine*8-f.risk*.8+activationValue(ob,ob.stats)};}};
     const riskPolicy=createRiskPolicy({baseline,score,cloneState,resolve,enumerateOptions,catalog,config,refreshAdvice});
     const learnedPolicy=valueModel?createLearnedPolicy({baseline,projectDeck,score,cloneState,resolve,enumerateOptions,model:valueModel,catalog,config}):null;
     const opening=openingTable?createOpeningTablePolicy({table:openingTable,catalog,refreshCost:config.openingRefreshCost??0}):null;
