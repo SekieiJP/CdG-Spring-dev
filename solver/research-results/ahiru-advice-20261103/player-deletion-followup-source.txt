@@ -1,0 +1,40 @@
+import fs from 'node:fs/promises';import crypto from 'node:crypto';import assert from 'node:assert/strict';import {spawn,execFileSync} from 'node:child_process';
+const root='/private/tmp/cdg-pro-player-deletion';process.chdir(root);
+const pid=37673,stage='ahiru-player-deletion-development-v1-20261103',nextStage='ahiru-stability-validation-v4-20261103',seed='ahiru-pro-ahiru-stability-validation-v4-20261103';
+const results='solver/research-results/ahiru-advice-20261103',rawRoot='solver/local-runs/pro-mean125',manifestFile=`${rawRoot}/${stage}/manifest.json`;
+const metrics=`${results}/player-deletion-development.json`,executionAudit=`${results}/player-deletion-execution-audit.json`,selection=`${results}/player-deletion-validation-selection.json`,validationMetrics=`${results}/stability-validation-v4.json`,validationAudit=`${results}/player-deletion-validation-execution-audit.json`;
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');const json=async p=>JSON.parse(await fs.readFile(p));
+const manifest=await json(manifestFile),technical=await json(`${results}/player-deletion-technical.json`);
+assert.equal(manifest.n,250);assert.equal(manifest.phase,'development');assert.deepEqual(manifest.runs.map(r=>r.id),['baseline','player-basic','player-basic-consistent']);assert.deepEqual(manifest.fingerprints,technical.fingerprints);assert.equal(manifest.configSha256,technical.configSha256);assert.equal(seed,technical.reservedValidation.seed);assert.equal(technical.modelTrainingAudit.overlapWithReservedValidation,0);
+const identity=()=>{try{return execFileSync('/bin/ps',['-p',String(pid),'-o','lstart=,command='],{encoding:'utf8'}).trim();}catch(e){if(e.status===1)return null;throw e;}};
+const expected=identity();assert(expected?.includes(`node solver/ahiru-pro-study.mjs ${stage} 250 baseline,player-basic,player-basic-consistent `),'既存の比較プロセスの一致が必要');
+const absent=async p=>{try{await fs.access(p);throw Error('既存記録を上書きしない: '+p);}catch(e){if(e.code!=='ENOENT')throw e;}};
+for(const p of [metrics,executionAudit,selection,validationMetrics,validationAudit,`${rawRoot}/${nextStage}/manifest.json`])await absent(p);
+await fs.writeFile(`${rawRoot}/${stage}/followup-launch.json`,JSON.stringify({createdAt:new Date().toISOString(),followupPid:process.pid,waitPid:pid,identity:expected,script:'/private/tmp/cdg-ahiru-player-followup-20261103.mjs',scriptSha256:sha(await fs.readFile('/private/tmp/cdg-ahiru-player-followup-20261103.mjs')),metrics,executionAudit,selection,validationMetrics,validationAudit},null,2)+'\n',{flag:'wx'});
+console.log(`WAIT player deletion study pid=${pid}; followup pid=${process.pid}`);
+while(true){const now=identity();if(now===null)break;assert.equal(now,expected,'待機PIDの実体が変化');await new Promise(resolve=>setTimeout(resolve,30000));}
+async function command(args){await new Promise((resolve,reject)=>{const child=spawn(process.execPath,args,{cwd:root,stdio:'inherit'});child.once('error',reject);child.once('exit',(code,signal)=>code===0?resolve():reject(Error(`command failed ${code}/${signal}: ${args.join(' ')}`)));});}
+console.log('Player deletion study terminal; audit all actual deletions and all 250 starts in each arm.');
+await command(['solver/ahiru-player-deletion-audit.mjs',manifestFile,executionAudit]);
+await command(['solver/ahiru-pro-metrics.mjs',manifestFile,metrics]);
+const report=await json(metrics),audit=await json(executionAudit);
+assert.deepEqual(Object.keys(report.groups),manifest.runs.map(r=>r.id));assert(Object.values(report.groups).every(g=>g.n===250));assert.equal(report.goalPassed,false);
+for(const id of ['player-basic','player-basic-consistent']){assert.equal(audit.groups[id].games,250);assert.equal(audit.groups[id].allRealDeletionsChecked,true);assert.equal(audit.groups[id].firstQuestionGames,250);assert.equal(audit.groups[id].secondMeetingGames,250);}
+const id=report.selectedCandidate;
+const decision={createdAt:new Date().toISOString(),metrics,metricsSha256:sha(await fs.readFile(metrics)),executionAudit,executionAuditSha256:sha(await fs.readFile(executionAudit)),selectedCandidate:id,allThreeArmsComplete:true,nextValidation:{stage:nextStage,seed,n:1000,allStartsAccepted:true,rerolls:0,requirement:'mean >=12; score <=8 count <=19; exact 1000 starts',transition:'not-requested'}};
+if(!id||id==='baseline'){
+ decision.reason='事前規則で変更候補が残らないため、新しい独立確認は開始しない。変更のない基準の1,000を再抽選しない。';
+ await fs.writeFile(selection,JSON.stringify(decision,null,2)+'\n',{flag:'wx'});console.log('NO_CHANGED_CANDIDATE; full results retained.');process.exit(0);
+}
+assert(['player-basic','player-basic-consistent'].includes(id));
+assert.equal(sha(Buffer.concat(await Promise.all(manifest.actorFiles.map(f=>fs.readFile(f))))),manifest.fingerprints.strategyVersion);
+const js=(await fs.readdir('game/js')).filter(f=>f.endsWith('.js')).sort();assert.equal(sha((await Promise.all(js.map(async f=>f+await fs.readFile(`game/js/${f}`,'utf8')))).join('\n')),manifest.fingerprints.codeHash);
+assert.equal(sha(await fs.readFile(manifest.configFile)),manifest.configSha256);
+const config=(await json(manifest.configFile))[id];assert.equal(sha(await fs.readFile(config.valueModelPath)),config.valueModelSha256);await absent(`${rawRoot}/${nextStage}/manifest.json`);
+decision.reason='全3条件各250開始を監査し、事前規則で選んだ変更候補だけを未使用v4群の全1,000開始で確認する。';decision.nextValidation.transition='requested';
+await fs.writeFile(selection,JSON.stringify(decision,null,2)+'\n',{flag:'wx'});console.log(`NEXT player deletion validation id=${id}`);
+await command(['solver/ahiru-pro-study.mjs',nextStage,'1000',id,'--configs',manifest.configFile,'--workers','2','--port-base','19520','--seed',seed]);
+await command(['solver/ahiru-player-deletion-audit.mjs',`${rawRoot}/${nextStage}/manifest.json`,validationAudit]);
+await command(['solver/ahiru-pro-metrics.mjs',`${rawRoot}/${nextStage}/manifest.json`,validationMetrics]);
+const validation=await json(validationMetrics);decision.nextValidation.transition='complete';decision.nextValidation.goalPassed=validation.goalPassed;await fs.writeFile(selection,JSON.stringify(decision,null,2)+'\n');
+console.log('PLAYER_VALIDATION_COMPLETE '+JSON.stringify({id,goalPassed:validation.goalPassed,groups:Object.fromEntries(Object.entries(validation.groups).map(([k,g])=>[k,{n:g.n,mean:g.mean,atMost8:g.atMost8}]))}));
