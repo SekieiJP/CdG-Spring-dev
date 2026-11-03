@@ -1,0 +1,81 @@
+{
+  "createdAt": "2026-11-03T14:39:25.927Z",
+  "purpose": "宣言した方針が全開始の実削除で動作したかの照合。新しい判断・ゲーム反復・投影は実行しない。",
+  "manifestFile": "solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/manifest.json",
+  "manifestSha256": "aaac15219800ec9528a55f71f3481973de8262b9a8972271f740a0ed1d03c3cd",
+  "auditorSha256": "20bb285bf7873c0d0552762de7857f7d862f856c3ee4f857f8a437760b53013e",
+  "groups": {
+    "baseline": {
+      "games": 250,
+      "reportedPolicy": false
+    },
+    "strict-control": {
+      "games": 250,
+      "reportedPolicy": true,
+      "scope": "all",
+      "accountingRule": "current-and-forecast",
+      "allRealDeletionsChecked": true,
+      "firstQuestionGames": 250,
+      "secondMeetingGames": 250,
+      "allBasicsRemovedGames": 68,
+      "accountingDeletedGames": 145,
+      "gamesWithNonbasicDeletion": 49,
+      "deletedBasicCards": 1068,
+      "deletedOtherCards": 115
+    },
+    "forecast-cash": {
+      "games": 250,
+      "reportedPolicy": true,
+      "scope": "all",
+      "accountingRule": "forecast",
+      "allRealDeletionsChecked": true,
+      "firstQuestionGames": 250,
+      "secondMeetingGames": 250,
+      "allBasicsRemovedGames": 82,
+      "accountingDeletedGames": 202,
+      "gamesWithNonbasicDeletion": 62,
+      "deletedBasicCards": 1082,
+      "deletedOtherCards": 153
+    },
+    "opening-only": {
+      "games": 250,
+      "reportedPolicy": true,
+      "scope": "opening",
+      "accountingRule": "current-and-forecast",
+      "allRealDeletionsChecked": true,
+      "firstQuestionGames": 250,
+      "secondMeetingGames": 250,
+      "allBasicsRemovedGames": 67,
+      "accountingDeletedGames": 173,
+      "gamesWithNonbasicDeletion": 101,
+      "deletedBasicCards": 1043,
+      "deletedOtherCards": 204
+    }
+  },
+  "audit": [
+    {
+      "id": "baseline",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/baseline-batch0.json",
+      "sha256": "3fb20b5059b259840f2f8544d155eac38a3ece195ae21058763744406910b153",
+      "n": 250
+    },
+    {
+      "id": "strict-control",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/strict-control-batch0.json",
+      "sha256": "926aff8dab504299ee29fe525d0aa6a28d92bde4200773ba9c06716572819dba",
+      "n": 250
+    },
+    {
+      "id": "forecast-cash",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/forecast-cash-batch0.json",
+      "sha256": "9d045f467c7090653141a94293206b65f738b05796d7a7ddeabdad14459f83d8",
+      "n": 250
+    },
+    {
+      "id": "opening-only",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/opening-only-batch0.json",
+      "sha256": "a3769c66a1817b391b399b7cef0bb600706fb4ef38ad5ca247eaabe4e8cd4a9f",
+      "n": 250
+    }
+  ]
+}
