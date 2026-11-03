@@ -43,3 +43,9 @@ v2群 `ahiru-pro-ahiru-player-deletion-development-v2-20261103:0..249` の全開
 固定した4条件各250開始を2ブラウザで開始した。[開始後の固定計画](../solver/research-results/ahiru-advice-20261103/player-components-development-plan.json)。延べ1,000完走を独立1,000シードとは呼ばず、途中で条件と開始群を変えない。
 
 起動時刻と内容の一致を照合した実行プロセスへ、完走待機・全実削除の監査・全得点の集計・新仮説だけからの選択を行う起動係を接続した。条件/方略/本体/モデル/監査器/選択手順の不一致があれば次の実行を拒否する。対象の2新仮説から基準を満たす候補が残った場合だけ予約v4全1,000を確認し、残らなければ対照を再抽選しない。[起動記録](../solver/research-results/ahiru-advice-20261103/player-components-followup-launch.json)、[実行した管理処理の写し](../solver/research-results/ahiru-advice-20261103/player-components-followup-source.txt)。全条件の完走と新しい1,000開始の達成はまだ未確認。
+
+## 固定モデルを再試行用に同梱
+
+元の固定平均モデルを`solver/models/pro-public-value-v1.json`へ同じ98,277バイトのまま保存した。SHAはc07e7fe7…から変わらず、学習時の来歴も変更していない。モデルの保存先だけを変えた4条件の設定を別ファイルに用意し、進行中の設定/モデル/開始群は維持した。[同梱情報と再試行手順](../solver/models/README.md)。
+
+保存先を変えた1ゲーム・全8配置でも、元の設定と実取得/提示/ドロー/配置/削除/解決後の値とトークン/最終公式得点が一致した。[同梱モデルの接続照合](../solver/research-results/ahiru-advice-20261103/model-bundle-technical.json)。少数ゲームを成績の傾向には使わない。実行器の本体/カード/得点表の版ガードを緩めず、研究実行版を保持して同じ条件を再試行できるようにする。

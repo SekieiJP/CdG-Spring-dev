@@ -1,0 +1,112 @@
+{
+  "createdAt": "2026-11-03T14:14:53.230Z",
+  "purpose": "現在の比較と同じ固定平均モデルを、学習時の来歴を変更せず再試行用に同梱する。目標達成の主張ではない。",
+  "file": "solver/models/pro-public-value-v1.json",
+  "sha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+  "bytes": 98277,
+  "originalFile": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+  "schema": "pro-public-value-v1",
+  "features": 102,
+  "trainingProvenance": {
+    "datasetSha256": "b0cc7acc5760f00509dc979c5a1c8627fef3e460e486581af69bfe809ad1786c",
+    "implementationSha256": "ebf6813315a8ab2ecc68d26be381f925f8edc1e21bdf0f32555d5a8141fc43d4",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 3000,
+      "validationSeeds": 250,
+      "trainRows": 73261,
+      "validationRows": 6071
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/v1-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "19acab75fee67847eadf521953af9e36cd89cafa747e1408be4f10edd0c4505e"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/v2-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "a17d0f21690bcf0ca18e3050b0bd08ceb6904a833b178aabfd0fe1bcf91cc1dc"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/v4-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "7dab456322803f2857dda3d1ccf2aac9915ac397321b046de65a95ae786850d6"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/v4b-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "e89493e2bc8b75d03ebf5ab6fcbc5153df7d9cdefff4cce220a710c478aecaa2"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-strategy/validation/full-engine-batch0.json",
+        "n": 250,
+        "sha256": "fde5007a85199b40f20db281bf3a22fbf860d870902e0189a69d02cdc3be460a"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-reroll/validation/public-engine-batch0.json",
+        "n": 250,
+        "sha256": "480385cec74d53f98b6fd39479114d4932e631e57fef1e82b3e0bab91dbad50e"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-strategy/validation/full-engine-batch1.json",
+        "n": 250,
+        "sha256": "38e13841edbeec5772b38e94f0bb6af68e963f102f2c48e453f52676c7e44bc9"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-reroll/validation/public-engine-batch1.json",
+        "n": 250,
+        "sha256": "7630c2e44c2753ca76eba016a26d228eb524447811764faab673afe0c1c3866c"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-strategy/validation/full-engine-batch2.json",
+        "n": 250,
+        "sha256": "dbb9ded3f55f817f69baebca540902d794d29f3a980c11b85a33965e0624bbbc"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-reroll/validation/public-engine-batch2.json",
+        "n": 250,
+        "sha256": "80ed6be4981786270afc36df9a4a01c3d5275d150ce2df519e53097a26bb3add"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-strategy/validation/full-engine-batch3.json",
+        "n": 250,
+        "sha256": "9432e98dbf7c0e827b4b9b7631efc9a81e5ce8c24fe96785145201a005279d14"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-reroll/validation/public-engine-batch3.json",
+        "n": 250,
+        "sha256": "c4987571041dedf3a6774278c0fbc4adafe0ce58655f94923754b4b800de945b"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/v3-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "2bc1a52e6e3ef2ebe5ba33ba3049b77e2e4fa699af4ae5c9bcf9ec6cde6d842c"
+      }
+    ]
+  },
+  "sourceConfig": "solver/research-scenarios/ahiru-pro-player-components-configs.json",
+  "sourceConfigSha256": "2e7174b2f133c73cda99102a9b4a73dd8ea2055f8ba713458fb978576ab30962",
+  "portableConfig": "solver/research-scenarios/ahiru-pro-player-components-portable.json",
+  "portableConfigSha256": "22c4a69f342229efb8c03cbed85920e71a6d4e26717c750f5636f95da1b47739",
+  "onlyConfigDifference": "valueModelPath",
+  "liveStudyUnchanged": true
+}
