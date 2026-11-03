@@ -13,7 +13,7 @@ const basic=c=>c.rarity==='N'&&no(c)<=5;
 const counts=cards=>[...cards.reduce((m,c)=>m.set(no(c),(m.get(no(c))||0)+1),new Map())].sort((a,b)=>a[0]-b[0]);
 
 export function auditPlayerDeletionRecord(record){
- const config=record.metadata?.research||{},scope=config.playerBasicScope||'all',accountingRule=config.playerBasicAccounting||'current-and-forecast';
+ const config=record.metadata?.research||{},scope=config.playerBasicScope===undefined?'all':config.playerBasicScope,accountingRule=config.playerBasicAccounting===undefined?'current-and-forecast':config.playerBasicAccounting;
  assert(['all','opening'].includes(scope)&&['current-and-forecast','forecast'].includes(accountingRule),'削除の範囲/経理条件が不正');
  const inReportedPhase=turn=>scope==='all'||turn<2;
  const owned=new Map(),before=new Map(),actual=new Map(),decisions=new Map(),initial=[];
