@@ -11,7 +11,9 @@ test('FRESH専用の補正でパラメータ直下に助言を表示し、開閉
     const layout=await page.evaluate(()=>{const h=document.querySelector('.ahiru-advice'),s=h.querySelector('[role=status]').getBoundingClientRect(),p=document.querySelector('#full-status-panel').getBoundingClientRect(),b=h.querySelector('button').getBoundingClientRect();return {below:s.top>=p.bottom,inside:s.left>=0&&s.right<=innerWidth,tap:b.width>=44&&b.height>=44,chars:Array.from(h.querySelector('[role=status]').textContent).length};});
     expect(layout).toMatchObject({below:true,inside:true,tap:true});expect(layout.chars).toBeLessThanOrEqual(25);
     await page.evaluate(()=>{for(let i=0;i<10;i++)window.game.uiController.ahiruAdvice.refresh();});expect(await page.evaluate(()=>JSON.stringify(window.game.gameState))).toBe(before);
-    await page.screenshot({path:`solver/local-runs/pro-mean125/ahiru-ui-fresh-${info.project.name}.png`,fullPage:true,animations:'disabled'});
+    await page.locator('#training-area').evaluate(area=>area.getAnimations().forEach(animation=>animation.finish()));
+    await page.evaluate(()=>window.scrollTo(0,0));
+    await page.screenshot({path:`solver/local-runs/pro-mean125/ahiru-ui-fresh-${info.project.name}.png`,fullPage:false});
     await activate(page,face(page));await expect(page.locator('.ahiru-advice__speech')).toBeHidden();
 });
 test('FRESHの初回2枚選択・会議の回復札削除・中断再開に助言が追従する',async({page})=>{
