@@ -1,0 +1,323 @@
+{
+  "createdAt": "2026-11-03T15:20:14.261Z",
+  "inputAudit": {
+    "games": 2000,
+    "overlap": 0,
+    "inSample": false,
+    "independentStarts": true
+  },
+  "sourceAuditSha256": "ff2b8fcfdcd35017cd403e99f06bc41b8f3dc03f32cf1872a031a6cd227c075a",
+  "calibrationSha256": "03fd2361282b7fef66744fb8eb90d72b1479b7d56c50d4aad670a9c047ae7fbc",
+  "sources": [
+    {
+      "file": "game/js/proAcquisitionConsistency.js",
+      "sha256": "bc5cb45c0088680102b8ce09fc10b00c2caf45fdce073238824981819baa63e5"
+    },
+    {
+      "file": "game/js/ahiruStatusPolicy.js",
+      "sha256": "3bcaa358b2b83c717a4d317a63268f38373337d8149ca56f0bdc577aa1d1aacc"
+    },
+    {
+      "file": "game/js/proAcquisitionAdvisor.js",
+      "sha256": "7706b0a4f6a3687501d807d52c9bf2852f21c1a45ebd4e2a0d949a8ed76f4e97"
+    },
+    {
+      "file": "game/js/ahiruProAdvice.js",
+      "sha256": "3032a13b94dcd754abc6a2da4bdd26232e7689704d565be1b92acf4c196be904"
+    },
+    {
+      "file": "game/js/ahiruProForecast.js",
+      "sha256": "be917d5590a992bd5876bb418740f1cefea9f8d400479b8d313b8e938b095881"
+    },
+    {
+      "file": "game/js/ahiruForecast.js",
+      "sha256": "ebbf4839fed7ac458a11522840e639b00aca0be437e7d5f270978cc8418948d4"
+    },
+    {
+      "file": "game/js/ahiruCardRoles.js",
+      "sha256": "99c32605308945a132226b2c417e3a8313ca105f41226fcde41f324ff6e08280"
+    },
+    {
+      "file": "solver/browser/ahiru-assist-consistency.js",
+      "sha256": "8a6622ba51c3310140da566aab3aabefe71f6de49573053f2b5def6d1b305986"
+    }
+  ],
+  "games": 2000,
+  "acquisitionStates": 18770,
+  "changedGames": 1108,
+  "changedStates": 1582,
+  "complementStates": 7619,
+  "groups": {
+    "none": {
+      "games": 2000,
+      "states": 6981,
+      "changedStates": 0,
+      "complementStates": 0,
+      "support250": true
+    },
+    "satisfaction": {
+      "games": 894,
+      "states": 1471,
+      "changedStates": 325,
+      "complementStates": 922,
+      "support250": true
+    },
+    "enrollment": {
+      "games": 1420,
+      "states": 3506,
+      "changedStates": 185,
+      "complementStates": 2492,
+      "support250": true
+    },
+    "accounting": {
+      "games": 1320,
+      "states": 3709,
+      "changedStates": 610,
+      "complementStates": 2230,
+      "support250": true
+    },
+    "experience": {
+      "games": 1341,
+      "states": 3103,
+      "changedStates": 462,
+      "complementStates": 1975,
+      "support250": true
+    }
+  },
+  "timingMs": {
+    "p95": 0.8000001907348633,
+    "max": 8.400000095367432
+  },
+  "examples": [
+    {
+      "gameId": "game-2",
+      "turn": 1,
+      "stats": {
+        "experience": 5,
+        "enrollment": 2,
+        "satisfaction": 5,
+        "accounting": 5
+      },
+      "ownedCardNos": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "8",
+        "13"
+      ],
+      "candidateCardNos": [
+        "25",
+        "36",
+        "39"
+      ],
+      "baseIndices": [
+        0
+      ],
+      "alignedIndices": [
+        1
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "accounting",
+        "focusAxis": "accounting",
+        "reason": "shortage-acquire-role",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    },
+    {
+      "gameId": "game-2",
+      "turn": 3,
+      "stats": {
+        "experience": 14,
+        "enrollment": 4,
+        "satisfaction": 12,
+        "accounting": 9
+      },
+      "ownedCardNos": [
+        "3",
+        "8",
+        "13",
+        "36",
+        "49"
+      ],
+      "candidateCardNos": [
+        "14",
+        "17",
+        "6"
+      ],
+      "baseIndices": [
+        1
+      ],
+      "alignedIndices": [
+        2
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "experience",
+        "focusAxis": "experience",
+        "reason": "shortage-acquire-role",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    },
+    {
+      "gameId": "game-4",
+      "turn": 1,
+      "stats": {
+        "experience": 6,
+        "enrollment": 0,
+        "satisfaction": 5,
+        "accounting": 5
+      },
+      "ownedCardNos": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "7",
+        "13"
+      ],
+      "candidateCardNos": [
+        "36",
+        "18",
+        "31"
+      ],
+      "baseIndices": [
+        1
+      ],
+      "alignedIndices": [
+        2
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "accounting",
+        "focusAxis": "accounting",
+        "reason": "shortage-acquire-role",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    },
+    {
+      "gameId": "game-9",
+      "turn": 7,
+      "stats": {
+        "experience": 28,
+        "enrollment": 25,
+        "satisfaction": 22,
+        "accounting": 17
+      },
+      "ownedCardNos": [
+        "3",
+        "6",
+        "9",
+        "16",
+        "21",
+        "29",
+        "40",
+        "48",
+        "49"
+      ],
+      "candidateCardNos": [
+        "30",
+        "28",
+        "20"
+      ],
+      "baseIndices": [
+        0
+      ],
+      "alignedIndices": [
+        2
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "experience",
+        "focusAxis": "experience",
+        "reason": "shortage-acquire-role",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    },
+    {
+      "gameId": "game-9",
+      "turn": 7,
+      "stats": {
+        "experience": 28,
+        "enrollment": 25,
+        "satisfaction": 22,
+        "accounting": 17
+      },
+      "ownedCardNos": [
+        "3",
+        "6",
+        "9",
+        "16",
+        "21",
+        "29",
+        "30",
+        "40",
+        "48",
+        "49"
+      ],
+      "candidateCardNos": [
+        "18",
+        "34",
+        "39"
+      ],
+      "baseIndices": [
+        0
+      ],
+      "alignedIndices": [
+        1
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "satisfaction",
+        "focusAxis": "satisfaction",
+        "reason": "next-score-milestone",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    },
+    {
+      "gameId": "game-11",
+      "turn": 2,
+      "stats": {
+        "experience": 10,
+        "enrollment": 0,
+        "satisfaction": 6,
+        "accounting": 11
+      },
+      "ownedCardNos": [
+        "2",
+        "3",
+        "4",
+        "7",
+        "16",
+        "33"
+      ],
+      "candidateCardNos": [
+        "51",
+        "48",
+        "47"
+      ],
+      "baseIndices": [
+        2
+      ],
+      "alignedIndices": [
+        0
+      ],
+      "alignment": {
+        "statusTone": "red",
+        "statusAxis": "enrollment",
+        "focusAxis": "enrollment",
+        "reason": "shortage-acquire-role",
+        "availableComplement": true,
+        "changedRecommendation": true
+      }
+    }
+  ],
+  "newSimulatedGames": 0,
+  "interpretation": "同じ過去の全開始の公開局面に対する静的な数式診断。変更後の完走得点・人間の成功率・推薦の因果効果は測定していない。250開始未満の内訳は件数のみ。"
+}

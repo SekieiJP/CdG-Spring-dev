@@ -1,6 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessStability,selectPilotCandidate,auditAhiruBatch} from '../../solver/ahiru-pro-metrics.mjs';
+test('更新された3%未満では29回までを許容し、旧判定の既定値は維持する',()=>{
+ const scores=Array(1000).fill(13);for(let i=0;i<29;i++)scores[i]=8;
+ assert.equal(assessStability(scores,{lowRateStrictlyBelow:.03}).passed,true);
+ assert.equal(assessStability(scores).passed,false);
+ scores[29]=8;assert.equal(assessStability(scores,{lowRateStrictlyBelow:.03}).passed,false);
+ for(const lowRateStrictlyBelow of [0,1,-.1,NaN])assert.throws(()=>assessStability(scores,{lowRateStrictlyBelow}));
+});
 test('1000開始で平均12以上、8点を含め19回までを許容する',()=>{
  const scores=Array(1000).fill(13);for(let i=0;i<19;i++)scores[i]=8;
  assert.ok(assessStability(scores).passed);assert.equal(assessStability(scores).atMost8.count,19);

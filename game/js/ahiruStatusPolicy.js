@@ -1,4 +1,4 @@
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0055';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0056';
 const AXES=['experience','enrollment','satisfaction','accounting'];
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'},SAFETY=['satisfaction','accounting'];
 function result(tone,text,axis,reason,forecast,extra={}){
@@ -31,7 +31,7 @@ export function createAhiruStatusPolicy({difficulty,weights,getGoals,projectStat
             if(phase==='deletion')return result('red',safety?`${label}が心配。回復札は残そう`:`${label}が不足気味。伸ばせる札は残そう`,axis,'shortage-keep-role',forecast);
             const handPressure=root.owned.length+(input.pickCount||1)>forecast.draw+1;
             const engine=!safety&&input.turn<=2&&forecast.remaining>=5&&handPressure&&(input.candidates||[]).some(c=>roles.supportsHand(c));
-            const text=engine?`${label}が不足気味。手数を増やす札も狙おう`:safety?`${label}が不足気味。回復札を取ろう`:`${label}が不足気味。伸ばせる札を取ろう`;
+            const text=engine?`${label}が不足気味。手数を増やす札も狙おう`:safety?`${label}が不足気味。補える札を取ろう`:`${label}が不足気味。伸ばせる札を取ろう`;
             return result('red',text,axis,engine?'shortage-build-engine':'shortage-acquire-role',forecast);
         }
         function growthAxis(){
@@ -56,7 +56,7 @@ export function createAhiruStatusPolicy({difficulty,weights,getGoals,projectStat
                 return result('yellow',`${LABELS[candidate.axis]}は十分。${LABELS[candidate.axis]}役を減らせそう`,candidate.axis,'surplus-safe-removal',forecast,{exampleCardNo:String(root.owned[candidate.index].cardNo)});
             }
         }
-        if(phase==='acquisition'&&surplus.length&&grow){const extra=surplus[0];return result('yellow',`${LABELS[extra]}は十分。${LABELS[grow]}の札を狙おう`,extra,'surplus-redirect-acquisition',forecast);}
+        if(phase==='acquisition'&&surplus.length&&grow){const extra=surplus[0];return result('yellow',`${LABELS[extra]}は十分。${LABELS[grow]}の札を狙おう`,extra,'surplus-redirect-acquisition',forecast,{growthAxis:grow});}
         if(phase==='deletion')return result('green','順調だよ。必要な札は残そう',null,'on-track-keep-options',forecast);
         return result('green',grow?`順調だよ。${LABELS[grow]}を伸ばそう`:'順調だよ。今の強みを大切にしよう',grow,'on-track-grow',forecast);
     };

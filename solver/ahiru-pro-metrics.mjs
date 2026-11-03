@@ -16,11 +16,12 @@ export function auditAhiruBatch(data,{seed,offset,config,fingerprints,episodes=2
  }
  return rs;
 }
-export function assessStability(scores,{requiredSeeds=1000}={}){
+export function assessStability(scores,{requiredSeeds=1000,lowRateStrictlyBelow=.02}={}){
  if(![1000,2000].includes(requiredSeeds))throw Error('到達確認は1000開始、旧計画の再監査のみ2000開始');
+ if(!Number.isFinite(lowRateStrictlyBelow)||lowRateStrictlyBelow<=0||lowRateStrictlyBelow>=1)throw Error('低得点率の上限は0より大きく1より小さい値');
  if(!scores.length||scores.some(s=>!Number.isFinite(s)))throw Error('有限な公式得点が必要');
  const n=scores.length,mean=scores.reduce((s,v)=>s+v,0)/n,lowCount=scores.filter(s=>s<=8).length;
- return {n,mean,atMost8:{count:lowCount,rate:lowCount/n,interval95:wilson(lowCount,n)},requirements:{seeds:requiredSeeds,meanAtLeast:12,scoreCutoffInclusive:8,lowRateStrictlyBelow:.02},passed:n===requiredSeeds&&mean>=12&&lowCount*100<2*n};
+ return {n,mean,atMost8:{count:lowCount,rate:lowCount/n,interval95:wilson(lowCount,n)},requirements:{seeds:requiredSeeds,meanAtLeast:12,scoreCutoffInclusive:8,lowRateStrictlyBelow},passed:n===requiredSeeds&&mean>=12&&lowCount<lowRateStrictlyBelow*n};
 }
 export function selectPilotCandidate(groups){
  if(Object.values(groups).some(g=>g.n!==250))throw Error('各250開始の全条件を確認する');

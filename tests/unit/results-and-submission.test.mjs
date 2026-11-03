@@ -1,9 +1,9 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0055';
-import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0055';
-import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0055';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0055';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0056';
+import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0056';
+import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0056';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0056';
 
 function memoryStorage() {
     const items = new Map();

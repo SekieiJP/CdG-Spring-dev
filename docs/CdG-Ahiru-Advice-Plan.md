@@ -1,5 +1,8 @@
 # あひる先生のアドバイス・方略検証と実装計画
 
+2026-11-04更新：ユーザーが低得点条件を**8点以下3%未満**へ変更し、助言・PRO取得アシスト・既存共通改修の統合とGitHub Pages公開を指示した。保存済みV1の最初の1,000開始は平均12.026点・低得点26件で新基準を達成。[再監査](../solver/research-results/ahiru-advice-20261103/goal-3percent-assessment.json)、[14の判断指針](CdG-PRO-One-Shot-Guide.md)。以下の2%基準と未完了という記述は各時点の履歴であり、現在の目標ではない。公開作業は `codex/ahiru-release` に分離し、[統合・公開記録](CdG-Ahiru-Release.md)で管理する。
+
+
 2026-11-03。作業ブランチ `codex/ahiru-pro-strategy`。以前の12.5点研究とは目標を区別し、現在の依頼を以下のまま検証する。MASTER・公開ブランチは変更しない。
 
 ## 完成の条件

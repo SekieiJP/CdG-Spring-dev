@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {attachFailureModel} from '../../solver/ahiru-failure-model.mjs';
 import {attachRiskModel} from '../../solver/ahiru-risk-model.mjs';
-import {VALUE_SCHEMA,VALUE_FEATURES} from '../../solver/browser/pro-value-model.js';
+import {VALUE_SCHEMA,VALUE_FEATURES} from '../../solver/browser/pro-value-model.js?v=20260815-0056';
 function fixture(){const model={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:12,learningRate:.1,trees:[{value:1}]},versions=['game','cards','rank','autoplay'];return {mean:{model,metrics:{mean:'retained'},provenance:{versions}},risk:{id:'test',model:{...model,base:.1},provenance:{versions,targetKind:'pro-failure8',counts:{trainSeeds:1500,validationSeeds:500}}}};}
 test('頻度の固定木を付けても平均の係数・指標・入力を変えない',()=>{
     const {mean,risk}=fixture(),a=structuredClone(mean),b=structuredClone(risk),out=attachFailureModel(mean,risk),{failureHead,...kept}=out.model;

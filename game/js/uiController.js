@@ -1,13 +1,13 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0055';
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0055';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0055';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0055';
-import { ResultController } from './resultController.js?v=20260815-0055';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0055';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0055';
-import { getPlacementError } from './placementRules.js?v=20260815-0055';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0055';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0055';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0056';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0056';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0056';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0056';
+import { ResultController } from './resultController.js?v=20260815-0056';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0056';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0056';
+import { getPlacementError } from './placementRules.js?v=20260815-0056';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0056';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0056';
 
 /**
  * UIController - UI操作・表示制御

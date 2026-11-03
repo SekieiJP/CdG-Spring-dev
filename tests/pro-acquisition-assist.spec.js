@@ -27,6 +27,25 @@ test('PROリフレッシュは推薦を再計算し、候補の除外履歴を�
     await page.clock.runFor(5000);await expect(glow(page)).toHaveCount(2);
     expect(await page.evaluate(()=>window.game.uiController.acquisitionAssist.context.observation)).toEqual(before);
 });
+test('あひる先生の経理不足と取得候補を揃え、再計算しても提示から5秒で強調する',async({page})=>{
+    await proTraining(page);
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.modelStatus)).toBe('ready');
+    await page.evaluate(()=>{
+        const g=window.game,card=no=>({...g.cardManager.allCards.find(c=>Number(c.cardNo)===no),acquiredTurn:0});
+        g.gameState.turn=1;Object.assign(g.gameState.player,{experience:5,enrollment:2,satisfaction:5,accounting:5,
+            deck:[2,3,4,5,8,13].map(card),hand:[],discard:[],placed:{leader:[],teacher:[],staff:[]}});
+        Object.assign(g.gameState.tokens,{passion:0,fatigue:0,inspiration:0,organize:0});
+        g.uiController.trainingSelectionMode='normal';g.uiController.selectedInitialCards=[];g.uiController.selectedTrainingCard=null;
+        g.gameState.currentTrainingCards=[25,36,39].map(card);g.uiController.renderTrainingCards(g.gameState.currentTrainingCards);
+        g.uiController.ahiruAdvice.scheduleRefresh();
+    });
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.acquisitionAssist.context.advice.recommended.cardNos)).toEqual(['36']);
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.axis)).toBe('accounting');
+    await page.clock.runFor(4999);await expect(glow(page)).toHaveCount(0);
+    const before=await page.evaluate(()=>{const assist=window.game.uiController.acquisitionAssist,value=assist.context.presentedAt;assist.refreshAdvice();return[value,assist.context.presentedAt];});
+    expect(before[0]).toBe(before[1]);await page.clock.runFor(1);await expect(glow(page)).toHaveCount(1);
+    await expect(glow(page)).toContainText(await page.evaluate(()=>window.game.cardManager.allCards.find(c=>Number(c.cardNo)===36).cardName));
+});
 test('PRO発想の辞退を推薦し、計算機・イベントでは表示しない',async({page})=>{
     await proTraining(page);
     await page.evaluate(()=>{const g=window.game;g.gameState.turn=7;Object.assign(g.gameState.player,{experience:0,enrollment:0,satisfaction:0,accounting:0});g.gameState.tokens.inspiration=1;
