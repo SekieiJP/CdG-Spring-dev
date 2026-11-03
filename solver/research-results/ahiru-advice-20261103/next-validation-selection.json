@@ -1,0 +1,29 @@
+{
+  "createdAt": "2026-11-03T06:03:08.374Z",
+  "developmentOutput": "solver/research-results/ahiru-advice-20261103/failure-development.json",
+  "developmentSha256": "cb3aaabaaab165091243ef434fd0ac81a3d4ce3fa32fc5b567bedb552b4dec36",
+  "allDevelopmentGroupsComplete": true,
+  "developmentSelectedCandidate": null,
+  "id": "consistent-v1",
+  "configFile": "solver/research-scenarios/ahiru-pro-consistent-validation.json",
+  "configSha256": "2bdc94653a8dc58be78e660e9a369bb7fb75eb88e10387b9eb824b29033e5539",
+  "reason": "全4条件で変更候補が残らず、別途再監査した旧250候補へ。変更のないV1基準は再抽選しない。",
+  "fingerprints": {
+    "strategyVersion": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "seed": "ahiru-pro-ahiru-stability-validation-v3-20261103",
+  "n": 1000,
+  "offsets": [
+    0,
+    250,
+    500,
+    750
+  ],
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "requirement": "mean >=12; score <=8 count <=19; exact 1000 starts; no rerolls",
+  "independentValidationStartedAfterFullDevelopment": true
+}
