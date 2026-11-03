@@ -1,0 +1,71 @@
+{
+  "createdAt": "2026-11-03T02:39:44.700Z",
+  "purpose": "旧方略の全2000開始の記述集計。全開始採用・リセマラなし。最終値の内訳であり原因や介入効果を示さない。現在の1000開始の到達確認ではない。",
+  "source": {
+    "teachers": "solver/local-runs/pro-mean125/ahiru-decisions-validation-v1/teachers.json",
+    "teachersSha256": "a566045abc7e3d398384957d9c90cb4a32b4f970c9dda46d53b2b2c906687b2b",
+    "audit": "solver/local-runs/pro-mean125/ahiru-decisions-validation-v1/audit.json",
+    "auditSha256": "ff2b8fcfdcd35017cd403e99f06bc41b8f3dc03f32cf1872a031a6cd227c075a",
+    "actor": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+    "physical": {
+      "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    }
+  },
+  "cohort": {
+    "n": 2000,
+    "mean": 12.0345,
+    "atMost8": 50,
+    "uniqueGames": true,
+    "allStartsAccepted": true
+  },
+  "counts": {
+    "accountingBelow15": {
+      "label": "経理15未満",
+      "all": 142,
+      "atMost8": 31
+    },
+    "satisfactionBelow15": {
+      "label": "満足15未満",
+      "all": 9,
+      "atMost8": 5
+    },
+    "eitherSafetyBelow15": {
+      "label": "満足または経理15未満",
+      "all": 150,
+      "atMost8": 35
+    },
+    "withdrawalAtLeast2": {
+      "label": "退塾2人以上",
+      "all": 86,
+      "atMost8": 33
+    },
+    "withdrawalAtLeast5": {
+      "label": "退塾5人以上",
+      "all": 8,
+      "atMost8": 8
+    },
+    "noWithdrawal": {
+      "label": "退塾0人",
+      "all": 1850,
+      "atMost8": 15
+    },
+    "experienceBelow30": {
+      "label": "体験30未満",
+      "all": 21,
+      "atMost8": 5
+    },
+    "differenceBelow26": {
+      "label": "入退差26未満",
+      "all": 279,
+      "atMost8": 30
+    }
+  },
+  "interpretation": [
+    "行同士は重複する。満足または経理15未満と退塾0人は相互排他的で、この2行の低得点件数の和は全低得点件数と一致する。",
+    "全2000開始の中での件数のみを記録する。250未満の下位群について条件付き成功率やカードの優劣を推定しない。",
+    "低得点50件のうち35件で満足か経理が15未満。退塾0人でも15件あり、安全面だけを整えれば全低得点を解消できるとはいえない。"
+  ]
+}
