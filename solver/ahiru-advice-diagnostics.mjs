@@ -1,11 +1,10 @@
 #!/usr/bin/env node
 /** 公開判断と教師を照合し、実際の助言・予測・集計はブラウザで実行する。 */
-import http from 'node:http';
 import path from 'node:path';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
-import {chromium} from 'playwright';
+import {runAhiruBrowser} from './ahiru-browser.mjs';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 
 export function validateDiagnosticData({publicInput,teachers,audit,seeds,trainingSeeds,calibration,publicSha,teacherSha,trainingPublicSha,allowDevelopment=false}){
@@ -34,36 +33,16 @@ async function main(){
     const [publicBytes,teacherBytes,auditBytes,seeds,trainSeeds,trainAudit,calibrationBytes]=await Promise.all([
         readFile(directory+'/public-decisions.json'),readFile(directory+'/teachers.json'),readFile(directory+'/audit.json'),
         readFile(directory+'/source-seeds.private.json').then(JSON.parse),readFile(training+'/source-seeds.private.json').then(JSON.parse),
-        readFile(training+'/audit.json').then(JSON.parse),readFile('game/data/ahiru/pro-projection-calibration.json')
+        readFile(training+'/audit.json').then(JSON.parse),readFile(option('--calibration','game/data/ahiru/pro-projection-calibration.json'))
     ]);
     const publicInput=JSON.parse(publicBytes),teachers=JSON.parse(teacherBytes),audit=JSON.parse(auditBytes),calibration=JSON.parse(calibrationBytes);
     const inputAudit=validateDiagnosticData({publicInput,teachers,audit,seeds,trainingSeeds:trainSeeds,calibration,publicSha:sha(publicBytes),teacherSha:sha(teacherBytes),trainingPublicSha:trainAudit.publicInputSha256,allowDevelopment:process.argv.includes('--development')});
-    const root=path.resolve('.'),payload=Buffer.from(JSON.stringify({publicInput,teachers,calibration,versions:{cardVersion:audit.physical.cardVersion,rankVersion:audit.physical.rankVersion}}));
-    const server=http.createServer(async(req,res)=>{try{
-        const name=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
-        if(name==='/'){res.writeHead(200,{'Content-Type':'text/html'});res.end('<!doctype html><title>あひる先生・予測診断</title>');return;}
-        if(name==='/diagnostic-input.json'){res.writeHead(200,{'Content-Type':'application/json'});res.end(payload);return;}
-        const file=path.resolve(root,'.'+name);
-        if(!file.startsWith(root+path.sep)||!['/game/','/solver/browser/'].some(prefix=>name.startsWith(prefix)))throw Error('path');
-        const content=await readFile(file);res.writeHead(200,{'Content-Type':file.endsWith('.js')?'application/javascript':'text/plain','Cache-Control':'no-store'});res.end(content);
-    }catch{res.writeHead(404);res.end();}});
-    await new Promise(resolve=>server.listen(port,'127.0.0.1',resolve));
-    let browser,result;
-    try{
-        browser=await chromium.launch({headless:true});const page=await browser.newPage();
-        await page.route('**/*',route=>new URL(route.request().url()).origin===`http://127.0.0.1:${port}`?route.continue():route.abort());
-        await page.goto(`http://127.0.0.1:${port}/`);
-        result=await page.evaluate(async()=>{
-            const input=await(await fetch('/diagnostic-input.json')).json();
-            const [{ScoreManager},{diagnoseProAdvice}]=await Promise.all([import('/game/js/scoreManager.js'),import('/solver/browser/ahiru-advice-diagnostics.js')]);
-            const official=new ScoreManager(null);await official.loadRankData('/game/data/rankPro.csv');
-            if(!official.rankTable||official.dataVersion!==input.versions.rankVersion)throw Error('公式得点表が一致しない');
-            for(const outcome of input.teachers.outcomes){const score=official.calculateScore({difficulty:'pro',player:outcome.stats});if(score.displayScore!==outcome.score)throw Error('保存済み公式結果と公開最終値の得点が異なる');}
-            return diagnoseProAdvice({...input,rankTable:official.rankTable});
-        });
-    }finally{await browser?.close();await new Promise(resolve=>server.close(resolve));}
-    const sources=['solver/ahiru-advice-diagnostics.mjs','solver/browser/ahiru-advice-diagnostics.js','game/js/ahiruProAdvice.js','game/js/ahiruProForecast.js','game/js/ahiruProGoals.js','game/js/ahiruCardRoles.js','game/js/proAcquisitionAdvisor.js','game/js/scoreManager.js','game/js/cardManager.js','game/js/difficultyConfig.js','game/js/eventManager.js'];
-    const report={createdAt:new Date().toISOString(),purpose:'固定したPRO助言の観測診断。過去の固定方略での将来結果との比較であり、助言に従う因果効果・人間の成績・個別の成功保証ではない。',inputAudit,sourceAuditSha256:sha(auditBytes),sourceConfig:audit.config,calibrationSha256:sha(calibrationBytes),sources:await Promise.all(sources.map(async file=>({file,sha256:sha(await readFile(file))}))),interpretation:'同じゲーム内の判断を独立した開始として数えない。250元開始未満の群は件数のみ。分位値の被覆は軸別であり共同の予測区間ではない。赤い助言後のS達成は、その不足を後で補えた場合も含む。',...result};
+    const sources=['solver/ahiru-advice-diagnostics.mjs','solver/ahiru-browser.mjs','solver/browser/ahiru-advice-diagnostics.js','game/js/ahiruProAdvice.js','game/js/ahiruProForecast.js','game/js/ahiruProGoals.js','game/js/ahiruFreshAdvice.js','game/js/ahiruFreshForecast.js','game/js/ahiruFreshGoals.js','game/js/ahiruStatusPolicy.js','game/js/ahiruForecast.js','game/js/ahiruCardRoles.js','game/js/proAcquisitionAdvisor.js','game/js/scoreManager.js','game/js/cardManager.js','game/js/difficultyConfig.js','game/js/eventManager.js'];
+    const sourceHashes=async()=>Promise.all(sources.map(async file=>({file,sha256:sha(await readFile(file))})));
+    const before=await sourceHashes();
+    const result=await runAhiruBrowser({difficulty:calibration.difficulty,publicInput,teachers,calibration,versions:{cardVersion:audit.physical.cardVersion,rankVersion:audit.physical.rankVersion}},{port,modulePath:'/solver/browser/ahiru-advice-diagnostics.js',exportName:'diagnoseAhiruAdvice'});
+    if(JSON.stringify(before)!==JSON.stringify(await sourceHashes()))throw Error('診断中に助言のコードが変わった');
+    const report={createdAt:new Date().toISOString(),purpose:'固定したFRESH/PRO助言の観測診断。過去の固定方略での将来結果との比較であり、助言に従う因果効果・人間の成績・個別の成功保証ではない。',inputAudit,sourceAuditSha256:sha(auditBytes),sourceConfig:audit.config,calibrationSha256:sha(calibrationBytes),sources:before,interpretation:'同じゲーム内の判断を独立した開始として数えない。250元開始未満の群は件数のみ。分位値の被覆は軸別であり共同の予測区間ではない。赤い助言後のS達成は、その不足を後で補えた場合も含む。',...result};
     await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify(report,null,2)+'\n');
     console.log(JSON.stringify({inputAudit,games:result.games,calls:result.calls,finalAgreements:result.finalAgreements,groups:Object.keys(result.groups).length}));
 }

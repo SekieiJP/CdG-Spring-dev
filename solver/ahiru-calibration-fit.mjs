@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import path from 'node:path';
+import {runAhiruBrowser} from './ahiru-browser.mjs';
+const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
+const [directory,difficulty,output]=process.argv.slice(2);
+if(!directory||!['fresh','pro'].includes(difficulty)||!output)throw Error('公開判断ディレクトリ、fresh/pro、モデル出力が必要');
+const option=(key,fallback)=>{const i=process.argv.indexOf(key);return i<0?fallback:process.argv[i+1];};
+const [publicBytes,teacherBytes,auditBytes]=await Promise.all(['public-decisions.json','teachers.json','audit.json'].map(file=>readFile(directory+'/'+file)));
+const publicInput=JSON.parse(publicBytes),teachers=JSON.parse(teacherBytes),audit=JSON.parse(auditBytes);
+if(audit.counts?.games<250||publicInput.rows.length!==audit.counts.decisions||audit.publicInputSha256!==sha(publicBytes)||audit.teachersSha256!==sha(teacherBytes)||teachers.outcomes.length!==audit.counts.games||new Set(teachers.outcomes.map(row=>row.gameId)).size!==audit.counts.games||publicInput.rows.some(row=>row.observation.difficulty!==difficulty))throw Error('全250開始以上の監査済み判断・教師が必要');
+const sources=['solver/ahiru-calibration-fit.mjs','solver/ahiru-browser.mjs','solver/browser/ahiru-calibration.js','game/js/ahiruForecast.js','game/js/ahiruProForecast.js','game/js/ahiruFreshForecast.js','game/js/proAcquisitionAdvisor.js','game/js/cardManager.js','game/js/scoreManager.js'];
+const sourceHashes=async()=>Promise.all(sources.map(async file=>({file,sha256:sha(await readFile(file))})));
+const before=await sourceHashes(),versions={cardVersion:audit.physical.cardVersion,rankVersion:audit.physical.rankVersion};
+const result=await runAhiruBrowser({difficulty,publicInput,teachers,versions},{port:Number(option('--port','19290')),modulePath:'/solver/browser/ahiru-calibration.js',exportName:'fitAhiruCalibration'});
+if(JSON.stringify(before)!==JSON.stringify(await sourceHashes()))throw Error('作成中に投影コードが変わった');
+const model={schema:1,difficulty,status:'development-calibration-not-yet-validated',axes:['experience','enrollment','satisfaction','accounting'],sourceGames:result.sourceGames,...versions,sourceActor:audit.sourceActor,sourcePublicSha256:sha(publicBytes),interpretation:'現在デッキだけの固定投影と、固定方略の将来取得込み最終値との差の開発分位値。共同確率や個別成功の保証ではない。',phases:result.phases};
+await mkdir(path.dirname(output),{recursive:true});await writeFile(output,JSON.stringify(model,null,2)+'\n');
+await writeFile(output+'.audit.json',JSON.stringify({createdAt:new Date().toISOString(),sourceAuditSha256:sha(auditBytes),sources:before,modelSha256:sha(await readFile(output)),support:result.support,featuresAndFittingInBrowser:true,sourceGames:result.sourceGames},null,2)+'\n');
+console.log(JSON.stringify({sourceGames:result.sourceGames,groups:Object.keys(result.support).length,supportedGroups:Object.values(result.support).filter(row=>row.support250).length,modelSha256:sha(await readFile(output))}));

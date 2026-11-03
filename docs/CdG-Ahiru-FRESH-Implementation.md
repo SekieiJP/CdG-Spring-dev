@@ -16,3 +16,19 @@ PROの関連17検査は共通部品へ移した後も通過。FRESHの6検査で
 これは実ゲーム250開始以上の予測精度や実機の速度を確認した結果ではない。FRESH用の補正値はまだ作っていない。既存のFRESH取得アシストとは別の機能であり、取得アシストの検証成績を新しいセリフの性能として扱わない。
 
 次は過去のFRESHの公開判断・削除直前の記録を全開始で抽出する。既存のvalidation-reach 500開始を開発材料、別のholdout-reach 1,000開始を独立診断とし、同じ開始を混ぜない。補正の計算と助言の評価はブラウザ内で行い、元開始250未満の時期は傾向を出さない。PROの確認を先に進め、共通表示へ接続した後に取得/削除/中断再開を実画面で検査する。
+
+
+## 全開始の材料抽出と診断の準備
+
+開発500開始から取得4,000・削除2,000、別1,000開始から取得8,000・削除4,000の公開判断を抽出した。全開始を採用し、元seedの重複は0。[抽出の元記録・版・全数・ハッシュの監査](../solver/research-results/ahiru-advice-20261103/fresh-extraction.json)。コード全体の識別値の違いも残した。
+
+取得は記録された公開観測、削除は実取得/実削除による所有札の追跡と最後の効果解決の数値/トークンから取り出す。次の取得観測・最終数値/デッキと一致することを全件照合する。カード効果は再実行せず、私用の個体ID・実seed・乱数・結果は公開観測に含めない。抽出の3単体検査も通過した。
+
+補正作成と独立診断の処理を準備した。実際の計算はブラウザ内で行い、500開始を補正作成にだけ使い、別1,000開始の全判断で予測を診断する。250元開始に満たない時期には補正を作らない。診断中の式の変更や開始の重複は拒否する。まだブラウザの補正作成・診断とFRESHの画面接続は実施していない。
+
+```sh
+node solver/ahiru-calibration-fit.mjs solver/local-runs/pro-mean125/ahiru-fresh-decisions-training fresh solver/local-runs/pro-mean125/ahiru-fresh-calibration-v1.json --port 19290
+node solver/ahiru-advice-diagnostics.mjs solver/local-runs/pro-mean125/ahiru-fresh-decisions-validation solver/research-results/ahiru-advice-20261103/fresh-advice-validation.json --training solver/local-runs/pro-mean125/ahiru-fresh-decisions-training --calibration solver/local-runs/pro-mean125/ahiru-fresh-calibration-v1.json --port 19290
+```
+
+最新の依頼で、PRO方略の到達確認は全1,000開始・平均12以上・8点以下19回以内へ変更された。旧2,000開始の計画は履歴として保持し、良い区間を選んで1,000開始の達成とすることはしない。
