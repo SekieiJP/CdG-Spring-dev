@@ -31,3 +31,8 @@ test('全開始の順序と8配置を監査し、欠落・リセット・局面�
   const x=fixture();change(x.data);assert.throws(()=>auditAhiruBatch(x.data,x.expected));
  }
 });
+
+test('0番への選択固定も拒否し、通常の未指定/nullと区別する',()=>{
+ const plain=fixture();plain.data.settings.forcedChoice=null;plain.data.simulations[0].playRecords[0].metadata.forcedChoice=null;assert.equal(auditAhiruBatch(plain.data,plain.expected).length,250);
+ for(const change of [d=>d.settings.forcedChoice=0,d=>d.simulations[0].playRecords[0].metadata.forcedChoice=0]){const f=fixture();change(f.data);assert.throws(()=>auditAhiruBatch(f.data,f.expected));}
+});

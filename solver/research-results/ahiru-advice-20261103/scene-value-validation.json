@@ -1,0 +1,212 @@
+{
+  "createdAt": "2026-11-03T04:47:41.901Z",
+  "purpose": "PRO・全開始採用。8点以下を含む低得点率。予測・局面継続ではなく実ゲームの公式得点。",
+  "manifest": {
+    "stage": "ahiru-stability-validation-v2-20261103",
+    "n": 1000,
+    "phase": "validation",
+    "seed": "ahiru-pro-ahiru-stability-validation-v2-20261103",
+    "fingerprints": {
+      "strategyVersion": "48105419afcd1a5bb22e41ae950719c9fdbfcdc93e5f415e625faa446b517d05",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    },
+    "actorFiles": [
+      "solver/autoplay-agent.mjs",
+      "solver/browser/pro-strategy-research.js",
+      "solver/browser/pro-risk-research.js",
+      "solver/browser/pro-value-model.js",
+      "solver/browser/pro-learned-research.js",
+      "solver/browser/pro-public-action-kernel.js",
+      "solver/pro-card-scene-input.mjs",
+      "solver/browser/pro-intrinsic-recovery.js",
+      "solver/browser/pro-action-candidates.js",
+      "solver/browser/pro-opening-table.js",
+      "solver/pro-opening-table-input.mjs"
+    ],
+    "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+    "configFile": "solver/research-scenarios/ahiru-pro-scene-value-configs.json",
+    "configSha256": "621a59a4830e86c9ae99f96eed0386751c9e9936bae0b97ea5298ed01adcd524",
+    "runs": [
+      {
+        "id": "scene-v3",
+        "config": {
+          "id": "scene-v3",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.02,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "shortfallWeight": 0
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d"
+        },
+        "files": [
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch0.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch1.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch2.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch3.json"
+        ]
+      }
+    ]
+  },
+  "groups": {
+    "scene-v3": {
+      "n": 1000,
+      "mean": 11.882,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -4,
+      "max": 16,
+      "score15": {
+        "count": 28,
+        "rate": 0.028,
+        "interval95": [
+          0.019442147463132154,
+          0.040170444802420505
+        ]
+      },
+      "score14": {
+        "count": 152,
+        "rate": 0.152
+      },
+      "score12Rate": 0.666,
+      "scoreBelow8Rate": 0.02,
+      "withdrawalZeroRate": 0.917,
+      "meanStats": {
+        "experience": 44.383,
+        "enrollment": 33.616,
+        "satisfaction": 32.655,
+        "accounting": 18.613,
+        "withdrawal": 0.183,
+        "difference": 33.433
+      },
+      "milestones": {
+        "experience50": 0.297,
+        "difference40": 0.185,
+        "difference48": 0.013,
+        "satisfaction25": 0.894,
+        "satisfaction35": 0.448
+      },
+      "activity": {
+        "deckSize": 10.102,
+        "acquisitions": 9.757,
+        "deleted": 4.655,
+        "drawn": 35.452,
+        "placed": 29.436,
+        "applied": 29.436,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "3": 2,
+        "4": 1,
+        "5": 1,
+        "6": 4,
+        "7": 6,
+        "8": 11,
+        "9": 30,
+        "10": 83,
+        "11": 190,
+        "12": 301,
+        "13": 213,
+        "14": 124,
+        "15": 26,
+        "16": 2,
+        "-4": 1,
+        "-3": 2,
+        "-2": 3
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 31,
+        "rate": 0.031,
+        "interval95": [
+          0.02192386473850233,
+          0.04366576613553198
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.762,
+        11.998
+      ],
+      "interpretation": "調整と異なる固定全開始。達成判定は観測平均と全低得点件数。"
+    }
+  },
+  "comparisons": {},
+  "audit": [
+    {
+      "id": "scene-v3",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch0.json",
+      "sha256": "8190e9ff47e8733440af286ee593ecdf5b64a53c7008c9edcede25ae18cc7b5a",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "scene-v3",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch1.json",
+      "sha256": "6277a652fcacf7bdfabcbddddcf07f6ee55350c430f56c6b60d812d145092ea6",
+      "n": 250,
+      "offset": 250
+    },
+    {
+      "id": "scene-v3",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch2.json",
+      "sha256": "64986278d961c819856fb316cc25a4875267ae84dc11fa16ab81caca9963531c",
+      "n": 250,
+      "offset": 500
+    },
+    {
+      "id": "scene-v3",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch3.json",
+      "sha256": "35514930ceff558ccfa73e65f485504d7d9f05f0ce2f8f9f79cf2b805daf4335",
+      "n": 250,
+      "offset": 750
+    }
+  ],
+  "planPassed": false,
+  "goalPassed": false
+}
