@@ -1,0 +1,224 @@
+{
+  "createdAt": "2026-10-04T11:13:30.872Z",
+  "purpose": "同じ設定の後続方略だけを教師にする研究。実装版の差は保存し、固定版の到達検証とは呼ばない。",
+  "manifest": "solver/research-scenarios/pro-value-v6-component-sources.json",
+  "readyForDataset": true,
+  "policySha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+  "policy": {
+    "acquisition": "learned",
+    "cacheEffects": true,
+    "deleteFloor": 4,
+    "deletion": "aggressive",
+    "fastPublicActions": true,
+    "lateAcquisitionRollout": 8,
+    "learned": {
+      "beam": 72,
+      "blend": 0.005,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "objective": "engine",
+    "placement": "engine",
+    "placementRolloutTurns": 8,
+    "planning": {
+      "actionCandidates": 8,
+      "contextSalt": true,
+      "drawSampler": "keyed",
+      "futureAcquisition": "learned",
+      "futureBeam": 64,
+      "futurePolicy": "baseline",
+      "futureRefresh": "learned",
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "valueHorizon": 2,
+      "worlds": 8
+    },
+    "refresh": "learned",
+    "safetyBuffer": 2,
+    "signedGrowth": true,
+    "targetScore": 13,
+    "uiTrainingStreams": true,
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "versions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+    "autoplay"
+  ],
+  "counts": {
+    "train": {
+      "seeds": 1250,
+      "rows": 30522
+    },
+    "validation": {
+      "seeds": 250,
+      "rows": 6117
+    }
+  },
+  "audits": [
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+      "sha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6077,
+      "phases": {
+        "acquisition": 2327,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 766,
+        "2": 774,
+        "3": 776,
+        "4": 786,
+        "5": 822,
+        "6": 827,
+        "7": 826
+      },
+      "strategyVersions": [
+        "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9"
+      ]
+    },
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+      "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6144,
+      "phases": {
+        "acquisition": 2394,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 766,
+        "2": 775,
+        "3": 785,
+        "4": 794,
+        "5": 836,
+        "6": 847,
+        "7": 841
+      },
+      "strategyVersions": [
+        "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775"
+      ]
+    },
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/short-policy-value-development/both2-batch0.json",
+      "sha256": "a5fe442696b52c61b235c5bdf3457460f02483db83567f40ba8035a62c673f51",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6105,
+      "phases": {
+        "acquisition": 2355,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 769,
+        "2": 765,
+        "3": 771,
+        "4": 786,
+        "5": 839,
+        "6": 843,
+        "7": 832
+      },
+      "strategyVersions": [
+        "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775"
+      ]
+    },
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/opening-table-development/baseline-batch0.json",
+      "sha256": "1672a3f196f202eb2482d75bdbc8e5d39a36552cf73063db5c31ea3730ebfca4",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6107,
+      "phases": {
+        "acquisition": 2357,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 769,
+        "2": 768,
+        "3": 783,
+        "4": 778,
+        "5": 840,
+        "6": 840,
+        "7": 829
+      },
+      "strategyVersions": [
+        "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da"
+      ]
+    },
+    {
+      "split": "train",
+      "file": "solver/local-runs/pro-mean125/growth-deletion-development/baseline-batch0.json",
+      "sha256": "4ac8ea08b96e2d3c389777f8ca10fca2fa46224c35138c79619c987bf8acd3b7",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6089,
+      "phases": {
+        "acquisition": 2339,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 765,
+        "2": 767,
+        "3": 771,
+        "4": 789,
+        "5": 832,
+        "6": 840,
+        "7": 825
+      },
+      "strategyVersions": [
+        "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da"
+      ]
+    },
+    {
+      "split": "validation",
+      "file": "solver/local-runs/pro-mean125/enrollment-emphasis-development/baseline-batch0.json",
+      "sha256": "fbad2e903c325e376159da53a2a8c12e8b59ef2c090b672059e68b41321cd1d9",
+      "configSha256": "e45f04a1e81fece9a160a5883e9b88ed57cd3de370fd676789bf7249adc95220",
+      "seeds": 250,
+      "rows": 6117,
+      "phases": {
+        "acquisition": 2367,
+        "after-action": 2000,
+        "before-training": 1750
+      },
+      "turns": {
+        "0": 500,
+        "1": 769,
+        "2": 775,
+        "3": 773,
+        "4": 791,
+        "5": 824,
+        "6": 847,
+        "7": 838
+      },
+      "strategyVersions": [
+        "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d"
+      ]
+    }
+  ],
+  "pending": [],
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "splitSeedsDisjoint": true,
+  "uniqueSeedListSha256": "debdd213c6234707fcfd5b5ec0c2e896ebf3e8a045d9effceec4b9d64ba6a20a",
+  "futureDecisionInput": "公開状態と学習済みmodelのみ。過去のseed・target・結果は判断入力に渡さない。"
+}

@@ -1,0 +1,693 @@
+{
+  "createdAt": "2026-10-04T01:15:52.650Z",
+  "purpose": "リセマラなしPRO。過去の結果だけを教師として使用。予測精度は実プレイ改善の証明ではない。",
+  "provenance": {
+    "datasetSha256": "589a9fecfb280b9990c153d791a614ac4af782474df2b775a794d51486739252",
+    "implementationSha256": "85b514259d52db331cd52991b406fb80bbb4d4695253542c54c5d2dd83e8da62",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay-and-public-counterfactuals"
+    ],
+    "counts": {
+      "trainSeeds": 5000,
+      "validationSeeds": 250,
+      "trainRows": 104718,
+      "validationRows": 6127,
+      "originalFullGameTrainSeeds": 3000,
+      "counterfactualPlays": 2000,
+      "counterfactualCases": 1000,
+      "counterfactualRows": 30808,
+      "counterfactualEffectiveWeight": 1000
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "17b79fdc85bf1ad7f32abf04e46e4305d7b38162b1a4e0fece441a8e4970aa7b"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch1.json",
+        "n": 250,
+        "sha256": "9dbcf463bbdb780b0143c40fd832edc4534defdbe5c420b14d7c2a1236127571"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch2.json",
+        "n": 250,
+        "sha256": "4c26fdc88dbacf1e9e039ff52e3baeb5fd658afa487cfadf4eff01d5deabfe42"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch3.json",
+        "n": 250,
+        "sha256": "593bed60880a933b628bb0b3a0ec7f7d06b266ff7185fc7716f8f66f0a4bf100"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch4.json",
+        "n": 250,
+        "sha256": "d3c252d97de42b039ad052adc170e5046e848630c736c0059ded7e9e1aaed795"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch5.json",
+        "n": 250,
+        "sha256": "9b9aaab0233d9cfe48ea6e6fc4421294a8e33073ee8485ae7ef6d793a999f4a9"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch6.json",
+        "n": 250,
+        "sha256": "5c5cdda9078a524ea993c1847271fe3daf4179032089a1fb2f88754559c99bb8"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch7.json",
+        "n": 250,
+        "sha256": "b96e8655a5ad5af10d1e7204aa2cffad6ccfe463156b73e16abe5f8f47eb57f4"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch8.json",
+        "n": 250,
+        "sha256": "1cef0d58cc0329b9ef3bdb8672f4988cfacce732a33642f4ce69671d36beb3ee"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch9.json",
+        "n": 250,
+        "sha256": "183ac82c4370e9f47f6068159fcc5b029f8796e19589418146b9802a1f6dec3f"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch10.json",
+        "n": 250,
+        "sha256": "4009f66418ab88bdbd163ad0d1dcf1bb4f968e79c7e21fd211653a9a6655ce26"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch11.json",
+        "n": 250,
+        "sha256": "3885a03cd451775f4713fef115b1f2f815cfc599340104dceaf723d76910e93a"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "9fcb77202f7242a2c7b64728bb48cf0eab5b6f16e9e8203ba22066d06b204ea9"
+      },
+      {
+        "id": "card-43-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-reference-batch0.json",
+        "n": 250,
+        "sha256": "23eba4f2071b66bb9ef1e0da7be83fc28eebe8b2d5bba46e05f5ed514316e56d",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-reference-batch1.json",
+        "n": 250,
+        "sha256": "044282181cbc0fc6c69ea87b840197ec60a58731f22fb7268d8b56fc60188ae4",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-target-batch0.json",
+        "n": 250,
+        "sha256": "417390dc4ff2fbe0bfd81b42b7dc83792628c0a5ee4549cea35a95118beae87c",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-target-batch1.json",
+        "n": 250,
+        "sha256": "c55bcdee941d72736402c5b9a2b44b34c06166ca4974b0ac9489e3ddf41fdf2e",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-reference-batch0.json",
+        "n": 250,
+        "sha256": "9df86918f9ef885188054c100cc19ff10c4b26c86338dffc4f6a7ab933d9c68b",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-reference-batch1.json",
+        "n": 250,
+        "sha256": "b0c7aaaf8c3b5ec9a986222894ad01210e2bae3d78ec6b64f9f83d074da5502a",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-target-batch0.json",
+        "n": 250,
+        "sha256": "90f38040c1faf996066053c3e96102eaf4736af42f5a2bcdfd694bbd193b5cc2",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-target-batch1.json",
+        "n": 250,
+        "sha256": "fc45d4806593fd962918176da26df62a082076ef6c0c2418e14ec8cb197de4dc",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      }
+    ]
+  },
+  "models": {
+    "depth3": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v3-scenes/depth3-model.json",
+      "sha256": "acd21433c5fefb1c4a3e42899439be2fc8c6f610c35ba540d8d32429dfbf7e23",
+      "settings": {
+        "iterations": 160,
+        "depth": 3,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 104718,
+          "weight": 3999.999999997036,
+          "rmse": 1.6048991434296636,
+          "mae": 0.9911831489217104,
+          "bias": 0.0007650536347423276
+        },
+        "validation": {
+          "rows": 6127,
+          "weight": 249.99999999999002,
+          "rmse": 1.7540338523253847,
+          "mae": 1.0503248821690507,
+          "bias": -0.05693424097496976
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2377,
+            "weight": 96.11094999144612,
+            "rmse": 1.745324884123766,
+            "mae": 1.0499705281313627,
+            "bias": -0.03801931848741744
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.07416000456143,
+            "rmse": 1.7246228335487748,
+            "mae": 1.0104455950279532,
+            "bias": -0.05156849043946286
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.81489000399101,
+            "rmse": 1.7984292185081356,
+            "mae": 1.0963754476811582,
+            "bias": -0.0883806532324134
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.51854000114047,
+            "rmse": 2.138737758786647,
+            "mae": 1.3842229383263596,
+            "bias": -0.14680267301090116
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 756,
+            "weight": 31.000977798154555,
+            "rmse": 2.1111701709752806,
+            "mae": 1.3503521488818286,
+            "bias": -0.13112763725617088
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 763,
+            "weight": 31.26730461948138,
+            "rmse": 2.0361582465871555,
+            "mae": 1.2848052008972808,
+            "bias": -0.10707306690190041
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 765,
+            "weight": 31.312188382157135,
+            "rmse": 1.982977401968737,
+            "mae": 1.1934405371320678,
+            "bias": -0.09203256874320168
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 792,
+            "weight": 32.33050022686496,
+            "rmse": 1.763561067498071,
+            "mae": 1.0812372051576118,
+            "bias": -0.0691952797978501
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 844,
+            "weight": 34.26035265413111,
+            "rmse": 1.5426573793108196,
+            "mae": 0.9235689236746456,
+            "bias": -0.023943096520186676
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 857,
+            "weight": 34.79273927463781,
+            "rmse": 1.318129673280587,
+            "mae": 0.7845898906403826,
+            "bias": 0.006975631584982433
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 850,
+            "weight": 34.51739704343355,
+            "rmse": 1.1009172948423673,
+            "mae": 0.6048645860760626,
+            "bias": 0.05469833607042712
+          }
+        }
+      },
+      "seconds": 23.068
+    },
+    "depth4": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+      "sha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d",
+      "settings": {
+        "iterations": 160,
+        "depth": 4,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 104718,
+          "weight": 3999.999999997036,
+          "rmse": 1.5650952241681668,
+          "mae": 0.9668208029113369,
+          "bias": 0.001063910059208144
+        },
+        "validation": {
+          "rows": 6127,
+          "weight": 249.99999999999002,
+          "rmse": 1.718888062549256,
+          "mae": 1.0324517083847207,
+          "bias": -0.05283308287718872
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2377,
+            "weight": 96.11094999144612,
+            "rmse": 1.7125056611268563,
+            "mae": 1.035757992774669,
+            "bias": -0.04823890762103286
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.07416000456143,
+            "rmse": 1.6847332328455904,
+            "mae": 0.990937522365962,
+            "bias": -0.04117146225827892
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.81489000399101,
+            "rmse": 1.7654300460941694,
+            "mae": 1.0754716421605934,
+            "bias": -0.07230910330703272
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.51854000114047,
+            "rmse": 2.134450177143305,
+            "mae": 1.379846118095699,
+            "bias": -0.13333629143549003
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 756,
+            "weight": 31.000977798154555,
+            "rmse": 2.097608266684699,
+            "mae": 1.335718871612127,
+            "bias": -0.11895840561458346
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 763,
+            "weight": 31.26730461948138,
+            "rmse": 2.014057275849391,
+            "mae": 1.2560979684240945,
+            "bias": -0.09759415552478436
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 765,
+            "weight": 31.312188382157135,
+            "rmse": 1.9517505223505758,
+            "mae": 1.1672919723308712,
+            "bias": -0.08280431639201068
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 792,
+            "weight": 32.33050022686496,
+            "rmse": 1.727274059666285,
+            "mae": 1.0641142323821928,
+            "bias": -0.07492483689479651
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 844,
+            "weight": 34.26035265413111,
+            "rmse": 1.4981581268995678,
+            "mae": 0.9107288057714944,
+            "bias": -0.031030294965176116
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 857,
+            "weight": 34.79273927463781,
+            "rmse": 1.247921097808973,
+            "mae": 0.7668488444644141,
+            "bias": 0.011805046484525053
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 850,
+            "weight": 34.51739704343355,
+            "rmse": 1.0085788973079894,
+            "mae": 0.587548269484863,
+            "bias": 0.05604272949327906
+          }
+        }
+      },
+      "seconds": 30.397
+    }
+  },
+  "datasetAudit": {
+    "schema": 1,
+    "createdAt": "2026-10-04T01:12:40.655Z",
+    "purpose": "学習用の公開状態と過去の結果。新規プレイ中の予測にはtarget・seedを渡さない。",
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "17b79fdc85bf1ad7f32abf04e46e4305d7b38162b1a4e0fece441a8e4970aa7b"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch1.json",
+        "n": 250,
+        "sha256": "9dbcf463bbdb780b0143c40fd832edc4534defdbe5c420b14d7c2a1236127571"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch2.json",
+        "n": 250,
+        "sha256": "4c26fdc88dbacf1e9e039ff52e3baeb5fd658afa487cfadf4eff01d5deabfe42"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch3.json",
+        "n": 250,
+        "sha256": "593bed60880a933b628bb0b3a0ec7f7d06b266ff7185fc7716f8f66f0a4bf100"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch4.json",
+        "n": 250,
+        "sha256": "d3c252d97de42b039ad052adc170e5046e848630c736c0059ded7e9e1aaed795"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch5.json",
+        "n": 250,
+        "sha256": "9b9aaab0233d9cfe48ea6e6fc4421294a8e33073ee8485ae7ef6d793a999f4a9"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch6.json",
+        "n": 250,
+        "sha256": "5c5cdda9078a524ea993c1847271fe3daf4179032089a1fb2f88754559c99bb8"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch7.json",
+        "n": 250,
+        "sha256": "b96e8655a5ad5af10d1e7204aa2cffad6ccfe463156b73e16abe5f8f47eb57f4"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch8.json",
+        "n": 250,
+        "sha256": "1cef0d58cc0329b9ef3bdb8672f4988cfacce732a33642f4ce69671d36beb3ee"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch9.json",
+        "n": 250,
+        "sha256": "183ac82c4370e9f47f6068159fcc5b029f8796e19589418146b9802a1f6dec3f"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch10.json",
+        "n": 250,
+        "sha256": "4009f66418ab88bdbd163ad0d1dcf1bb4f968e79c7e21fd211653a9a6655ce26"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch11.json",
+        "n": 250,
+        "sha256": "3885a03cd451775f4713fef115b1f2f815cfc599340104dceaf723d76910e93a"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "9fcb77202f7242a2c7b64728bb48cf0eab5b6f16e9e8203ba22066d06b204ea9"
+      },
+      {
+        "id": "card-43-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-reference-batch0.json",
+        "n": 250,
+        "sha256": "23eba4f2071b66bb9ef1e0da7be83fc28eebe8b2d5bba46e05f5ed514316e56d",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-reference-batch1.json",
+        "n": 250,
+        "sha256": "044282181cbc0fc6c69ea87b840197ec60a58731f22fb7268d8b56fc60188ae4",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-target-batch0.json",
+        "n": 250,
+        "sha256": "417390dc4ff2fbe0bfd81b42b7dc83792628c0a5ee4549cea35a95118beae87c",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-43-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-43-target-batch1.json",
+        "n": 250,
+        "sha256": "c55bcdee941d72736402c5b9a2b44b34c06166ca4974b0ac9489e3ddf41fdf2e",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-reference-batch0.json",
+        "n": 250,
+        "sha256": "9df86918f9ef885188054c100cc19ff10c4b26c86338dffc4f6a7ab933d9c68b",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-reference",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-reference-batch1.json",
+        "n": 250,
+        "sha256": "b0c7aaaf8c3b5ec9a986222894ad01210e2bae3d78ec6b64f9f83d074da5502a",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-target-batch0.json",
+        "n": 250,
+        "sha256": "90f38040c1faf996066053c3e96102eaf4736af42f5a2bcdfd694bbd193b5cc2",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      },
+      {
+        "id": "card-51-target",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-scenes-development-trials/card-51-target-batch1.json",
+        "n": 250,
+        "sha256": "fc45d4806593fd962918176da26df62a082076ef6c0c2418e14ec8cb197de4dc",
+        "split": "train",
+        "kind": "public-counterfactual",
+        "gameWeight": 0.5
+      }
+    ],
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay-and-public-counterfactuals"
+    ],
+    "counts": {
+      "trainSeeds": 5000,
+      "validationSeeds": 250,
+      "trainRows": 104718,
+      "validationRows": 6127,
+      "originalFullGameTrainSeeds": 3000,
+      "counterfactualPlays": 2000,
+      "counterfactualCases": 1000,
+      "counterfactualRows": 30808,
+      "counterfactualEffectiveWeight": 1000
+    },
+    "sceneAugmentation": {
+      "generatorSha256": "58c3a76507d2ae9791353a64205a222246c5515dbd6ea96745984b194f56c399",
+      "baseDatasetSha256": "bb408bdf1821540bc3373b77c15c059b03fc28b30e09c6b799eafab76ce38e8c",
+      "baseSources": [
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch0.json",
+          "n": 250,
+          "sha256": "17b79fdc85bf1ad7f32abf04e46e4305d7b38162b1a4e0fece441a8e4970aa7b"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch1.json",
+          "n": 250,
+          "sha256": "9dbcf463bbdb780b0143c40fd832edc4534defdbe5c420b14d7c2a1236127571"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch2.json",
+          "n": 250,
+          "sha256": "4c26fdc88dbacf1e9e039ff52e3baeb5fd658afa487cfadf4eff01d5deabfe42"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch3.json",
+          "n": 250,
+          "sha256": "593bed60880a933b628bb0b3a0ec7f7d06b266ff7185fc7716f8f66f0a4bf100"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch4.json",
+          "n": 250,
+          "sha256": "d3c252d97de42b039ad052adc170e5046e848630c736c0059ded7e9e1aaed795"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch5.json",
+          "n": 250,
+          "sha256": "9b9aaab0233d9cfe48ea6e6fc4421294a8e33073ee8485ae7ef6d793a999f4a9"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch6.json",
+          "n": 250,
+          "sha256": "5c5cdda9078a524ea993c1847271fe3daf4179032089a1fb2f88754559c99bb8"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch7.json",
+          "n": 250,
+          "sha256": "b96e8655a5ad5af10d1e7204aa2cffad6ccfe463156b73e16abe5f8f47eb57f4"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch8.json",
+          "n": 250,
+          "sha256": "1cef0d58cc0329b9ef3bdb8672f4988cfacce732a33642f4ce69671d36beb3ee"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch9.json",
+          "n": 250,
+          "sha256": "183ac82c4370e9f47f6068159fcc5b029f8796e19589418146b9802a1f6dec3f"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch10.json",
+          "n": 250,
+          "sha256": "4009f66418ab88bdbd163ad0d1dcf1bb4f968e79c7e21fd211653a9a6655ce26"
+        },
+        {
+          "split": "train",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch11.json",
+          "n": 250,
+          "sha256": "3885a03cd451775f4713fef115b1f2f815cfc599340104dceaf723d76910e93a"
+        },
+        {
+          "split": "validation",
+          "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json",
+          "n": 250,
+          "sha256": "9fcb77202f7242a2c7b64728bb48cf0eab5b6f16e9e8203ba22066d06b204ea9"
+        }
+      ],
+      "manifestSha256": "1e91d8e6038c556bb244c50b2be3b430cf3e6e280d746264880e245ef87f8025",
+      "preparationSha256": "ac7398ad62341e6625ca5be88a430c8356241cfd10466ac9b7baa07c18920e9d",
+      "weight": 0.5,
+      "scope": "既存の学習側の公開局面のみ。2群とも学習側に置き、検証側は既存の別250開始シードを維持。途中局面からの継続を全ゲーム達成の証拠には数えない。"
+    }
+  }
+}

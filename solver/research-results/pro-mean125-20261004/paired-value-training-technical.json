@@ -1,0 +1,141 @@
+{
+  "createdAt": "2026-10-04T13:34:18.052Z",
+  "purpose": "合成教師のみで学習・検証・全250局面ゲートの接続を確認。実ゲームの改善やカード評価の根拠ではない。",
+  "provenance": {
+    "inputSha256": "651185d9e32ae4fad28a44b4e76cdcc02aba06a983757584d7d07dc2adb63657",
+    "implementationSha256": "9b61be17a21798519c3fdc513c390a488ece2e34cf162d1ef17a9f2f846ebb89",
+    "sourceFiles": [
+      "solver/pro-paired-value-dataset.mjs",
+      "solver/pro-paired-value-train.mjs",
+      "solver/browser/pro-paired-training.js",
+      "solver/browser/pro-paired-value.js",
+      "solver/browser/pro-value-model.js",
+      "game/js/proAcquisitionAdvisor.js"
+    ],
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    ],
+    "syntheticOnly": true,
+    "publicBank": "solver/local-runs/pro-mean125/paired-value-scenes-v1/choices.json"
+  },
+  "syntheticOnly": true,
+  "settings": {
+    "depth": 2,
+    "iterations": 120,
+    "learningRate": 0.05,
+    "bins": 8,
+    "featureFraction": 0.75,
+    "rowFraction": 0.8,
+    "minRows": 25,
+    "minWeight": 10,
+    "l2": 5,
+    "seed": 904125
+  },
+  "metrics": {
+    "train": {
+      "n": 500,
+      "learned": {
+        "mae": 0.0409793180113991,
+        "rmse": 0.07044089642988709,
+        "bias": -0.004892595020224745
+      },
+      "zero": {
+        "mae": 0.3279999999999997,
+        "rmse": 0.6633249580710796,
+        "bias": -0.0216
+      },
+      "actualAlternativeMean": 0.0216,
+      "actualAlternativeMean95": [
+        -0.03680000000000003,
+        0.08000000000000007
+      ],
+      "gates": {
+        "0": {
+          "n": 500,
+          "changes": 243,
+          "keptReference": 257,
+          "meanGainPerRoot": 0.17480000000000034,
+          "meanGain95": [
+            0.13680000000000023,
+            0.21480000000000038
+          ],
+          "sumGained": 87.40000000000018,
+          "sumLost": 0,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        },
+        "0.15": {
+          "n": 500,
+          "changes": 132,
+          "keptReference": 368,
+          "meanGainPerRoot": 0.1692000000000003,
+          "meanGain95": [
+            0.13120000000000018,
+            0.20920000000000039
+          ],
+          "sumGained": 84.60000000000015,
+          "sumLost": 0,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        }
+      },
+      "antisymmetryError": 0
+    },
+    "validation": {
+      "n": 250,
+      "learned": {
+        "mae": 0.042878158612804085,
+        "rmse": 0.07212507933370768,
+        "bias": -0.0018756066727068541
+      },
+      "zero": {
+        "mae": 0.3448000000000006,
+        "rmse": 0.6658528365937934,
+        "bias": -0.026400000000000003
+      },
+      "actualAlternativeMean": 0.026400000000000003,
+      "actualAlternativeMean95": [
+        -0.056,
+        0.10879999999999997
+      ],
+      "gates": {
+        "0": {
+          "n": 250,
+          "changes": 127,
+          "keptReference": 123,
+          "meanGainPerRoot": 0.18560000000000001,
+          "meanGain95": [
+            0.1295999999999999,
+            0.24400000000000022
+          ],
+          "sumGained": 46.400000000000006,
+          "sumLost": 0,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        },
+        "0.15": {
+          "n": 250,
+          "changes": 66,
+          "keptReference": 184,
+          "meanGainPerRoot": 0.184,
+          "meanGain95": [
+            0.12719999999999995,
+            0.2424000000000002
+          ],
+          "sumGained": 46,
+          "sumLost": 0,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        }
+      },
+      "antisymmetryError": 0
+    }
+  },
+  "audit": {
+    "trainRoots": 500,
+    "validationRoots": 250,
+    "augmentedRows": 1000,
+    "trainTotalWeight": 500,
+    "features": 204,
+    "labelsAndTrainingInBrowser": true
+  },
+  "featuresAndTrainingInBrowser": true
+}

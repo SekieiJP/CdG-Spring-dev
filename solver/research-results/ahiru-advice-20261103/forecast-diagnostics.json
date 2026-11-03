@@ -1,0 +1,1479 @@
+{
+  "createdAt": "2026-11-02T17:48:29.663Z",
+  "purpose": "アドバイスの設計のための開発250開始の観測診断。2,000開始の方略検証やセリフの精度検証ではない。",
+  "sourceAuditSha256": "74e92821668748a94bfb766e7abe37f981b1b1e44e8bd03e816cacfc55fe43a5",
+  "publicInputSha256": "59187f0de47ccbcf4950e059d6aba587e1b0b7ea4dc369decc8c1968671b9771",
+  "teachersSha256": "22ec41c1da959484a8c3396356fb9d62e3313bd6d1f7062c25907dfb45d88ca2",
+  "sources": [
+    {
+      "file": "solver/ahiru-forecast-diagnostics.mjs",
+      "sha256": "f74cacd2e29eafb49972687b61fd52324dfb18e783d10e796183bc552120d893"
+    },
+    {
+      "file": "solver/browser/pro-value-model.js",
+      "sha256": "f727f94ea32448332d4ed852469516a4b8e82286c7dc91d2fffacaca8edfd6fa"
+    },
+    {
+      "file": "game/js/proAcquisitionAdvisor.js",
+      "sha256": "bff3e55ab6224881f28afc4ad6817985bd41ed8bd3daa602d413f58a69cc27d1"
+    }
+  ],
+  "groups": {
+    "acquisition-turn-0-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 5,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 2,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 21.60000000000004,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -24.735999999999915,
+          "mae": 24.735999999999915,
+          "actualMinusProjectionQuantiles": {
+            "p10": 15.399999999999999,
+            "median": 24.4,
+            "p90": 34.4
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 10.80000000000002,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -22.531999999999893,
+          "mae": 22.531999999999893,
+          "actualMinusProjectionQuantiles": {
+            "p10": 12.2,
+            "median": 23.2,
+            "p90": 30.2
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 13.800000000000054,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -18.687999999999914,
+          "mae": 18.687999999999914,
+          "actualMinusProjectionQuantiles": {
+            "p10": 10.2,
+            "median": 19.2,
+            "p90": 27.2
+          }
+        },
+        "accounting": {
+          "meanPredicted": 15.800000000000072,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": -2.756000000000005,
+          "mae": 3.215200000000008,
+          "actualMinusProjectionQuantiles": {
+            "p10": -0.8000000000000007,
+            "median": 2.1999999999999993,
+            "p90": 6.199999999999999
+          }
+        }
+      }
+    },
+    "acquisition-turn-0-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 7,
+      "ownedMax": 7,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 3.312,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 29.035931428571505,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -17.300068571428564,
+          "mae": 18.439497142857142,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.7142857142857153,
+            "median": 18,
+            "p90": 33
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 11.139108571428578,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -22.192891428571446,
+          "mae": 22.192891428571446,
+          "actualMinusProjectionQuantiles": {
+            "p10": 11,
+            "median": 23,
+            "p90": 32
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 19.48253714285715,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -13.005462857142867,
+          "mae": 13.72715428571429,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.1428571428571459,
+            "median": 13,
+            "p90": 24.285714285714285
+          }
+        },
+        "accounting": {
+          "meanPredicted": 22.905394285714312,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 4.349394285714293,
+          "mae": 7.039451428571422,
+          "actualMinusProjectionQuantiles": {
+            "p10": -14,
+            "median": -5,
+            "p90": 5
+          }
+        }
+      }
+    },
+    "deletion-turn-0-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 7,
+      "ownedMax": 7,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 3.092,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 29.724800000000013,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -16.61120000000004,
+          "mae": 17.70720000000002,
+          "actualMinusProjectionQuantiles": {
+            "p10": -0.5714285714285694,
+            "median": 17,
+            "p90": 32
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 10.716731428571421,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -22.61526857142857,
+          "mae": 22.61526857142857,
+          "actualMinusProjectionQuantiles": {
+            "p10": 11.142857142857142,
+            "median": 23.142857142857142,
+            "p90": 32.142857142857146
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 19.165017142857128,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -13.322982857142852,
+          "mae": 13.838411428571431,
+          "actualMinusProjectionQuantiles": {
+            "p10": 2.2857142857142847,
+            "median": 12.5,
+            "p90": 24.142857142857142
+          }
+        },
+        "accounting": {
+          "meanPredicted": 22.81273142857141,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 4.256731428571422,
+          "mae": 6.988708571428575,
+          "actualMinusProjectionQuantiles": {
+            "p10": -14,
+            "median": -4.142857142857142,
+            "p90": 6
+          }
+        }
+      }
+    },
+    "deletion-turn-0-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 6,
+      "ownedMax": 6,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 4.812,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 31.344,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -14.99200000000001,
+          "mae": 16.1584,
+          "actualMinusProjectionQuantiles": {
+            "p10": -1.2000000000000028,
+            "median": 15,
+            "p90": 30
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 12.483919999999975,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -20.848079999999968,
+          "mae": 20.86407999999997,
+          "actualMinusProjectionQuantiles": {
+            "p10": 9.000000000000004,
+            "median": 21.4,
+            "p90": 31
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 20.78136000000002,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -11.706639999999997,
+          "mae": 12.58354666666666,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.5,
+            "median": 11.4,
+            "p90": 22.5
+          }
+        },
+        "accounting": {
+          "meanPredicted": 20.95413333333334,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 2.3981333333333383,
+          "mae": 4.828640000000001,
+          "actualMinusProjectionQuantiles": {
+            "p10": -10,
+            "median": -1.8133333333333326,
+            "p90": 4.4
+          }
+        }
+      }
+    },
+    "acquisition-turn-1-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 6,
+      "ownedMax": 6,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 4.812,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 31.344,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -14.99200000000001,
+          "mae": 16.1584,
+          "actualMinusProjectionQuantiles": {
+            "p10": -1.2000000000000028,
+            "median": 15,
+            "p90": 30
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 12.483919999999975,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -20.848079999999968,
+          "mae": 20.86407999999997,
+          "actualMinusProjectionQuantiles": {
+            "p10": 9.000000000000004,
+            "median": 21.4,
+            "p90": 31
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 20.78136000000002,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -11.706639999999997,
+          "mae": 12.58354666666666,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.5,
+            "median": 11.4,
+            "p90": 22.5
+          }
+        },
+        "accounting": {
+          "meanPredicted": 20.95413333333334,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 2.3981333333333383,
+          "mae": 4.828640000000001,
+          "actualMinusProjectionQuantiles": {
+            "p10": -10,
+            "median": -1.8133333333333326,
+            "p90": 4.4
+          }
+        }
+      }
+    },
+    "acquisition-turn-1-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 7,
+      "ownedMax": 7,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 5.852,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 30.97027421896176,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -15.365725781038254,
+          "mae": 16.07826770310125,
+          "actualMinusProjectionQuantiles": {
+            "p10": -0.0714285714285694,
+            "median": 14.714285714285708,
+            "p90": 30.92857142857143
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 14.194118319818841,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -19.137881680181152,
+          "mae": 19.294453108752585,
+          "actualMinusProjectionQuantiles": {
+            "p10": 7.5,
+            "median": 20,
+            "p90": 30.142857142857146
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 25.054426950314497,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -7.433573049685512,
+          "mae": 9.652620183924766,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.8571428571428577,
+            "median": 8.048884670147132,
+            "p90": 19.142857142857146
+          }
+        },
+        "accounting": {
+          "meanPredicted": 20.49009714027809,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 1.934097140278091,
+          "mae": 4.797379824476089,
+          "actualMinusProjectionQuantiles": {
+            "p10": -9.307606679035253,
+            "median": -1.1428571428571423,
+            "p90": 5
+          }
+        }
+      }
+    },
+    "deletion-turn-1-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 7,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 5.64,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 31.385304054862097,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -14.95069594513793,
+          "mae": 15.670374950288156,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.0714285714285694,
+            "median": 14.863530778164925,
+            "p90": 31.28571428571429
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 13.934223779517893,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -19.39777622048211,
+          "mae": 19.494919077624967,
+          "actualMinusProjectionQuantiles": {
+            "p10": 7,
+            "median": 20,
+            "p90": 30.63636363636364
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 24.86943420316838,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -7.618565796831623,
+          "mae": 9.491212768935076,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.12987012987012,
+            "median": 7.5,
+            "p90": 19.5
+          }
+        },
+        "accounting": {
+          "meanPredicted": 20.341435818716278,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 1.7854358187162735,
+          "mae": 4.828966746523365,
+          "actualMinusProjectionQuantiles": {
+            "p10": -9.96294372294372,
+            "median": -1.0000000000000036,
+            "p90": 5
+          }
+        }
+      }
+    },
+    "deletion-turn-1-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 7,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 6.684,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 33.13621084794547,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -13.199789152054539,
+          "mae": 14.277146557116033,
+          "actualMinusProjectionQuantiles": {
+            "p10": -2.200000000000003,
+            "median": 11.799999999999997,
+            "p90": 29.36
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 16.137063436763952,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -17.194936563236052,
+          "mae": 17.440781007680492,
+          "actualMinusProjectionQuantiles": {
+            "p10": 4.333333333333334,
+            "median": 18,
+            "p90": 28.8
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 24.593113105184614,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -7.8948868948153965,
+          "mae": 9.81890661221237,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.266666666666673,
+            "median": 8,
+            "p90": 19.2
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.715726012682673,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 3.159726012682658,
+          "mae": 5.1928013961951995,
+          "actualMinusProjectionQuantiles": {
+            "p10": -11.600000000000001,
+            "median": -2.8000000000000007,
+            "p90": 3.6000000000000014
+          }
+        }
+      }
+    },
+    "acquisition-turn-2-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 7,
+      "actualS": 182,
+      "predictedS": 0,
+      "projectedSButActualBelow": 0,
+      "projectedBelowButActualS": 182,
+      "projectedMeanPoints": 6.684,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 33.13621084794547,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -13.199789152054539,
+          "mae": 14.277146557116033,
+          "actualMinusProjectionQuantiles": {
+            "p10": -2.200000000000003,
+            "median": 11.799999999999997,
+            "p90": 29.36
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 16.137063436763952,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -17.194936563236052,
+          "mae": 17.440781007680492,
+          "actualMinusProjectionQuantiles": {
+            "p10": 4.333333333333334,
+            "median": 18,
+            "p90": 28.8
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 24.593113105184614,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -7.8948868948153965,
+          "mae": 9.81890661221237,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.266666666666673,
+            "median": 8,
+            "p90": 19.2
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.715726012682673,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 3.159726012682658,
+          "mae": 5.1928013961951995,
+          "actualMinusProjectionQuantiles": {
+            "p10": -11.600000000000001,
+            "median": -2.8000000000000007,
+            "p90": 3.6000000000000014
+          }
+        }
+      }
+    },
+    "acquisition-turn-2-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 6,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 4,
+      "projectedSButActualBelow": 2,
+      "projectedBelowButActualS": 180,
+      "projectedMeanPoints": 6.732,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 40.98001685472938,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -5.355983145270617,
+          "mae": 9.459408314362966,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8.136469221835071,
+            "median": 5.071428571428573,
+            "p90": 20.999999999999996
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 20.342789495521487,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -12.989210504478514,
+          "mae": 13.868393252601425,
+          "actualMinusProjectionQuantiles": {
+            "p10": -0.49117251322912026,
+            "median": 13.142857142857142,
+            "p90": 26
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 26.61016210412638,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -5.87783789587361,
+          "mae": 8.231300242152617,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.6802197802197725,
+            "median": 5.686111111111117,
+            "p90": 16.5
+          }
+        },
+        "accounting": {
+          "meanPredicted": 17.265265661222674,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": -1.290734338777333,
+          "mae": 4.650991702546973,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.509956709956711,
+            "median": 1.610389610389614,
+            "p90": 9
+          }
+        }
+      }
+    },
+    "deletion-turn-2-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 6,
+      "ownedMax": 9,
+      "actualS": 182,
+      "predictedS": 7,
+      "projectedSButActualBelow": 1,
+      "projectedBelowButActualS": 176,
+      "projectedMeanPoints": 6.62,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 41.20227863482306,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -5.133721365176936,
+          "mae": 8.814844365352144,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.606271777003485,
+            "median": 4.142857142857146,
+            "p90": 19.885714285714286
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 20.352567831837845,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -12.979432168162143,
+          "mae": 13.767748124336004,
+          "actualMinusProjectionQuantiles": {
+            "p10": 0.13664596273292773,
+            "median": 13.499999999999996,
+            "p90": 26
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 26.396009685956713,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -6.0919903140433025,
+          "mae": 8.102448677097852,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.429343629343627,
+            "median": 5.5,
+            "p90": 16.28571428571429
+          }
+        },
+        "accounting": {
+          "meanPredicted": 17.59634310526845,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": -0.9596568947315498,
+          "mae": 4.780616590251622,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.428571428571427,
+            "median": 1.3877520215633403,
+            "p90": 8.5
+          }
+        }
+      }
+    },
+    "deletion-turn-2-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 19,
+      "projectedSButActualBelow": 5,
+      "projectedBelowButActualS": 168,
+      "projectedMeanPoints": 8.06,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 41.77722782019688,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -4.558772179803112,
+          "mae": 8.772356903549449,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8,
+            "median": 4,
+            "p90": 20
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 22.242054277647675,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -11.089945722352295,
+          "mae": 12.56625309786283,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.116771909953272,
+            "median": 10.5,
+            "p90": 25
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 28.42566189608608,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -4.06233810391391,
+          "mae": 7.643195261256091,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.679268817204303,
+            "median": 4,
+            "p90": 15.399999999999999
+          }
+        },
+        "accounting": {
+          "meanPredicted": 19.05360731805764,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.49760731805765135,
+          "mae": 4.713823603923319,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8.040000000000006,
+            "median": -0.40000000000000213,
+            "p90": 6.999999999999998
+          }
+        }
+      }
+    },
+    "acquisition-turn-3-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 19,
+      "projectedSButActualBelow": 5,
+      "projectedBelowButActualS": 168,
+      "projectedMeanPoints": 8.06,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 41.77722782019688,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -4.558772179803112,
+          "mae": 8.772356903549449,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8,
+            "median": 4,
+            "p90": 20
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 22.242054277647675,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -11.089945722352295,
+          "mae": 12.56625309786283,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.116771909953272,
+            "median": 10.5,
+            "p90": 25
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 28.42566189608608,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -4.06233810391391,
+          "mae": 7.643195261256091,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.679268817204303,
+            "median": 4,
+            "p90": 15.399999999999999
+          }
+        },
+        "accounting": {
+          "meanPredicted": 19.05360731805764,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.49760731805765135,
+          "mae": 4.713823603923319,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8.040000000000006,
+            "median": -0.40000000000000213,
+            "p90": 6.999999999999998
+          }
+        }
+      }
+    },
+    "acquisition-turn-3-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 9,
+      "actualS": 182,
+      "predictedS": 19,
+      "projectedSButActualBelow": 3,
+      "projectedBelowButActualS": 166,
+      "projectedMeanPoints": 9,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 41.59224248844514,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -4.743757511554846,
+          "mae": 8.445446408333622,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.499999999999993,
+            "median": 4.428571428571431,
+            "p90": 16.785714285714292
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 22.643537180995907,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -10.688462819004085,
+          "mae": 11.91799256251741,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.1999999999999957,
+            "median": 10.5,
+            "p90": 22.799999999999997
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 28.971368789139557,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -3.5166312108604556,
+          "mae": 6.868149061539771,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.608008251676129,
+            "median": 2.997220077220078,
+            "p90": 14.342175066312997
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.541031363186406,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 2.9850313631863994,
+          "mae": 5.028692597876665,
+          "actualMinusProjectionQuantiles": {
+            "p10": -10.795083557951486,
+            "median": -3,
+            "p90": 3.599999999999998
+          }
+        }
+      }
+    },
+    "deletion-turn-3-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 9,
+      "actualS": 182,
+      "predictedS": 17,
+      "projectedSButActualBelow": 4,
+      "projectedBelowButActualS": 169,
+      "projectedMeanPoints": 9.096,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 41.786808122217124,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -4.549191877782892,
+          "mae": 8.086754610185945,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7,
+            "median": 4,
+            "p90": 16
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 22.708180839926897,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -10.623819160073106,
+          "mae": 11.59900699787397,
+          "actualMinusProjectionQuantiles": {
+            "p10": -2,
+            "median": 10,
+            "p90": 23.2
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 28.8957553886798,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -3.5922446113201967,
+          "mae": 6.985068142447138,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.631944444444443,
+            "median": 3.571428571428573,
+            "p90": 14.136753246753248
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.600937720055057,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 3.0449377200550547,
+          "mae": 5.100989787033736,
+          "actualMinusProjectionQuantiles": {
+            "p10": -10.818217821782184,
+            "median": -3.0269946808510646,
+            "p90": 4.5
+          }
+        }
+      }
+    },
+    "deletion-turn-3-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 48,
+      "projectedSButActualBelow": 4,
+      "projectedBelowButActualS": 138,
+      "projectedMeanPoints": 9.692,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 43.0208546350684,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -3.315145364931583,
+          "mae": 7.606275685682064,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.400000000000006,
+            "median": 2.239999999999995,
+            "p90": 16.040000000000006
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 24.80353745681979,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -8.528462543180195,
+          "mae": 10.59718511595877,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.621176470588232,
+            "median": 7.599999999999998,
+            "p90": 22.599999999999998
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 29.994153302005788,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -2.4938466979942278,
+          "mae": 6.588784935833905,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.960000000000001,
+            "median": 2.0714285714285694,
+            "p90": 12.719999999999999
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.18509975786596,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 2.6290997578659487,
+          "mae": 4.4809190420197025,
+          "actualMinusProjectionQuantiles": {
+            "p10": -9.109000000000002,
+            "median": -2.9200000000000017,
+            "p90": 4.199999999999999
+          }
+        }
+      }
+    },
+    "acquisition-turn-4-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 8,
+      "actualS": 182,
+      "predictedS": 48,
+      "projectedSButActualBelow": 4,
+      "projectedBelowButActualS": 138,
+      "projectedMeanPoints": 9.692,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 43.0208546350684,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -3.315145364931583,
+          "mae": 7.606275685682064,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.400000000000006,
+            "median": 2.239999999999995,
+            "p90": 16.040000000000006
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 24.80353745681979,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -8.528462543180195,
+          "mae": 10.59718511595877,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.621176470588232,
+            "median": 7.599999999999998,
+            "p90": 22.599999999999998
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 29.994153302005788,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -2.4938466979942278,
+          "mae": 6.588784935833905,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.960000000000001,
+            "median": 2.0714285714285694,
+            "p90": 12.719999999999999
+          }
+        },
+        "accounting": {
+          "meanPredicted": 21.18509975786596,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 2.6290997578659487,
+          "mae": 4.4809190420197025,
+          "actualMinusProjectionQuantiles": {
+            "p10": -9.109000000000002,
+            "median": -2.9200000000000017,
+            "p90": 4.199999999999999
+          }
+        }
+      }
+    },
+    "acquisition-turn-4-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 9,
+      "actualS": 182,
+      "predictedS": 105,
+      "projectedSButActualBelow": 15,
+      "projectedBelowButActualS": 92,
+      "projectedMeanPoints": 10.608,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.31441860852325,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -0.02158139147675692,
+          "mae": 5.449899531834741,
+          "actualMinusProjectionQuantiles": {
+            "p10": -9.394285714285715,
+            "median": 0,
+            "p90": 9
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 29.11616825020131,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -4.21583174979867,
+          "mae": 6.9198290338356925,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.536067892503532,
+            "median": 2.9827049813527893,
+            "p90": 14.5
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 31.77391659641115,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -0.7140834035888269,
+          "mae": 5.491822982972125,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8.421999999999997,
+            "median": 0.5,
+            "p90": 10.399999999999999
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.5675738256894,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.011573825689397346,
+          "mae": 3.333260299991649,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.5,
+            "median": 0,
+            "p90": 5.5
+          }
+        }
+      }
+    },
+    "acquisition-turn-5-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 10,
+      "actualS": 182,
+      "predictedS": 107,
+      "projectedSButActualBelow": 14,
+      "projectedBelowButActualS": 89,
+      "projectedMeanPoints": 10.956,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.91349823961146,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": 0.5774982396114492,
+          "mae": 4.937736867509277,
+          "actualMinusProjectionQuantiles": {
+            "p10": -8.374564459930312,
+            "median": -0.519999999999996,
+            "p90": 7
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 29.451033260034308,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -3.8809667399657104,
+          "mae": 6.523334026657776,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.3028571428571425,
+            "median": 3.9200000000000017,
+            "p90": 13.399999999999999
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 31.70654206508443,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": -0.7814579349155564,
+          "mae": 4.779825230824803,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6.974950584007189,
+            "median": 0.25,
+            "p90": 8.8
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.95458222695323,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.398582226953241,
+          "mae": 3.0526515612603373,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.25,
+            "median": -0.37333333333333485,
+            "p90": 4.48
+          }
+        }
+      }
+    },
+    "acquisition-turn-5-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 11,
+      "actualS": 182,
+      "predictedS": 134,
+      "projectedSButActualBelow": 14,
+      "projectedBelowButActualS": 62,
+      "projectedMeanPoints": 11.42,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.39693987211141,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": 0.06093987211140356,
+          "mae": 4.584162835806898,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.990000000000002,
+            "median": -0.4000000000000057,
+            "p90": 7.638461538461538
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 31.037124766154605,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -2.294875233845387,
+          "mae": 4.878594799856252,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4,
+            "median": 1.428571428571427,
+            "p90": 10.2
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 32.90902050584564,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": 0.4210205058456436,
+          "mae": 4.234003576762764,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7.305423728813558,
+            "median": -0.4506172839506206,
+            "p90": 6.296682262866867
+          }
+        },
+        "accounting": {
+          "meanPredicted": 19.186964845051772,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.6309648450517712,
+          "mae": 3.0216802153021205,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.780447439747924,
+            "median": -0.432098765432098,
+            "p90": 3.8000000000000007
+          }
+        }
+      }
+    },
+    "acquisition-turn-6-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 11,
+      "actualS": 182,
+      "predictedS": 135,
+      "projectedSButActualBelow": 12,
+      "projectedBelowButActualS": 59,
+      "projectedMeanPoints": 11.468,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.55245166690598,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": 0.21645166690602902,
+          "mae": 3.8983402802147493,
+          "actualMinusProjectionQuantiles": {
+            "p10": -7,
+            "median": -0.1428571428571388,
+            "p90": 5.810117647058817
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 31.50344529564365,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -1.82855470435634,
+          "mae": 4.243410208041647,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.015999999999998,
+            "median": 1.1312410079335677,
+            "p90": 8.380451127819548
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 32.5782994327481,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": 0.09029943274810733,
+          "mae": 3.665201255528457,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.501298701298701,
+            "median": -0.02902899872380793,
+            "p90": 5.79032258064516
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.904934674587047,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.34893467458704047,
+          "mae": 2.531531237332547,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5,
+            "median": -0.1999999999999993,
+            "p90": 3.6799999999999997
+          }
+        }
+      }
+    },
+    "acquisition-turn-6-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 12,
+      "actualS": 182,
+      "predictedS": 146,
+      "projectedSButActualBelow": 10,
+      "projectedBelowButActualS": 46,
+      "projectedMeanPoints": 11.664,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.13099744192685,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -0.20500255807315243,
+          "mae": 3.6570691276479286,
+          "actualMinusProjectionQuantiles": {
+            "p10": -5.9152238805970185,
+            "median": 0.2900432900432932,
+            "p90": 5.952941176470588
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 32.41249863594828,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -0.9195013640517417,
+          "mae": 3.5999465430337985,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.921681159420288,
+            "median": 0.7999999999999972,
+            "p90": 6.5
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 32.96209827592472,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": 0.4740982759247325,
+          "mae": 3.2753042433476205,
+          "actualMinusProjectionQuantiles": {
+            "p10": -6,
+            "median": -0.42596491228070477,
+            "p90": 4.4719379844961225
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.96493146161466,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.4089314616146665,
+          "mae": 2.426047741682307,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4.440000000000001,
+            "median": -0.07563636363636661,
+            "p90": 3.283870967741933
+          }
+        }
+      }
+    },
+    "acquisition-turn-7-before-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 4,
+      "ownedMax": 13,
+      "actualS": 182,
+      "predictedS": 150,
+      "projectedSButActualBelow": 10,
+      "projectedBelowButActualS": 42,
+      "projectedMeanPoints": 11.648,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.30298792304128,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -0.03301207695875547,
+          "mae": 2.713735467496788,
+          "actualMinusProjectionQuantiles": {
+            "p10": -4,
+            "median": 0.22857142857142776,
+            "p90": 4.25
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 32.865577363132886,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -0.466422636867101,
+          "mae": 2.389764224890188,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.375,
+            "median": 0.3200000000000003,
+            "p90": 4.329166666666666
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 32.64528350307232,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": 0.15728350307232442,
+          "mae": 2.3735868140391347,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.799999999999997,
+            "median": -0.2666666666666657,
+            "p90": 3.3999999999999986
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.677348431201732,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.1213484312017348,
+          "mae": 2.010003638839335,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.5,
+            "median": 0,
+            "p90": 2.9555555555555557
+          }
+        }
+      }
+    },
+    "acquisition-turn-7-after-choice": {
+      "games": 250,
+      "states": 250,
+      "support250": true,
+      "ownedMin": 5,
+      "ownedMax": 14,
+      "actualS": 182,
+      "predictedS": 162,
+      "projectedSButActualBelow": 10,
+      "projectedBelowButActualS": 30,
+      "projectedMeanPoints": 11.796,
+      "actualMeanPoints": 12.148,
+      "axes": {
+        "experience": {
+          "meanPredicted": 46.12286950878882,
+          "meanActual": 46.336,
+          "biasPredictedMinusActual": -0.21313049121116964,
+          "mae": 2.6785099975698916,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.951999999999998,
+            "median": 0.20000000000000284,
+            "p90": 4.371428571428574
+          }
+        },
+        "enrollment": {
+          "meanPredicted": 33.11856844361193,
+          "meanActual": 33.332,
+          "biasPredictedMinusActual": -0.2134315563880567,
+          "mae": 2.23237778882229,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.2727272727272734,
+            "median": 0,
+            "p90": 3.700000000000003
+          }
+        },
+        "satisfaction": {
+          "meanPredicted": 32.69447079035649,
+          "meanActual": 32.488,
+          "biasPredictedMinusActual": 0.20647079035646915,
+          "mae": 2.209013937764617,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.6571428571428584,
+            "median": -0.45440340909090793,
+            "p90": 3.242424242424242
+          }
+        },
+        "accounting": {
+          "meanPredicted": 18.69322641442684,
+          "meanActual": 18.556,
+          "biasPredictedMinusActual": 0.1372264144268429,
+          "mae": 1.9444873093414523,
+          "actualMinusProjectionQuantiles": {
+            "p10": -3.5,
+            "median": -0.03200000000000003,
+            "p90": 2.9399999999999977
+          }
+        }
+      }
+    },
+    "deletion-turn-6-before-choice": {
+      "games": 36,
+      "states": 36,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    },
+    "deletion-turn-6-after-choice": {
+      "games": 36,
+      "states": 36,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    },
+    "deletion-turn-4-before-choice": {
+      "games": 42,
+      "states": 42,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    },
+    "deletion-turn-4-after-choice": {
+      "games": 42,
+      "states": 42,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    },
+    "deletion-turn-5-before-choice": {
+      "games": 52,
+      "states": 52,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    },
+    "deletion-turn-5-after-choice": {
+      "games": 52,
+      "states": 52,
+      "support250": false,
+      "interpretation": "250元開始未満なので傾向や校正値を出さない。"
+    }
+  },
+  "allSourceGames": 250,
+  "featuresAndStatisticsInBrowser": true,
+  "forecaster": "固定2回の代数補正。今のデッキだけ。未来の取得・実seed・山札順は入力しない。",
+  "interpretation": "未取得の将来カードを含む実際の最終値との比較。早い時期の差を、現在デッキの投影が間違った証明とは扱わない。before/afterは実選択を追加・削除した公開状態で、個別選択の因果効果ではない。"
+}

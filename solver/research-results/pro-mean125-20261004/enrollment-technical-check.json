@@ -1,0 +1,59 @@
+{
+  "purpose": "2 actual full games for wiring only; no scoring trend",
+  "n": 2,
+  "strategyVersion": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d",
+  "recordSha256": "8ef6866339d9e8332fc2adfef7e7baab418a82e1870f44b5e25b2c5a1d03f907",
+  "config": {
+    "id": "enrollment6-cash17",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8,
+    "weights": {
+      "enrollment": 6
+    },
+    "caps": {
+      "accounting": 17
+    },
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+  "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+  "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+  "noRerolls": true,
+  "noTruncation": true,
+  "placementFrames": [
+    8,
+    8
+  ]
+}

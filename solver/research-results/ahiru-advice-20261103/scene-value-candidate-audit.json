@@ -1,0 +1,88 @@
+{
+  "createdAt": "2026-11-03T03:35:44.122Z",
+  "purpose": "過去250開始の新候補の全記録を再監査。探索で選んだ候補であり、独立1000開始の達成ではない。",
+  "source": "solver/research-results/pro-mean125-20261004/scene-value-development.json",
+  "sourceSha256": "273d7f63b760007d6a8595454dc098dd1473646bcca550e1c42ce297d4bef3b3",
+  "rawFile": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/scene-value-development/both2-v3-batch0.json",
+  "rawSha256": "bfbb21b940c4772c09a4392595e91a9f31b5cd6a87530555793ec1c5fef92125",
+  "n": 250,
+  "mean": 12.16,
+  "atMost8": 3,
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "eightPlacementDecisionsEach": true,
+  "sourceFingerprints": {
+    "strategyVersion": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "config": {
+    "id": "both2-v3",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.02,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d"
+  },
+  "model": {
+    "file": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+    "sha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d",
+    "datasetFile": "solver/local-runs/pro-mean125/value-v3-scenes/dataset.json",
+    "datasetSha256": "589a9fecfb280b9990c153d791a614ac4af782474df2b775a794d51486739252",
+    "counts": {
+      "trainSeeds": 5000,
+      "validationSeeds": 250,
+      "trainRows": 104718,
+      "validationRows": 6127,
+      "originalFullGameTrainSeeds": 3000,
+      "counterfactualPlays": 2000,
+      "counterfactualCases": 1000,
+      "counterfactualRows": 30808,
+      "counterfactualEffectiveWeight": 1000
+    }
+  },
+  "nextValidation": {
+    "seedPrefix": "ahiru-pro-ahiru-stability-validation-v2-20261103",
+    "n": 1000,
+    "offsets": [
+      0,
+      250,
+      500,
+      750
+    ],
+    "allStartsAccepted": true,
+    "overlapWithModelRows": 0,
+    "requirement": "mean >=12; score <=8 count <=19; no rerolls; all 0..999 accepted"
+  }
+}

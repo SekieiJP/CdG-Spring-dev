@@ -1,0 +1,163 @@
+{
+  "stage": "ahiru-player-deletion-development-v1-20261103",
+  "n": 250,
+  "phase": "development",
+  "seed": "ahiru-pro-ahiru-player-deletion-development-v1-20261103",
+  "fingerprints": {
+    "strategyVersion": "29ad73b91ff76d28eb1eab171512733e3c4436d1522b1fdc6136a3ddca62092c",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "actorFiles": [
+    "solver/autoplay-agent.mjs",
+    "solver/browser/pro-strategy-research.js",
+    "solver/browser/pro-risk-research.js",
+    "solver/browser/pro-value-model.js",
+    "solver/browser/pro-learned-research.js",
+    "solver/browser/pro-public-action-kernel.js",
+    "solver/pro-card-scene-input.mjs",
+    "solver/browser/pro-intrinsic-recovery.js",
+    "solver/browser/pro-action-candidates.js",
+    "solver/browser/pro-opening-table.js",
+    "solver/pro-opening-table-input.mjs"
+  ],
+  "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+  "configFile": "solver/research-scenarios/ahiru-pro-player-deletion-configs.json",
+  "configSha256": "9299daf082d150b4824ee4b34b5b881f7b917f81d12f778d8f17d47e032c849f",
+  "runs": [
+    {
+      "id": "baseline",
+      "config": {
+        "id": "baseline",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed"
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/baseline-batch0.json"
+      ]
+    },
+    {
+      "id": "player-basic",
+      "config": {
+        "id": "player-basic",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "player-basic",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed"
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/player-basic-batch0.json"
+      ]
+    },
+    {
+      "id": "player-basic-consistent",
+      "config": {
+        "id": "player-basic-consistent",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "player-basic",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "futureDeletion": "player-basic"
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/player-basic-consistent-batch0.json"
+      ]
+    }
+  ]
+}

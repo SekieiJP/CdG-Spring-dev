@@ -1,0 +1,118 @@
+{
+  "createdAt": "2026-11-03T05:33:17.016Z",
+  "purpose": "将来の経理消費がある時も最後の回復札を残す仮説のための、過去全開始の記述診断。進行中の比較を変更しない。",
+  "source": {
+    "dir": "solver/local-runs/pro-mean125/ahiru-decisions-validation-v1",
+    "publicSha256": "4bbf7cb44e0cfb5b6e23fcfb71fb38cb85b4d8d2fa0bf9fe9472bcc72682dbd0",
+    "teachersSha256": "a566045abc7e3d398384957d9c90cb4a32b4f970c9dda46d53b2b2c906687b2b",
+    "auditSha256": "ff2b8fcfdcd35017cd403e99f06bc41b8f3dc03f32cf1872a031a6cd227c075a",
+    "actor": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+    "versions": {
+      "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    }
+  },
+  "sources": [
+    {
+      "file": "solver/ahiru-deletion-role-diagnostics.mjs",
+      "sha256": "77b29f24239daac54e5ab789e41d55b0b7b8c8504e2056803362812128ece303"
+    },
+    {
+      "file": "solver/browser/ahiru-deletion-role-diagnostics.js",
+      "sha256": "33097389789ecb67b6cf0b54d5e0ac8b66412f2a8a41e0f3ab51b66e8d2714a7"
+    },
+    {
+      "file": "solver/ahiru-browser.mjs",
+      "sha256": "1e462343508930a47efeafb57e25baf744f79bb34c8907d2c7f0c029a319048b"
+    },
+    {
+      "file": "solver/browser/pro-strategy-research.js",
+      "sha256": "f39dde9a368f66926e122c5784d23ada20f8418f725cd2235a03be96b28fe9db"
+    },
+    {
+      "file": "solver/browser/pro-intrinsic-recovery.js",
+      "sha256": "41f6972041be4fb34cbce0c79fc61931cabe4622aa699835e9df3ea8a45d66f7"
+    },
+    {
+      "file": "game/js/proAcquisitionAdvisor.js",
+      "sha256": "bff3e55ab6224881f28afc4ad6817985bd41ed8bd3daa602d413f58a69cc27d1"
+    },
+    {
+      "file": "game/js/cardManager.js",
+      "sha256": "7f7623f3a41d3df038f05eca6888b70aa93e81336f00f13ca72f00e1b8ccf731"
+    },
+    {
+      "file": "game/js/scoreManager.js",
+      "sha256": "ddf2c827e8697dc5479bc13135a668f0d391efd74e5133ac07d1e9e7b9fe8ac2"
+    }
+  ],
+  "result": {
+    "games": 2000,
+    "decisions": 8984,
+    "removedCards": 9784,
+    "gamesWithActualDeletion": 2000,
+    "allEndedAtMost8": 50,
+    "counts": {
+      "accounting": {
+        "removedLastRecovery": {
+          "games": 150,
+          "endedAtMost8": 1
+        },
+        "removedLastRecoveryWhileBelow15": {
+          "games": 17,
+          "endedAtMost8": 1
+        },
+        "removedLastRecoveryWithFutureShortage": {
+          "games": 10,
+          "endedAtMost8": 1
+        },
+        "removedLastRecoveryAtLeast15WithFutureShortage": {
+          "games": 1,
+          "endedAtMost8": 0
+        },
+        "removedLastCategoryWithoutRecovery": {
+          "games": 3,
+          "endedAtMost8": 0
+        }
+      },
+      "satisfaction": {
+        "removedLastRecovery": {
+          "games": 12,
+          "endedAtMost8": 1
+        },
+        "removedLastRecoveryWhileBelow15": {
+          "games": 0,
+          "endedAtMost8": 0
+        },
+        "removedLastRecoveryWithFutureShortage": {
+          "games": 0,
+          "endedAtMost8": 0
+        },
+        "removedLastRecoveryAtLeast15WithFutureShortage": {
+          "games": 0,
+          "endedAtMost8": 0
+        },
+        "removedLastCategoryWithoutRecovery": {
+          "games": 7,
+          "endedAtMost8": 0
+        }
+      }
+    },
+    "examples": [
+      {
+        "gameId": "game-1391",
+        "rowId": "game-1391-decision-9",
+        "turn": 4,
+        "axis": "accounting",
+        "cardNo": "16",
+        "current": 20,
+        "projectedWithoutCard": 14.48,
+        "actualFinal": 20,
+        "actualScore": 13
+      }
+    ],
+    "interpretation": "全開始を分母とした元ゲームの重複なし件数のみ。同じゲームの複数削除を別の開始と数えない。回復判定と固定投影は当時の公開状態・既知の日程だけを使う。将来の実手札、乱数、結果は判定へ渡さない。最後の回復札を残す介入の救済数・効果ではなく、次の仮説の対象件数。250未満の下位群から条件付き成功率は推定しない。"
+  }
+}

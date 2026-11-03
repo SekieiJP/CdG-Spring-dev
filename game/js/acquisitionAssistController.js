@@ -1,4 +1,5 @@
-import { createAdvisorObservation, recommendAcquisition } from './freshAcquisitionAdvisor.js?v=20260815-0054';
+import { createAdvisorObservation, recommendAcquisition, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20260815-0056';
+import {alignProAcquisition} from './proAcquisitionConsistency.js?v=20260815-0056';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -12,7 +13,7 @@ export class AcquisitionAssistController {
     }
     eligible() {
         const state = this.ui.gameState;
-        return state.difficulty === 'fresh' && !state.calcMode && !state.event?.enabled && state.phase === 'training';
+        return supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && state.phase === 'training';
     }
     clear() {
         clearTimeout(this.timer);
@@ -29,13 +30,24 @@ export class AcquisitionAssistController {
         if (!this.eligible() || !cards?.length || this.container.children.length < cards.length) return;
         const inspiration = this.ui.trainingSelectionMode === 'inspiration';
         const observation = createAdvisorObservation(this.ui.gameState, cards, {
-            pickCount: this.ui.gameState.turn === 0 && !inspiration ? 2 : 1, allowSkip: inspiration
+            pickCount: this.ui.gameState.turn === 0 && !inspiration ? 2 : 1, allowSkip: inspiration, rankTable: this.ui.scoreManager.rankTable
         });
         const presentedAt = performance.now();
         try {
-            this.context = { observation, advice: recommendAcquisition(observation), presentedAt, recorded: false };
+            this.context = { observation, advice: this.evaluate(observation), presentedAt, recorded: false };
             this.schedule();
         } catch (error) { console.warn('[取得アシスト]',error.message); }
+    }
+    evaluate(observation) {
+        const advice=recommendAcquisition(observation);
+        if(observation.difficulty!=='pro')return advice;
+        return alignProAcquisition(observation,advice,{calibration:this.ui.ahiruAdvice?.calibration,
+            versions:{cardVersion:this.ui.cardManager.dataVersion,rankVersion:this.ui.scoreManager.dataVersion}});
+    }
+    refreshAdvice() {
+        if(!this.context||!this.eligible())return;
+        try { this.context.advice=this.evaluate(this.context.observation); this.clear(); this.schedule(); }
+        catch(error) { console.warn('[取得アシスト]',error.message); }
     }
     schedule() {
         clearTimeout(this.timer);

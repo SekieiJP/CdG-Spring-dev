@@ -1,0 +1,681 @@
+{
+  "createdAt": "2026-11-03T06:03:03.737Z",
+  "purpose": "PRO・全開始採用。8点以下を含む低得点率。予測・局面継続ではなく実ゲームの公式得点。",
+  "manifest": {
+    "stage": "ahiru-failure-development-v1-20261103",
+    "n": 250,
+    "phase": "development",
+    "seed": "ahiru-pro-ahiru-failure-development-v1-20261103",
+    "fingerprints": {
+      "strategyVersion": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    },
+    "actorFiles": [
+      "solver/autoplay-agent.mjs",
+      "solver/browser/pro-strategy-research.js",
+      "solver/browser/pro-risk-research.js",
+      "solver/browser/pro-value-model.js",
+      "solver/browser/pro-learned-research.js",
+      "solver/browser/pro-public-action-kernel.js",
+      "solver/pro-card-scene-input.mjs",
+      "solver/browser/pro-intrinsic-recovery.js",
+      "solver/browser/pro-action-candidates.js",
+      "solver/browser/pro-opening-table.js",
+      "solver/pro-opening-table-input.mjs"
+    ],
+    "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+    "configFile": "solver/research-scenarios/ahiru-pro-failure-configs.json",
+    "configSha256": "c64165edf7ceba1612017a7abc4110c48b120ecc044586a248271c411c3ccdd1",
+    "runs": [
+      {
+        "id": "baseline",
+        "config": {
+          "id": "baseline",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25,
+            "acquisitionFailureWeight": 0
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "shortfallWeight": 0,
+            "failureWeight": 0
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/baseline-batch0.json"
+        ]
+      },
+      {
+        "id": "failure5",
+        "config": {
+          "id": "failure5",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25,
+            "acquisitionFailureWeight": 0
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "shortfallWeight": 0,
+            "failureWeight": 5
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-batch0.json"
+        ]
+      },
+      {
+        "id": "failure15",
+        "config": {
+          "id": "failure15",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25,
+            "acquisitionFailureWeight": 0
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "shortfallWeight": 0,
+            "failureWeight": 15
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure15-batch0.json"
+        ]
+      },
+      {
+        "id": "failure5-refresh",
+        "config": {
+          "id": "failure5-refresh",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25,
+            "acquisitionFailureWeight": 5
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "shortfallWeight": 0,
+            "failureWeight": 5
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-refresh-batch0.json"
+        ]
+      }
+    ]
+  },
+  "groups": {
+    "baseline": {
+      "n": 250,
+      "mean": 11.932,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "score14": {
+        "count": 43,
+        "rate": 0.172
+      },
+      "score12Rate": 0.736,
+      "scoreBelow8Rate": 0.032,
+      "withdrawalZeroRate": 0.928,
+      "meanStats": {
+        "experience": 46.26,
+        "enrollment": 33.448,
+        "satisfaction": 32.504,
+        "accounting": 18.156,
+        "withdrawal": 0.204,
+        "difference": 33.244
+      },
+      "milestones": {
+        "experience50": 0.412,
+        "difference40": 0.216,
+        "difference48": 0.012,
+        "satisfaction25": 0.868,
+        "satisfaction35": 0.472
+      },
+      "activity": {
+        "deckSize": 9.82,
+        "acquisitions": 9.908,
+        "deleted": 5.088,
+        "drawn": 36.64,
+        "placed": 30.228,
+        "applied": 30.228,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "5": 2,
+        "6": 2,
+        "7": 2,
+        "8": 4,
+        "9": 8,
+        "10": 19,
+        "11": 27,
+        "12": 78,
+        "13": 63,
+        "14": 37,
+        "15": 6,
+        "-4": 1,
+        "-3": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 12,
+        "rate": 0.048,
+        "interval95": [
+          0.02766792620603601,
+          0.08201307170762354
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.66,
+        12.192
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "failure5": {
+      "n": 250,
+      "mean": 12.028,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -5,
+      "max": 16,
+      "score15": {
+        "count": 13,
+        "rate": 0.052,
+        "interval95": [
+          0.03063736169809375,
+          0.0869225654375688
+        ]
+      },
+      "score14": {
+        "count": 48,
+        "rate": 0.192
+      },
+      "score12Rate": 0.708,
+      "scoreBelow8Rate": 0.016,
+      "withdrawalZeroRate": 0.936,
+      "meanStats": {
+        "experience": 46.208,
+        "enrollment": 33.028,
+        "satisfaction": 32.952,
+        "accounting": 18.232,
+        "withdrawal": 0.132,
+        "difference": 32.896
+      },
+      "milestones": {
+        "experience50": 0.404,
+        "difference40": 0.204,
+        "difference48": 0.024,
+        "satisfaction25": 0.904,
+        "satisfaction35": 0.476
+      },
+      "activity": {
+        "deckSize": 9.816,
+        "acquisitions": 9.88,
+        "deleted": 5.064,
+        "drawn": 36.664,
+        "placed": 30.012,
+        "applied": 30.012,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "7": 1,
+        "8": 3,
+        "9": 8,
+        "10": 17,
+        "11": 41,
+        "12": 76,
+        "13": 53,
+        "14": 35,
+        "15": 12,
+        "16": 1,
+        "-5": 1,
+        "-3": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 7,
+        "rate": 0.028,
+        "interval95": [
+          0.013627884857773491,
+          0.056658466945870976
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.74,
+        12.276
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "failure15": {
+      "n": 250,
+      "mean": 12.108,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": 6,
+      "max": 16,
+      "score15": {
+        "count": 11,
+        "rate": 0.044,
+        "interval95": [
+          0.024743541619069078,
+          0.07705852707258744
+        ]
+      },
+      "score14": {
+        "count": 46,
+        "rate": 0.184
+      },
+      "score12Rate": 0.7,
+      "scoreBelow8Rate": 0.012,
+      "withdrawalZeroRate": 0.932,
+      "meanStats": {
+        "experience": 45.74,
+        "enrollment": 32.752,
+        "satisfaction": 33.768,
+        "accounting": 18.336,
+        "withdrawal": 0.124,
+        "difference": 32.628
+      },
+      "milestones": {
+        "experience50": 0.38,
+        "difference40": 0.2,
+        "difference48": 0.008,
+        "satisfaction25": 0.912,
+        "satisfaction35": 0.544
+      },
+      "activity": {
+        "deckSize": 9.872,
+        "acquisitions": 9.872,
+        "deleted": 5,
+        "drawn": 36.492,
+        "placed": 29.632,
+        "applied": 29.632,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 1,
+        "7": 2,
+        "8": 4,
+        "9": 6,
+        "10": 19,
+        "11": 43,
+        "12": 75,
+        "13": 54,
+        "14": 35,
+        "15": 10,
+        "16": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 7,
+        "rate": 0.028,
+        "interval95": [
+          0.013627884857773491,
+          0.056658466945870976
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.908,
+        12.308
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "failure5-refresh": {
+      "n": 250,
+      "mean": 12.004,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": 4,
+      "max": 16,
+      "score15": {
+        "count": 11,
+        "rate": 0.044,
+        "interval95": [
+          0.024743541619069078,
+          0.07705852707258744
+        ]
+      },
+      "score14": {
+        "count": 40,
+        "rate": 0.16
+      },
+      "score12Rate": 0.684,
+      "scoreBelow8Rate": 0.004,
+      "withdrawalZeroRate": 0.936,
+      "meanStats": {
+        "experience": 45.248,
+        "enrollment": 33.076,
+        "satisfaction": 32.588,
+        "accounting": 18.576,
+        "withdrawal": 0.096,
+        "difference": 32.98
+      },
+      "milestones": {
+        "experience50": 0.344,
+        "difference40": 0.212,
+        "difference48": 0.016,
+        "satisfaction25": 0.9,
+        "satisfaction35": 0.464
+      },
+      "activity": {
+        "deckSize": 9.944,
+        "acquisitions": 9.924,
+        "deleted": 4.98,
+        "drawn": 36.476,
+        "placed": 29.824,
+        "applied": 29.824,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "8": 6,
+        "9": 9,
+        "10": 23,
+        "11": 40,
+        "12": 77,
+        "13": 54,
+        "14": 29,
+        "15": 10,
+        "16": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 7,
+        "rate": 0.028,
+        "interval95": [
+          0.013627884857773491,
+          0.056658466945870976
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.808,
+        12.204
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    }
+  },
+  "comparisons": {
+    "failure5": {
+      "n": 250,
+      "meanDifference": 0.096,
+      "meanDifference95": [
+        -0.148,
+        0.34
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        0
+      ],
+      "score15RateDifference": 0.028,
+      "score15RateDifference95": [
+        0.012,
+        0.048
+      ],
+      "newly15": 7,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "failure15": {
+      "n": 250,
+      "meanDifference": 0.176,
+      "meanDifference95": [
+        -0.096,
+        0.476
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        0
+      ],
+      "score15RateDifference": 0.02,
+      "score15RateDifference95": [
+        -0.004,
+        0.044
+      ],
+      "newly15": 8,
+      "lost15": 3,
+      "firstOfferMismatches": 0
+    },
+    "failure5-refresh": {
+      "n": 250,
+      "meanDifference": 0.072,
+      "meanDifference95": [
+        -0.2,
+        0.36
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        0
+      ],
+      "score15RateDifference": 0.02,
+      "score15RateDifference95": [
+        -0.008,
+        0.048
+      ],
+      "newly15": 9,
+      "lost15": 4,
+      "firstOfferMismatches": 0
+    }
+  },
+  "audit": [
+    {
+      "id": "baseline",
+      "file": "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/baseline-batch0.json",
+      "sha256": "80a8a762f10ee9165427b4fe3f98b74ff868a39aaf7ec317bbe9364640c445ef",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "failure5",
+      "file": "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-batch0.json",
+      "sha256": "4b799092834ebb384e8aaa1537aa424a82e5c23a444eba069bf6f12590508def",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "failure15",
+      "file": "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure15-batch0.json",
+      "sha256": "a243deb1fa450da6ee220fb70321d53e9d616b95f8b777ff05279afc51cef604",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "failure5-refresh",
+      "file": "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-refresh-batch0.json",
+      "sha256": "84a04ddb7298274c18c4e3256a25c95c26585cf076dd6c7845a7b6b0cbf3efd4",
+      "n": 250,
+      "offset": 0
+    }
+  ],
+  "selectedCandidate": null,
+  "planPassed": false,
+  "goalPassed": false
+}

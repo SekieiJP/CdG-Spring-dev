@@ -1,0 +1,28 @@
+{
+  "comparisons": [
+    {
+      "id": "action-coverage-development:champion-v1-to-both2",
+      "manifest": "solver/local-runs/pro-mean125/action-coverage-development/manifest.json",
+      "before": "champion-v1",
+      "after": "both2"
+    },
+    {
+      "id": "action-coverage-development:both2-to-both2-recovery",
+      "manifest": "solver/local-runs/pro-mean125/action-coverage-development/manifest.json",
+      "before": "both2",
+      "after": "both2-recovery"
+    },
+    {
+      "id": "short-policy-value-development:both2-to-both2-v4",
+      "manifest": "solver/local-runs/pro-mean125/short-policy-value-development/manifest.json",
+      "before": "both2",
+      "after": "both2-v4"
+    },
+    {
+      "id": "opening-table-development:baseline-to-opening0",
+      "manifest": "solver/local-runs/pro-mean125/opening-table-development/manifest.json",
+      "before": "baseline",
+      "after": "opening0"
+    }
+  ]
+}

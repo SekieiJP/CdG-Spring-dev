@@ -1,0 +1,1269 @@
+{
+  "generatedAt": "2026-10-03T09:37:42.211Z",
+  "manifest": {
+    "stage": "scenes",
+    "n": 250,
+    "runs": [
+      {
+        "id": "engine-ready-0",
+        "description": "engine-ready: forced 49",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/engine-ready-0.json"
+        ]
+      },
+      {
+        "id": "engine-ready-1",
+        "description": "engine-ready: forced 43",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/engine-ready-1.json"
+        ]
+      },
+      {
+        "id": "engine-ready-2",
+        "description": "engine-ready: forced 50",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/engine-ready-2.json"
+        ]
+      },
+      {
+        "id": "finance-short-0",
+        "description": "finance-short: forced 49",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/finance-short-0.json"
+        ]
+      },
+      {
+        "id": "finance-short-1",
+        "description": "finance-short: forced 43",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/finance-short-1.json"
+        ]
+      },
+      {
+        "id": "finance-short-2",
+        "description": "finance-short: forced 50",
+        "files": [
+          "solver/local-runs/pro-strategy/scenes/finance-short-2.json"
+        ]
+      }
+    ],
+    "comparisons": [
+      {
+        "id": "engine-ready-0-to-1",
+        "before": "engine-ready-0",
+        "after": "engine-ready-1"
+      },
+      {
+        "id": "engine-ready-0-to-2",
+        "before": "engine-ready-0",
+        "after": "engine-ready-2"
+      },
+      {
+        "id": "finance-short-0-to-1",
+        "before": "finance-short-0",
+        "after": "finance-short-1"
+      },
+      {
+        "id": "finance-short-0-to-2",
+        "before": "finance-short-0",
+        "after": "finance-short-2"
+      }
+    ]
+  },
+  "groups": {
+    "engine-ready-0": {
+      "description": "engine-ready: forced 49",
+      "n": 250,
+      "mean": 12.512,
+      "median": 13,
+      "p10": 10,
+      "p90": 14,
+      "min": -1,
+      "max": 15,
+      "score15": {
+        "count": 6,
+        "rate": 0.024,
+        "interval95": [
+          0.011044626630631514,
+          0.051362795951009954
+        ]
+      },
+      "score14": {
+        "count": 78,
+        "rate": 0.312
+      },
+      "score12Rate": 0.836,
+      "scoreBelow8Rate": 0.024,
+      "withdrawalZeroRate": 0.76,
+      "meanStats": {
+        "experience": 45.876,
+        "enrollment": 39.276,
+        "satisfaction": 34.164,
+        "accounting": 16.852,
+        "withdrawal": 0.504,
+        "difference": 38.772
+      },
+      "milestones": {
+        "experience50": 0.252,
+        "difference40": 0.496,
+        "difference48": 0.004,
+        "satisfaction25": 1,
+        "satisfaction35": 0.496
+      },
+      "activity": {
+        "deckSize": 11.356,
+        "acquisitions": 10.384,
+        "deleted": 0.028,
+        "drawn": 17.7,
+        "placed": 15.844,
+        "applied": 15.844,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 1,
+        "7": 4,
+        "8": 5,
+        "9": 5,
+        "10": 10,
+        "11": 15,
+        "12": 56,
+        "13": 75,
+        "14": 72,
+        "15": 6,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 41.666666666666664,
+        "expectedAttempts95": [
+          19.469345106403555,
+          90.54176600470754
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.21567117403507274,
+            "interval95": [
+              0.10511558438326751,
+              0.40979684068487254
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.7031815565015263,
+            "interval95": [
+              0.4261019823502049,
+              0.9283843975651833
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.9118988115991433,
+            "interval95": [
+              0.6706410653376355,
+              0.9948712054878983
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-scene-engine-ready:12",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 49,
+            "satisfaction": 35,
+            "accounting": 14,
+            "withdrawal": 1,
+            "difference": 48
+          },
+          "turnStats": {
+            "4": {
+              "experience": 26,
+              "enrollment": 24,
+              "satisfaction": 25,
+              "accounting": 11
+            },
+            "5": {
+              "experience": 29,
+              "enrollment": 29,
+              "satisfaction": 29,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 37,
+              "enrollment": 32,
+              "satisfaction": 30,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 49,
+              "satisfaction": 35,
+              "accounting": 14
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-scene-engine-ready:46",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 42,
+            "satisfaction": 36,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 42
+          },
+          "turnStats": {
+            "4": {
+              "experience": 29,
+              "enrollment": 24,
+              "satisfaction": 25,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 33,
+              "enrollment": 33,
+              "satisfaction": 32,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 38,
+              "enrollment": 37,
+              "satisfaction": 32,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 42,
+              "satisfaction": 36,
+              "accounting": 15
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "29",
+              "cardName": "設問の急所は？教材研究"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-scene-engine-ready:70",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 40,
+            "satisfaction": 36,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "4": {
+              "experience": 32,
+              "enrollment": 20,
+              "satisfaction": 23,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 20,
+              "satisfaction": 28,
+              "accounting": 13
+            },
+            "6": {
+              "experience": 44,
+              "enrollment": 34,
+              "satisfaction": 31,
+              "accounting": 17
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 40,
+              "satisfaction": 36,
+              "accounting": 15
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "32",
+              "cardName": "スタンプ帳キャンペーン"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-scene-engine-ready:94",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 40,
+            "satisfaction": 35,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "4": {
+              "experience": 32,
+              "enrollment": 24,
+              "satisfaction": 25,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 27,
+              "satisfaction": 27,
+              "accounting": 9
+            },
+            "6": {
+              "experience": 41,
+              "enrollment": 32,
+              "satisfaction": 30,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 40,
+              "satisfaction": 35,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-scene-engine-ready:219",
+          "score": 15,
+          "stats": {
+            "experience": 51,
+            "enrollment": 46,
+            "satisfaction": 35,
+            "accounting": 24,
+            "withdrawal": 0,
+            "difference": 46
+          },
+          "turnStats": {
+            "4": {
+              "experience": 29,
+              "enrollment": 24,
+              "satisfaction": 25,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 34,
+              "enrollment": 34,
+              "satisfaction": 31,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 39,
+              "enrollment": 39,
+              "satisfaction": 33,
+              "accounting": 19
+            },
+            "7": {
+              "experience": 51,
+              "enrollment": 46,
+              "satisfaction": 35,
+              "accounting": 24
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "7",
+              "cardName": "元塾生に講習案内"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "engine-ready-1": {
+      "description": "engine-ready: forced 43",
+      "n": 250,
+      "mean": 11.44,
+      "median": 12,
+      "p10": 10,
+      "p90": 13,
+      "min": -2,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 18,
+        "rate": 0.072
+      },
+      "score12Rate": 0.64,
+      "scoreBelow8Rate": 0.06,
+      "withdrawalZeroRate": 0.756,
+      "meanStats": {
+        "experience": 44.136,
+        "enrollment": 35.072,
+        "satisfaction": 32.836,
+        "accounting": 17.42,
+        "withdrawal": 0.572,
+        "difference": 34.5
+      },
+      "milestones": {
+        "experience50": 0.204,
+        "difference40": 0.152,
+        "difference48": 0,
+        "satisfaction25": 1,
+        "satisfaction35": 0.332
+      },
+      "activity": {
+        "deckSize": 10.692,
+        "acquisitions": 9.784,
+        "deleted": 0.092,
+        "drawn": 14.652,
+        "placed": 12.688,
+        "applied": 12.688,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "5": 2,
+        "6": 5,
+        "7": 4,
+        "8": 1,
+        "9": 7,
+        "10": 14,
+        "11": 53,
+        "12": 95,
+        "13": 47,
+        "14": 18,
+        "-2": 1,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "engine-ready-2": {
+      "description": "engine-ready: forced 50",
+      "n": 250,
+      "mean": 12.232,
+      "median": 12,
+      "p10": 11,
+      "p90": 14,
+      "min": 6,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 28,
+        "rate": 0.112
+      },
+      "score12Rate": 0.828,
+      "scoreBelow8Rate": 0.016,
+      "withdrawalZeroRate": 0.84,
+      "meanStats": {
+        "experience": 44.936,
+        "enrollment": 35.916,
+        "satisfaction": 33.22,
+        "accounting": 17.492,
+        "withdrawal": 0.24,
+        "difference": 35.676
+      },
+      "milestones": {
+        "experience50": 0.228,
+        "difference40": 0.22,
+        "difference48": 0,
+        "satisfaction25": 1,
+        "satisfaction35": 0.364
+      },
+      "activity": {
+        "deckSize": 10.068,
+        "acquisitions": 9.076,
+        "deleted": 0.008,
+        "drawn": 14.8,
+        "placed": 13.62,
+        "applied": 13.62,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 3,
+        "7": 1,
+        "8": 1,
+        "10": 3,
+        "11": 35,
+        "12": 109,
+        "13": 70,
+        "14": 28
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "finance-short-0": {
+      "description": "finance-short: forced 49",
+      "n": 250,
+      "mean": 8.82,
+      "median": 11,
+      "p10": -2,
+      "p90": 13,
+      "min": -4,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 8,
+        "rate": 0.032
+      },
+      "score12Rate": 0.428,
+      "scoreBelow8Rate": 0.24,
+      "withdrawalZeroRate": 0.552,
+      "meanStats": {
+        "experience": 43.132,
+        "enrollment": 37.22,
+        "satisfaction": 31.544,
+        "accounting": 14.956,
+        "withdrawal": 1.884,
+        "difference": 35.336
+      },
+      "milestones": {
+        "experience50": 0.084,
+        "difference40": 0.192,
+        "difference48": 0,
+        "satisfaction25": 0.976,
+        "satisfaction35": 0.236
+      },
+      "activity": {
+        "deckSize": 10.92,
+        "acquisitions": 10.028,
+        "deleted": 0.108,
+        "drawn": 17.844,
+        "placed": 15.92,
+        "applied": 15.92,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "5": 3,
+        "6": 5,
+        "7": 6,
+        "8": 5,
+        "9": 8,
+        "10": 13,
+        "11": 57,
+        "12": 67,
+        "13": 32,
+        "14": 8,
+        "-4": 1,
+        "-3": 10,
+        "-2": 15,
+        "-1": 19
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "finance-short-1": {
+      "description": "finance-short: forced 43",
+      "n": 250,
+      "mean": 5.22,
+      "median": 8,
+      "p10": -3,
+      "p90": 12,
+      "min": -6,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 1,
+        "rate": 0.004
+      },
+      "score12Rate": 0.128,
+      "scoreBelow8Rate": 0.472,
+      "withdrawalZeroRate": 0.352,
+      "meanStats": {
+        "experience": 43.32,
+        "enrollment": 34.304,
+        "satisfaction": 30.044,
+        "accounting": 12.084,
+        "withdrawal": 4.016,
+        "difference": 30.288
+      },
+      "milestones": {
+        "experience50": 0.124,
+        "difference40": 0.028,
+        "difference48": 0,
+        "satisfaction25": 0.936,
+        "satisfaction35": 0.156
+      },
+      "activity": {
+        "deckSize": 9.936,
+        "acquisitions": 9.036,
+        "deleted": 0.1,
+        "drawn": 14.64,
+        "placed": 12.704,
+        "applied": 12.704,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "4": 3,
+        "5": 5,
+        "6": 9,
+        "7": 7,
+        "8": 13,
+        "9": 5,
+        "10": 31,
+        "11": 51,
+        "12": 22,
+        "13": 9,
+        "14": 1,
+        "-6": 1,
+        "-4": 17,
+        "-3": 34,
+        "-2": 33,
+        "-1": 8
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "finance-short-2": {
+      "description": "finance-short: forced 50",
+      "n": 250,
+      "mean": 10.776,
+      "median": 12,
+      "p10": 10,
+      "p90": 13,
+      "min": -3,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 4,
+        "rate": 0.016
+      },
+      "score12Rate": 0.584,
+      "scoreBelow8Rate": 0.068,
+      "withdrawalZeroRate": 0.816,
+      "meanStats": {
+        "experience": 43.224,
+        "enrollment": 34.972,
+        "satisfaction": 30.54,
+        "accounting": 16.82,
+        "withdrawal": 0.732,
+        "difference": 34.24
+      },
+      "milestones": {
+        "experience50": 0.108,
+        "difference40": 0.1,
+        "difference48": 0,
+        "satisfaction25": 0.92,
+        "satisfaction35": 0.208
+      },
+      "activity": {
+        "deckSize": 10,
+        "acquisitions": 9.004,
+        "deleted": 0.004,
+        "drawn": 14.836,
+        "placed": 13.66,
+        "applied": 13.66,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "8": 1,
+        "9": 2,
+        "10": 17,
+        "11": 67,
+        "12": 105,
+        "13": 37,
+        "14": 4,
+        "-3": 4,
+        "-2": 11,
+        "-1": 2
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "counterfactual"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    }
+  },
+  "comparisons": {
+    "engine-ready-0-to-1": {
+      "id": "engine-ready-0-to-1",
+      "before": "engine-ready-0",
+      "after": "engine-ready-1",
+      "n": 250,
+      "meanDifference": -1.072,
+      "meanDifference95": [
+        -1.42,
+        -0.728
+      ],
+      "medianDifference": -1,
+      "medianDifference95": [
+        -1,
+        -1
+      ],
+      "score15RateDifference": -0.024,
+      "score15RateDifference95": [
+        -0.044,
+        -0.008
+      ],
+      "newly15": 0,
+      "lost15": 6,
+      "firstOfferMismatches": 0
+    },
+    "engine-ready-0-to-2": {
+      "id": "engine-ready-0-to-2",
+      "before": "engine-ready-0",
+      "after": "engine-ready-2",
+      "n": 250,
+      "meanDifference": -0.28,
+      "meanDifference95": [
+        -0.532,
+        -0.012
+      ],
+      "medianDifference": -1,
+      "medianDifference95": [
+        -1,
+        -1
+      ],
+      "score15RateDifference": -0.024,
+      "score15RateDifference95": [
+        -0.044,
+        -0.008
+      ],
+      "newly15": 0,
+      "lost15": 6,
+      "firstOfferMismatches": 0
+    },
+    "finance-short-0-to-1": {
+      "id": "finance-short-0-to-1",
+      "before": "finance-short-0",
+      "after": "finance-short-1",
+      "n": 250,
+      "meanDifference": -3.6,
+      "meanDifference95": [
+        -4.464,
+        -2.824
+      ],
+      "medianDifference": -3,
+      "medianDifference95": [
+        -5,
+        -1
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        0,
+        0
+      ],
+      "newly15": 0,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "finance-short-0-to-2": {
+      "id": "finance-short-0-to-2",
+      "before": "finance-short-0",
+      "after": "finance-short-2",
+      "n": 250,
+      "meanDifference": 1.956,
+      "meanDifference95": [
+        1.212,
+        2.712
+      ],
+      "medianDifference": 1,
+      "medianDifference95": [
+        1,
+        1
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        0,
+        0
+      ],
+      "newly15": 0,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    }
+  }
+}

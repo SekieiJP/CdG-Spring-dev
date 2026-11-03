@@ -1,0 +1,41 @@
+{
+  "createdAt": "2026-11-03T02:52:34.164Z",
+  "purpose": "現在値で総合Sを確保した通常PRO/FRESHの助言を、予測上の不足からSを守る注意へ変更した検査。方略の1000開始達成や人間の効果の証明ではない。",
+  "unit": {
+    "command": "npm run test:unit",
+    "passed": 196,
+    "failed": 0
+  },
+  "browser": {
+    "command": "CDG_TEST_PORT=19410 PLAYWRIGHT_JSON_OUTPUT_FILE=solver/local-runs/pro-mean125/ahiru-s-preservation-ui-v2.json node node_modules/@playwright/test/cli.js test tests/ahiru-s-preservation.spec.js tests/ahiru-advice.spec.js tests/ahiru-fresh-advice.spec.js --project=chromium --project=iphone12-layout --project=android-chrome --workers=1 --reporter=list,json",
+    "rawFile": "solver/local-runs/pro-mean125/ahiru-s-preservation-ui-v2.json",
+    "sha256": "cd1c5bd992d5400da7936fc47b501c25d1750f79f4ec47680bc8d75cda456c86",
+    "stats": {
+      "startTime": "2026-11-03T02:50:09.945Z",
+      "duration": 41978.001000000004,
+      "expected": 36,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": [
+      "Chromium",
+      "iPhone 12寸法のChromium",
+      "Android寸法のChromium"
+    ],
+    "scope": "助言30検査＋通常PRO/FRESHの残り3ターンで毎回取得し空配置で完走して数値/公式得点を維持する6検査。実機Safariは未確認。"
+  },
+  "sources": {
+    "game/js/ahiruStatusPolicy.js": "f8c7409b10c7fdb43ae1b458cafd4c2042cf6becdd1d8d1d15dff5f386c5b45a",
+    "tests/ahiru-s-preservation.spec.js": "4ecf93ea11bbcfca379115d2e3894a33306e1e09138c0d74592eae6a34307f4f",
+    "tests/unit/ahiru-pro-advice.test.mjs": "7c559d417cf6aef8e2559225b27ace4373eaf3affdbd9954e90c88e00a36e245",
+    "tests/unit/ahiru-fresh-advice.test.mjs": "a6112da3492de7cdec0fccb8e8e50de3d205f9b274dddb6ef5a17d90daa22c83",
+    "tests/ahiru-advice.spec.js": "54fe17faf61e72cec972989c19ed521a1ced28f0a512636a96df997ee79b8014",
+    "tests/ahiru-fresh-advice.spec.js": "2045d65800a757b6aa9470c137542155a8bc48cf49bdb30eaf88198a9143bed2"
+  },
+  "limitations": [
+    "反復シミュレーションを本体の助言に追加していない。予測式・補正係数・カード・得点ルールは変更していない。",
+    "旧PRO2000/FRESH1000診断の表情別内訳はこの変更前。更新後の表情別精度の独立検証とはしない。",
+    "最初の画面検査は停止した時計でターン案内が閉じずタイムアウトした。検査の時計を1850ms進める修正後に全36検査を再実行した。"
+  ]
+}

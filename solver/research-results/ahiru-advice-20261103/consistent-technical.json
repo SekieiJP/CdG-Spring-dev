@@ -1,0 +1,26 @@
+{
+  "createdAt": "2026-11-03T05:40:53.258Z",
+  "purpose": "条件付き次候補のブラウザ本体接続のみ。1ゲームの得点を方略の強さの証拠に使わず、進行中の全4条件の採否を先に判断する。",
+  "preparedOnly": true,
+  "rawFile": "solver/local-runs/pro-mean125/ahiru-consistent-technical-20261103/consistent-v1.json",
+  "rawSha256": "895a3e3742e0b41d93cce4fc93e26ab0788199f17fd5136a7a15b1fa64969f6e",
+  "fingerprints": {
+    "strategyVersion": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+  "configFile": "solver/research-scenarios/ahiru-pro-consistent-validation.json",
+  "configSha256": "2bdc94653a8dc58be78e660e9a369bb7fb75eb88e10387b9eb824b29033e5539",
+  "games": 1,
+  "placementDecisions": 8,
+  "allStartsAccepted": true,
+  "rerolls": 0,
+  "independentValidationStarted": false,
+  "unitCheck": {
+    "command": "node --test --test-name-pattern=将来の学習リフレッシュ tests/unit/pro-strategy-research.test.mjs",
+    "passed": 1
+  },
+  "ongoingStudyUnchanged": true
+}

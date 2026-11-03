@@ -48,14 +48,16 @@ test('推薦理由を長押し詳細で確認しても選択されない',async(
     await expect(page.locator('.tooltip-assist')).toContainText('取得アシスト');
     await expect(page.locator('#training-cards .selected')).toHaveCount(0);
 });
-test('発想追加取得を再提示するたびに比較し、PROでは表示しない',async({page})=>{
+test('発想追加取得を再提示するたびに比較し、PROでも2枚を推薦する',async({page})=>{
     await training(page);
     await page.evaluate(()=>{ const g=window.game;g.gameState.turn=2;g.gameState.tokens.inspiration=2;g.uiController.startInspirationTrainingFlow(); });
     await page.clock.runFor(5000); await expect(glow(page)).toHaveCount(1);
     await page.locator('#training-cards .card').first().click(); await page.click('#confirm-training');
     await expect(glow(page)).toHaveCount(0); await page.clock.runFor(5000); await expect(glow(page)).toHaveCount(1);
     await page.evaluate(async()=>{const g=window.game;await g.setDifficulty('pro');g.gameState.reset('pro');g.gameState.phase='training';g.uiController.showInitialTraining();});
-    await page.clock.runFor(6000); await expect(glow(page)).toHaveCount(0);
+    await page.clock.runFor(4999); await expect(glow(page)).toHaveCount(0);
+    await page.clock.runFor(1); await expect(glow(page)).toHaveCount(2);
+    expect(await page.evaluate(()=>window.game.uiController.acquisitionAssist.context.advice.targetRank)).toBe('S+');
 });
 test('コストを払えない発想候補では辞退を強調し、取得せずに確定できる',async({page})=>{
     await training(page);

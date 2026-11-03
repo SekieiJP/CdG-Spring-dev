@@ -1,0 +1,21 @@
+{
+  "train": [
+    "solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+    "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+    "solver/local-runs/pro-mean125/short-policy-value-development/both2-batch0.json",
+    "solver/local-runs/pro-mean125/opening-table-development/baseline-batch0.json",
+    "solver/local-runs/pro-mean125/growth-deletion-development/baseline-batch0.json"
+  ],
+  "validation": [
+    "solver/local-runs/pro-mean125/enrollment-emphasis-development/baseline-batch0.json"
+  ],
+  "selectionRule": "上記5条件の全1250開始を採用。得点・カード・成否による記録選別なし。検証250開始は学習に使わない。",
+  "scope": "同じV1両方2ターン先読み設定だが研究実装版は複数。新モデル学習用の準備であり平均12.5到達検証ではない。",
+  "referenceModels": [
+    {
+      "id": "v1-depth3",
+      "file": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+      "sha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+    }
+  ]
+}

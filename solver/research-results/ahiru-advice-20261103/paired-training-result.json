@@ -1,0 +1,156 @@
+{
+  "createdAt": "2026-11-02T16:20:25.273Z",
+  "purpose": "固定2択の公式得点差予測。実プレイ全開始での平均12.5点・カード単体パワーは未検証。",
+  "provenance": {
+    "inputSha256": "052de5c385f82692ad42dcf2277793458d97276cc452823167d603bb1650dca7",
+    "implementationSha256": "9b61be17a21798519c3fdc513c390a488ece2e34cf162d1ef17a9f2f846ebb89",
+    "sourceFiles": [
+      "solver/pro-paired-value-dataset.mjs",
+      "solver/pro-paired-value-train.mjs",
+      "solver/browser/pro-paired-training.js",
+      "solver/browser/pro-paired-value.js",
+      "solver/browser/pro-value-model.js",
+      "game/js/proAcquisitionAdvisor.js"
+    ],
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    ],
+    "counts": {
+      "trainRoots": 500,
+      "validationRoots": 250,
+      "continuations": 1500
+    },
+    "sourceProvenance": {
+      "manifestFile": "solver/local-runs/pro-mean125/paired-value-v1-teachers/manifest.json",
+      "manifestSha256": "72ede4ea5462d2cdda537ef134380f97fdc3f86d4a58383b8b0fa5a0df41fc4a",
+      "sourceAuditSha256": "5f921f8d5e5ee1baf4794a4f0a487ca5d646c10eb0859cbaa37e7003ca09cf6c",
+      "generatorSha256": "5859c91c3fb79a0ef941406369dda86c1d83604007a7b1b7ff39cedf4647e7c0",
+      "allRootsAccepted": true,
+      "sourceSeedsDisjoint": true,
+      "rerolls": 0,
+      "choiceScope": "取得全体。初回は2枚を変える場合がある。各時期は250未満。"
+    },
+    "bankSha256": "651185d9e32ae4fad28a44b4e76cdcc02aba06a983757584d7d07dc2adb63657",
+    "continuationActor": "eeb356928ca543bdd78d669ffd5ae21822d8e51540ed6c8e2e4ed3b713c90dc1"
+  },
+  "modelFile": "solver/local-runs/pro-mean125/paired-value-v1/paired-model.json",
+  "modelSha256": "02357a9e39c7a3275b7a26afc96e0fb6977649f94165f6fee15049bb48814498",
+  "settings": {
+    "depth": 2,
+    "iterations": 120,
+    "learningRate": 0.05,
+    "bins": 8,
+    "featureFraction": 0.75,
+    "rowFraction": 0.8,
+    "minRows": 25,
+    "minWeight": 10,
+    "l2": 5,
+    "seed": 904125
+  },
+  "audit": {
+    "trainRoots": 500,
+    "validationRoots": 250,
+    "augmentedRows": 1000,
+    "trainTotalWeight": 500,
+    "features": 204,
+    "labelsAndTrainingInBrowser": true
+  },
+  "metrics": {
+    "train": {
+      "n": 500,
+      "learned": {
+        "mae": 1.2200921351224192,
+        "rmse": 1.8863102659347233,
+        "bias": 0.1409175421571453
+      },
+      "zero": {
+        "mae": 1.238,
+        "rmse": 1.9763602910400726,
+        "bias": 0.23
+      },
+      "actualAlternativeMean": -0.23,
+      "actualAlternativeMean95": [
+        -0.4,
+        -0.052
+      ],
+      "gates": {
+        "0": {
+          "n": 500,
+          "changes": 195,
+          "keptReference": 305,
+          "meanGainPerRoot": 0.142,
+          "meanGain95": [
+            0.036,
+            0.256
+          ],
+          "sumGained": 150,
+          "sumLost": 79,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        },
+        "0.15": {
+          "n": 500,
+          "changes": 100,
+          "keptReference": 400,
+          "meanGainPerRoot": 0.098,
+          "meanGain95": [
+            0.028,
+            0.18
+          ],
+          "sumGained": 85,
+          "sumLost": 36,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        }
+      },
+      "antisymmetryError": 0
+    },
+    "validation": {
+      "n": 250,
+      "learned": {
+        "mae": 1.281842103010809,
+        "rmse": 2.05918314081544,
+        "bias": 0.1802494926747448
+      },
+      "zero": {
+        "mae": 1.236,
+        "rmse": 2.0208908926510603,
+        "bias": 0.284
+      },
+      "actualAlternativeMean": -0.284,
+      "actualAlternativeMean95": [
+        -0.528,
+        -0.024
+      ],
+      "gates": {
+        "0": {
+          "n": 250,
+          "changes": 91,
+          "keptReference": 159,
+          "meanGainPerRoot": -0.092,
+          "meanGain95": [
+            -0.24,
+            0.056
+          ],
+          "sumGained": 54,
+          "sumLost": 77,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        },
+        "0.15": {
+          "n": 250,
+          "changes": 47,
+          "keptReference": 203,
+          "meanGainPerRoot": -0.104,
+          "meanGain95": [
+            -0.204,
+            -0.016
+          ],
+          "sumGained": 20,
+          "sumLost": 46,
+          "interpretation": "全局面を含む固定2択・固定後続方略の対照。変更例だけの率や独立全ゲーム成績ではない。"
+        }
+      },
+      "antisymmetryError": 0
+    }
+  }
+}

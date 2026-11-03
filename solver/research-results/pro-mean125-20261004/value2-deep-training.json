@@ -1,0 +1,480 @@
+{
+  "createdAt": "2026-10-03T20:16:13.595Z",
+  "purpose": "リセマラなしPRO。過去の結果だけを教師として使用。予測精度は実プレイ改善の証明ではない。",
+  "provenance": {
+    "datasetSha256": "bb408bdf1821540bc3373b77c15c059b03fc28b30e09c6b799eafab76ce38e8c",
+    "implementationSha256": "7bbd4eeceecc92f2752f07e34c0c2efd4455363078934d1b4bad9823b82a0b64",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 3000,
+      "validationSeeds": 250,
+      "trainRows": 73910,
+      "validationRows": 6127
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "17b79fdc85bf1ad7f32abf04e46e4305d7b38162b1a4e0fece441a8e4970aa7b"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch1.json",
+        "n": 250,
+        "sha256": "9dbcf463bbdb780b0143c40fd832edc4534defdbe5c420b14d7c2a1236127571"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch2.json",
+        "n": 250,
+        "sha256": "4c26fdc88dbacf1e9e039ff52e3baeb5fd658afa487cfadf4eff01d5deabfe42"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch3.json",
+        "n": 250,
+        "sha256": "593bed60880a933b628bb0b3a0ec7f7d06b266ff7185fc7716f8f66f0a4bf100"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch4.json",
+        "n": 250,
+        "sha256": "d3c252d97de42b039ad052adc170e5046e848630c736c0059ded7e9e1aaed795"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch5.json",
+        "n": 250,
+        "sha256": "9b9aaab0233d9cfe48ea6e6fc4421294a8e33073ee8485ae7ef6d793a999f4a9"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch6.json",
+        "n": 250,
+        "sha256": "5c5cdda9078a524ea993c1847271fe3daf4179032089a1fb2f88754559c99bb8"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch7.json",
+        "n": 250,
+        "sha256": "b96e8655a5ad5af10d1e7204aa2cffad6ccfe463156b73e16abe5f8f47eb57f4"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch8.json",
+        "n": 250,
+        "sha256": "1cef0d58cc0329b9ef3bdb8672f4988cfacce732a33642f4ce69671d36beb3ee"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch9.json",
+        "n": 250,
+        "sha256": "183ac82c4370e9f47f6068159fcc5b029f8796e19589418146b9802a1f6dec3f"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch10.json",
+        "n": 250,
+        "sha256": "4009f66418ab88bdbd163ad0d1dcf1bb4f968e79c7e21fd211653a9a6655ce26"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-selfplay-v2/champion-batch11.json",
+        "n": 250,
+        "sha256": "3885a03cd451775f4713fef115b1f2f815cfc599340104dceaf723d76910e93a"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json",
+        "n": 250,
+        "sha256": "9fcb77202f7242a2c7b64728bb48cf0eab5b6f16e9e8203ba22066d06b204ea9"
+      }
+    ]
+  },
+  "models": {
+    "depth5": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v2-deep/depth5-model.json",
+      "sha256": "0bf0971b627f613456863cd200b3b3c80d093feffc08714f836962ae91c30838",
+      "settings": {
+        "iterations": 240,
+        "depth": 5,
+        "learningRate": 0.05,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 60,
+        "minWeight": 2,
+        "l2": 3,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 73910,
+          "weight": 2999.999999997156,
+          "rmse": 1.5518564328831348,
+          "mae": 0.9674450286543411,
+          "bias": 0.0014965636425721212
+        },
+        "validation": {
+          "rows": 6127,
+          "weight": 249.99999999999002,
+          "rmse": 1.7143618916054293,
+          "mae": 1.024373015734284,
+          "bias": -0.03702763934544649
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2377,
+            "weight": 96.11094999144612,
+            "rmse": 1.711181594238506,
+            "mae": 1.0306049688147072,
+            "bias": -0.029560292274497166
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.07416000456143,
+            "rmse": 1.6812975744771053,
+            "mae": 0.9820541414533479,
+            "bias": -0.02876173235366666
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.81489000399101,
+            "rmse": 1.7555429645900218,
+            "mae": 1.0643971267218093,
+            "bias": -0.05646805335781955
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.51854000114047,
+            "rmse": 2.1278731491715663,
+            "mae": 1.369627711609405,
+            "bias": -0.1057332400019963
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 756,
+            "weight": 31.000977798154555,
+            "rmse": 2.0862699453514164,
+            "mae": 1.3260891323766482,
+            "bias": -0.10124923042918138
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 763,
+            "weight": 31.26730461948138,
+            "rmse": 2.0001372953380043,
+            "mae": 1.2416964399912143,
+            "bias": -0.06756956059475012
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 765,
+            "weight": 31.312188382157135,
+            "rmse": 1.9462864453489037,
+            "mae": 1.1574192441713507,
+            "bias": -0.07014425004430482
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 792,
+            "weight": 32.33050022686496,
+            "rmse": 1.693546259048977,
+            "mae": 1.045560690503954,
+            "bias": -0.05354635418836083
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 844,
+            "weight": 34.26035265413111,
+            "rmse": 1.471054046229786,
+            "mae": 0.8877613250740937,
+            "bias": -0.017993866604072338
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 857,
+            "weight": 34.79273927463781,
+            "rmse": 1.2591712366061232,
+            "mae": 0.7657157191183381,
+            "bias": 0.01495952408223056
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 850,
+            "weight": 34.51739704343355,
+            "rmse": 1.0924310954743193,
+            "mae": 0.6070776234625264,
+            "bias": 0.06337873148433511
+          }
+        }
+      },
+      "seconds": 44.5
+    },
+    "depth6": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v2-deep/depth6-model.json",
+      "sha256": "11b700604141e81e8ea74494e0b7fd6f04a399b1a16e9e25abf9b42c8776019f",
+      "settings": {
+        "iterations": 240,
+        "depth": 6,
+        "learningRate": 0.05,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 60,
+        "minWeight": 2,
+        "l2": 3,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 73910,
+          "weight": 2999.999999997156,
+          "rmse": 1.507212494706535,
+          "mae": 0.939975734361978,
+          "bias": 0.0016999252600325336
+        },
+        "validation": {
+          "rows": 6127,
+          "weight": 249.99999999999002,
+          "rmse": 1.7154139037171658,
+          "mae": 1.020669007692761,
+          "bias": -0.034509225800110926
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2377,
+            "weight": 96.11094999144612,
+            "rmse": 1.7141113680966442,
+            "mae": 1.0281851586310338,
+            "bias": -0.029278174110884708
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.07416000456143,
+            "rmse": 1.6828492399190902,
+            "mae": 0.9788550861669396,
+            "bias": -0.02538970925181853
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.81489000399101,
+            "rmse": 1.753595038534769,
+            "mae": 1.0583973684632455,
+            "bias": -0.05193232576705346
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.51854000114047,
+            "rmse": 2.1291099328238787,
+            "mae": 1.3674603785681714,
+            "bias": -0.09719399664568701
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 756,
+            "weight": 31.000977798154555,
+            "rmse": 2.088443291673886,
+            "mae": 1.3181568316073395,
+            "bias": -0.09403296573060538
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 763,
+            "weight": 31.26730461948138,
+            "rmse": 1.99572598650573,
+            "mae": 1.2333456882814087,
+            "bias": -0.0619695787204532
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 765,
+            "weight": 31.312188382157135,
+            "rmse": 1.9461631914505138,
+            "mae": 1.1563935380817902,
+            "bias": -0.05591928501618474
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 792,
+            "weight": 32.33050022686496,
+            "rmse": 1.6876175591143758,
+            "mae": 1.037959953759056,
+            "bias": -0.0486892160166982
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 844,
+            "weight": 34.26035265413111,
+            "rmse": 1.4703655714313844,
+            "mae": 0.8862499569486408,
+            "bias": -0.021597117150162496
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 857,
+            "weight": 34.79273927463781,
+            "rmse": 1.269018903735687,
+            "mae": 0.7623994688843589,
+            "bias": 0.008010509435198739
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 850,
+            "weight": 34.51739704343355,
+            "rmse": 1.1046959465484771,
+            "mae": 0.6091199916882452,
+            "bias": 0.05811641049101454
+          }
+        }
+      },
+      "seconds": 56.008
+    },
+    "monotone5": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v2-deep/monotone5-model.json",
+      "sha256": "6b24369a6b1b2dc87d9fb8d7833bdf5b0db4b1cdfcfa814f39585ac45b489bb9",
+      "settings": {
+        "iterations": 240,
+        "depth": 5,
+        "learningRate": 0.05,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 60,
+        "minWeight": 2,
+        "l2": 3,
+        "monotone": true,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 73910,
+          "weight": 2999.999999997156,
+          "rmse": 1.5552787586452241,
+          "mae": 0.9699695353038575,
+          "bias": 0.0009495926755231853
+        },
+        "validation": {
+          "rows": 6127,
+          "weight": 249.99999999999002,
+          "rmse": 1.7162619352980328,
+          "mae": 1.024907778479542,
+          "bias": -0.03977553808135896
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2377,
+            "weight": 96.11094999144612,
+            "rmse": 1.7137850595474249,
+            "mae": 1.0304824022742878,
+            "bias": -0.030696507208832623
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.07416000456143,
+            "rmse": 1.684264207199051,
+            "mae": 0.9848660165001363,
+            "bias": -0.03320273042310527
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.81489000399101,
+            "rmse": 1.7553570456404974,
+            "mae": 1.0632091891012518,
+            "bias": -0.05943792215664055
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.51854000114047,
+            "rmse": 2.1284060307513504,
+            "mae": 1.3699674709462246,
+            "bias": -0.10474170535674757
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 756,
+            "weight": 31.000977798154555,
+            "rmse": 2.0896740505264972,
+            "mae": 1.3262192369747325,
+            "bias": -0.10213524557015358
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 763,
+            "weight": 31.26730461948138,
+            "rmse": 2.0051510341751646,
+            "mae": 1.2443677432396174,
+            "bias": -0.06360960145850536
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 765,
+            "weight": 31.312188382157135,
+            "rmse": 1.9455096484496581,
+            "mae": 1.163086264916103,
+            "bias": -0.07702389703471177
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 792,
+            "weight": 32.33050022686496,
+            "rmse": 1.6888979583938961,
+            "mae": 1.0415023903217755,
+            "bias": -0.05581591526512418
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 844,
+            "weight": 34.26035265413111,
+            "rmse": 1.4773679208390083,
+            "mae": 0.8875691585992675,
+            "bias": -0.023770882973548173
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 857,
+            "weight": 34.79273927463781,
+            "rmse": 1.2622332804390353,
+            "mae": 0.7635504342802503,
+            "bias": 0.0068965483885565105
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 850,
+            "weight": 34.51739704343355,
+            "rmse": 1.095225761922574,
+            "mae": 0.6092458470507456,
+            "bias": 0.06232358345493181
+          }
+        }
+      },
+      "seconds": 47.727
+    }
+  }
+}

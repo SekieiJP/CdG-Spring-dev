@@ -1,0 +1,647 @@
+{
+  "generatedAt": "2026-10-04T09:10:58.887Z",
+  "purpose": "低得点救済と中高得点化のどちらが平均12.5に必要かを診断。群を混ぜず、各全250開始で集計する。",
+  "newFullGames": 0,
+  "groups": [
+    {
+      "id": "combo2-both2",
+      "source": {
+        "summary": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+        "group": "both2",
+        "summarySha256": "76bfdf9c82c3e72c1452415c8e4c99ecd0105a99962573f054e45be82ac3c8a7",
+        "stage": "combo2-development",
+        "fingerprints": {
+          "strategyVersion": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9",
+          "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+        },
+        "audit": [
+          {
+            "id": "both2",
+            "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+            "sha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f",
+            "n": 250,
+            "version": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9"
+          }
+        ]
+      },
+      "diagnosis": {
+        "n": 250,
+        "target": 12.5,
+        "mean": 12.244,
+        "gap": 0.2560000000000002,
+        "buckets": [
+          {
+            "id": "below8",
+            "count": 3,
+            "rate": 0.012,
+            "contributionToMean": 0.08,
+            "shortfallFromTargetPerStart": 0.07,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "8-9",
+            "count": 10,
+            "rate": 0.04,
+            "contributionToMean": 0.34,
+            "shortfallFromTargetPerStart": 0.16,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "10-11",
+            "count": 51,
+            "rate": 0.204,
+            "contributionToMean": 2.176,
+            "shortfallFromTargetPerStart": 0.374,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "12",
+            "count": 61,
+            "rate": 0.244,
+            "contributionToMean": 2.928,
+            "shortfallFromTargetPerStart": 0.122,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "13",
+            "count": 78,
+            "rate": 0.312,
+            "contributionToMean": 4.056,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.156
+          },
+          {
+            "id": "14",
+            "count": 39,
+            "rate": 0.156,
+            "contributionToMean": 2.184,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.234
+          },
+          {
+            "id": "15-16",
+            "count": 8,
+            "rate": 0.032,
+            "contributionToMean": 0.48,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.08
+          }
+        ],
+        "grossShortfallPerStart": 0.726,
+        "grossSurplusPerStart": 0.47000000000000003,
+        "netShortfallPerStart": 0.25599999999999995,
+        "below8Repair": [
+          {
+            "replacementScore": 8,
+            "affectedCount": 3,
+            "gainPerStart": 0.016,
+            "meanAfterReplacement": 12.26,
+            "remainingGap": 0.2400000000000002,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 12,
+            "affectedCount": 3,
+            "gainPerStart": 0.064,
+            "meanAfterReplacement": 12.308,
+            "remainingGap": 0.19200000000000023,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 15,
+            "affectedCount": 3,
+            "gainPerStart": 0.1,
+            "meanAfterReplacement": 12.344,
+            "remainingGap": 0.15600000000000022,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 16,
+            "affectedCount": 3,
+            "gainPerStart": 0.112,
+            "meanAfterReplacement": 12.356,
+            "remainingGap": 0.14400000000000024,
+            "reachesTarget": false
+          }
+        ],
+        "onePointUpgradesNeeded": 64,
+        "eligibleForOnePointCount": 250,
+        "interpretation": "全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。"
+      }
+    },
+    {
+      "id": "combo2-world16",
+      "source": {
+        "summary": "solver/research-results/pro-mean125-20261004/combo2-development.json",
+        "group": "both2-world16",
+        "summarySha256": "76bfdf9c82c3e72c1452415c8e4c99ecd0105a99962573f054e45be82ac3c8a7",
+        "stage": "combo2-development",
+        "fingerprints": {
+          "strategyVersion": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9",
+          "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+        },
+        "audit": [
+          {
+            "id": "both2-world16",
+            "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/combo2-development/both2-world16-batch0.json",
+            "sha256": "1deab859aa92cdac89c77b297815c8d107fd95fda3cf9cef7356c125f2f8b8ef",
+            "n": 250,
+            "version": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9"
+          }
+        ]
+      },
+      "diagnosis": {
+        "n": 250,
+        "target": 12.5,
+        "mean": 12.276,
+        "gap": 0.2240000000000002,
+        "buckets": [
+          {
+            "id": "below8",
+            "count": 5,
+            "rate": 0.02,
+            "contributionToMean": 0.084,
+            "shortfallFromTargetPerStart": 0.166,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "8-9",
+            "count": 2,
+            "rate": 0.008,
+            "contributionToMean": 0.068,
+            "shortfallFromTargetPerStart": 0.032,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "10-11",
+            "count": 53,
+            "rate": 0.212,
+            "contributionToMean": 2.264,
+            "shortfallFromTargetPerStart": 0.386,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "12",
+            "count": 68,
+            "rate": 0.272,
+            "contributionToMean": 3.264,
+            "shortfallFromTargetPerStart": 0.136,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "13",
+            "count": 70,
+            "rate": 0.28,
+            "contributionToMean": 3.64,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.14
+          },
+          {
+            "id": "14",
+            "count": 41,
+            "rate": 0.164,
+            "contributionToMean": 2.296,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.246
+          },
+          {
+            "id": "15-16",
+            "count": 11,
+            "rate": 0.044,
+            "contributionToMean": 0.66,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.11
+          }
+        ],
+        "grossShortfallPerStart": 0.7200000000000001,
+        "grossSurplusPerStart": 0.496,
+        "netShortfallPerStart": 0.2240000000000001,
+        "below8Repair": [
+          {
+            "replacementScore": 8,
+            "affectedCount": 5,
+            "gainPerStart": 0.076,
+            "meanAfterReplacement": 12.352,
+            "remainingGap": 0.1480000000000002,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 12,
+            "affectedCount": 5,
+            "gainPerStart": 0.156,
+            "meanAfterReplacement": 12.432,
+            "remainingGap": 0.0680000000000002,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 15,
+            "affectedCount": 5,
+            "gainPerStart": 0.216,
+            "meanAfterReplacement": 12.491999999999999,
+            "remainingGap": 0.008000000000000201,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 16,
+            "affectedCount": 5,
+            "gainPerStart": 0.236,
+            "meanAfterReplacement": 12.512,
+            "remainingGap": 0,
+            "reachesTarget": true
+          }
+        ],
+        "onePointUpgradesNeeded": 56,
+        "eligibleForOnePointCount": 250,
+        "interpretation": "全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。"
+      }
+    },
+    {
+      "id": "action-both2",
+      "source": {
+        "summary": "solver/research-results/pro-mean125-20261004/action-coverage-development.json",
+        "group": "both2",
+        "summarySha256": "6671b5aacbee37d96390b11ff40e1794517efe8bfc09838ba345bf74d4d204dd",
+        "stage": "action-coverage-development",
+        "fingerprints": {
+          "strategyVersion": "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775",
+          "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+        },
+        "audit": [
+          {
+            "id": "both2",
+            "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+            "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390",
+            "n": 250,
+            "version": "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775"
+          }
+        ]
+      },
+      "diagnosis": {
+        "n": 250,
+        "target": 12.5,
+        "mean": 12.252,
+        "gap": 0.24799999999999933,
+        "buckets": [
+          {
+            "id": "below8",
+            "count": 2,
+            "rate": 0.008,
+            "contributionToMean": 0.048,
+            "shortfallFromTargetPerStart": 0.052,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "8-9",
+            "count": 8,
+            "rate": 0.032,
+            "contributionToMean": 0.28,
+            "shortfallFromTargetPerStart": 0.12,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "10-11",
+            "count": 53,
+            "rate": 0.212,
+            "contributionToMean": 2.268,
+            "shortfallFromTargetPerStart": 0.382,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "12",
+            "count": 75,
+            "rate": 0.3,
+            "contributionToMean": 3.6,
+            "shortfallFromTargetPerStart": 0.15,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "13",
+            "count": 65,
+            "rate": 0.26,
+            "contributionToMean": 3.38,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.13
+          },
+          {
+            "id": "14",
+            "count": 37,
+            "rate": 0.148,
+            "contributionToMean": 2.072,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.222
+          },
+          {
+            "id": "15-16",
+            "count": 10,
+            "rate": 0.04,
+            "contributionToMean": 0.604,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.104
+          }
+        ],
+        "grossShortfallPerStart": 0.7040000000000001,
+        "grossSurplusPerStart": 0.45599999999999996,
+        "netShortfallPerStart": 0.2480000000000001,
+        "below8Repair": [
+          {
+            "replacementScore": 8,
+            "affectedCount": 2,
+            "gainPerStart": 0.016,
+            "meanAfterReplacement": 12.268,
+            "remainingGap": 0.23199999999999932,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 12,
+            "affectedCount": 2,
+            "gainPerStart": 0.048,
+            "meanAfterReplacement": 12.3,
+            "remainingGap": 0.19999999999999934,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 15,
+            "affectedCount": 2,
+            "gainPerStart": 0.072,
+            "meanAfterReplacement": 12.324,
+            "remainingGap": 0.17599999999999932,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 16,
+            "affectedCount": 2,
+            "gainPerStart": 0.08,
+            "meanAfterReplacement": 12.332,
+            "remainingGap": 0.16799999999999932,
+            "reachesTarget": false
+          }
+        ],
+        "onePointUpgradesNeeded": 62,
+        "eligibleForOnePointCount": 249,
+        "interpretation": "全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。"
+      }
+    },
+    {
+      "id": "shortvalue-both2",
+      "source": {
+        "summary": "solver/research-results/pro-mean125-20261004/short-policy-value-development.json",
+        "group": "both2",
+        "summarySha256": "9bb6cceb900c534acb735371da589e528f5ec2420d490cf0a9ae58598b29a1e2",
+        "stage": "short-policy-value-development",
+        "fingerprints": {
+          "strategyVersion": "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775",
+          "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+        },
+        "audit": [
+          {
+            "id": "both2",
+            "file": "solver/local-runs/pro-mean125/short-policy-value-development/both2-batch0.json",
+            "sha256": "a5fe442696b52c61b235c5bdf3457460f02483db83567f40ba8035a62c673f51",
+            "n": 250,
+            "version": "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775"
+          }
+        ]
+      },
+      "diagnosis": {
+        "n": 250,
+        "target": 12.5,
+        "mean": 12.06,
+        "gap": 0.4399999999999995,
+        "buckets": [
+          {
+            "id": "below8",
+            "count": 2,
+            "rate": 0.008,
+            "contributionToMean": 0.052,
+            "shortfallFromTargetPerStart": 0.048,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "8-9",
+            "count": 13,
+            "rate": 0.052,
+            "contributionToMean": 0.44,
+            "shortfallFromTargetPerStart": 0.21,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "10-11",
+            "count": 64,
+            "rate": 0.256,
+            "contributionToMean": 2.74,
+            "shortfallFromTargetPerStart": 0.46,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "12",
+            "count": 61,
+            "rate": 0.244,
+            "contributionToMean": 2.928,
+            "shortfallFromTargetPerStart": 0.122,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "13",
+            "count": 73,
+            "rate": 0.292,
+            "contributionToMean": 3.796,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.146
+          },
+          {
+            "id": "14",
+            "count": 29,
+            "rate": 0.116,
+            "contributionToMean": 1.624,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.174
+          },
+          {
+            "id": "15-16",
+            "count": 8,
+            "rate": 0.032,
+            "contributionToMean": 0.48,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.08
+          }
+        ],
+        "grossShortfallPerStart": 0.84,
+        "grossSurplusPerStart": 0.39999999999999997,
+        "netShortfallPerStart": 0.44,
+        "below8Repair": [
+          {
+            "replacementScore": 8,
+            "affectedCount": 2,
+            "gainPerStart": 0.012,
+            "meanAfterReplacement": 12.072000000000001,
+            "remainingGap": 0.4279999999999995,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 12,
+            "affectedCount": 2,
+            "gainPerStart": 0.044,
+            "meanAfterReplacement": 12.104000000000001,
+            "remainingGap": 0.3959999999999995,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 15,
+            "affectedCount": 2,
+            "gainPerStart": 0.068,
+            "meanAfterReplacement": 12.128,
+            "remainingGap": 0.3719999999999995,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 16,
+            "affectedCount": 2,
+            "gainPerStart": 0.076,
+            "meanAfterReplacement": 12.136000000000001,
+            "remainingGap": 0.3639999999999995,
+            "reachesTarget": false
+          }
+        ],
+        "onePointUpgradesNeeded": 110,
+        "eligibleForOnePointCount": 250,
+        "interpretation": "全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。"
+      }
+    },
+    {
+      "id": "opening-baseline",
+      "source": {
+        "summary": "solver/research-results/pro-mean125-20261004/opening-table-development.json",
+        "group": "baseline",
+        "summarySha256": "f4a8517602e235b5d4476c5c0dbfb14d15671d6a8e276d20bf139ca68b640b32",
+        "stage": "opening-table-development",
+        "fingerprints": {
+          "strategyVersion": "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da",
+          "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+        },
+        "audit": [
+          {
+            "id": "baseline",
+            "file": "solver/local-runs/pro-mean125/opening-table-development/baseline-batch0.json",
+            "sha256": "1672a3f196f202eb2482d75bdbc8e5d39a36552cf73063db5c31ea3730ebfca4",
+            "n": 250,
+            "version": "e40efe6719bbd169d767ac0451221abf6f67212ff801394c049b1cfb692b29da"
+          }
+        ]
+      },
+      "diagnosis": {
+        "n": 250,
+        "target": 12.5,
+        "mean": 12,
+        "gap": 0.5,
+        "buckets": [
+          {
+            "id": "below8",
+            "count": 1,
+            "rate": 0.004,
+            "contributionToMean": 0.028,
+            "shortfallFromTargetPerStart": 0.022,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "8-9",
+            "count": 17,
+            "rate": 0.068,
+            "contributionToMean": 0.608,
+            "shortfallFromTargetPerStart": 0.242,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "10-11",
+            "count": 71,
+            "rate": 0.284,
+            "contributionToMean": 3.056,
+            "shortfallFromTargetPerStart": 0.494,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "12",
+            "count": 67,
+            "rate": 0.268,
+            "contributionToMean": 3.216,
+            "shortfallFromTargetPerStart": 0.134,
+            "surplusFromTargetPerStart": 0
+          },
+          {
+            "id": "13",
+            "count": 54,
+            "rate": 0.216,
+            "contributionToMean": 2.808,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.108
+          },
+          {
+            "id": "14",
+            "count": 30,
+            "rate": 0.12,
+            "contributionToMean": 1.68,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.18
+          },
+          {
+            "id": "15-16",
+            "count": 10,
+            "rate": 0.04,
+            "contributionToMean": 0.604,
+            "shortfallFromTargetPerStart": 0,
+            "surplusFromTargetPerStart": 0.104
+          }
+        ],
+        "grossShortfallPerStart": 0.892,
+        "grossSurplusPerStart": 0.39199999999999996,
+        "netShortfallPerStart": 0.5,
+        "below8Repair": [
+          {
+            "replacementScore": 8,
+            "affectedCount": 1,
+            "gainPerStart": 0.004,
+            "meanAfterReplacement": 12.004,
+            "remainingGap": 0.496,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 12,
+            "affectedCount": 1,
+            "gainPerStart": 0.02,
+            "meanAfterReplacement": 12.02,
+            "remainingGap": 0.48,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 15,
+            "affectedCount": 1,
+            "gainPerStart": 0.032,
+            "meanAfterReplacement": 12.032,
+            "remainingGap": 0.46799999999999997,
+            "reachesTarget": false
+          },
+          {
+            "replacementScore": 16,
+            "affectedCount": 1,
+            "gainPerStart": 0.036,
+            "meanAfterReplacement": 12.036,
+            "remainingGap": 0.464,
+            "reachesTarget": false
+          }
+        ],
+        "onePointUpgradesNeeded": 125,
+        "eligibleForOnePointCount": 249,
+        "interpretation": "全開始の集計に対する算術的な置換例。救済の実現可能性・カードの因果効果・新方略の成績を示さない。少数の得点帯から場面別の攻略傾向を推論しない。"
+      }
+    }
+  ]
+}

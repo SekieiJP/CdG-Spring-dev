@@ -1,0 +1,2627 @@
+{
+  "generatedAt": "2026-10-04T02:35:30.931Z",
+  "purpose": "exploratory post-hoc subgroup summaries; old continuation policy; not mean125 confirmation",
+  "minimumSeeds": 250,
+  "manifestSha256": "446b9381e7662496f583e13d3bb7feb4228c73ac0a1f3432370da21ae1a97cd8",
+  "generatorSha256": "aa7e730f66ee1568b678704fec91bce027108f9ff08491258a4b2f7b689af39a",
+  "audit": [
+    {
+      "id": "card-45-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-45-reference-batch0.json",
+      "sha256": "dd8da8a39832a4e0f994aa2dd317360fbcac753e42a8e3108ae2ae6bbd210378"
+    },
+    {
+      "id": "card-45-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-45-reference-batch1.json",
+      "sha256": "c8bfc0ca79594945dc015910580c2c39da70f4d225f38a26729ff58f1e2e8fb4"
+    },
+    {
+      "id": "card-45-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-45-target-batch0.json",
+      "sha256": "20fb837f059f2683e1c77586f368720fb12680df1c518d76b61cd07b8add5aca"
+    },
+    {
+      "id": "card-45-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-45-target-batch1.json",
+      "sha256": "0a57bf72b44a5c7e9b514aad30c237365f589829b455b455637296db807a7817"
+    },
+    {
+      "id": "card-47-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-47-reference-batch0.json",
+      "sha256": "97139cd28bac941abb5ee10f01ea77086285af01058ca8a86823a7609bfd5bfa"
+    },
+    {
+      "id": "card-47-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-47-reference-batch1.json",
+      "sha256": "c8ecdd50635e0099d5b2e3fa21a9e04ad06aad6739c0dad4695615f567dde922"
+    },
+    {
+      "id": "card-47-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-47-target-batch0.json",
+      "sha256": "2dedd0be98b40b91e2033077196b97958d9b301c15aee96a576736652c351333"
+    },
+    {
+      "id": "card-47-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-47-target-batch1.json",
+      "sha256": "357750c72b59bf0aa0548c6ce608b4e81cab80874c588467e4bcdfa18a5e9f8e"
+    },
+    {
+      "id": "card-49-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-49-reference-batch0.json",
+      "sha256": "7f4e790fad4a7ac5e919e221980f76fb1f296e90f47cc69c33d406f288a33c79"
+    },
+    {
+      "id": "card-49-reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-49-reference-batch1.json",
+      "sha256": "a369f0f92bb1cdd92ccbc6a8ab4d200f2ca2305a4c65534cc9c74fe091d9ea38"
+    },
+    {
+      "id": "card-49-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-49-target-batch0.json",
+      "sha256": "f2b50b9671e20216eaad317f6e3be2badd47dbdd313f6de50bd5ffa339d47404"
+    },
+    {
+      "id": "card-49-target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/card-growth-development-trials/card-49-target-batch1.json",
+      "sha256": "d1efebc24e78727a242bfacccc57bbcef77e878a8d9438d844a16cd4a119a88f"
+    }
+  ],
+  "comparisons": {
+    "card-45": {
+      "referenceMode": "best-other",
+      "cohorts": {
+        "satisfaction-at-least15": {
+          "n": 126,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "satisfaction-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 374,
+          "reference": {
+            "n": 374,
+            "mean": 11.644385026737968,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": 5,
+            "max": 15,
+            "score15": {
+              "count": 4,
+              "rate": 0.0106951871657754,
+              "interval95": [
+                0.00416672403109024,
+                0.027173393097357237
+              ]
+            },
+            "score14": {
+              "count": 31,
+              "rate": 0.08288770053475936
+            },
+            "score12Rate": 0.5935828877005348,
+            "scoreBelow8Rate": 0.008021390374331552,
+            "withdrawalZeroRate": 0.9278074866310161,
+            "meanStats": {
+              "experience": 44.72727272727273,
+              "enrollment": 31.524064171122994,
+              "satisfaction": 32.37433155080214,
+              "accounting": 18.240641711229948,
+              "withdrawal": 0.12299465240641712,
+              "difference": 31.40106951871658
+            },
+            "milestones": {
+              "experience50": 0.3235294117647059,
+              "difference40": 0.13636363636363635,
+              "difference48": 0,
+              "satisfaction25": 0.8716577540106952,
+              "satisfaction35": 0.4304812834224599
+            },
+            "activity": {
+              "deckSize": 10,
+              "acquisitions": 6.13903743315508,
+              "deleted": 1.9625668449197862,
+              "drawn": 25.331550802139038,
+              "placed": 20.91176470588235,
+              "applied": 20.91176470588235,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 1,
+              "6": 1,
+              "7": 1,
+              "8": 13,
+              "9": 12,
+              "10": 47,
+              "11": 77,
+              "12": 113,
+              "13": 78,
+              "14": 27,
+              "15": 4
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 93.5,
+              "expectedAttempts95": [
+                36.80070414530806,
+                239.99669585469186
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.10194854948638665,
+                  "interval95": [
+                    0.04089458672938384,
+                    0.24080314406826642
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.4158745974510204,
+                  "interval95": [
+                    0.1884192993878262,
+                    0.7477843655061572
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.6587975140969925,
+                  "interval95": [
+                    0.341336766393853,
+                    0.9363872737168684
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.48663101604278,
+              11.79946524064171
+            ]
+          },
+          "target": {
+            "n": 374,
+            "mean": 11.588235294117647,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": -1,
+            "max": 15,
+            "score15": {
+              "count": 5,
+              "rate": 0.013368983957219251,
+              "interval95": [
+                0.005723502963055701,
+                0.030909837569061453
+              ]
+            },
+            "score14": {
+              "count": 32,
+              "rate": 0.0855614973262032
+            },
+            "score12Rate": 0.5828877005347594,
+            "scoreBelow8Rate": 0.016042780748663103,
+            "withdrawalZeroRate": 0.8877005347593583,
+            "meanStats": {
+              "experience": 43.53475935828877,
+              "enrollment": 35.1524064171123,
+              "satisfaction": 28.97326203208556,
+              "accounting": 17.74331550802139,
+              "withdrawal": 0.20588235294117646,
+              "difference": 34.94652406417112
+            },
+            "milestones": {
+              "experience50": 0.21657754010695188,
+              "difference40": 0.2914438502673797,
+              "difference48": 0.01871657754010695,
+              "satisfaction25": 0.7406417112299465,
+              "satisfaction35": 0.24064171122994651
+            },
+            "activity": {
+              "deckSize": 9.68716577540107,
+              "acquisitions": 5.7727272727272725,
+              "deleted": 1.9090909090909092,
+              "drawn": 24.767379679144383,
+              "placed": 20.47860962566845,
+              "applied": 20.47860962566845,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 1,
+              "5": 1,
+              "7": 3,
+              "8": 10,
+              "9": 14,
+              "10": 45,
+              "11": 81,
+              "12": 113,
+              "13": 73,
+              "14": 27,
+              "15": 5,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 74.8,
+              "expectedAttempts95": [
+                32.352159656798996,
+                174.7181763432011
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.12592713194390448,
+                  "interval95": [
+                    0.05578317313366732,
+                    0.26946361841508837
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.4898026506993646,
+                  "interval95": [
+                    0.24948620625532603,
+                    0.7919301059793578
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.7396986647666054,
+                  "interval95": [
+                    0.43672904539897706,
+                    0.9567069192022387
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.414438502673796,
+              11.751336898395722
+            ]
+          },
+          "comparison": {
+            "n": 374,
+            "meanDifference": -0.05614973262032086,
+            "meanDifference95": [
+              -0.26737967914438504,
+              0.15508021390374332
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              0,
+              0
+            ],
+            "score15RateDifference": 0.00267379679144385,
+            "score15RateDifference95": [
+              -0.0106951871657754,
+              0.016042780748663103
+            ],
+            "newly15": 4,
+            "lost15": 3,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": 0.00267379679144385,
+            "interval95": [
+              -0.029411764705882353,
+              0.0374331550802139
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.008021390374331552,
+            "interval95": [
+              -0.008021390374331552,
+              0.02406417112299465
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.040106951871657755,
+            "interval95": [
+              0,
+              0.08021390374331551
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 249,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 125,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "accounting-at-least15": {
+          "n": 59,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "accounting-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 441,
+          "reference": {
+            "n": 441,
+            "mean": 11.673469387755102,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": -1,
+            "max": 15,
+            "score15": {
+              "count": 4,
+              "rate": 0.009070294784580499,
+              "interval95": [
+                0.0035326963586440573,
+                0.023087116176874204
+              ]
+            },
+            "score14": {
+              "count": 38,
+              "rate": 0.08616780045351474
+            },
+            "score12Rate": 0.5941043083900227,
+            "scoreBelow8Rate": 0.009070294784580499,
+            "withdrawalZeroRate": 0.9183673469387755,
+            "meanStats": {
+              "experience": 44.59183673469388,
+              "enrollment": 31.54421768707483,
+              "satisfaction": 33.16326530612245,
+              "accounting": 18.170068027210885,
+              "withdrawal": 0.14285714285714285,
+              "difference": 31.401360544217688
+            },
+            "milestones": {
+              "experience50": 0.30385487528344673,
+              "difference40": 0.12698412698412698,
+              "difference48": 0,
+              "satisfaction25": 0.8979591836734694,
+              "satisfaction35": 0.48299319727891155
+            },
+            "activity": {
+              "deckSize": 10.086167800453515,
+              "acquisitions": 6.018140589569161,
+              "deleted": 1.7142857142857142,
+              "drawn": 24.74829931972789,
+              "placed": 20.405895691609977,
+              "applied": 20.405895691609977,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 1,
+              "6": 1,
+              "7": 1,
+              "8": 12,
+              "9": 14,
+              "10": 51,
+              "11": 98,
+              "12": 127,
+              "13": 97,
+              "14": 34,
+              "15": 4,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 110.25,
+              "expectedAttempts95": [
+                43.31420140734924,
+                283.0698985926508
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.08708892654846023,
+                  "interval95": [
+                    0.03477062409923348,
+                    0.20830414258149488
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.3659224526311424,
+                  "interval95": [
+                    0.16217627551557845,
+                    0.688977460969862
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.5979456639226941,
+                  "interval95": [
+                    0.2980514066910521,
+                    0.9032649802152464
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.528344671201815,
+              11.811791383219955
+            ]
+          },
+          "target": {
+            "n": 441,
+            "mean": 11.62358276643991,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": -2,
+            "max": 15,
+            "score15": {
+              "count": 7,
+              "rate": 0.015873015873015872,
+              "interval95": [
+                0.007709597868778107,
+                0.03239816183714868
+              ]
+            },
+            "score14": {
+              "count": 38,
+              "rate": 0.08616780045351474
+            },
+            "score12Rate": 0.5986394557823129,
+            "scoreBelow8Rate": 0.02040816326530612,
+            "withdrawalZeroRate": 0.8843537414965986,
+            "meanStats": {
+              "experience": 43.151927437641724,
+              "enrollment": 35.19954648526077,
+              "satisfaction": 30.045351473922903,
+              "accounting": 17.709750566893423,
+              "withdrawal": 0.23356009070294784,
+              "difference": 34.965986394557824
+            },
+            "milestones": {
+              "experience50": 0.19047619047619047,
+              "difference40": 0.2675736961451247,
+              "difference48": 0.018140589569160998,
+              "satisfaction25": 0.800453514739229,
+              "satisfaction35": 0.2925170068027211
+            },
+            "activity": {
+              "deckSize": 9.723356009070296,
+              "acquisitions": 5.607709750566894,
+              "deleted": 1.6666666666666667,
+              "drawn": 23.988662131519273,
+              "placed": 19.79138321995465,
+              "applied": 19.79138321995465,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 2,
+              "5": 1,
+              "6": 1,
+              "7": 3,
+              "8": 11,
+              "9": 15,
+              "10": 47,
+              "11": 95,
+              "12": 126,
+              "13": 100,
+              "14": 31,
+              "15": 7,
+              "-2": 1,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 63,
+              "expectedAttempts95": [
+                30.865948661734592,
+                129.70845133826543
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.14785911979132071,
+                  "interval95": [
+                    0.07447552721396689,
+                    0.2806059405104444
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.5506787046594741,
+                  "interval95": [
+                    0.3208909243556828,
+                    0.8073210654220392
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.798110373553512,
+                  "interval95": [
+                    0.538810863377521,
+                    0.9628748281699019
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.45124716553288,
+              11.795918367346939
+            ]
+          },
+          "comparison": {
+            "n": 441,
+            "meanDifference": -0.049886621315192746,
+            "meanDifference95": [
+              -0.26077097505668934,
+              0.14285714285714285
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              0,
+              0
+            ],
+            "score15RateDifference": 0.006802721088435374,
+            "score15RateDifference95": [
+              -0.006802721088435374,
+              0.02040816326530612
+            ],
+            "newly15": 6,
+            "lost15": 3,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": 0,
+            "interval95": [
+              -0.031746031746031744,
+              0.034013605442176874
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.011337868480725623,
+            "interval95": [
+              -0.0045351473922902496,
+              0.027210884353741496
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.034013605442176874,
+            "interval95": [
+              -0.0022675736961451248,
+              0.07029478458049887
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 248,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 193,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "original-policy-selected-target": {
+          "n": 121,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "original-policy-selected-other": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 379,
+          "reference": {
+            "n": 379,
+            "mean": 11.725593667546175,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": -1,
+            "max": 15,
+            "score15": {
+              "count": 2,
+              "rate": 0.005277044854881266,
+              "interval95": [
+                0.0014483205849141288,
+                0.019034301993196508
+              ]
+            },
+            "score14": {
+              "count": 31,
+              "rate": 0.08179419525065963
+            },
+            "score12Rate": 0.6279683377308707,
+            "scoreBelow8Rate": 0.010554089709762533,
+            "withdrawalZeroRate": 0.920844327176781,
+            "meanStats": {
+              "experience": 44.071240105540895,
+              "enrollment": 31.986807387862797,
+              "satisfaction": 33.43535620052771,
+              "accounting": 18.200527704485488,
+              "withdrawal": 0.14511873350923482,
+              "difference": 31.84168865435356
+            },
+            "milestones": {
+              "experience50": 0.28232189973614774,
+              "difference40": 0.1266490765171504,
+              "difference48": 0,
+              "satisfaction25": 0.9129287598944591,
+              "satisfaction35": 0.48548812664907653
+            },
+            "activity": {
+              "deckSize": 10.145118733509236,
+              "acquisitions": 6.1319261213720315,
+              "deleted": 1.799472295514512,
+              "drawn": 25.437994722955146,
+              "placed": 20.83641160949868,
+              "applied": 20.83641160949868,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 1,
+              "6": 1,
+              "7": 1,
+              "8": 10,
+              "9": 11,
+              "10": 34,
+              "11": 82,
+              "12": 121,
+              "13": 86,
+              "14": 29,
+              "15": 2,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 189.5,
+              "expectedAttempts95": [
+                52.5367308114284,
+                690.4548691885714
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.05153479673183414,
+                  "interval95": [
+                    0.014389176028804185,
+                    0.1748399106871461
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.23244940642100387,
+                  "interval95": [
+                    0.06990497510465943,
+                    0.6174474766143483
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.41086608629653076,
+                  "interval95": [
+                    0.13492324466493577,
+                    0.8536535668512704
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.556728232189974,
+              11.886543535620053
+            ]
+          },
+          "target": {
+            "n": 379,
+            "mean": 11.525065963060687,
+            "median": 12,
+            "p10": 10,
+            "p90": 13,
+            "min": -1,
+            "max": 15,
+            "score15": {
+              "count": 4,
+              "rate": 0.010554089709762533,
+              "interval95": [
+                0.0041116541771243666,
+                0.026819153760153088
+              ]
+            },
+            "score14": {
+              "count": 26,
+              "rate": 0.06860158311345646
+            },
+            "score12Rate": 0.5699208443271768,
+            "scoreBelow8Rate": 0.021108179419525065,
+            "withdrawalZeroRate": 0.899736147757256,
+            "meanStats": {
+              "experience": 42.43007915567282,
+              "enrollment": 34.52770448548813,
+              "satisfaction": 29.986807387862797,
+              "accounting": 17.846965699208443,
+              "withdrawal": 0.20844327176781002,
+              "difference": 34.31926121372032
+            },
+            "milestones": {
+              "experience50": 0.17150395778364116,
+              "difference40": 0.24538258575197888,
+              "difference48": 0.005277044854881266,
+              "satisfaction25": 0.8073878627968337,
+              "satisfaction35": 0.287598944591029
+            },
+            "activity": {
+              "deckSize": 9.725593667546175,
+              "acquisitions": 5.691292875989446,
+              "deleted": 1.7783641160949868,
+              "drawn": 24.4934036939314,
+              "placed": 20.071240105540898,
+              "applied": 20.071240105540898,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 2,
+              "5": 1,
+              "6": 1,
+              "7": 3,
+              "8": 10,
+              "9": 16,
+              "10": 44,
+              "11": 85,
+              "12": 108,
+              "13": 82,
+              "14": 22,
+              "15": 4,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 94.75,
+              "expectedAttempts95": [
+                37.28678424916461,
+                243.21111575083535
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.10066690070699358,
+                  "interval95": [
+                    0.0403640667916223,
+                    0.23803411514719308
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.41169452789565975,
+                  "interval95": [
+                    0.18617222455996107,
+                    0.7431511435171859
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.6538966714920893,
+                  "interval95": [
+                    0.3376843519223176,
+                    0.9340286649234708
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.345646437994723,
+              11.683377308707124
+            ]
+          },
+          "comparison": {
+            "n": 379,
+            "meanDifference": -0.20052770448548812,
+            "meanDifference95": [
+              -0.40897097625329815,
+              0.0158311345646438
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              0,
+              0
+            ],
+            "score15RateDifference": 0.005277044854881266,
+            "score15RateDifference95": [
+              -0.0079155672823219,
+              0.018469656992084433
+            ],
+            "newly15": 4,
+            "lost15": 2,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": -0.013192612137203167,
+            "interval95": [
+              -0.047493403693931395,
+              0.018469656992084433
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.010554089709762533,
+            "interval95": [
+              -0.0079155672823219,
+              0.029023746701846966
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.021108179419525065,
+            "interval95": [
+              -0.018469656992084433,
+              0.06068601583113457
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 224,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 155,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        }
+      }
+    },
+    "card-47": {
+      "referenceMode": "best-other",
+      "cohorts": {
+        "satisfaction-at-least15": {
+          "n": 136,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "satisfaction-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 364,
+          "reference": {
+            "n": 364,
+            "mean": 11.598901098901099,
+            "median": 12,
+            "p10": 10,
+            "p90": 14,
+            "min": 3,
+            "max": 16,
+            "score15": {
+              "count": 6,
+              "rate": 0.016483516483516484,
+              "interval95": [
+                0.007575775166651883,
+                0.035490588181049956
+              ]
+            },
+            "score14": {
+              "count": 44,
+              "rate": 0.12087912087912088
+            },
+            "score12Rate": 0.554945054945055,
+            "scoreBelow8Rate": 0.013736263736263736,
+            "withdrawalZeroRate": 0.9203296703296703,
+            "meanStats": {
+              "experience": 44.51923076923077,
+              "enrollment": 31.832417582417584,
+              "satisfaction": 31.75,
+              "accounting": 18.412087912087912,
+              "withdrawal": 0.12912087912087913,
+              "difference": 31.703296703296704
+            },
+            "milestones": {
+              "experience50": 0.2774725274725275,
+              "difference40": 0.14285714285714285,
+              "difference48": 0.01098901098901099,
+              "satisfaction25": 0.8489010989010989,
+              "satisfaction35": 0.4340659340659341
+            },
+            "activity": {
+              "deckSize": 9.997252747252746,
+              "acquisitions": 6.082417582417582,
+              "deleted": 1.9423076923076923,
+              "drawn": 25.228021978021978,
+              "placed": 20.832417582417584,
+              "applied": 20.832417582417584,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "3": 1,
+              "4": 1,
+              "6": 1,
+              "7": 2,
+              "8": 9,
+              "9": 14,
+              "10": 57,
+              "11": 77,
+              "12": 97,
+              "13": 61,
+              "14": 38,
+              "15": 5,
+              "16": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 60.666666666666664,
+              "expectedAttempts95": [
+                28.17648428080844,
+                131.9996934969693
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.15313062106870823,
+                  "interval95": [
+                    0.07322658458017228,
+                    0.3032696981373305
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.5644057385037575,
+                  "interval95": [
+                    0.31629644574717286,
+                    0.8358187736232272
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.8102576393515432,
+                  "interval95": [
+                    0.5325494499020514,
+                    0.9730445249054188
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.436813186813186,
+              11.766483516483516
+            ]
+          },
+          "target": {
+            "n": 364,
+            "mean": 11.241758241758241,
+            "median": 12,
+            "p10": 9,
+            "p90": 13,
+            "min": -4,
+            "max": 15,
+            "score15": {
+              "count": 4,
+              "rate": 0.01098901098901099,
+              "interval95": [
+                0.004281411069712183,
+                0.02791070640694081
+              ]
+            },
+            "score14": {
+              "count": 30,
+              "rate": 0.08241758241758242
+            },
+            "score12Rate": 0.521978021978022,
+            "scoreBelow8Rate": 0.03571428571428571,
+            "withdrawalZeroRate": 0.8791208791208791,
+            "meanStats": {
+              "experience": 41.86538461538461,
+              "enrollment": 34.082417582417584,
+              "satisfaction": 29.747252747252748,
+              "accounting": 17.903846153846153,
+              "withdrawal": 0.2774725274725275,
+              "difference": 33.80494505494506
+            },
+            "milestones": {
+              "experience50": 0.19230769230769232,
+              "difference40": 0.18681318681318682,
+              "difference48": 0.005494505494505495,
+              "satisfaction25": 0.7692307692307693,
+              "satisfaction35": 0.3131868131868132
+            },
+            "activity": {
+              "deckSize": 9.722527472527473,
+              "acquisitions": 5.766483516483516,
+              "deleted": 1.901098901098901,
+              "drawn": 24.71978021978022,
+              "placed": 20.282967032967033,
+              "applied": 20.282967032967033,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 3,
+              "6": 1,
+              "7": 5,
+              "8": 10,
+              "9": 25,
+              "10": 52,
+              "11": 74,
+              "12": 97,
+              "13": 63,
+              "14": 26,
+              "15": 4,
+              "-4": 1,
+              "-1": 3
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 91,
+              "expectedAttempts95": [
+                35.82854498269957,
+                233.56785501730036
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.10461220304638708,
+                  "interval95": [
+                    0.041998586502112634,
+                    0.24653757469955595
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.4244860488528589,
+                  "interval95": [
+                    0.1930794993126187,
+                    0.7571668374309544
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.6687836920350061,
+                  "interval95": [
+                    0.3488793055704259,
+                    0.9410320551567155
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.016483516483516,
+              11.458791208791208
+            ]
+          },
+          "comparison": {
+            "n": 364,
+            "meanDifference": -0.35714285714285715,
+            "meanDifference95": [
+              -0.6016483516483516,
+              -0.12362637362637363
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              -1,
+              0
+            ],
+            "score15RateDifference": -0.005494505494505495,
+            "score15RateDifference95": [
+              -0.02197802197802198,
+              0.01098901098901099
+            ],
+            "newly15": 4,
+            "lost15": 6,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": -0.038461538461538464,
+            "interval95": [
+              -0.07692307692307693,
+              0
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.02197802197802198,
+            "interval95": [
+              0,
+              0.04395604395604396
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.04120879120879121,
+            "interval95": [
+              0.0027472527472527475,
+              0.07967032967032966
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 247,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 117,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "accounting-at-least15": {
+          "n": 53,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "accounting-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 447,
+          "reference": {
+            "n": 447,
+            "mean": 11.677852348993289,
+            "median": 12,
+            "p10": 10,
+            "p90": 14,
+            "min": -1,
+            "max": 16,
+            "score15": {
+              "count": 9,
+              "rate": 0.020134228187919462,
+              "interval95": [
+                0.010628005229090395,
+                0.03781827834367662
+              ]
+            },
+            "score14": {
+              "count": 56,
+              "rate": 0.12527964205816555
+            },
+            "score12Rate": 0.5861297539149888,
+            "scoreBelow8Rate": 0.013422818791946308,
+            "withdrawalZeroRate": 0.9082774049217002,
+            "meanStats": {
+              "experience": 44.58389261744966,
+              "enrollment": 32.002237136465325,
+              "satisfaction": 32.78299776286354,
+              "accounting": 18.23042505592841,
+              "withdrawal": 0.15436241610738255,
+              "difference": 31.847874720357943
+            },
+            "milestones": {
+              "experience50": 0.28859060402684567,
+              "difference40": 0.1319910514541387,
+              "difference48": 0.013422818791946308,
+              "satisfaction25": 0.8859060402684564,
+              "satisfaction35": 0.49217002237136465
+            },
+            "activity": {
+              "deckSize": 10.125279642058166,
+              "acquisitions": 5.939597315436242,
+              "deleted": 1.6487695749440716,
+              "drawn": 24.552572706935123,
+              "placed": 20.257270693512304,
+              "applied": 20.257270693512304,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "0": 1,
+              "3": 1,
+              "4": 1,
+              "6": 1,
+              "7": 1,
+              "8": 9,
+              "9": 15,
+              "10": 62,
+              "11": 93,
+              "12": 121,
+              "13": 85,
+              "14": 47,
+              "15": 8,
+              "16": 1,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 49.66666666666667,
+              "expectedAttempts95": [
+                26.442240202275215,
+                94.09103387179889
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.18404562810047254,
+                  "interval95": [
+                    0.10133851226452806,
+                    0.3199027409678985
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.6383159404303875,
+                  "interval95": [
+                    0.41388794801999407,
+                    0.8545026368558808
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.869184641053245,
+                  "interval95": [
+                    0.6564726625237869,
+                    0.9788305173181083
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.503355704697986,
+              11.845637583892618
+            ]
+          },
+          "target": {
+            "n": 447,
+            "mean": 11.302013422818792,
+            "median": 12,
+            "p10": 9,
+            "p90": 13,
+            "min": -4,
+            "max": 15,
+            "score15": {
+              "count": 5,
+              "rate": 0.011185682326621925,
+              "interval95": [
+                0.004786986778052015,
+                0.02591470534618852
+              ]
+            },
+            "score14": {
+              "count": 39,
+              "rate": 0.087248322147651
+            },
+            "score12Rate": 0.5391498881431768,
+            "scoreBelow8Rate": 0.03803131991051454,
+            "withdrawalZeroRate": 0.8657718120805369,
+            "meanStats": {
+              "experience": 41.95302013422819,
+              "enrollment": 34.20805369127517,
+              "satisfaction": 30.7337807606264,
+              "accounting": 17.747203579418343,
+              "withdrawal": 0.3131991051454139,
+              "difference": 33.89485458612975
+            },
+            "milestones": {
+              "experience50": 0.18568232662192394,
+              "difference40": 0.16778523489932887,
+              "difference48": 0.008948545861297539,
+              "satisfaction25": 0.8165548098434005,
+              "satisfaction35": 0.348993288590604
+            },
+            "activity": {
+              "deckSize": 9.78523489932886,
+              "acquisitions": 5.574944071588367,
+              "deleted": 1.6241610738255035,
+              "drawn": 24.004474272930647,
+              "placed": 19.60850111856823,
+              "applied": 19.60850111856823,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "0": 1,
+              "4": 3,
+              "5": 1,
+              "6": 1,
+              "7": 6,
+              "8": 10,
+              "9": 27,
+              "10": 57,
+              "11": 95,
+              "12": 120,
+              "13": 82,
+              "14": 34,
+              "15": 5,
+              "-4": 1,
+              "-1": 4
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 89.39999999999999,
+              "expectedAttempts95": [
+                38.588129274141174,
+                208.89967872585882
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.10639114807211947,
+                  "interval95": [
+                    0.046851735625596524,
+                    0.23092291705960732
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.4301804953410694,
+                  "interval95": [
+                    0.2133123960557478,
+                    0.7309398673818381
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.6753057321102509,
+                  "interval95": [
+                    0.3811226138004513,
+                    0.9276066450354972
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.080536912751677,
+              11.498881431767337
+            ]
+          },
+          "comparison": {
+            "n": 447,
+            "meanDifference": -0.37583892617449666,
+            "meanDifference95": [
+              -0.6129753914988815,
+              -0.13870246085011187
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              -1,
+              0
+            ],
+            "score15RateDifference": -0.008948545861297539,
+            "score15RateDifference95": [
+              -0.024608501118568233,
+              0.006711409395973154
+            ],
+            "newly15": 4,
+            "lost15": 8,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": -0.03803131991051454,
+            "interval95": [
+              -0.0738255033557047,
+              -0.0022371364653243847
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.024608501118568233,
+            "interval95": [
+              0.0044742729306487695,
+              0.0447427293064877
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.042505592841163314,
+            "interval95": [
+              0.0044742729306487695,
+              0.08053691275167785
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 248,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 199,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "original-policy-selected-target": {
+          "n": 132,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "original-policy-selected-other": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 368,
+          "reference": {
+            "n": 368,
+            "mean": 11.660326086956522,
+            "median": 12,
+            "p10": 10,
+            "p90": 14,
+            "min": -1,
+            "max": 16,
+            "score15": {
+              "count": 7,
+              "rate": 0.019021739130434784,
+              "interval95": [
+                0.009243895995712879,
+                0.038737825253335106
+              ]
+            },
+            "score14": {
+              "count": 49,
+              "rate": 0.1331521739130435
+            },
+            "score12Rate": 0.5815217391304348,
+            "scoreBelow8Rate": 0.01358695652173913,
+            "withdrawalZeroRate": 0.9320652173913043,
+            "meanStats": {
+              "experience": 43.828804347826086,
+              "enrollment": 32.00271739130435,
+              "satisfaction": 33.28804347826087,
+              "accounting": 18.418478260869566,
+              "withdrawal": 0.1331521739130435,
+              "difference": 31.869565217391305
+            },
+            "milestones": {
+              "experience50": 0.26358695652173914,
+              "difference40": 0.12771739130434784,
+              "difference48": 0.008152173913043478,
+              "satisfaction25": 0.907608695652174,
+              "satisfaction35": 0.5108695652173914
+            },
+            "activity": {
+              "deckSize": 10.201086956521738,
+              "acquisitions": 5.978260869565218,
+              "deleted": 1.6331521739130435,
+              "drawn": 24.997282608695652,
+              "placed": 20.519021739130434,
+              "applied": 20.519021739130434,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "0": 1,
+              "3": 1,
+              "4": 1,
+              "7": 1,
+              "8": 8,
+              "9": 16,
+              "10": 48,
+              "11": 77,
+              "12": 96,
+              "13": 69,
+              "14": 42,
+              "15": 6,
+              "16": 1,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 52.57142857142857,
+              "expectedAttempts95": [
+                25.814562213037647,
+                108.17949492981948
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.17473422941396555,
+                  "interval95": [
+                    0.08868699737940777,
+                    0.326374477492129
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.6172024393466278,
+                  "interval95": [
+                    0.3714528895844351,
+                    0.8612948241261771
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.8534660275578279,
+                  "interval95": [
+                    0.6049285299882436,
+                    0.9807608741858118
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.467391304347826,
+              11.839673913043478
+            ]
+          },
+          "target": {
+            "n": 368,
+            "mean": 11.133152173913043,
+            "median": 11,
+            "p10": 9,
+            "p90": 13,
+            "min": -1,
+            "max": 15,
+            "score15": {
+              "count": 3,
+              "rate": 0.008152173913043478,
+              "interval95": [
+                0.0027762207716439547,
+                0.023690963104501153
+              ]
+            },
+            "score14": {
+              "count": 21,
+              "rate": 0.057065217391304345
+            },
+            "score12Rate": 0.4701086956521739,
+            "scoreBelow8Rate": 0.035326086956521736,
+            "withdrawalZeroRate": 0.8695652173913043,
+            "meanStats": {
+              "experience": 40.51358695652174,
+              "enrollment": 33.32336956521739,
+              "satisfaction": 30.842391304347824,
+              "accounting": 17.8125,
+              "withdrawal": 0.2798913043478261,
+              "difference": 33.04347826086956
+            },
+            "milestones": {
+              "experience50": 0.14402173913043478,
+              "difference40": 0.1331521739130435,
+              "difference48": 0,
+              "satisfaction25": 0.8233695652173914,
+              "satisfaction35": 0.358695652173913
+            },
+            "activity": {
+              "deckSize": 9.809782608695652,
+              "acquisitions": 5.614130434782608,
+              "deleted": 1.6603260869565217,
+              "drawn": 24.171195652173914,
+              "placed": 19.63586956521739,
+              "applied": 19.63586956521739,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "0": 1,
+              "4": 3,
+              "7": 6,
+              "8": 9,
+              "9": 25,
+              "10": 59,
+              "11": 89,
+              "12": 93,
+              "13": 59,
+              "14": 18,
+              "15": 3,
+              "-1": 3
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 122.66666666666667,
+              "expectedAttempts95": [
+                42.21018772385853,
+                360.20190116503034
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.07859522656812079,
+                  "interval95": [
+                    0.027417929897141202,
+                    0.21318416374040172
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.33587123779489714,
+                  "interval95": [
+                    0.1297755229306241,
+                    0.6984457442335907
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.558932987211918,
+                  "interval95": [
+                    0.24270935950933137,
+                    0.909065030829167
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              10.915760869565217,
+              11.339673913043478
+            ]
+          },
+          "comparison": {
+            "n": 368,
+            "meanDifference": -0.5271739130434783,
+            "meanDifference95": [
+              -0.7554347826086957,
+              -0.296195652173913
+            ],
+            "medianDifference": -1,
+            "medianDifference95": [
+              -1,
+              0
+            ],
+            "score15RateDifference": -0.010869565217391304,
+            "score15RateDifference95": [
+              -0.02717391304347826,
+              0.005434782608695652
+            ],
+            "newly15": 3,
+            "lost15": 7,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": -0.07608695652173914,
+            "interval95": [
+              -0.11141304347826086,
+              -0.03804347826086957
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.021739130434782608,
+            "interval95": [
+              0,
+              0.04619565217391304
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": 0.0625,
+            "interval95": [
+              0.024456521739130436,
+              0.10054347826086957
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 203,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 165,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        }
+      }
+    },
+    "card-49": {
+      "referenceMode": "best-other",
+      "cohorts": {
+        "satisfaction-at-least15": {
+          "n": 142,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "satisfaction-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 358,
+          "reference": {
+            "n": 358,
+            "mean": 11.486033519553073,
+            "median": 12,
+            "p10": 9,
+            "p90": 13,
+            "min": -4,
+            "max": 15,
+            "score15": {
+              "count": 2,
+              "rate": 0.00558659217877095,
+              "interval95": [
+                0.0015333522724492333,
+                0.02013800889774236
+              ]
+            },
+            "score14": {
+              "count": 23,
+              "rate": 0.06424581005586592
+            },
+            "score12Rate": 0.5586592178770949,
+            "scoreBelow8Rate": 0.01675977653631285,
+            "withdrawalZeroRate": 0.88268156424581,
+            "meanStats": {
+              "experience": 44.385474860335194,
+              "enrollment": 32.46368715083799,
+              "satisfaction": 30.977653631284916,
+              "accounting": 18.019553072625698,
+              "withdrawal": 0.24022346368715083,
+              "difference": 32.22346368715084
+            },
+            "milestones": {
+              "experience50": 0.30446927374301674,
+              "difference40": 0.1564245810055866,
+              "difference48": 0.002793296089385475,
+              "satisfaction25": 0.8659217877094972,
+              "satisfaction35": 0.3407821229050279
+            },
+            "activity": {
+              "deckSize": 9.572625698324023,
+              "acquisitions": 5.812849162011173,
+              "deleted": 2.047486033519553,
+              "drawn": 24.34078212290503,
+              "placed": 20.276536312849164,
+              "applied": 20.276536312849164,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 2,
+              "6": 3,
+              "8": 7,
+              "9": 24,
+              "10": 40,
+              "11": 81,
+              "12": 100,
+              "13": 77,
+              "14": 21,
+              "15": 2,
+              "-4": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 179,
+              "expectedAttempts95": [
+                49.65734224658667,
+                652.1658577534134
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.05448219096448703,
+                  "interval95": [
+                    0.015228151572606818,
+                    0.1840771103017692
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.2443014890887817,
+                  "interval95": [
+                    0.07385683736438264,
+                    0.6383857098447661
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.42891976060656734,
+                  "interval95": [
+                    0.14225884230329644,
+                    0.8692351051555263
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.293296089385475,
+              11.664804469273744
+            ]
+          },
+          "target": {
+            "n": 358,
+            "mean": 11.405027932960893,
+            "median": 11.5,
+            "p10": 9,
+            "p90": 13,
+            "min": -2,
+            "max": 16,
+            "score15": {
+              "count": 7,
+              "rate": 0.019553072625698324,
+              "interval95": [
+                0.009502964996666977,
+                0.03980479840035536
+              ]
+            },
+            "score14": {
+              "count": 34,
+              "rate": 0.09497206703910614
+            },
+            "score12Rate": 0.5,
+            "scoreBelow8Rate": 0.019553072625698324,
+            "withdrawalZeroRate": 0.9217877094972067,
+            "meanStats": {
+              "experience": 43.46648044692738,
+              "enrollment": 30.81564245810056,
+              "satisfaction": 32.47486033519553,
+              "accounting": 18.307262569832403,
+              "withdrawal": 0.14804469273743018,
+              "difference": 30.66759776536313
+            },
+            "milestones": {
+              "experience50": 0.26536312849162014,
+              "difference40": 0.11731843575418995,
+              "difference48": 0.008379888268156424,
+              "satisfaction25": 0.8715083798882681,
+              "satisfaction35": 0.46089385474860334
+            },
+            "activity": {
+              "deckSize": 10.522346368715084,
+              "acquisitions": 6.824022346368715,
+              "deleted": 2.1089385474860336,
+              "drawn": 29.181564245810055,
+              "placed": 23.71508379888268,
+              "applied": 23.71508379888268,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 1,
+              "5": 1,
+              "6": 1,
+              "7": 3,
+              "8": 10,
+              "9": 25,
+              "10": 54,
+              "11": 83,
+              "12": 78,
+              "13": 67,
+              "14": 27,
+              "15": 6,
+              "16": 1,
+              "-2": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 51.142857142857146,
+              "expectedAttempts95": [
+                25.122599289212136,
+                105.23031499650214
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.17919328975422155,
+                  "interval95": [
+                    0.09106715263813181,
+                    0.33381428895823284
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.6274329087870565,
+                  "interval95": [
+                    0.379618280707234,
+                    0.8687870902094702
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.8611937625451263,
+                  "interval95": [
+                    0.6151265223673518,
+                    0.9827831723043023
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.21508379888268,
+              11.594972067039107
+            ]
+          },
+          "comparison": {
+            "n": 358,
+            "meanDifference": -0.08100558659217877,
+            "meanDifference95": [
+              -0.31564245810055863,
+              0.15921787709497207
+            ],
+            "medianDifference": -0.5,
+            "medianDifference95": [
+              -1,
+              0
+            ],
+            "score15RateDifference": 0.013966480446927373,
+            "score15RateDifference95": [
+              -0.002793296089385475,
+              0.030726256983240222
+            ],
+            "newly15": 7,
+            "lost15": 2,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": 0.030726256983240222,
+            "interval95": [
+              -0.00558659217877095,
+              0.0670391061452514
+            ]
+          },
+          "below8RateDifference": {
+            "mean": 0.002793296089385475,
+            "interval95": [
+              -0.013966480446927373,
+              0.019553072625698324
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": -0.03910614525139665,
+            "interval95": [
+              -0.08100558659217877,
+              0.002793296089385475
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 247,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 111,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "accounting-at-least15": {
+          "n": 43,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        },
+        "accounting-below15": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 457,
+          "reference": {
+            "n": 457,
+            "mean": 11.466083150984682,
+            "median": 12,
+            "p10": 9,
+            "p90": 13,
+            "min": -4,
+            "max": 15,
+            "score15": {
+              "count": 5,
+              "rate": 0.010940919037199124,
+              "interval95": [
+                0.00468204092308395,
+                0.02535344198470909
+              ]
+            },
+            "score14": {
+              "count": 39,
+              "rate": 0.08533916849015317
+            },
+            "score12Rate": 0.5667396061269147,
+            "scoreBelow8Rate": 0.028446389496717725,
+            "withdrawalZeroRate": 0.8840262582056893,
+            "meanStats": {
+              "experience": 44.37417943107221,
+              "enrollment": 32.38074398249453,
+              "satisfaction": 32.032822757111596,
+              "accounting": 17.984682713347922,
+              "withdrawal": 0.27571115973741794,
+              "difference": 32.10503282275711
+            },
+            "milestones": {
+              "experience50": 0.31072210065645517,
+              "difference40": 0.14660831509846828,
+              "difference48": 0.002188183807439825,
+              "satisfaction25": 0.8840262582056893,
+              "satisfaction35": 0.4048140043763676
+            },
+            "activity": {
+              "deckSize": 9.647702407002189,
+              "acquisitions": 5.536105032822757,
+              "deleted": 1.6849015317286653,
+              "drawn": 23.161925601750546,
+              "placed": 19.22319474835886,
+              "applied": 19.22319474835886,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 2,
+              "6": 6,
+              "7": 2,
+              "8": 9,
+              "9": 26,
+              "10": 49,
+              "11": 101,
+              "12": 129,
+              "13": 91,
+              "14": 34,
+              "15": 5,
+              "-4": 1,
+              "-3": 1,
+              "-2": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 91.4,
+              "expectedAttempts95": [
+                39.44237632914339,
+                213.58207167085666
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.10417671374433513,
+                  "interval95": [
+                    0.04584615754262,
+                    0.22648002339111006
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.42308512466058734,
+                  "interval95": [
+                    0.2091538260553646,
+                    0.723077865509318
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.66716922661211,
+                  "interval95": [
+                    0.3745623291571314,
+                    0.9233141314291247
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.269146608315099,
+              11.641137855579869
+            ]
+          },
+          "target": {
+            "n": 457,
+            "mean": 11.544857768052516,
+            "median": 12,
+            "p10": 10,
+            "p90": 14,
+            "min": -2,
+            "max": 16,
+            "score15": {
+              "count": 9,
+              "rate": 0.019693654266958426,
+              "interval95": [
+                0.010394687448454405,
+                0.03700033938940051
+              ]
+            },
+            "score14": {
+              "count": 48,
+              "rate": 0.1050328227571116
+            },
+            "score12Rate": 0.5536105032822757,
+            "scoreBelow8Rate": 0.019693654266958426,
+            "withdrawalZeroRate": 0.9212253829321663,
+            "meanStats": {
+              "experience": 43.461706783369806,
+              "enrollment": 31.332603938730852,
+              "satisfaction": 33.544857768052516,
+              "accounting": 18.13566739606127,
+              "withdrawal": 0.1575492341356674,
+              "difference": 31.175054704595187
+            },
+            "milestones": {
+              "experience50": 0.24945295404814005,
+              "difference40": 0.12691466083150985,
+              "difference48": 0.0087527352297593,
+              "satisfaction25": 0.9080962800875274,
+              "satisfaction35": 0.5142231947483589
+            },
+            "activity": {
+              "deckSize": 10.62800875273523,
+              "acquisitions": 6.5929978118161925,
+              "deleted": 1.7614879649890591,
+              "drawn": 27.921225382932167,
+              "placed": 22.693654266958426,
+              "applied": 22.693654266958426,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 1,
+              "5": 1,
+              "6": 2,
+              "7": 3,
+              "8": 13,
+              "9": 23,
+              "10": 58,
+              "11": 101,
+              "12": 112,
+              "13": 93,
+              "14": 39,
+              "15": 8,
+              "16": 1,
+              "-2": 1,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 50.77777777777778,
+              "expectedAttempts95": [
+                27.026779118855057,
+                96.20298878237949
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.18036944652498887,
+                  "interval95": [
+                    0.09921700132141109,
+                    0.31409915061981475
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.6300945786382726,
+                  "interval95": [
+                    0.406936899541098,
+                    0.848187789726006
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.863169979247203,
+                  "interval95": [
+                    0.6482761588740744,
+                    0.9769530528117246
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.36761487964989,
+              11.713347921225383
+            ]
+          },
+          "comparison": {
+            "n": 457,
+            "meanDifference": 0.0787746170678337,
+            "meanDifference95": [
+              -0.14442013129102846,
+              0.3172866520787746
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              0,
+              0
+            ],
+            "score15RateDifference": 0.0087527352297593,
+            "score15RateDifference95": [
+              -0.006564551422319475,
+              0.024070021881838075
+            ],
+            "newly15": 9,
+            "lost15": 5,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": 0.019693654266958426,
+            "interval95": [
+              -0.01312910284463895,
+              0.05470459518599562
+            ]
+          },
+          "below8RateDifference": {
+            "mean": -0.0087527352297593,
+            "interval95": [
+              -0.0262582056892779,
+              0.0087527352297593
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": -0.037199124726477024,
+            "interval95": [
+              -0.07658643326039387,
+              0.002188183807439825
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 249,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 208,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "original-policy-selected-target": {
+          "trendSupported": true,
+          "schema": 1,
+          "n": 400,
+          "reference": {
+            "n": 400,
+            "mean": 11.415,
+            "median": 12,
+            "p10": 9,
+            "p90": 13,
+            "min": -3,
+            "max": 15,
+            "score15": {
+              "count": 4,
+              "rate": 0.01,
+              "interval95": [
+                0.0038954207932788126,
+                0.02542696699440824
+              ]
+            },
+            "score14": {
+              "count": 28,
+              "rate": 0.07
+            },
+            "score12Rate": 0.555,
+            "scoreBelow8Rate": 0.03,
+            "withdrawalZeroRate": 0.8925,
+            "meanStats": {
+              "experience": 43.7275,
+              "enrollment": 31.9775,
+              "satisfaction": 32.62,
+              "accounting": 18.2225,
+              "withdrawal": 0.2525,
+              "difference": 31.725
+            },
+            "milestones": {
+              "experience50": 0.2775,
+              "difference40": 0.12,
+              "difference48": 0.0025,
+              "satisfaction25": 0.895,
+              "satisfaction35": 0.45
+            },
+            "activity": {
+              "deckSize": 9.5625,
+              "acquisitions": 5.4375,
+              "deleted": 1.6575,
+              "drawn": 22.8725,
+              "placed": 18.855,
+              "applied": 18.855,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "5": 2,
+              "6": 6,
+              "7": 2,
+              "8": 8,
+              "9": 22,
+              "10": 46,
+              "11": 90,
+              "12": 119,
+              "13": 75,
+              "14": 24,
+              "15": 4,
+              "-3": 1,
+              "-2": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 100,
+              "expectedAttempts95": [
+                39.32832414577462,
+                256.71167585422535
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.09561792499119559,
+                  "interval95": [
+                    0.03827840939707172,
+                    0.2270633503473456
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.39499393286246365,
+                  "interval95": [
+                    0.17728989758875469,
+                    0.7241204545765609
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.6339676587267709,
+                  "interval95": [
+                    0.3231480873904782,
+                    0.9238904764169567
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.22,
+              11.6
+            ]
+          },
+          "target": {
+            "n": 400,
+            "mean": 11.66,
+            "median": 12,
+            "p10": 10,
+            "p90": 14,
+            "min": -1,
+            "max": 16,
+            "score15": {
+              "count": 10,
+              "rate": 0.025,
+              "interval95": [
+                0.013634943739762435,
+                0.045402064829934204
+              ]
+            },
+            "score14": {
+              "count": 47,
+              "rate": 0.1175
+            },
+            "score12Rate": 0.5825,
+            "scoreBelow8Rate": 0.0175,
+            "withdrawalZeroRate": 0.9275,
+            "meanStats": {
+              "experience": 43.3675,
+              "enrollment": 31.5425,
+              "satisfaction": 34.27,
+              "accounting": 18.33,
+              "withdrawal": 0.14,
+              "difference": 31.4025
+            },
+            "milestones": {
+              "experience50": 0.2525,
+              "difference40": 0.1375,
+              "difference48": 0.01,
+              "satisfaction25": 0.935,
+              "satisfaction35": 0.555
+            },
+            "activity": {
+              "deckSize": 10.6525,
+              "acquisitions": 6.5425,
+              "deleted": 1.6725,
+              "drawn": 27.915,
+              "placed": 22.66,
+              "applied": 22.66,
+              "failed": 0
+            },
+            "scoreDistribution": {
+              "4": 1,
+              "6": 2,
+              "7": 3,
+              "8": 12,
+              "9": 17,
+              "10": 48,
+              "11": 83,
+              "12": 101,
+              "13": 85,
+              "14": 37,
+              "15": 9,
+              "16": 1,
+              "-1": 1
+            },
+            "retries": {
+              "assumption": "independent full games with an unchanged strategy; no early restart",
+              "expectedAttempts": 40,
+              "expectedAttempts95": [
+                22.02542998310258,
+                73.34097001689743
+              ],
+              "successWithin": [
+                {
+                  "count": 10,
+                  "probability": 0.22367037914356236,
+                  "interval95": [
+                    0.12828045792291554,
+                    0.3716452443285335
+                  ]
+                },
+                {
+                  "count": 50,
+                  "probability": 0.718011897659083,
+                  "interval95": [
+                    0.49663396226593115,
+                    0.9020454684951386
+                  ]
+                },
+                {
+                  "count": 100,
+                  "probability": 0.9204827101381686,
+                  "interval95": [
+                    0.746622632055904,
+                    0.9904049097576632
+                  ]
+                }
+              ]
+            },
+            "versions": [
+              [
+                "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+                "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+                "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+                "counterfactual"
+              ]
+            ],
+            "mean95": [
+              11.4825,
+              11.8275
+            ]
+          },
+          "comparison": {
+            "n": 400,
+            "meanDifference": 0.245,
+            "meanDifference95": [
+              0.035,
+              0.48
+            ],
+            "medianDifference": 0,
+            "medianDifference95": [
+              0,
+              0
+            ],
+            "score15RateDifference": 0.015,
+            "score15RateDifference95": [
+              -0.0025,
+              0.0325
+            ],
+            "newly15": 10,
+            "lost15": 4,
+            "firstOfferMismatches": 0
+          },
+          "score14RateDifference": {
+            "mean": 0.0475,
+            "interval95": [
+              0.01,
+              0.085
+            ]
+          },
+          "below8RateDifference": {
+            "mean": -0.0125,
+            "interval95": [
+              -0.0325,
+              0.005
+            ]
+          },
+          "withdrawalRateDifference": {
+            "mean": -0.035,
+            "interval95": [
+              -0.0775,
+              0.0025
+            ]
+          },
+          "byTurn": {
+            "3": {
+              "n": 196,
+              "trendSupported": false
+            },
+            "5": {
+              "n": 204,
+              "trendSupported": false
+            }
+          },
+          "activityScope": "局面の復元後。元の所持札を追加した復元イベントを新規取得から除外する。",
+          "interpretation": "旧方略の公開局面分布に対する取得変更の完走対照試験。開始からの平均12.5達成の検証や全デッキでのカード優劣ではない。時期・相性の細分は250局面未満なら傾向と扱わない。"
+        },
+        "original-policy-selected-other": {
+          "n": 100,
+          "trendSupported": false,
+          "reason": "最低250局面に未達のため、得点差の傾向を集計しない"
+        }
+      }
+    }
+  },
+  "interpretation": "取得前の公開値と旧方略の選択で分ける事後集計。条件を満たすデッキを後から選ぶ効果や時期の因果比較ではない。複数比較の名目区間。250未満は件数だけを残す。"
+}

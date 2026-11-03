@@ -1,0 +1,430 @@
+{
+  "createdAt": "2026-10-04T10:49:28.693Z",
+  "purpose": "リセマラなしPRO。過去の結果だけを教師として使用。予測精度は実プレイ改善の証明ではない。",
+  "provenance": {
+    "datasetSha256": "02fa31d447d5ca27237fd9f389cc2a927e5704d47a92b5df43b8c88d5a7970ef",
+    "implementationSha256": "a941c8870a0ef5107ff04a67f382cafe994241e0c7f08f867e2902db7f236776",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 1250,
+      "validationSeeds": 250,
+      "trainRows": 30522,
+      "validationRows": 6117
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+        "n": 250,
+        "sha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f"
+      },
+      {
+        "split": "train",
+        "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+        "n": 250,
+        "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390"
+      },
+      {
+        "split": "train",
+        "file": "solver/local-runs/pro-mean125/short-policy-value-development/both2-batch0.json",
+        "n": 250,
+        "sha256": "a5fe442696b52c61b235c5bdf3457460f02483db83567f40ba8035a62c673f51"
+      },
+      {
+        "split": "train",
+        "file": "solver/local-runs/pro-mean125/opening-table-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "1672a3f196f202eb2482d75bdbc8e5d39a36552cf73063db5c31ea3730ebfca4"
+      },
+      {
+        "split": "train",
+        "file": "solver/local-runs/pro-mean125/growth-deletion-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "4ac8ea08b96e2d3c389777f8ca10fca2fa46224c35138c79619c987bf8acd3b7"
+      },
+      {
+        "split": "validation",
+        "file": "solver/local-runs/pro-mean125/enrollment-emphasis-development/baseline-batch0.json",
+        "n": 250,
+        "sha256": "fbad2e903c325e376159da53a2a8c12e8b59ef2c090b672059e68b41321cd1d9"
+      }
+    ]
+  },
+  "models": {
+    "depth3": {
+      "file": "solver/local-runs/pro-mean125/value-v5-both2-policy/depth3-model.json",
+      "sha256": "243bcdb45001891da10b7f9c3f17c76b038ee328e823a457244c9eadb3df36a6",
+      "settings": {
+        "iterations": 160,
+        "depth": 3,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 30522,
+          "weight": 1249.999999999994,
+          "rmse": 1.3032731226643632,
+          "mae": 0.9117812625032984,
+          "bias": 0.001411510180749326
+        },
+        "validation": {
+          "rows": 6117,
+          "weight": 249.99999999998994,
+          "rmse": 1.6766484000646131,
+          "mae": 1.0132694508944116,
+          "bias": -0.021710054362919978
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2367,
+            "weight": 95.89064856049728,
+            "rmse": 1.6887859924578463,
+            "mae": 1.018873413738444,
+            "bias": -0.0012860031705170067
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.19165410106697,
+            "rmse": 1.64257830229079,
+            "mae": 0.9774066329341727,
+            "bias": -0.03627096703576777
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.91769733843371,
+            "rmse": 1.6988015930402993,
+            "mae": 1.0467835480700316,
+            "bias": -0.032301189027385005
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.547913525266978,
+            "rmse": 1.9195937357699875,
+            "mae": 1.258951782767477,
+            "bias": -0.1582114331010474
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 769,
+            "weight": 31.54359358376191,
+            "rmse": 1.8788835511129012,
+            "mae": 1.2326829661055758,
+            "bias": -0.09095470179217913
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 775,
+            "weight": 31.778278667197,
+            "rmse": 1.8682821282588606,
+            "mae": 1.2024547342520784,
+            "bias": -0.06652010928095317
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 773,
+            "weight": 31.66682383541402,
+            "rmse": 1.7932379698033847,
+            "mae": 1.1412314084263426,
+            "bias": -0.06278429209433063
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 791,
+            "weight": 32.32848174636559,
+            "rmse": 1.7354738352090218,
+            "mae": 1.0528653082349804,
+            "bias": 0.03357908919637276
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 824,
+            "weight": 33.54861279857252,
+            "rmse": 1.5717057681535505,
+            "mae": 0.9056156922278588,
+            "bias": 0.03604798553816912
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 847,
+            "weight": 34.45791847523218,
+            "rmse": 1.4599589623638618,
+            "mae": 0.8158377060684628,
+            "bias": 0.037360231500890344
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 838,
+            "weight": 34.12837736819108,
+            "rmse": 1.2015831252118694,
+            "mae": 0.635319041463613,
+            "bias": 0.035519895505258164
+          }
+        }
+      },
+      "seconds": 6.928
+    },
+    "depth4": {
+      "file": "solver/local-runs/pro-mean125/value-v5-both2-policy/depth4-model.json",
+      "sha256": "828d946f1685ef192c4ac5b108d90ee2220f9b3c6f7f06933827f42d3e999a05",
+      "settings": {
+        "iterations": 160,
+        "depth": 4,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 30522,
+          "weight": 1249.999999999994,
+          "rmse": 1.252076513605421,
+          "mae": 0.8747837338188778,
+          "bias": 0.0014252567957354658
+        },
+        "validation": {
+          "rows": 6117,
+          "weight": 249.99999999998994,
+          "rmse": 1.6680654507534978,
+          "mae": 1.0078923514119933,
+          "bias": -0.017735283877334314
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2367,
+            "weight": 95.89064856049728,
+            "rmse": 1.6790152126700302,
+            "mae": 1.01362524634591,
+            "bias": -0.005274361485896099
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.19165410106697,
+            "rmse": 1.6334137843210004,
+            "mae": 0.969189047758247,
+            "bias": -0.0206348166848146
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.91769733843371,
+            "rmse": 1.6924304126779042,
+            "mae": 1.0444808078074128,
+            "bias": -0.031036162070198228
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.547913525266978,
+            "rmse": 1.9221142538037328,
+            "mae": 1.2643950594853577,
+            "bias": -0.1326403056868936
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 769,
+            "weight": 31.54359358376191,
+            "rmse": 1.8725825039290247,
+            "mae": 1.2317550595131384,
+            "bias": -0.08641429752594044
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 775,
+            "weight": 31.778278667197,
+            "rmse": 1.8591710783108533,
+            "mae": 1.1921256307549775,
+            "bias": -0.0607811814780505
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 773,
+            "weight": 31.66682383541402,
+            "rmse": 1.776462035221165,
+            "mae": 1.1212928384269811,
+            "bias": -0.052119375789330256
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 791,
+            "weight": 32.32848174636559,
+            "rmse": 1.7303254457363448,
+            "mae": 1.0416211127984527,
+            "bias": 0.04831301536067451
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 824,
+            "weight": 33.54861279857252,
+            "rmse": 1.562115135851811,
+            "mae": 0.900513550663457,
+            "bias": 0.03313181546633372
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 847,
+            "weight": 34.45791847523218,
+            "rmse": 1.4448906962402082,
+            "mae": 0.8172134061364091,
+            "bias": 0.023692519107418118
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 838,
+            "weight": 34.12837736819108,
+            "rmse": 1.194720974528067,
+            "mae": 0.6359066096698619,
+            "bias": 0.03251390095969133
+          }
+        }
+      },
+      "seconds": 9.061
+    }
+  },
+  "references": {
+    "v1-depth3": {
+      "file": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+      "sha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+      "metrics": {
+        "train": {
+          "rows": 30522,
+          "weight": 1249.999999999994,
+          "rmse": 1.4530254580228354,
+          "mae": 1.0660171389225908,
+          "bias": -0.32926857431005796
+        },
+        "validation": {
+          "rows": 6117,
+          "weight": 249.99999999998994,
+          "rmse": 1.7482975406839325,
+          "mae": 1.1562210323694857,
+          "bias": -0.37233151145850674
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2367,
+            "weight": 95.89064856049728,
+            "rmse": 1.7627020632051456,
+            "mae": 1.1594754032873749,
+            "bias": -0.3568474488048327
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.19165410106697,
+            "rmse": 1.7043347593456868,
+            "mae": 1.1224375460161369,
+            "bias": -0.3717359302024155
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 71.91769733843371,
+            "rmse": 1.7783652261071172,
+            "mae": 1.1904915523932822,
+            "bias": -0.39365767560946935
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.547913525266978,
+            "rmse": 2.131126545115447,
+            "mae": 1.615682582204742,
+            "bias": -0.9416646270937098
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 769,
+            "weight": 31.54359358376191,
+            "rmse": 2.030758937300468,
+            "mae": 1.5208533002427251,
+            "bias": -0.8073526156588458
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 775,
+            "weight": 31.778278667197,
+            "rmse": 1.9647357461811925,
+            "mae": 1.4119267780643967,
+            "bias": -0.6448292507647738
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 773,
+            "weight": 31.66682383541402,
+            "rmse": 1.8718152030489514,
+            "mae": 1.3051742340849442,
+            "bias": -0.5203714057719339
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 791,
+            "weight": 32.32848174636559,
+            "rmse": 1.806468430213469,
+            "mae": 1.1681457488343834,
+            "bias": -0.23570552502929532
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 824,
+            "weight": 33.54861279857252,
+            "rmse": 1.6087177874670373,
+            "mae": 0.9682826350721732,
+            "bias": -0.11338408293130975
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 847,
+            "weight": 34.45791847523218,
+            "rmse": 1.4241839900154132,
+            "mae": 0.8377848402712418,
+            "bias": -0.029815268816418935
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 838,
+            "weight": 34.12837736819108,
+            "rmse": 1.14694338465014,
+            "mae": 0.6612271324255042,
+            "bias": 0.03382798009731843
+          }
+        }
+      },
+      "interpretation": "同じ検証250開始の同じ公開状態に対する固定モデルの誤差。実ゲーム改善の証明ではない。"
+    }
+  },
+  "actor11": "8b24adce12addf07b9298198b5afbef609e412ae96a0ecf3574124c720e4463d",
+  "fullGameImprovementEstablished": false,
+  "nextStep": "新しい各250開始でV1/V5の実ゲーム対応比較。平均12.5達成の独立1000確認はその後。"
+}

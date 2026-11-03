@@ -1,0 +1,682 @@
+{
+  "createdAt": "2026-11-03T14:39:25.998Z",
+  "purpose": "PRO・全開始採用。8点以下を含む低得点率。予測・局面継続ではなく実ゲームの公式得点。",
+  "manifest": {
+    "stage": "ahiru-player-deletion-development-v2-20261103",
+    "n": 250,
+    "phase": "development",
+    "seed": "ahiru-pro-ahiru-player-deletion-development-v2-20261103",
+    "fingerprints": {
+      "strategyVersion": "cb09c4d03296acd8373e9dad98e1a203edcad3d8457444aaa6f2cf307fff79e0",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    },
+    "actorFiles": [
+      "solver/autoplay-agent.mjs",
+      "solver/browser/pro-strategy-research.js",
+      "solver/browser/pro-risk-research.js",
+      "solver/browser/pro-value-model.js",
+      "solver/browser/pro-learned-research.js",
+      "solver/browser/pro-public-action-kernel.js",
+      "solver/pro-card-scene-input.mjs",
+      "solver/browser/pro-intrinsic-recovery.js",
+      "solver/browser/pro-action-candidates.js",
+      "solver/browser/pro-opening-table.js",
+      "solver/pro-opening-table-input.mjs"
+    ],
+    "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+    "configFile": "solver/research-scenarios/ahiru-pro-player-components-configs.json",
+    "configSha256": "2e7174b2f133c73cda99102a9b4a73dd8ea2055f8ba713458fb978576ab30962",
+    "runs": [
+      {
+        "id": "baseline",
+        "config": {
+          "id": "baseline",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed"
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/baseline-batch0.json"
+        ]
+      },
+      {
+        "id": "strict-control",
+        "config": {
+          "id": "strict-control",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "player-basic",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "futureDeletion": "player-basic"
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/strict-control-batch0.json"
+        ]
+      },
+      {
+        "id": "forecast-cash",
+        "config": {
+          "id": "forecast-cash",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "player-basic",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "futureDeletion": "player-basic"
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+          "playerBasicAccounting": "forecast"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/forecast-cash-batch0.json"
+        ]
+      },
+      {
+        "id": "opening-only",
+        "config": {
+          "id": "opening-only",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "player-basic",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed",
+            "futureDeletion": "player-basic"
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+          "playerBasicScope": "opening"
+        },
+        "files": [
+          "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/opening-only-batch0.json"
+        ]
+      }
+    ]
+  },
+  "groups": {
+    "baseline": {
+      "n": 250,
+      "mean": 12.032,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -1,
+      "max": 16,
+      "score15": {
+        "count": 8,
+        "rate": 0.032,
+        "interval95": [
+          0.016302169731072406,
+          0.061863111294575085
+        ]
+      },
+      "score14": {
+        "count": 36,
+        "rate": 0.144
+      },
+      "score12Rate": 0.696,
+      "scoreBelow8Rate": 0.012,
+      "withdrawalZeroRate": 0.916,
+      "meanStats": {
+        "experience": 45.536,
+        "enrollment": 33.756,
+        "satisfaction": 32.252,
+        "accounting": 18.444,
+        "withdrawal": 0.156,
+        "difference": 33.6
+      },
+      "milestones": {
+        "experience50": 0.36,
+        "difference40": 0.216,
+        "difference48": 0.012,
+        "satisfaction25": 0.856,
+        "satisfaction35": 0.468
+      },
+      "activity": {
+        "deckSize": 9.764,
+        "acquisitions": 9.852,
+        "deleted": 5.088,
+        "drawn": 36.7,
+        "placed": 29.884,
+        "applied": 29.884,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 1,
+        "7": 1,
+        "8": 2,
+        "9": 6,
+        "10": 25,
+        "11": 40,
+        "12": 71,
+        "13": 67,
+        "14": 28,
+        "15": 7,
+        "16": 1,
+        "-1": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 5,
+        "rate": 0.02,
+        "interval95": [
+          0.008572197944651562,
+          0.045956295414986886
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.824,
+        12.244
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "strict-control": {
+      "n": 250,
+      "mean": 12.1,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -2,
+      "max": 16,
+      "score15": {
+        "count": 14,
+        "rate": 0.056,
+        "interval95": [
+          0.03364733819454402,
+          0.09179151816312153
+        ]
+      },
+      "score14": {
+        "count": 48,
+        "rate": 0.192
+      },
+      "score12Rate": 0.724,
+      "scoreBelow8Rate": 0.028,
+      "withdrawalZeroRate": 0.924,
+      "meanStats": {
+        "experience": 47.376,
+        "enrollment": 33.896,
+        "satisfaction": 32.296,
+        "accounting": 18.796,
+        "withdrawal": 0.192,
+        "difference": 33.704
+      },
+      "milestones": {
+        "experience50": 0.476,
+        "difference40": 0.224,
+        "difference48": 0.02,
+        "satisfaction25": 0.828,
+        "satisfaction35": 0.452
+      },
+      "activity": {
+        "deckSize": 10.044,
+        "acquisitions": 9.776,
+        "deleted": 4.732,
+        "drawn": 36.336,
+        "placed": 30.02,
+        "applied": 30.02,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 2,
+        "5": 1,
+        "7": 2,
+        "8": 2,
+        "9": 7,
+        "10": 12,
+        "11": 41,
+        "12": 65,
+        "13": 68,
+        "14": 34,
+        "15": 13,
+        "16": 1,
+        "-2": 1,
+        "-1": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 9,
+        "rate": 0.036,
+        "interval95": [
+          0.019053062687361854,
+          0.06699114756028864
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.82,
+        12.348
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "forecast-cash": {
+      "n": 250,
+      "mean": 12.128,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": 3,
+      "max": 16,
+      "score15": {
+        "count": 14,
+        "rate": 0.056,
+        "interval95": [
+          0.03364733819454402,
+          0.09179151816312153
+        ]
+      },
+      "score14": {
+        "count": 46,
+        "rate": 0.184
+      },
+      "score12Rate": 0.704,
+      "scoreBelow8Rate": 0.024,
+      "withdrawalZeroRate": 0.916,
+      "meanStats": {
+        "experience": 47.46,
+        "enrollment": 33.552,
+        "satisfaction": 32.376,
+        "accounting": 18.668,
+        "withdrawal": 0.188,
+        "difference": 33.364
+      },
+      "milestones": {
+        "experience50": 0.464,
+        "difference40": 0.228,
+        "difference48": 0.028,
+        "satisfaction25": 0.86,
+        "satisfaction35": 0.468
+      },
+      "activity": {
+        "deckSize": 9.88,
+        "acquisitions": 9.82,
+        "deleted": 4.94,
+        "drawn": 36.316,
+        "placed": 30.012,
+        "applied": 30.012,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "3": 1,
+        "5": 1,
+        "6": 1,
+        "7": 3,
+        "8": 4,
+        "9": 4,
+        "10": 16,
+        "11": 44,
+        "12": 66,
+        "13": 64,
+        "14": 32,
+        "15": 11,
+        "16": 3
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 10,
+        "rate": 0.04,
+        "interval95": [
+          0.02186967487695694,
+          0.07205346459269657
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.904,
+        12.344
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    },
+    "opening-only": {
+      "n": 250,
+      "mean": 12.004,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -4,
+      "max": 16,
+      "score15": {
+        "count": 10,
+        "rate": 0.04,
+        "interval95": [
+          0.02186967487695694,
+          0.07205346459269657
+        ]
+      },
+      "score14": {
+        "count": 55,
+        "rate": 0.22
+      },
+      "score12Rate": 0.736,
+      "scoreBelow8Rate": 0.04,
+      "withdrawalZeroRate": 0.904,
+      "meanStats": {
+        "experience": 47.268,
+        "enrollment": 33.612,
+        "satisfaction": 33.012,
+        "accounting": 18.096,
+        "withdrawal": 0.268,
+        "difference": 33.344
+      },
+      "milestones": {
+        "experience50": 0.472,
+        "difference40": 0.26,
+        "difference48": 0.024,
+        "satisfaction25": 0.892,
+        "satisfaction35": 0.496
+      },
+      "activity": {
+        "deckSize": 9.844,
+        "acquisitions": 9.832,
+        "deleted": 4.988,
+        "drawn": 36.524,
+        "placed": 30.204,
+        "applied": 30.204,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "3": 1,
+        "4": 1,
+        "5": 1,
+        "6": 2,
+        "7": 2,
+        "8": 2,
+        "9": 6,
+        "10": 17,
+        "11": 31,
+        "12": 68,
+        "13": 61,
+        "14": 45,
+        "15": 6,
+        "16": 4,
+        "-4": 2,
+        "-3": 1
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "atMost8": {
+        "count": 12,
+        "rate": 0.048,
+        "interval95": [
+          0.02766792620603601,
+          0.08201307170762354
+        ]
+      },
+      "requirements": {
+        "seeds": 1000,
+        "meanAtLeast": 12,
+        "scoreCutoffInclusive": 8,
+        "lowRateStrictlyBelow": 0.02
+      },
+      "passed": false,
+      "mean95": [
+        11.676,
+        12.3
+      ],
+      "interpretation": "候補選択に使う開発250開始。達成の証明ではない。"
+    }
+  },
+  "comparisons": {
+    "strict-control": {
+      "n": 250,
+      "meanDifference": 0.068,
+      "meanDifference95": [
+        -0.24,
+        0.364
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        1
+      ],
+      "score15RateDifference": 0.024,
+      "score15RateDifference95": [
+        -0.008,
+        0.056
+      ],
+      "newly15": 12,
+      "lost15": 6,
+      "firstOfferMismatches": 0
+    },
+    "forecast-cash": {
+      "n": 250,
+      "meanDifference": 0.096,
+      "meanDifference95": [
+        -0.184,
+        0.372
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        0.5
+      ],
+      "score15RateDifference": 0.024,
+      "score15RateDifference95": [
+        -0.004,
+        0.056
+      ],
+      "newly15": 11,
+      "lost15": 5,
+      "firstOfferMismatches": 0
+    },
+    "opening-only": {
+      "n": 250,
+      "meanDifference": -0.028,
+      "meanDifference95": [
+        -0.392,
+        0.316
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        0,
+        1
+      ],
+      "score15RateDifference": 0.008,
+      "score15RateDifference95": [
+        -0.02,
+        0.04
+      ],
+      "newly15": 8,
+      "lost15": 6,
+      "firstOfferMismatches": 0
+    }
+  },
+  "audit": [
+    {
+      "id": "baseline",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/baseline-batch0.json",
+      "sha256": "3fb20b5059b259840f2f8544d155eac38a3ece195ae21058763744406910b153",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "strict-control",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/strict-control-batch0.json",
+      "sha256": "926aff8dab504299ee29fe525d0aa6a28d92bde4200773ba9c06716572819dba",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "forecast-cash",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/forecast-cash-batch0.json",
+      "sha256": "9d045f467c7090653141a94293206b65f738b05796d7a7ddeabdad14459f83d8",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "id": "opening-only",
+      "file": "/private/tmp/cdg-pro-player-deletion-components/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v2-20261103/opening-only-batch0.json",
+      "sha256": "a3769c66a1817b391b399b7cef0bb600706fb4ef38ad5ca247eaabe4e8cd4a9f",
+      "n": 250,
+      "offset": 0
+    }
+  ],
+  "selectedCandidate": null,
+  "planPassed": false,
+  "goalPassed": false
+}

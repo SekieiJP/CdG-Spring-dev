@@ -1,0 +1,149 @@
+{
+  "createdAt": "2026-11-03T03:19:54.788Z",
+  "purpose": "配置による下振れを防ぐ次の仮説のための過去全開始診断。進行中の方略を変更しない。",
+  "source": {
+    "dir": "solver/local-runs/pro-mean125/ahiru-decisions-validation-v1",
+    "publicSha256": "4bbf7cb44e0cfb5b6e23fcfb71fb38cb85b4d8d2fa0bf9fe9472bcc72682dbd0",
+    "teachersSha256": "a566045abc7e3d398384957d9c90cb4a32b4f970c9dda46d53b2b2c906687b2b",
+    "auditSha256": "ff2b8fcfdcd35017cd403e99f06bc41b8f3dc03f32cf1872a031a6cd227c075a",
+    "actor": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+    "versions": {
+      "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    }
+  },
+  "sources": {
+    "solver/ahiru-score-preservation-diagnostics.mjs": "62f8f26a09e4597c75280f1ec21ac34e21accebc11582cc54ea6f59022d785aa",
+    "solver/browser/ahiru-score-preservation-diagnostics.js": "107fbae086deb0be6175235056685b505ffd4c02eaca8afa9b1c31af1af5591b",
+    "game/js/scoreManager.js": "ddf2c827e8697dc5479bc13135a668f0d391efd74e5133ac07d1e9e7b9fe8ac2"
+  },
+  "result": {
+    "games": 2000,
+    "allStartsAccepted": true,
+    "thresholds": {
+      "9": {
+        "label": "8点以下を避ける境界",
+        "reachedBeforeFinalAction": 1418,
+        "endedBelowThresholdAfterReaching": 0,
+        "endedAtMost8AfterReaching": 0,
+        "endedAtMost8WithoutReaching": 50,
+        "allEndedAtMost8": 50,
+        "earliestReachedByTurn": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 289,
+          "7": 1129
+        },
+        "byTurn": {
+          "0": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "1": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "2": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "3": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "4": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "5": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "6": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 289,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "7": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 1417,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          }
+        }
+      },
+      "12": {
+        "label": "総合Sの境界",
+        "reachedBeforeFinalAction": 193,
+        "endedBelowThresholdAfterReaching": 0,
+        "endedAtMost8AfterReaching": 0,
+        "endedAtMost8WithoutReaching": 50,
+        "allEndedAtMost8": 50,
+        "earliestReachedByTurn": {
+          "0": 0,
+          "1": 0,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0,
+          "7": 193
+        },
+        "byTurn": {
+          "0": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "1": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "2": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "3": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "4": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "5": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "6": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 0,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          },
+          "7": {
+            "allGames": 2000,
+            "currentAtLeastThreshold": 193,
+            "currentAtLeastThresholdAndEndedAtMost8": 0
+          }
+        }
+      }
+    },
+    "interpretation": "全開始の記述的な件数。新しい配置制約を使うと、その後の取得・削除・ドロー・配置が変わるので、この件数を救済件数や改善幅とは扱わない。下位群250未満の条件付き成績は推定しない。"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "createdAt": "2026-11-03T03:28:10.652Z",
+  "conclusion": "変更不要。大量試行は既にヘッドレス・UI/演出経路を通さない同期ループで実行される。",
+  "codeChanged": false,
+  "sourceRoot": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev",
+  "frozenSourceMatches": true,
+  "actorHash": "48105419afcd1a5bb22e41ae950719c9fdbfcdc93e5f415e625faa446b517d05",
+  "gameHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+  "technicalRun": {
+    "n": 1,
+    "placementTurns": 8,
+    "rerolls": 0,
+    "recordFile": "/private/tmp/cdg-headless-audit.FLmAfO/game.json",
+    "recordSha256": "d334ebdb7e40cccd6e82fbf9cb36f1c4359907b2a99055a69838534509787e51",
+    "profileFile": "/private/tmp/cdg-headless-audit.FLmAfO/profile.json",
+    "profileSha256": "7b65b562a487a9f0de3ceffb2a42893224aec8c61c2b5e9d019f6fc0c51c9971",
+    "headless": true,
+    "policyWallMs": 7128.560332999999,
+    "rendererTaskMs": 6973.497,
+    "layoutMs": 0.8349999999999955,
+    "styleRecalcMs": 0.6150000000000001,
+    "policyTimers": 0,
+    "policyIntervals": 0,
+    "policyAnimationFrames": 0,
+    "policyDomMutations": 0,
+    "resourceRequests": {
+      "document": 1,
+      "script": 37,
+      "stylesheet": 1,
+      "fetch": 4
+    }
+  },
+  "limits": [
+    "1ゲームの技術計測であり成績や一般的な速度の傾向は主張しない。",
+    "CDP ScriptDuration は Runtime.evaluate の本体計算を十分に集計しないため主な時間割合の根拠に使わない。Renderer TaskDuration と DOM/タイマーの0件、同期コード経路を併用する。",
+    "初回ページのUI初期化・CSS1回読込は残るが、1バッチ250ゲームごとに1回で、ターン演出待ちではない。",
+    "他の研究も動作中のため、端末速度やスマートフォンの実行速度を表す測定ではない。"
+  ]
+}

@@ -1,0 +1,2569 @@
+{
+  "createdAt": "2026-11-03T05:03:18.854Z",
+  "purpose": "固定したFRESH/PRO助言の観測診断。過去の固定方略での将来結果との比較であり、助言に従う因果効果・人間の成績・個別の成功保証ではない。",
+  "inputAudit": {
+    "games": 1000,
+    "overlap": 0,
+    "inSample": false,
+    "independentStarts": true
+  },
+  "sourceAuditSha256": "f09b64eb4ff04a6483d4dda39cf5c5f0597cdc3f68963dd2c135d229ea20be95",
+  "sourceConfig": {
+    "id": "scene-v3",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.02,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed",
+      "shortfallWeight": 0
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d"
+  },
+  "calibrationSha256": "03fd2361282b7fef66744fb8eb90d72b1479b7d56c50d4aad670a9c047ae7fbc",
+  "sources": [
+    {
+      "file": "solver/ahiru-advice-diagnostics.mjs",
+      "sha256": "784c8459e92cc3c78f9c3f54ae9b3075395f5d080c26eb35320642c41f465490"
+    },
+    {
+      "file": "solver/ahiru-browser.mjs",
+      "sha256": "1e462343508930a47efeafb57e25baf744f79bb34c8907d2c7f0c029a319048b"
+    },
+    {
+      "file": "solver/browser/ahiru-advice-diagnostics.js",
+      "sha256": "535f756ac7decc9c73546961cc8a5247832ee23781ab4df8506caa9fe3f46aad"
+    },
+    {
+      "file": "game/js/ahiruProAdvice.js",
+      "sha256": "84e0d6300ed6274c855b771f7c3a1d64132fd84412332923c845a608b89970ce"
+    },
+    {
+      "file": "game/js/ahiruProForecast.js",
+      "sha256": "ee73844f3127a0fe2ce97bef64f390dc99ec0a14610b276a72a05d64a7354c79"
+    },
+    {
+      "file": "game/js/ahiruProGoals.js",
+      "sha256": "b4d32d667fe7c80cb4d489d324a1dc2f329a5d0c9ac88dd93d32275e501a46a9"
+    },
+    {
+      "file": "game/js/ahiruFreshAdvice.js",
+      "sha256": "715ac92c4b4495fe3cd0259180e633d76ebb114a92cad138aea05c195a2622f2"
+    },
+    {
+      "file": "game/js/ahiruFreshForecast.js",
+      "sha256": "e34c25f72ad6b925d0d3713107041a3486bddb43f13857323dbd94f4d2772ff6"
+    },
+    {
+      "file": "game/js/ahiruFreshGoals.js",
+      "sha256": "1b9986400850757f690da0c19a55578fd4be00cfc50bd648878de470d6376e24"
+    },
+    {
+      "file": "game/js/ahiruStatusPolicy.js",
+      "sha256": "f8c7409b10c7fdb43ae1b458cafd4c2042cf6becdd1d8d1d15dff5f386c5b45a"
+    },
+    {
+      "file": "game/js/ahiruForecast.js",
+      "sha256": "a09f153bf36c88d05e8546e0ee6fcf3e8006bcc9fb3c9065a4f57ef7296a76b9"
+    },
+    {
+      "file": "game/js/ahiruCardRoles.js",
+      "sha256": "7af570fb6f21ab48d7b770ece91aeb4190a8ff4c6b0c53c57ac2d6d5e6525b15"
+    },
+    {
+      "file": "game/js/proAcquisitionAdvisor.js",
+      "sha256": "bff3e55ab6224881f28afc4ad6817985bd41ed8bd3daa602d413f58a69cc27d1"
+    },
+    {
+      "file": "game/js/scoreManager.js",
+      "sha256": "ddf2c827e8697dc5479bc13135a668f0d391efd74e5133ac07d1e9e7b9fe8ac2"
+    },
+    {
+      "file": "game/js/cardManager.js",
+      "sha256": "7f7623f3a41d3df038f05eca6888b70aa93e81336f00f13ca72f00e1b8ccf731"
+    },
+    {
+      "file": "game/js/difficultyConfig.js",
+      "sha256": "b97d4b316e60454ac9484279c8b0ee14cdca2afe95bf012115f7ceea886e36fe"
+    },
+    {
+      "file": "game/js/eventManager.js",
+      "sha256": "b37a64aa47575c4a1266fa5baf9f76f2b7a187bc693ff6fb1434f470416f6ae7"
+    }
+  ],
+  "interpretation": "同じゲーム内の判断を独立した開始として数えない。250元開始未満の群は件数のみ。分位値の被覆は軸別であり共同の予測区間ではない。赤い助言後のS達成は、その不足を後で補えた場合も含む。",
+  "games": 1000,
+  "calls": 28198,
+  "groups": {
+    "acquisition:0:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 2,
+        "pointsMAE": 9.938,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 22.78620000000021,
+            "bias": -22.78300000000021
+          },
+          "enrollment": {
+            "mae": 22.816000000000418,
+            "bias": -22.816000000000418
+          },
+          "satisfaction": {
+            "mae": 18.86380000000035,
+            "bias": -18.85500000000035
+          },
+          "accounting": {
+            "mae": 3.4765999999999666,
+            "bias": -2.812999999999974
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 12,
+        "pointsMAE": 1.212,
+        "predictedSRate": 1,
+        "projectedSButActualBelowRate": 0.334,
+        "projectedBelowButActualSRate": 0,
+        "axes": {
+          "experience": {
+            "mae": 6.085,
+            "bias": 1.617
+          },
+          "enrollment": {
+            "mae": 4.886,
+            "bias": 0.384
+          },
+          "satisfaction": {
+            "mae": 5.481,
+            "bias": 0.345
+          },
+          "accounting": {
+            "mae": 2.815,
+            "bias": -0.613
+          }
+        }
+      },
+      "tones": {
+        "red": 0,
+        "yellow": 0,
+        "green": 1
+      },
+      "greenButActualBelowSRate": 0.334,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.821
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.864
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.815
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.779
+        }
+      }
+    },
+    "acquisition:0:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 4.022,
+        "pointsMAE": 7.952,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 19.64196571428574,
+            "bias": -19.469394285714316
+          },
+          "enrollment": {
+            "mae": 21.653022857142844,
+            "bias": -21.653022857142844
+          },
+          "satisfaction": {
+            "mae": 10.502588571428545,
+            "bias": -8.850839999999945
+          },
+          "accounting": {
+            "mae": 6.84397142857146,
+            "bias": 3.30487428571428
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 7.06,
+        "pointsMAE": 5.642,
+        "predictedSRate": 0.543,
+        "projectedSButActualBelowRate": 0.163,
+        "projectedBelowButActualSRate": 0.286,
+        "axes": {
+          "experience": {
+            "mae": 8.652800000000001,
+            "bias": -1.4693942857142863
+          },
+          "enrollment": {
+            "mae": 5.61867428571429,
+            "bias": 0.3131199999999997
+          },
+          "satisfaction": {
+            "mae": 8.088108571428615,
+            "bias": 4.149159999999966
+          },
+          "accounting": {
+            "mae": 6.5642800000000125,
+            "bias": -1.695125714285723
+          }
+        }
+      },
+      "tones": {
+        "red": 0.457,
+        "yellow": 0,
+        "green": 0.543
+      },
+      "greenButActualBelowSRate": 0.163,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.892
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.903
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.771
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.787
+        }
+      }
+    },
+    "deletion:0:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 3.885,
+        "pointsMAE": 8.087,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 19.19840000000002,
+            "bias": -18.976971428571446
+          },
+          "enrollment": {
+            "mae": 22.033931428571485,
+            "bias": -22.023931428571487
+          },
+          "satisfaction": {
+            "mae": 10.636917142857158,
+            "bias": -9.149437142857193
+          },
+          "accounting": {
+            "mae": 6.825194285714266,
+            "bias": 3.2403485714285836
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 6.778,
+        "pointsMAE": 5.782,
+        "predictedSRate": 0.33,
+        "projectedSButActualBelowRate": 0.11,
+        "projectedBelowButActualSRate": 0.446,
+        "axes": {
+          "experience": {
+            "mae": 8.72377142857143,
+            "bias": -1.976971428571426
+          },
+          "enrollment": {
+            "mae": 5.631005714285715,
+            "bias": 0.05685714285714121
+          },
+          "satisfaction": {
+            "mae": 7.7055171428571105,
+            "bias": 3.350562857142888
+          },
+          "accounting": {
+            "mae": 6.548508571428573,
+            "bias": -0.902508571428561
+          }
+        }
+      },
+      "tones": {
+        "red": 0.681,
+        "yellow": 0.018,
+        "green": 0.301
+      },
+      "greenButActualBelowSRate": 0.102,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.856
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.892
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.733
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.798
+        }
+      }
+    },
+    "deletion:0:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 5.127,
+        "pointsMAE": 6.883,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 17.260799999999993,
+            "bias": -16.966599999999993
+          },
+          "enrollment": {
+            "mae": 20.141786666666704,
+            "bias": -20.1173866666667
+          },
+          "satisfaction": {
+            "mae": 9.564453333333331,
+            "bias": -7.711200000000015
+          },
+          "accounting": {
+            "mae": 4.783466666666667,
+            "bias": 1.3737066666666686
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.646,
+        "pointsMAE": 1.976,
+        "predictedSRate": 0.308,
+        "projectedSButActualBelowRate": 0.092,
+        "projectedBelowButActualSRate": 0.45,
+        "axes": {
+          "experience": {
+            "mae": 8.448600000000008,
+            "bias": -1.9665999999999946
+          },
+          "enrollment": {
+            "mae": 5.755973333333336,
+            "bias": 0.05186666666666594
+          },
+          "satisfaction": {
+            "mae": 7.728066666666701,
+            "bias": 3.6888000000000125
+          },
+          "accounting": {
+            "mae": 4.857386666666619,
+            "bias": -0.4396266666666588
+          }
+        }
+      },
+      "tones": {
+        "red": 0.75,
+        "yellow": 0.004,
+        "green": 0.246
+      },
+      "greenButActualBelowSRate": 0.071,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.877
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.893
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.729
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.767
+        }
+      }
+    },
+    "acquisition:1:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 5.127,
+        "pointsMAE": 6.883,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 17.260799999999993,
+            "bias": -16.966599999999993
+          },
+          "enrollment": {
+            "mae": 20.141786666666704,
+            "bias": -20.1173866666667
+          },
+          "satisfaction": {
+            "mae": 9.564453333333331,
+            "bias": -7.711200000000015
+          },
+          "accounting": {
+            "mae": 4.783466666666667,
+            "bias": 1.3737066666666686
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.646,
+        "pointsMAE": 1.976,
+        "predictedSRate": 0.308,
+        "projectedSButActualBelowRate": 0.092,
+        "projectedBelowButActualSRate": 0.45,
+        "axes": {
+          "experience": {
+            "mae": 8.448600000000008,
+            "bias": -1.9665999999999946
+          },
+          "enrollment": {
+            "mae": 5.755973333333336,
+            "bias": 0.05186666666666594
+          },
+          "satisfaction": {
+            "mae": 7.728066666666701,
+            "bias": 3.6888000000000125
+          },
+          "accounting": {
+            "mae": 4.857386666666619,
+            "bias": -0.4396266666666588
+          }
+        }
+      },
+      "tones": {
+        "red": 0.75,
+        "yellow": 0.026,
+        "green": 0.224
+      },
+      "greenButActualBelowSRate": 0.065,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.877
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.893
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.729
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.767
+        }
+      }
+    },
+    "acquisition:1:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 5.903,
+        "pointsMAE": 6.091,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 17.012506158225317,
+            "bias": -16.039769184794434
+          },
+          "enrollment": {
+            "mae": 17.873052903893704,
+            "bias": -17.769036071782292
+          },
+          "satisfaction": {
+            "mae": 8.061014578523032,
+            "bias": -5.043501227840784
+          },
+          "accounting": {
+            "mae": 5.973609651361623,
+            "bias": 2.6681536963144588
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.885,
+        "pointsMAE": 2.047,
+        "predictedSRate": 0.486,
+        "projectedSButActualBelowRate": 0.157,
+        "projectedBelowButActualSRate": 0.337,
+        "axes": {
+          "experience": {
+            "mae": 9.301494632160644,
+            "bias": -1.3254834705087295
+          },
+          "enrollment": {
+            "mae": 6.328523273042955,
+            "bias": 0.897957921427017
+          },
+          "satisfaction": {
+            "mae": 7.37264225342641,
+            "bias": 3.00538344230635
+          },
+          "accounting": {
+            "mae": 5.853710693356115,
+            "bias": 1.5252965534573226
+          }
+        }
+      },
+      "tones": {
+        "red": 0.55,
+        "yellow": 0.082,
+        "green": 0.368
+      },
+      "greenButActualBelowSRate": 0.117,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.822
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.886
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.806
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.71
+        }
+      }
+    },
+    "deletion:1:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 5.785,
+        "pointsMAE": 6.193,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 16.96061861049711,
+            "bias": -15.861098544627561
+          },
+          "enrollment": {
+            "mae": 17.963843256954362,
+            "bias": -17.896147297849804
+          },
+          "satisfaction": {
+            "mae": 8.07562938494029,
+            "bias": -5.310967998158284
+          },
+          "accounting": {
+            "mae": 6.155512945990629,
+            "bias": 2.8167933978564617
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.602,
+        "pointsMAE": 2.25,
+        "predictedSRate": 0.468,
+        "projectedSButActualBelowRate": 0.133,
+        "projectedBelowButActualSRate": 0.331,
+        "axes": {
+          "experience": {
+            "mae": 9.32383374083704,
+            "bias": -0.9975677664626411
+          },
+          "enrollment": {
+            "mae": 6.385815240625409,
+            "bias": 0.8871971013034836
+          },
+          "satisfaction": {
+            "mae": 7.016323347441491,
+            "bias": 2.1890320018417047
+          },
+          "accounting": {
+            "mae": 6.019065282694406,
+            "bias": 1.816793397856461
+          }
+        }
+      },
+      "tones": {
+        "red": 0.579,
+        "yellow": 0.032,
+        "green": 0.389
+      },
+      "greenButActualBelowSRate": 0.11,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.833
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.888
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.826
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.714
+        }
+      }
+    },
+    "deletion:1:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 6.973,
+        "pointsMAE": 5.045,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 14.973187216468384,
+            "bias": -13.656346819166606
+          },
+          "enrollment": {
+            "mae": 15.760978014726314,
+            "bias": -15.606131276375061
+          },
+          "satisfaction": {
+            "mae": 8.386002428314725,
+            "bias": -5.5094888634228765
+          },
+          "accounting": {
+            "mae": 5.782578423554437,
+            "bias": 3.373856859315697
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.417,
+        "pointsMAE": 2.421,
+        "predictedSRate": 0.423,
+        "projectedSButActualBelowRate": 0.132,
+        "projectedBelowButActualSRate": 0.375,
+        "axes": {
+          "experience": {
+            "mae": 9.267758005952041,
+            "bias": -1.8563468191666186
+          },
+          "enrollment": {
+            "mae": 6.5036406578872565,
+            "bias": 0.7227223069564811
+          },
+          "satisfaction": {
+            "mae": 7.287602146645378,
+            "bias": 2.4905111365771355
+          },
+          "accounting": {
+            "mae": 5.362603116137821,
+            "bias": 0.5738568593156956
+          }
+        }
+      },
+      "tones": {
+        "red": 0.629,
+        "yellow": 0.029,
+        "green": 0.342
+      },
+      "greenButActualBelowSRate": 0.106,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.843
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.891
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.815
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.758
+        }
+      }
+    },
+    "acquisition:2:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 6.973,
+        "pointsMAE": 5.045,
+        "predictedSRate": 0,
+        "projectedSButActualBelowRate": 0,
+        "projectedBelowButActualSRate": 0.666,
+        "axes": {
+          "experience": {
+            "mae": 14.973187216468384,
+            "bias": -13.656346819166606
+          },
+          "enrollment": {
+            "mae": 15.760978014726314,
+            "bias": -15.606131276375061
+          },
+          "satisfaction": {
+            "mae": 8.386002428314725,
+            "bias": -5.5094888634228765
+          },
+          "accounting": {
+            "mae": 5.782578423554437,
+            "bias": 3.373856859315697
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.417,
+        "pointsMAE": 2.421,
+        "predictedSRate": 0.423,
+        "projectedSButActualBelowRate": 0.132,
+        "projectedBelowButActualSRate": 0.375,
+        "axes": {
+          "experience": {
+            "mae": 9.267758005952041,
+            "bias": -1.8563468191666186
+          },
+          "enrollment": {
+            "mae": 6.5036406578872565,
+            "bias": 0.7227223069564811
+          },
+          "satisfaction": {
+            "mae": 7.287602146645378,
+            "bias": 2.4905111365771355
+          },
+          "accounting": {
+            "mae": 5.362603116137821,
+            "bias": 0.5738568593156956
+          }
+        }
+      },
+      "tones": {
+        "red": 0.629,
+        "yellow": 0.063,
+        "green": 0.308
+      },
+      "greenButActualBelowSRate": 0.098,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.843
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.891
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.815
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.758
+        }
+      }
+    },
+    "acquisition:2:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 6.885,
+        "pointsMAE": 5.189,
+        "predictedSRate": 0.017,
+        "projectedSButActualBelowRate": 0.003,
+        "projectedBelowButActualSRate": 0.652,
+        "axes": {
+          "experience": {
+            "mae": 8.923328664836387,
+            "bias": -4.023357751374363
+          },
+          "enrollment": {
+            "mae": 11.351595291367731,
+            "bias": -9.98936026739572
+          },
+          "satisfaction": {
+            "mae": 7.241867260854596,
+            "bias": -3.7902031290710925
+          },
+          "accounting": {
+            "mae": 4.922217545086663,
+            "bias": -1.9328840812723653
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.678,
+        "pointsMAE": 2.528,
+        "predictedSRate": 0.52,
+        "projectedSButActualBelowRate": 0.16,
+        "projectedBelowButActualSRate": 0.306,
+        "axes": {
+          "experience": {
+            "mae": 8.3881502758124,
+            "bias": 1.0480708200542102
+          },
+          "enrollment": {
+            "mae": 7.25944490656952,
+            "bias": 1.0420613286514055
+          },
+          "satisfaction": {
+            "mae": 6.5727051338020015,
+            "bias": 1.8959079820400324
+          },
+          "accounting": {
+            "mae": 4.664295059029527,
+            "bias": -0.32249447088274774
+          }
+        }
+      },
+      "tones": {
+        "red": 0.535,
+        "yellow": 0.074,
+        "green": 0.391
+      },
+      "greenButActualBelowSRate": 0.123,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.817
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.863
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.811
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.827
+        }
+      }
+    },
+    "deletion:2:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 6.823,
+        "pointsMAE": 5.221,
+        "predictedSRate": 0.017,
+        "projectedSButActualBelowRate": 0.008,
+        "projectedBelowButActualSRate": 0.657,
+        "axes": {
+          "experience": {
+            "mae": 8.415817272381311,
+            "bias": -3.5442013780733235
+          },
+          "enrollment": {
+            "mae": 11.288657591064768,
+            "bias": -10.102294637536211
+          },
+          "satisfaction": {
+            "mae": 7.147816975966535,
+            "bias": -4.035904947274945
+          },
+          "accounting": {
+            "mae": 4.975229869958801,
+            "bias": -1.81693064627197
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.541,
+        "pointsMAE": 2.471,
+        "predictedSRate": 0.476,
+        "projectedSButActualBelowRate": 0.141,
+        "projectedBelowButActualSRate": 0.331,
+        "axes": {
+          "experience": {
+            "mae": 8.143861358611018,
+            "bias": 0.5986557647838174
+          },
+          "enrollment": {
+            "mae": 7.0614036847447075,
+            "bias": 1.1651939139567953
+          },
+          "satisfaction": {
+            "mae": 6.347219128307942,
+            "bias": 1.4640950527250483
+          },
+          "accounting": {
+            "mae": 4.7547825203876215,
+            "bias": -0.4291786247086319
+          }
+        }
+      },
+      "tones": {
+        "red": 0.576,
+        "yellow": 0.004,
+        "green": 0.42
+      },
+      "greenButActualBelowSRate": 0.129,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.788
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.835
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.809
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.785
+        }
+      }
+    },
+    "deletion:2:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 8.398,
+        "pointsMAE": 3.806,
+        "predictedSRate": 0.089,
+        "projectedSButActualBelowRate": 0.027,
+        "projectedBelowButActualSRate": 0.604,
+        "axes": {
+          "experience": {
+            "mae": 8.280259261972594,
+            "bias": -2.744312816580503
+          },
+          "enrollment": {
+            "mae": 9.891068947102585,
+            "bias": -7.668187631779646
+          },
+          "satisfaction": {
+            "mae": 6.648314292118948,
+            "bias": -1.7984152860978013
+          },
+          "accounting": {
+            "mae": 4.949843608458163,
+            "bias": -0.4866242928019132
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.113,
+        "pointsMAE": 2.893,
+        "predictedSRate": 0.487,
+        "projectedSButActualBelowRate": 0.152,
+        "projectedBelowButActualSRate": 0.331,
+        "axes": {
+          "experience": {
+            "mae": 8.350378687549512,
+            "bias": 1.255687183419499
+          },
+          "enrollment": {
+            "mae": 7.67552642815857,
+            "bias": 1.3857871053397213
+          },
+          "satisfaction": {
+            "mae": 6.619887460760359,
+            "bias": 2.2015847139021973
+          },
+          "accounting": {
+            "mae": 4.980799529924891,
+            "bias": -0.8866242928019118
+          }
+        }
+      },
+      "tones": {
+        "red": 0.578,
+        "yellow": 0.018,
+        "green": 0.404
+      },
+      "greenButActualBelowSRate": 0.134,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.807
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.847
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.838
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.776
+        }
+      }
+    },
+    "acquisition:3:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 8.398,
+        "pointsMAE": 3.806,
+        "predictedSRate": 0.089,
+        "projectedSButActualBelowRate": 0.027,
+        "projectedBelowButActualSRate": 0.604,
+        "axes": {
+          "experience": {
+            "mae": 8.280259261972594,
+            "bias": -2.744312816580503
+          },
+          "enrollment": {
+            "mae": 9.891068947102585,
+            "bias": -7.668187631779646
+          },
+          "satisfaction": {
+            "mae": 6.648314292118948,
+            "bias": -1.7984152860978013
+          },
+          "accounting": {
+            "mae": 4.949843608458163,
+            "bias": -0.4866242928019132
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.113,
+        "pointsMAE": 2.893,
+        "predictedSRate": 0.487,
+        "projectedSButActualBelowRate": 0.152,
+        "projectedBelowButActualSRate": 0.331,
+        "axes": {
+          "experience": {
+            "mae": 8.350378687549512,
+            "bias": 1.255687183419499
+          },
+          "enrollment": {
+            "mae": 7.67552642815857,
+            "bias": 1.3857871053397213
+          },
+          "satisfaction": {
+            "mae": 6.619887460760359,
+            "bias": 2.2015847139021973
+          },
+          "accounting": {
+            "mae": 4.980799529924891,
+            "bias": -0.8866242928019118
+          }
+        }
+      },
+      "tones": {
+        "red": 0.578,
+        "yellow": 0.107,
+        "green": 0.315
+      },
+      "greenButActualBelowSRate": 0.117,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.807
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.847
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.838
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.776
+        }
+      }
+    },
+    "acquisition:3:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 9.549,
+        "pointsMAE": 2.743,
+        "predictedSRate": 0.089,
+        "projectedSButActualBelowRate": 0.024,
+        "projectedBelowButActualSRate": 0.601,
+        "axes": {
+          "experience": {
+            "mae": 7.694207792694602,
+            "bias": -3.7272936586346104
+          },
+          "enrollment": {
+            "mae": 9.025027125004684,
+            "bias": -7.5097721553317545
+          },
+          "satisfaction": {
+            "mae": 5.93860391869353,
+            "bias": -1.690174923911512
+          },
+          "accounting": {
+            "mae": 4.614983282831413,
+            "bias": 2.087942791325733
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.482,
+        "pointsMAE": 2.534,
+        "predictedSRate": 0.542,
+        "projectedSButActualBelowRate": 0.153,
+        "projectedBelowButActualSRate": 0.277,
+        "axes": {
+          "experience": {
+            "mae": 7.370158735428606,
+            "bias": 0.701277769936825
+          },
+          "enrollment": {
+            "mae": 7.0413982972957445,
+            "bias": 1.8002484992368162
+          },
+          "satisfaction": {
+            "mae": 5.854187346447988,
+            "bias": 1.3070451533085703
+          },
+          "accounting": {
+            "mae": 4.372332505149878,
+            "bias": -0.9120572086742691
+          }
+        }
+      },
+      "tones": {
+        "red": 0.493,
+        "yellow": 0.056,
+        "green": 0.451
+      },
+      "greenButActualBelowSRate": 0.129,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.824
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.859
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.843
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.812
+        }
+      }
+    },
+    "deletion:3:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 9.527,
+        "pointsMAE": 2.705,
+        "predictedSRate": 0.104,
+        "projectedSButActualBelowRate": 0.015,
+        "projectedBelowButActualSRate": 0.577,
+        "axes": {
+          "experience": {
+            "mae": 7.343940418666498,
+            "bias": -3.2271247064977713
+          },
+          "enrollment": {
+            "mae": 8.943878004550628,
+            "bias": -7.688957908140624
+          },
+          "satisfaction": {
+            "mae": 5.567991020963654,
+            "bias": -1.9550095231251614
+          },
+          "accounting": {
+            "mae": 4.7432665516549175,
+            "bias": 2.086034184848912
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.065,
+        "pointsMAE": 2.695,
+        "predictedSRate": 0.493,
+        "projectedSButActualBelowRate": 0.116,
+        "projectedBelowButActualSRate": 0.289,
+        "axes": {
+          "experience": {
+            "mae": 7.158125966681192,
+            "bias": 0.7728752935022329
+          },
+          "enrollment": {
+            "mae": 6.706012694964335,
+            "bias": 1.268785872627954
+          },
+          "satisfaction": {
+            "mae": 5.531354814488812,
+            "bias": 1.6164190483034206
+          },
+          "accounting": {
+            "mae": 4.492805580747664,
+            "bias": -0.940960496002154
+          }
+        }
+      },
+      "tones": {
+        "red": 0.544,
+        "yellow": 0.02,
+        "green": 0.436
+      },
+      "greenButActualBelowSRate": 0.108,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.8
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.872
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.87
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.825
+        }
+      }
+    },
+    "deletion:3:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 10.355,
+        "pointsMAE": 2.133,
+        "predictedSRate": 0.286,
+        "projectedSButActualBelowRate": 0.063,
+        "projectedBelowButActualSRate": 0.443,
+        "axes": {
+          "experience": {
+            "mae": 7.122134145200459,
+            "bias": -2.1005558738686467
+          },
+          "enrollment": {
+            "mae": 7.838054858031609,
+            "bias": -5.307864231803343
+          },
+          "satisfaction": {
+            "mae": 5.491707868488029,
+            "bias": -0.3107141773239546
+          },
+          "accounting": {
+            "mae": 4.284346862231741,
+            "bias": 1.927588582059636
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.619,
+        "pointsMAE": 2.309,
+        "predictedSRate": 0.528,
+        "projectedSButActualBelowRate": 0.14,
+        "projectedBelowButActualSRate": 0.278,
+        "axes": {
+          "experience": {
+            "mae": 7.140859009675031,
+            "bias": 0.13944412613134716
+          },
+          "enrollment": {
+            "mae": 6.895164514845706,
+            "bias": 1.1240231607013933
+          },
+          "satisfaction": {
+            "mae": 5.697063720661913,
+            "bias": 1.760714394104616
+          },
+          "accounting": {
+            "mae": 4.002960018587072,
+            "bias": -0.9924114179403625
+          }
+        }
+      },
+      "tones": {
+        "red": 0.523,
+        "yellow": 0.031,
+        "green": 0.446
+      },
+      "greenButActualBelowSRate": 0.114,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.793
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.866
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.848
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.812
+        }
+      }
+    },
+    "acquisition:4:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 10.355,
+        "pointsMAE": 2.133,
+        "predictedSRate": 0.286,
+        "projectedSButActualBelowRate": 0.063,
+        "projectedBelowButActualSRate": 0.443,
+        "axes": {
+          "experience": {
+            "mae": 7.122134145200459,
+            "bias": -2.1005558738686467
+          },
+          "enrollment": {
+            "mae": 7.838054858031609,
+            "bias": -5.307864231803343
+          },
+          "satisfaction": {
+            "mae": 5.491707868488029,
+            "bias": -0.3107141773239546
+          },
+          "accounting": {
+            "mae": 4.284346862231741,
+            "bias": 1.927588582059636
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.619,
+        "pointsMAE": 2.309,
+        "predictedSRate": 0.528,
+        "projectedSButActualBelowRate": 0.14,
+        "projectedBelowButActualSRate": 0.278,
+        "axes": {
+          "experience": {
+            "mae": 7.140859009675031,
+            "bias": 0.13944412613134716
+          },
+          "enrollment": {
+            "mae": 6.895164514845706,
+            "bias": 1.1240231607013933
+          },
+          "satisfaction": {
+            "mae": 5.697063720661913,
+            "bias": 1.760714394104616
+          },
+          "accounting": {
+            "mae": 4.002960018587072,
+            "bias": -0.9924114179403625
+          }
+        }
+      },
+      "tones": {
+        "red": 0.523,
+        "yellow": 0.122,
+        "green": 0.355
+      },
+      "greenButActualBelowSRate": 0.107,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.793
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.866
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.848
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.812
+        }
+      }
+    },
+    "acquisition:4:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 10.839,
+        "pointsMAE": 1.961,
+        "predictedSRate": 0.504,
+        "projectedSButActualBelowRate": 0.114,
+        "projectedBelowButActualSRate": 0.276,
+        "axes": {
+          "experience": {
+            "mae": 5.899355878869795,
+            "bias": 1.1301607761464552
+          },
+          "enrollment": {
+            "mae": 5.7978920660001645,
+            "bias": -1.4824108574978483
+          },
+          "satisfaction": {
+            "mae": 4.850065748381653,
+            "bias": 1.1022251627041226
+          },
+          "accounting": {
+            "mae": 3.6311725595183857,
+            "bias": -0.6803960722765978
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.225,
+        "pointsMAE": 1.871,
+        "predictedSRate": 0.59,
+        "projectedSButActualBelowRate": 0.143,
+        "projectedBelowButActualSRate": 0.219,
+        "axes": {
+          "experience": {
+            "mae": 5.899355878869795,
+            "bias": 1.1301607761464552
+          },
+          "enrollment": {
+            "mae": 5.688018389645659,
+            "bias": 0.9435998111082663
+          },
+          "satisfaction": {
+            "mae": 4.938260987188437,
+            "bias": 1.6022251627041193
+          },
+          "accounting": {
+            "mae": 3.6311725595183857,
+            "bias": -0.6803960722765978
+          }
+        }
+      },
+      "tones": {
+        "red": 0.447,
+        "yellow": 0.119,
+        "green": 0.434
+      },
+      "greenButActualBelowSRate": 0.12,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.783
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.79
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.872
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.785
+        }
+      }
+    },
+    "acquisition:5:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 10.853,
+        "pointsMAE": 1.791,
+        "predictedSRate": 0.474,
+        "projectedSButActualBelowRate": 0.094,
+        "projectedBelowButActualSRate": 0.286,
+        "axes": {
+          "experience": {
+            "mae": 5.196544941675007,
+            "bias": 1.515995417566404
+          },
+          "enrollment": {
+            "mae": 5.296777923108141,
+            "bias": -1.6804826159278194
+          },
+          "satisfaction": {
+            "mae": 4.44263671815094,
+            "bias": 0.8825008295717303
+          },
+          "accounting": {
+            "mae": 3.614731040520259,
+            "bias": -0.4312052386322967
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.095,
+        "pointsMAE": 1.791,
+        "predictedSRate": 0.553,
+        "projectedSButActualBelowRate": 0.118,
+        "projectedBelowButActualSRate": 0.231,
+        "axes": {
+          "experience": {
+            "mae": 5.117977915443675,
+            "bias": 0.9959954175664139
+          },
+          "enrollment": {
+            "mae": 5.183523546405976,
+            "bias": 1.5314967546027516
+          },
+          "satisfaction": {
+            "mae": 4.482609808156419,
+            "bias": 1.13250082957173
+          },
+          "accounting": {
+            "mae": 3.6404029042385826,
+            "bias": -0.8045385719656316
+          }
+        }
+      },
+      "tones": {
+        "red": 0.495,
+        "yellow": 0.163,
+        "green": 0.342
+      },
+      "greenButActualBelowSRate": 0.085,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.771
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.832
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.837
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.718
+        }
+      }
+    },
+    "acquisition:5:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 11.408,
+        "pointsMAE": 1.356,
+        "predictedSRate": 0.582,
+        "projectedSButActualBelowRate": 0.113,
+        "projectedBelowButActualSRate": 0.197,
+        "axes": {
+          "experience": {
+            "mae": 4.760910122817369,
+            "bias": 0.7154960529144706
+          },
+          "enrollment": {
+            "mae": 4.522095771787719,
+            "bias": -0.690314083389997
+          },
+          "satisfaction": {
+            "mae": 3.980266200419952,
+            "bias": 1.1197362441009409
+          },
+          "accounting": {
+            "mae": 3.4092666818628667,
+            "bias": 0.4430863572643813
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.352,
+        "pointsMAE": 1.42,
+        "predictedSRate": 0.571,
+        "projectedSButActualBelowRate": 0.118,
+        "projectedBelowButActualSRate": 0.213,
+        "axes": {
+          "experience": {
+            "mae": 4.7226132947206825,
+            "bias": 0.31549605291446603
+          },
+          "enrollment": {
+            "mae": 4.4970591201641765,
+            "bias": 0.4952226283466835
+          },
+          "satisfaction": {
+            "mae": 3.9140752446525897,
+            "bias": 0.6691189601503216
+          },
+          "accounting": {
+            "mae": 3.391549511658439,
+            "bias": 0.010987591832282508
+          }
+        }
+      },
+      "tones": {
+        "red": 0.464,
+        "yellow": 0.154,
+        "green": 0.382
+      },
+      "greenButActualBelowSRate": 0.091,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.816
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.773
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.845
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.74
+        }
+      }
+    },
+    "acquisition:6:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 11.358,
+        "pointsMAE": 1.222,
+        "predictedSRate": 0.556,
+        "projectedSButActualBelowRate": 0.084,
+        "projectedBelowButActualSRate": 0.194,
+        "axes": {
+          "experience": {
+            "mae": 4.040371431311125,
+            "bias": 0.8598020802290061
+          },
+          "enrollment": {
+            "mae": 3.737430662219684,
+            "bias": -0.6605593708557022
+          },
+          "satisfaction": {
+            "mae": 3.172571902041139,
+            "bias": 0.6074257461581456
+          },
+          "accounting": {
+            "mae": 3.0327590354465874,
+            "bias": 0.194811027944078
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.398,
+        "pointsMAE": 1.274,
+        "predictedSRate": 0.576,
+        "projectedSButActualBelowRate": 0.095,
+        "projectedBelowButActualSRate": 0.185,
+        "axes": {
+          "experience": {
+            "mae": 4.022923667560668,
+            "bias": 0.7169449373718696
+          },
+          "enrollment": {
+            "mae": 3.6709646803708296,
+            "bias": 0.3084060513094916
+          },
+          "satisfaction": {
+            "mae": 3.168101436237673,
+            "bias": 0.5783967474343371
+          },
+          "accounting": {
+            "mae": 3.021547566262583,
+            "bias": -0.0051889720559210204
+          }
+        }
+      },
+      "tones": {
+        "red": 0.452,
+        "yellow": 0.194,
+        "green": 0.354
+      },
+      "greenButActualBelowSRate": 0.072,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.798
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.85
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.841
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.748
+        }
+      }
+    },
+    "acquisition:6:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 11.563,
+        "pointsMAE": 1.079,
+        "predictedSRate": 0.593,
+        "projectedSButActualBelowRate": 0.092,
+        "projectedBelowButActualSRate": 0.165,
+        "axes": {
+          "experience": {
+            "mae": 3.762404413817456,
+            "bias": 0.4239788525831538
+          },
+          "enrollment": {
+            "mae": 3.372957625444444,
+            "bias": -0.10185654145121299
+          },
+          "satisfaction": {
+            "mae": 2.9860167365534327,
+            "bias": 0.812102509610356
+          },
+          "accounting": {
+            "mae": 2.793959391003867,
+            "bias": 0.4115722652605385
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.605,
+        "pointsMAE": 1.075,
+        "predictedSRate": 0.612,
+        "projectedSButActualBelowRate": 0.097,
+        "projectedBelowButActualSRate": 0.151,
+        "axes": {
+          "experience": {
+            "mae": 3.799418384621683,
+            "bias": 0.7140221426264448
+          },
+          "enrollment": {
+            "mae": 3.4054139839664828,
+            "bias": 0.6338546154748562
+          },
+          "satisfaction": {
+            "mae": 2.93461345422604,
+            "bias": 0.38613759732965036
+          },
+          "accounting": {
+            "mae": 2.7869983762745294,
+            "bias": 0.3359359016241732
+          }
+        }
+      },
+      "tones": {
+        "red": 0.412,
+        "yellow": 0.205,
+        "green": 0.383
+      },
+      "greenButActualBelowSRate": 0.067,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.782
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.82
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.851
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.741
+        }
+      }
+    },
+    "acquisition:7:before": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.999,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 11.56,
+        "pointsMAE": 0.852,
+        "predictedSRate": 0.573,
+        "projectedSButActualBelowRate": 0.055,
+        "projectedBelowButActualSRate": 0.148,
+        "axes": {
+          "experience": {
+            "mae": 2.8510425247163536,
+            "bias": 0.2376342308336505
+          },
+          "enrollment": {
+            "mae": 2.4957345104647386,
+            "bias": -0.10706820313119414
+          },
+          "satisfaction": {
+            "mae": 2.1490092848361955,
+            "bias": 0.3325909407834229
+          },
+          "accounting": {
+            "mae": 2.3063612396284268,
+            "bias": 0.029322648828354118
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.587,
+        "pointsMAE": 0.849,
+        "predictedSRate": 0.583,
+        "projectedSButActualBelowRate": 0.061,
+        "projectedBelowButActualSRate": 0.144,
+        "axes": {
+          "experience": {
+            "mae": 2.8736326298750887,
+            "bias": 0.4659770879765063
+          },
+          "enrollment": {
+            "mae": 2.4994560025282215,
+            "bias": 0.20371338417039261
+          },
+          "satisfaction": {
+            "mae": 2.1318272020301134,
+            "bias": 0.06619094078342373
+          },
+          "accounting": {
+            "mae": 2.3063612396284268,
+            "bias": 0.029322648828354118
+          }
+        }
+      },
+      "tones": {
+        "red": 0.437,
+        "yellow": 0.292,
+        "green": 0.271
+      },
+      "greenButActualBelowSRate": 0.035,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.749
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.791
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.837
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.765
+        }
+      }
+    },
+    "acquisition:7:after": {
+      "games": 1000,
+      "states": 1000,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.999,
+      "actualMeanPoints": 11.882,
+      "actualSRate": 0.666,
+      "raw": {
+        "meanPoints": 11.731,
+        "pointsMAE": 0.797,
+        "predictedSRate": 0.612,
+        "projectedSButActualBelowRate": 0.071,
+        "projectedBelowButActualSRate": 0.125,
+        "axes": {
+          "experience": {
+            "mae": 2.7454400952917766,
+            "bias": 0.12452360503071674
+          },
+          "enrollment": {
+            "mae": 2.33741956329897,
+            "bias": 0.12620989288604925
+          },
+          "satisfaction": {
+            "mae": 2.0113773929169385,
+            "bias": 0.34420077460006926
+          },
+          "accounting": {
+            "mae": 2.192967709356016,
+            "bias": 0.14951718592210764
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.681,
+        "pointsMAE": 0.809,
+        "predictedSRate": 0.592,
+        "projectedSButActualBelowRate": 0.062,
+        "projectedBelowButActualSRate": 0.136,
+        "axes": {
+          "experience": {
+            "mae": 2.759470749589855,
+            "bias": 0.32432360503071855
+          },
+          "enrollment": {
+            "mae": 2.33741956329897,
+            "bias": 0.12620989288604925
+          },
+          "satisfaction": {
+            "mae": 1.9972005173688736,
+            "bias": -0.10974823108174755
+          },
+          "accounting": {
+            "mae": 2.190375709356014,
+            "bias": 0.117549185922108
+          }
+        }
+      },
+      "tones": {
+        "red": 0.426,
+        "yellow": 0.31,
+        "green": 0.264
+      },
+      "greenButActualBelowSRate": 0.037,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.774
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.78
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.839
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.774
+        }
+      }
+    },
+    "inspiration:7:before": {
+      "games": 254,
+      "states": 287,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.9940944881889765,
+      "actualMeanPoints": 12.204724409448819,
+      "actualSRate": 0.7283464566929135,
+      "raw": {
+        "meanPoints": 11.700787401574804,
+        "pointsMAE": 0.9606299212598425,
+        "predictedSRate": 0.6003937007874017,
+        "projectedSButActualBelowRate": 0.047244094488188976,
+        "projectedBelowButActualSRate": 0.17519685039370078,
+        "axes": {
+          "experience": {
+            "mae": 2.5951166134320323,
+            "bias": -0.27832543273811505
+          },
+          "enrollment": {
+            "mae": 2.375429493051786,
+            "bias": -0.5621992932701597
+          },
+          "satisfaction": {
+            "mae": 2.1864897203178786,
+            "bias": 0.41891831294135495
+          },
+          "accounting": {
+            "mae": 2.095566797376827,
+            "bias": 0.22781693007518192
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.656824146981625,
+        "pointsMAE": 0.9730971128608925,
+        "predictedSRate": 0.5800524934383201,
+        "projectedSButActualBelowRate": 0.04330708661417323,
+        "projectedBelowButActualSRate": 0.19160104986876642,
+        "axes": {
+          "experience": {
+            "mae": 2.5897491593637905,
+            "bias": -0.07950653510031745
+          },
+          "enrollment": {
+            "mae": 2.375429493051786,
+            "bias": -0.5621992932701597
+          },
+          "satisfaction": {
+            "mae": 2.1445174148319177,
+            "bias": -0.03280161145019705
+          },
+          "accounting": {
+            "mae": 2.0944959312350964,
+            "bias": 0.1960059064531353
+          }
+        }
+      },
+      "tones": {
+        "red": 0.44750656167978997,
+        "yellow": 0.3051181102362205,
+        "green": 0.24737532808398952
+      },
+      "greenButActualBelowSRate": 0.03543307086614173,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.7854330708661419
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.767716535433071
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.8070866141732285
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.7933070866141734
+        }
+      }
+    },
+    "inspiration:7:after": {
+      "games": 254,
+      "states": 287,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.986220472440945,
+      "actualMeanPoints": 12.204724409448819,
+      "actualSRate": 0.7283464566929135,
+      "raw": {
+        "meanPoints": 11.848425196850394,
+        "pointsMAE": 0.8169291338582677,
+        "predictedSRate": 0.6161417322834647,
+        "projectedSButActualBelowRate": 0.04133858267716536,
+        "projectedBelowButActualSRate": 0.15354330708661418,
+        "axes": {
+          "experience": {
+            "mae": 2.52110672984814,
+            "bias": -0.19998535170875545
+          },
+          "enrollment": {
+            "mae": 2.2030725847548385,
+            "bias": -0.2362147440227353
+          },
+          "satisfaction": {
+            "mae": 2.0910573034160835,
+            "bias": 0.42060646193473133
+          },
+          "accounting": {
+            "mae": 2.0205832378980273,
+            "bias": 0.18103341823400657
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.811679790026247,
+        "pointsMAE": 0.8261154855643045,
+        "predictedSRate": 0.6108923884514437,
+        "projectedSButActualBelowRate": 0.045275590551181105,
+        "projectedBelowButActualSRate": 0.1627296587926509,
+        "axes": {
+          "experience": {
+            "mae": 2.517844637609671,
+            "bias": -0.0027412572205636914
+          },
+          "enrollment": {
+            "mae": 2.2030725847548385,
+            "bias": -0.2362147440227353
+          },
+          "satisfaction": {
+            "mae": 2.0471922223985675,
+            "bias": -0.027535482857679497
+          },
+          "accounting": {
+            "mae": 2.0188824504964553,
+            "bias": 0.14947436311589682
+          }
+        }
+      },
+      "tones": {
+        "red": 0.40879265091863515,
+        "yellow": 0.31299212598425197,
+        "green": 0.2782152230971129
+      },
+      "greenButActualBelowSRate": 0.03543307086614173,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.7854330708661419
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.783464566929134
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.828740157480315
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.8169291338582678
+        }
+      }
+    },
+    "deletion:5:before": {
+      "games": 145,
+      "states": 145,
+      "support250": false
+    },
+    "deletion:5:after": {
+      "games": 145,
+      "states": 145,
+      "support250": false
+    },
+    "inspiration:2:before": {
+      "games": 56,
+      "states": 56,
+      "support250": false
+    },
+    "inspiration:2:after": {
+      "games": 56,
+      "states": 56,
+      "support250": false
+    },
+    "inspiration:4:before": {
+      "games": 131,
+      "states": 136,
+      "support250": false
+    },
+    "inspiration:4:after": {
+      "games": 131,
+      "states": 136,
+      "support250": false
+    },
+    "deletion:6:before": {
+      "games": 127,
+      "states": 127,
+      "support250": false
+    },
+    "deletion:6:after": {
+      "games": 127,
+      "states": 127,
+      "support250": false
+    },
+    "inspiration:1:before": {
+      "games": 44,
+      "states": 44,
+      "support250": false
+    },
+    "inspiration:1:after": {
+      "games": 44,
+      "states": 44,
+      "support250": false
+    },
+    "inspiration:3:before": {
+      "games": 75,
+      "states": 75,
+      "support250": false
+    },
+    "inspiration:3:after": {
+      "games": 75,
+      "states": 75,
+      "support250": false
+    },
+    "inspiration:5:before": {
+      "games": 256,
+      "states": 295,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 1,
+      "actualMeanPoints": 12.33984375,
+      "actualSRate": 0.76171875,
+      "raw": {
+        "meanPoints": 11.063802083333334,
+        "pointsMAE": 1.7330729166666665,
+        "predictedSRate": 0.517578125,
+        "projectedSButActualBelowRate": 0.060546875,
+        "projectedBelowButActualSRate": 0.3046875,
+        "axes": {
+          "experience": {
+            "mae": 5.170445137140444,
+            "bias": -0.4448602016863108
+          },
+          "enrollment": {
+            "mae": 5.372476283990847,
+            "bias": -3.394993993824967
+          },
+          "satisfaction": {
+            "mae": 4.16033334239737,
+            "bias": 1.1881110097961285
+          },
+          "accounting": {
+            "mae": 3.684871842083269,
+            "bias": 0.20321708841950914
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 10.927083333333334,
+        "pointsMAE": 1.8580729166666665,
+        "predictedSRate": 0.474609375,
+        "projectedSButActualBelowRate": 0.05859375,
+        "projectedBelowButActualSRate": 0.345703125,
+        "axes": {
+          "experience": {
+            "mae": 5.205238606691719,
+            "bias": -0.8448602016863173
+          },
+          "enrollment": {
+            "mae": 4.969309092803424,
+            "bias": -2.2036807979257693
+          },
+          "satisfaction": {
+            "mae": 4.09513344543778,
+            "bias": 0.7374937258455085
+          },
+          "accounting": {
+            "mae": 3.6881869518074812,
+            "bias": -0.22888167701258938
+          }
+        }
+      },
+      "tones": {
+        "red": 0.544921875,
+        "yellow": 0.17317708333333334,
+        "green": 0.28190104166666663
+      },
+      "greenButActualBelowSRate": 0.04296875,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.7786458333333334
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.744140625
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.8079427083333334
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.7141927083333334
+        }
+      }
+    },
+    "inspiration:5:after": {
+      "games": 256,
+      "states": 295,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.99609375,
+      "actualMeanPoints": 12.33984375,
+      "actualSRate": 0.76171875,
+      "raw": {
+        "meanPoints": 11.477213541666668,
+        "pointsMAE": 1.3391927083333335,
+        "predictedSRate": 0.568359375,
+        "projectedSButActualBelowRate": 0.0625,
+        "projectedBelowButActualSRate": 0.255859375,
+        "axes": {
+          "experience": {
+            "mae": 4.934549229782271,
+            "bias": -0.4064261859821426
+          },
+          "enrollment": {
+            "mae": 4.697378045895011,
+            "bias": -2.4669790757400474
+          },
+          "satisfaction": {
+            "mae": 3.799036329949734,
+            "bias": 1.1802209607191188
+          },
+          "accounting": {
+            "mae": 3.6050391836750872,
+            "bias": 0.5230418604144401
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.373697916666668,
+        "pointsMAE": 1.4505208333333335,
+        "predictedSRate": 0.546875,
+        "projectedSButActualBelowRate": 0.05859375,
+        "projectedBelowButActualSRate": 0.2734375,
+        "axes": {
+          "experience": {
+            "mae": 4.985028396448926,
+            "bias": -0.8048636859821473
+          },
+          "enrollment": {
+            "mae": 4.283965744515166,
+            "bias": -1.3179666277706343
+          },
+          "satisfaction": {
+            "mae": 3.7224932222640064,
+            "bias": 0.7313639005339305
+          },
+          "accounting": {
+            "mae": 3.5899774847039843,
+            "bias": 0.09263098078481136
+          }
+        }
+      },
+      "tones": {
+        "red": 0.4765625,
+        "yellow": 0.18815104166666669,
+        "green": 0.3352864583333333
+      },
+      "greenButActualBelowSRate": 0.046875,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.8131510416666666
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.814453125
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.8522135416666666
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.7194010416666667
+        }
+      }
+    },
+    "inspiration:6:before": {
+      "games": 278,
+      "states": 319,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.9982014388489209,
+      "actualMeanPoints": 12.39568345323741,
+      "actualSRate": 0.7733812949640287,
+      "raw": {
+        "meanPoints": 11.52158273381295,
+        "pointsMAE": 1.2410071942446044,
+        "predictedSRate": 0.5971223021582733,
+        "projectedSButActualBelowRate": 0.0539568345323741,
+        "projectedBelowButActualSRate": 0.2302158273381295,
+        "axes": {
+          "experience": {
+            "mae": 3.7869411656836416,
+            "bias": -0.38284139826919433
+          },
+          "enrollment": {
+            "mae": 3.7502387490394598,
+            "bias": -1.5659010228381574
+          },
+          "satisfaction": {
+            "mae": 3.2157668763790515,
+            "bias": 0.820995545107914
+          },
+          "accounting": {
+            "mae": 2.833731113250714,
+            "bias": 0.5383774571722194
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.555755395683454,
+        "pointsMAE": 1.2284172661870503,
+        "predictedSRate": 0.6025179856115108,
+        "projectedSButActualBelowRate": 0.050359712230215826,
+        "projectedBelowButActualSRate": 0.22122302158273383,
+        "axes": {
+          "experience": {
+            "mae": 3.7849669611530317,
+            "bias": -0.09331976881950453
+          },
+          "enrollment": {
+            "mae": 3.6056140093707003,
+            "bias": -0.8418512408717462
+          },
+          "satisfaction": {
+            "mae": 3.171175378728505,
+            "bias": 0.3957967567701601
+          },
+          "accounting": {
+            "mae": 2.8246395845597894,
+            "bias": 0.46287713016109855
+          }
+        }
+      },
+      "tones": {
+        "red": 0.4226618705035971,
+        "yellow": 0.23741007194244604,
+        "green": 0.33992805755395683
+      },
+      "greenButActualBelowSRate": 0.02877697841726619,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.7913669064748201
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.8165467625899281
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.8219424460431655
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.7320143884892086
+        }
+      }
+    },
+    "inspiration:6:after": {
+      "games": 278,
+      "states": 319,
+      "support250": true,
+      "weighting": "同じ元ゲーム・時期内の総重みを1にする",
+      "calibrationUsedRate": 0.9892086330935251,
+      "actualMeanPoints": 12.39568345323741,
+      "actualSRate": 0.7733812949640287,
+      "raw": {
+        "meanPoints": 11.746402877697841,
+        "pointsMAE": 1.066546762589928,
+        "predictedSRate": 0.6510791366906474,
+        "projectedSButActualBelowRate": 0.0683453237410072,
+        "projectedBelowButActualSRate": 0.1906474820143885,
+        "axes": {
+          "experience": {
+            "mae": 3.6445680616125564,
+            "bias": -0.37454237497478055
+          },
+          "enrollment": {
+            "mae": 3.243546449031019,
+            "bias": -0.8869836559418157
+          },
+          "satisfaction": {
+            "mae": 2.9653118697433167,
+            "bias": 0.7814242669654266
+          },
+          "accounting": {
+            "mae": 2.682744852355844,
+            "bias": 0.5300685103829265
+          }
+        }
+      },
+      "corrected": {
+        "meanPoints": 11.780575539568344,
+        "pointsMAE": 1.0323741007194245,
+        "predictedSRate": 0.6438848920863309,
+        "projectedSButActualBelowRate": 0.0539568345323741,
+        "projectedBelowButActualSRate": 0.18345323741007194,
+        "axes": {
+          "experience": {
+            "mae": 3.6308105362613605,
+            "bias": -0.08762904849310539
+          },
+          "enrollment": {
+            "mae": 3.181448954098612,
+            "bias": -0.17131629491492345
+          },
+          "satisfaction": {
+            "mae": 2.9292863480255105,
+            "bias": 0.360056098342427
+          },
+          "accounting": {
+            "mae": 2.6762150943440695,
+            "bias": 0.4552483664980322
+          }
+        }
+      },
+      "tones": {
+        "red": 0.38489208633093525,
+        "yellow": 0.21942446043165467,
+        "green": 0.39568345323741005
+      },
+      "greenButActualBelowSRate": 0.03597122302158273,
+      "axes": {
+        "experience": {
+          "marginalIntervalCoverage": 0.7913669064748201
+        },
+        "enrollment": {
+          "marginalIntervalCoverage": 0.8327338129496403
+        },
+        "satisfaction": {
+          "marginalIntervalCoverage": 0.8345323741007195
+        },
+        "accounting": {
+          "marginalIntervalCoverage": 0.7284172661870504
+        }
+      }
+    },
+    "deletion:4:before": {
+      "games": 115,
+      "states": 115,
+      "support250": false
+    },
+    "deletion:4:after": {
+      "games": 115,
+      "states": 115,
+      "support250": false
+    }
+  },
+  "finalAgreements": 1000,
+  "allDecisionsIncluded": true,
+  "featuresAndStatisticsInBrowser": true
+}

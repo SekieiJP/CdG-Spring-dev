@@ -1,0 +1,218 @@
+{
+  "stage": "ahiru-failure-development-v1-20261103",
+  "n": 250,
+  "phase": "development",
+  "seed": "ahiru-pro-ahiru-failure-development-v1-20261103",
+  "fingerprints": {
+    "strategyVersion": "b08c9317199bdc32d4f1aa7b2f2463172d8569941761218a789a3f95d86d131b",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "actorFiles": [
+    "solver/autoplay-agent.mjs",
+    "solver/browser/pro-strategy-research.js",
+    "solver/browser/pro-risk-research.js",
+    "solver/browser/pro-value-model.js",
+    "solver/browser/pro-learned-research.js",
+    "solver/browser/pro-public-action-kernel.js",
+    "solver/pro-card-scene-input.mjs",
+    "solver/browser/pro-intrinsic-recovery.js",
+    "solver/browser/pro-action-candidates.js",
+    "solver/browser/pro-opening-table.js",
+    "solver/pro-opening-table-input.mjs"
+  ],
+  "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+  "configFile": "solver/research-scenarios/ahiru-pro-failure-configs.json",
+  "configSha256": "c64165edf7ceba1612017a7abc4110c48b120ecc044586a248271c411c3ccdd1",
+  "runs": [
+    {
+      "id": "baseline",
+      "config": {
+        "id": "baseline",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25,
+          "acquisitionFailureWeight": 0
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "shortfallWeight": 0,
+          "failureWeight": 0
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/baseline-batch0.json"
+      ]
+    },
+    {
+      "id": "failure5",
+      "config": {
+        "id": "failure5",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25,
+          "acquisitionFailureWeight": 0
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "shortfallWeight": 0,
+          "failureWeight": 5
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-batch0.json"
+      ]
+    },
+    {
+      "id": "failure15",
+      "config": {
+        "id": "failure15",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25,
+          "acquisitionFailureWeight": 0
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "shortfallWeight": 0,
+          "failureWeight": 15
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure15-batch0.json"
+      ]
+    },
+    {
+      "id": "failure5-refresh",
+      "config": {
+        "id": "failure5-refresh",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.005,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25,
+          "acquisitionFailureWeight": 5
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/ahiru-failure-v1/mean-plus-failure3.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "shortfallWeight": 0,
+          "failureWeight": 5
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "06471ebeaa0b5b312f0c6694c76563d6283e88e70a488e64a38b066abdee4cbb"
+      },
+      "files": [
+        "/private/tmp/cdg-pro-failure-analysis/solver/local-runs/pro-mean125/ahiru-failure-development-v1-20261103/failure5-refresh-batch0.json"
+      ]
+    }
+  ]
+}

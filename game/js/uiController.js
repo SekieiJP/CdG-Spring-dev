@@ -1,12 +1,13 @@
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0054';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0054';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0054';
-import { ResultController } from './resultController.js?v=20260815-0054';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0054';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0054';
-import { getPlacementError } from './placementRules.js?v=20260815-0054';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0054';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0054';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0056';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0056';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0056';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0056';
+import { ResultController } from './resultController.js?v=20260815-0056';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0056';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0056';
+import { getPlacementError } from './placementRules.js?v=20260815-0056';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0056';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0056';
 
 /**
  * UIController - UI操作・表示制御
@@ -77,6 +78,7 @@ export class UIController {
         this.actionAnimation = new ActionAnimationController(this);
         this.mobileLayout = new MobileLayoutController(gameState);
         this.acquisitionAssist = new AcquisitionAssistController(this);
+        this.ahiruAdvice = new AhiruAdviceController(this);
     }
 
     /**
@@ -101,6 +103,7 @@ export class UIController {
         this.setupScrollListener();
         this.resultController.init();
         this.acquisitionAssist.init();
+        this.ahiruAdvice.init();
     }
 
     /**
@@ -299,6 +302,7 @@ export class UIController {
 
         // ランク表示更新
         this.updateRankDisplay();
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -408,6 +412,7 @@ export class UIController {
      */
     showPhaseArea(phase) {
         if (phase !== 'training') this.acquisitionAssist.leave();
+        this.ahiruAdvice?.setPhase(phase);
         document.body.dataset.phase = phase;
         document.body.dataset.calcMode = String(this.gameState.calcMode);
         this.mobileLayout.schedule({ resetScroll: phase === 'action' });
@@ -783,6 +788,7 @@ export class UIController {
         if (confirmBtn) {
             confirmBtn.disabled = this.selectedInitialCards.length !== 2;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -1675,6 +1681,7 @@ export class UIController {
         if (maxDeleteElem) maxDeleteElem.textContent = maxDelete;
 
         this.selectedCardsForDeletion = [];
+        this.ahiruAdvice?.setDeleteMax(maxDelete);
         // Bug3修正: 選択済み枚数の表示を0にリセット
         const selectedCountElem = document.getElementById('selected-count');
         if (selectedCountElem) selectedCountElem.textContent = '0';
@@ -1735,6 +1742,7 @@ export class UIController {
         if (selectedCountElem) {
             selectedCountElem.textContent = this.selectedCardsForDeletion.length;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -2008,6 +2016,7 @@ export class UIController {
         if (confirmBtn) {
             confirmBtn.disabled = false;
         }
+        this.ahiruAdvice?.scheduleRefresh();
     }
 
     /**
@@ -3932,12 +3941,12 @@ export class UIController {
                     </div>
                 </div>
                 <div class="settings-section">
-                    <h3>取得アシスト（FRESH）</h3>
+                    <h3>取得アシスト（FRESH・PRO）</h3>
                     <div class="font-toggle">
                         <button data-acquisition-assist="on" class="font-toggle-option${this.acquisitionAssist.enabled ? ' active' : ''}">オン</button>
                         <button data-acquisition-assist="off" class="font-toggle-option${!this.acquisitionAssist.enabled ? ' active' : ''}">オフ</button>
                     </div>
-                    <p class="font-toggle-note">候補提示の5秒後に、おすすめの背後が淡く光ります。通常のFRESHで利用できます。</p>
+                    <p class="font-toggle-note">候補提示の5秒後に、おすすめの背後が淡く光ります。通常のFRESH・PROで利用できます。</p>
                 </div>
                 <div class="settings-section">
                     <h3>リンク</h3>
@@ -4044,6 +4053,7 @@ export class UIController {
      * ゲームをリセット（中断データ削除＋リロード）
      */
     resetGame() {
+        this.ahiruAdvice?.reset();
         this.saveManager?.clear();
         this.logger?.log('ゲームをリセットします', 'info');
         location.reload();

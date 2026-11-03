@@ -1,15 +1,15 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20260815-0054';
-import { isEventActive } from './eventManager.js?v=20260815-0054';
-import { fingerprint } from './playRecord.js?v=20260815-0054';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20260815-0056';
+import { isEventActive } from './eventManager.js?v=20260815-0056';
+import { fingerprint } from './playRecord.js?v=20260815-0056';
 
 export class ScoreManager {
-    constructor(logger) {
+    constructor(logger, { migrateHighScore = true } = {}) {
         this.logger = logger;
         this.rankTable = null;
-        this.migrateOldHighScore();
+        if (migrateHighScore) this.migrateOldHighScore();
     }
 
     /**
