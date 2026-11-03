@@ -376,3 +376,32 @@ test('実結果の8点も損失側へ含め、9点では損失減点を足さな
   assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-3*Math.max(0,9-points))<1e-9);
  }
 });
+
+
+function constantFailureModel(value=.2){
+ const mean={schema:VALUE_SCHEMA,features:[...VALUE_FEATURES],base:13,learningRate:1,trees:[]};
+ return {...mean,failureHead:{...mean,base:value,targetKind:'pro-failure8'}};
+}
+test('低得点頻度を足しても平均を変えず、頻度を0〜1へ制限し、非公開情報を読まない',()=>{
+ const model=constantFailureModel(),{strategy,observe}=setup({},model),o=observe();
+ for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(o,key,{get(){throw Error('private');}});
+ assert.equal(strategy.learnedPolicy.estimate(o,'after-action'),13);assert.equal(strategy.learnedPolicy.failure(o,'after-action'),.2);
+ for(const [raw,expected]of [[-2,0],[2,1]]){const p=setup({},constantFailureModel(raw));assert.equal(p.strategy.learnedPolicy.failure(p.observe(),'after-action'),expected);assert.equal(p.strategy.learnedPolicy.estimate(p.observe(),'after-action'),13);}
+ const plain=setup({}, {...model,failureHead:undefined});assert.equal(plain.strategy.learnedPolicy.failure(plain.observe(),'after-action'),0);
+ assert.throws(()=>setup({planning:{failureWeight:5}}, {...model,failureHead:undefined}),/頻度モデル/);
+ assert.throws(()=>setup({planning:{failureWeight:5}}, {...model,failureHead:{...model.failureHead,targetKind:'pro-shortfall9'}}),/頻度モデル/);
+ assert.throws(()=>setup({planning:{failureWeight:NaN}}),/0〜40/);
+});
+test('学習末端の頻度は係数通りに減点し、平均と予測数値を変えない',()=>{
+ const config={planning:{worlds:2,valueHorizon:1,futurePolicy:'baseline',futureBeam:8}},a=setup(config,constantFailureModel()),b=setup({...config,planning:{...config.planning,failureWeight:5}},constantFailureModel());
+ const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+ assert.equal(x.mean,13);assert.equal(y.mean,13);assert.ok(Math.abs(x.score-y.score-1)<1e-9);assert.deepEqual(x.forecast,y.forecast);
+});
+test('実結果の8点と大きな失点を同じ1件として減点し、9点は減点しない',()=>{
+ for(const stats of [{experience:40,enrollment:26,satisfaction:15,accounting:14},{experience:35,enrollment:26,satisfaction:15,accounting:15},{experience:0,enrollment:0,satisfaction:3,accounting:5}]){
+  const a=setup({planning:{failureWeight:0}},constantFailureModel()),b=setup({planning:{failureWeight:5}},constantFailureModel());
+  a.state.turn=7;b.state.turn=7;Object.assign(a.state.player,stats);Object.assign(b.state.player,stats);const points=sm.calculateScore(a.state).points;
+  const x=a.strategy.riskPolicy.evaluate(a.observe(),a.observe().owned,a.clone(a.state),'after-action'),y=b.strategy.riskPolicy.evaluate(b.observe(),b.observe().owned,b.clone(b.state),'after-action');
+  assert.equal(x.mean,points);assert.equal(y.mean,points);assert.ok(Math.abs(x.score-y.score-5*Number(points<=8))<1e-9);
+ }
+});

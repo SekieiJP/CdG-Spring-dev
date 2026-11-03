@@ -4,16 +4,10 @@ import {readFile,writeFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {VALUE_SCHEMA,VALUE_FEATURES} from './browser/pro-value-model.js';
+import {attachRiskModel} from './ahiru-risk-model.mjs';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
-export function attachShortfallModel(mean,shortfall){
-    const valid=model=>model?.schema===VALUE_SCHEMA&&Array.isArray(model.features)&&model.features.join('|')===VALUE_FEATURES.join('|')&&Number.isFinite(model.base)&&Number.isFinite(model.learningRate)&&Array.isArray(model.trees);
-    const counts=shortfall?.provenance?.counts,versions=mean?.provenance?.versions;
-    const compatible=Array.isArray(versions)&&versions.length===4&&JSON.stringify(versions)===JSON.stringify(shortfall?.provenance?.versions);
-    const sufficient=Number.isInteger(counts?.trainSeeds)&&counts.trainSeeds>=250&&Number.isInteger(counts?.validationSeeds)&&counts.validationSeeds>=250;
-    if(!valid(mean?.model)||!valid(shortfall?.model)||mean.model.shortfallHead||shortfall.model.shortfallHead||shortfall.provenance?.targetKind!=='pro-shortfall9'||mean.provenance?.targetKind&&mean.provenance.targetKind!=='official-score'||!compatible||!sufficient)throw Error('互換な平均モデルと、別250開始以上で比較した損失モデルが必要');
-    return {...mean,model:{...mean.model,shortfallHead:{...shortfall.model,targetKind:'pro-shortfall9'}},shortfall:{id:shortfall.id,targetKind:'pro-shortfall9',prediction:'max(0, fixed-tree prediction)',provenance:shortfall.provenance}};
-}
+export function attachShortfallModel(mean,shortfall){return attachRiskModel(mean,shortfall,'pro-shortfall9');}
+
 async function main(){
     const [meanFile,shortfallFile,output]=process.argv.slice(2);if(!meanFile||!shortfallFile||!output)throw Error('平均モデル・損失モデル・出力が必要');
     if([meanFile,shortfallFile].some(file=>path.resolve(file)===path.resolve(output)))throw Error('元モデルを出力で上書きできない');
