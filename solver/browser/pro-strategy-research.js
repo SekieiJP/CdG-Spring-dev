@@ -64,6 +64,8 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     if(['placementBeam','lateBeam'].some(k=>config[k]!==undefined&&(!Number.isInteger(config[k])||config[k]<8||config[k]>2000)))throw Error('探索幅は8〜2000');
     if(config.statBuffers&&Object.entries(config.statBuffers).some(([k,v])=>!KEYS.includes(k)||!Number.isFinite(v)||v<0||v>12))throw Error('パラメータ余裕は既知の軸の0〜12');
     if(config.deleteFloor!==undefined&&(!Number.isInteger(config.deleteFloor)||config.deleteFloor<2||config.deleteFloor>12))throw Error('保持枚数は2〜12枚');
+    if(config.playerBasicScope!==undefined&&!['all','opening'].includes(config.playerBasicScope))throw Error('報告削除の範囲はall/opening');
+    if(config.playerBasicAccounting!==undefined&&!['current-and-forecast','forecast'].includes(config.playerBasicAccounting))throw Error('報告削除の経理条件はcurrent-and-forecast/forecast');
     if(config.effectRecoveryProtection!==undefined&&typeof config.effectRecoveryProtection!=='boolean')throw Error('実効果による回復役保護は真偽値');
     if(config.effectRecoveryProtection&&!publicActionParser)throw Error('回復効果のパーサーが必要');
     const recoveryCheck=config.effectRecoveryProtection?createIntrinsicRecoveryCheck(publicActionParser):null;
@@ -183,6 +185,7 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
     }
     /** ユーザー報告の順序。追加枠も基本札に使い、面談は2ターン目まで残す。 */
     function playerBasicDeletions(observation,deleteMax,objective) {
+        if(config.playerBasicScope==='opening'&&observation.turn>=2)return deletions(observation,deleteMax,'aggressive',objective);
         const isBasic=card=>card.rarity==='N'&&Number(card.cardNo)>=1&&Number(card.cardNo)<=5;
         const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
         let owned=[...observation.owned];const removed=[];
@@ -196,8 +199,8 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
                 if(index<0)continue;
                 const after=[...owned];after.splice(index,1);
                 const evaluated=deckValue(next,after,objective);
-                // 「経理が順調」は現在15以上、削除後の固定投影も15以上とする。
-                if(no===5&&(observation.stats.accounting<15||evaluated.forecast.end.accounting<15))continue;
+                // 既定は現在値も15以上。別仮説では、公開デッキの投影だけで判断する。
+                if(no===5&&(config.playerBasicAccounting!=='forecast'&&observation.stats.accounting<15||evaluated.forecast.end.accounting<15))continue;
                 chosen={index,cardNo:owned[index].cardNo,gain:evaluated.score-deckValue(next,owned,objective).score,after:evaluated.forecast.end,rule:'player-basic'};
                 break;
             }

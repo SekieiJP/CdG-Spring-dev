@@ -475,3 +475,29 @@ test('仮想将来の削除は既定の積極削除を維持し、明示時だ�
  calls.length=0;make('player-basic').evaluate(ob,ob.owned,clone(state),'after-action');assert(calls.length>0);assert(calls.every(mode=>mode==='player-basic'));
  assert.throws(()=>make('unknown'),/将来の削除方針/);
 });
+
+test('経理条件を投影だけにする仮説は現在15未満でも回復が見込めれば基本経理を消す',()=>{
+ const prepare=config=>{const s=setup(config);s.state.turn=2;s.state.player.accounting=14;s.state.player.deck=[];for(const n of [1,2,5,16,37])s.state.addToDeck({...card(n)});return s;};
+ const strict=prepare({}),projected=prepare({playerBasicAccounting:'forecast'});
+ assert.equal(Number(strict.strategy.deletions(strict.observe(),1,'player-basic','engine')[0].cardNo),1);
+ const ob=projected.observe(),snapshot=JSON.stringify(ob);for(const key of ['seed','rng','deckOrder','result'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ assert.equal(Number(projected.strategy.deletions(ob,1,'player-basic','engine')[0].cardNo),5);assert.equal(JSON.stringify(ob),snapshot);
+ projected.state.player.deck=projected.state.player.deck.filter(c=>![16,37].includes(Number(c.cardNo)));projected.state.player.accounting=10;
+ assert.equal(Number(projected.strategy.deletions(projected.observe(),1,'player-basic','engine')[0].cardNo),1);
+});
+test('初回2回だけ固定する仮説は3ターン目以降を従来の積極削除へ戻す',()=>{
+ const {state,strategy,observe}=setup({playerBasicScope:'opening'});state.turn=3;state.player.accounting=10;state.player.deck=[];for(const n of [5,6,7,10,15,17,31])state.addToDeck({...card(n)});
+ const ob=observe(),expected=strategy.deletions(ob,3,'aggressive','engine');assert(expected.length>0);assert.deepEqual(strategy.deletions(ob,3,'player-basic','engine'),expected);
+ state.turn=7;assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+});
+test('別の経理条件や初回だけの範囲でも最初の2会議の順序と保留を守る',()=>{
+ for(const config of [{playerBasicAccounting:'forecast'},{playerBasicScope:'opening'},{playerBasicScope:'opening',playerBasicAccounting:'forecast'}]){
+  const {state,strategy,observe}=setup(config);state.player.accounting=40;
+  assert.deepEqual(strategy.deletions(observe(),9,'player-basic','engine').map(d=>Number(d.cardNo)),[3,1,2]);
+  state.turn=1;state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);
+  assert.deepEqual(strategy.deletions(observe(),9,'player-basic','engine').map(d=>Number(d.cardNo)),[4,1,2]);
+ }
+});
+test('報告削除の未知の範囲や経理条件を拒否する',()=>{
+ assert.throws(()=>setup({playerBasicScope:'unknown'}),/範囲/);assert.throws(()=>setup({playerBasicAccounting:'current'}),/経理条件/);
+});

@@ -1,0 +1,42 @@
+{
+  "development": {
+    "stage": "ahiru-player-deletion-development-v2-20261103",
+    "seed": "ahiru-pro-ahiru-player-deletion-development-v2-20261103",
+    "n": 250,
+    "ids": [
+      "baseline",
+      "strict-control",
+      "forecast-cash",
+      "opening-only"
+    ],
+    "allStartsAccepted": true,
+    "rerolls": 0
+  },
+  "selection": {
+    "eligibleIds": [
+      "forecast-cash",
+      "opening-only"
+    ],
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 4,
+    "order": [
+      "atMost8.count ascending",
+      "mean descending"
+    ],
+    "controlsNotEligible": [
+      "baseline",
+      "strict-control"
+    ],
+    "interpretation": "既に独立検証で未達の基準や、今回変更しない旧報告方針を再抽選しない。2つの新仮説から目標に近い候補を選ぶ探索で、対照より優れるという証明ではない。"
+  },
+  "validation": {
+    "stage": "ahiru-stability-validation-v4-20261103",
+    "seed": "ahiru-pro-ahiru-stability-validation-v4-20261103",
+    "n": 1000,
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 19
+  },
+  "configFile": "solver/research-scenarios/ahiru-pro-player-components-configs.json"
+}
