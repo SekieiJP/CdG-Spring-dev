@@ -8,14 +8,14 @@ import {chromium} from 'playwright';
 const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
 async function main(){
  const [dir='solver/local-runs/pro-mean125/value-v1',idsText='depth3,depth4,monotone3']=process.argv.slice(2),datasetBytes=await readFile(path.join(dir,'dataset.json'));
- const dataset=JSON.parse(datasetBytes),specs={scalar3x4:{depth:3,iterations:640},component3:{depth:3,iterations:160,componentwise:true},depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
+ const dataset=JSON.parse(datasetBytes),specs={shortfall2:{depth:2,iterations:240,learningRate:.05,minRows:80,minWeight:3,l2:3},shortfall3:{depth:3,iterations:180,learningRate:.05,minRows:80,minWeight:3,l2:3},scalar3x4:{depth:3,iterations:640},component3:{depth:3,iterations:160,componentwise:true},depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
  if(ids.some(id=>!specs[id]))throw Error('学習条件の指定が不正');
  if(dataset.counts.trainSeeds<250||dataset.counts.validationSeeds<250)throw Error('各群250シード以上が必要');
  const trainSeeds=new Set(dataset.train.map(r=>r.seed)),validationSeeds=new Set(dataset.validation.map(r=>r.seed));
  if([...trainSeeds].some(s=>validationSeeds.has(s)))throw Error('学習・検証シードが重複');
- const modelSources=await Promise.all(['solver/pro-value-dataset.mjs','solver/pro-value-scene-dataset.mjs','solver/pro-value-train.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
+ const modelSources=await Promise.all(['solver/pro-value-train.mjs','solver/pro-value-dataset.mjs','solver/pro-value-scene-dataset.mjs','solver/pro-value-train.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
  const referenceModels=[];for(const reference of dataset.referenceModels||[]){const bytes=await readFile(reference.file),data=JSON.parse(bytes);if(sha(bytes)!==reference.sha256||JSON.stringify(data.provenance.versions)!==JSON.stringify(dataset.versions))throw Error('比較用モデルのSHAまたはゲーム版が異なる');referenceModels.push({...reference,model:data.model});}
- const provenance={datasetSha256:sha(datasetBytes),implementationSha256:sha(Buffer.concat(modelSources)),versions:dataset.versions,counts:dataset.counts,sources:dataset.sources};
+ const provenance={datasetSha256:sha(datasetBytes),implementationSha256:sha(Buffer.concat(modelSources)),versions:dataset.versions,counts:dataset.counts,sources:dataset.sources,targetKind:dataset.targetKind||'official-score'};
  const root=path.resolve('game'),port=18680,server=http.createServer(async(req,res)=>{try{
   const pathname=decodeURIComponent(new URL(req.url,'http://127.0.0.1').pathname);
   if(pathname==='/value-dataset.json'){res.writeHead(200,{'Content-Type':'application/json'});res.end(datasetBytes);return;}
@@ -30,12 +30,19 @@ async function main(){
    const data=await(await fetch('/value-dataset.json')).json(),vm=await import('/research/pro-value-model.js'),formula=await import('/js/proAcquisitionAdvisor.js');
    const forecast=vm.createValueForecaster(formula.projectProDeck);
    const context={forecast,score:formula.proGoal};let done=0;
-   const encode=rows=>rows.map(r=>{if(++done%10000===0)console.log('VALUE features '+done);return {x:vm.encodeValueFeatures(vm.unpackValueObservation(r.observation,data),r.observation.phase,context),y:r.target,targetComponents:r.targetComponents,weight:r.weight,phase:r.observation.phase,turn:r.observation.turn,seed:r.seed};});
+   const encode=rows=>rows.map(r=>{if(++done%10000===0)console.log('VALUE features '+done);return {x:vm.encodeValueFeatures(vm.unpackValueObservation(r.observation,data),r.observation.phase,context),y:data.targetKind==='pro-shortfall9'?Math.max(0,9-r.target):r.target,targetComponents:r.targetComponents,weight:r.weight,phase:r.observation.phase,turn:r.observation.turn,seed:r.seed};});
    window.valueResearch={train:encode(data.train),validation:encode(data.validation),vm};
    window.valueResearch.metrics=model=>{const {train,validation}=window.valueResearch;
-    const byTurn={};for(let turn=0;turn<8;turn++){const rows=validation.filter(r=>r.turn===turn);byTurn[turn]={seeds:new Set(rows.map(r=>r.seed)).size,...vm.valueMetrics(model,rows)};}
-    const byPhase={};for(const phase of ['acquisition','after-action','before-training']){const rows=validation.filter(r=>r.phase===phase);byPhase[phase]={seeds:new Set(rows.map(r=>r.seed)).size,...vm.valueMetrics(model,rows)};}
-    return {train:vm.valueMetrics(model,train),validation:vm.valueMetrics(model,validation),byPhase,byTurn};
+    const measure=(rows,predictor=model)=>{
+     if(data.targetKind!=='pro-shortfall9')return vm.valueMetrics(predictor,rows);
+     const weight=rows.reduce((sum,row)=>sum+row.weight,0);let se=0,ae=0,bias=0;
+     for(const row of rows){const error=Math.max(0,vm.predictValue(predictor,row.x))-row.y;se+=row.weight*error**2;ae+=row.weight*Math.abs(error);bias+=row.weight*error;}
+     return {rows:rows.length,weight,rmse:Math.sqrt(se/weight),mae:ae/weight,bias:bias/weight,prediction:'max(0, fixed-tree prediction)'};
+    };
+    const byTurn={};for(let turn=0;turn<8;turn++){const rows=validation.filter(r=>r.turn===turn);byTurn[turn]={seeds:new Set(rows.map(r=>r.seed)).size,...measure(rows)};}
+    const byPhase={};for(const phase of ['acquisition','after-action','before-training']){const rows=validation.filter(r=>r.phase===phase);byPhase[phase]={seeds:new Set(rows.map(r=>r.seed)).size,...measure(rows)};}
+    const leaves=validation.filter(row=>row.phase==='after-action'&&row.turn>=1&&row.turn<=6);
+    return {train:measure(train),validation:measure(validation),byPhase,byTurn,...(data.targetKind==='pro-shortfall9'?{planningLeaves:{seeds:new Set(leaves.map(row=>row.seed)).size,...measure(leaves)},planningLeavesBaselines:{zero:measure(leaves,{...model,base:0,trees:[]}),trainingMean:measure(leaves,{...model,trees:[]})}}:{})};
    };console.log('VALUE features complete '+done);
   });
   const summary={createdAt:new Date().toISOString(),purpose:'リセマラなしPRO。過去の結果だけを教師として使用。予測精度は実プレイ改善の証明ではない。',provenance,models:{},references:{}};

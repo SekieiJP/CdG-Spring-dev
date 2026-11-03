@@ -11,7 +11,7 @@ import {compressRun} from './compress-research-runs.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 async function main(){
  const [stage,nText='250',idsText='baseline,downside025,downside050']=process.argv.slice(2),n=Number(nText),option=(key,value)=>{const i=process.argv.indexOf(key);return i<0?value:process.argv[i+1];},workers=Number(option('--workers','2')),port=Number(option('--port-base','19110')),configFile=option('--configs','solver/research-scenarios/ahiru-pro-stability-configs.json'),ids=idsText.split(','),seed=option('--seed',`ahiru-pro-${stage}`);
- if(!/^[a-z0-9:_-]+$/i.test(seed)||!/^[a-z0-9-]+$/.test(stage||'')||![250,2000].includes(n)||![1,2].includes(workers)||!Number.isInteger(port)||port<1024||port+workers>65535||new Set(ids).size!==ids.length||n===2000&&ids.length!==1)throw Error('stage、250/2000、条件、workers1/2、portが必要');
+ if(!/^[a-z0-9:_-]+$/i.test(seed)||!/^[a-z0-9-]+$/.test(stage||'')||![250,1000,2000].includes(n)||![1,2].includes(workers)||!Number.isInteger(port)||port<1024||port+workers>65535||new Set(ids).size!==ids.length||n!==250&&ids.length!==1)throw Error('stage、250/1000（旧2000）、条件、workers1/2、portが必要');
  const configs=JSON.parse(await readFile(configFile));if(ids.some(id=>!configs[id]||configs[id].initial))throw Error('リセマラなしの固定条件が必要');
  const actorHash=async()=>sha(Buffer.concat(await Promise.all(ACTOR_FILES.map(f=>readFile(f))))),sources=await Promise.all((await readdir('game/js')).filter(f=>f.endsWith('.js')).sort().map(async f=>f+await readFile(`game/js/${f}`,'utf8')));
  const fingerprints={strategyVersion:await actorHash(),codeHash:sha(sources.join('\n')),cardVersion:'sha256:'+sha(await readFile('game/data/cards_pro.csv')),rankVersion:'sha256:'+sha(await readFile('game/data/rankPro.csv'))};
@@ -19,7 +19,7 @@ async function main(){
  for(const id of ids){const config={id,...configs[id]},modelSha=sha(await readFile(config.valueModelPath));if(config.valueModelSha256&&config.valueModelSha256!==modelSha)throw Error('固定されたモデルSHAと異なる');config.valueModelSha256=modelSha;const configPath=`${root}/${id}-config.json`;await writeFile(configPath,JSON.stringify(config,null,2)+'\n');const files=[];
   for(let b=0;b<n/250;b++){const output=`${root}/${id}-batch${b}.json`;files.push(path.resolve(output));jobs.push({id,b,output,config,configPath});}runs.push({id,config,files});
  }
- const manifest={stage,n,phase:n===2000?'validation':'development',seed,fingerprints,actorFiles:ACTOR_FILES,requirement:'all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%',configFile,configSha256:sha(await readFile(configFile)),runs};
+ const manifest={stage,n,phase:n!==250?'validation':'development',seed,fingerprints,actorFiles:ACTOR_FILES,requirement:'all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%',configFile,configSha256:sha(await readFile(configFile)),runs};
  const manifestPath=`${root}/manifest.json`;
  if(process.argv.includes('--resume')){const old=JSON.parse(await readFile(manifestPath));if(JSON.stringify(old)!==JSON.stringify(manifest))throw Error('再開条件が元の固定計画と異なる');}else{try{await readFile(manifestPath);throw Error('既存の実行がある。変更せず --resume で監査して再開する');}catch(e){if(e.code!=='ENOENT')throw e;}}
  await writeFile(manifestPath,JSON.stringify(manifest,null,2)+'\n');let next=0,done=0;

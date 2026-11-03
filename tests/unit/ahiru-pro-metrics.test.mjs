@@ -1,12 +1,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {assessStability,selectPilotCandidate,auditAhiruBatch} from '../../solver/ahiru-pro-metrics.mjs';
-test('2000開始で平均12以上、8点を含め39回までを許容する',()=>{
+test('1000開始で平均12以上、8点を含め19回までを許容する',()=>{
+ const scores=Array(1000).fill(13);for(let i=0;i<19;i++)scores[i]=8;
+ assert.ok(assessStability(scores).passed);assert.equal(assessStability(scores).atMost8.count,19);
+ scores[19]=8;assert.equal(assessStability(scores).atMost8.rate,.02);assert.ok(!assessStability(scores).passed);
+ assert.ok(!assessStability(Array(1000).fill(11)).passed);assert.ok(assessStability(Array(1000).fill(12)).passed);
+ assert.ok(!assessStability(Array(999).fill(12)).passed);assert.ok(!assessStability(Array(1001).fill(12)).passed);
+});
+
+test('旧2000開始の再監査は明示し、現在の1000開始の達成と混同しない',()=>{
  const scores=Array(2000).fill(13);for(let i=0;i<39;i++)scores[i]=8;
- assert.ok(assessStability(scores).passed);assert.equal(assessStability(scores).atMost8.count,39);
- scores[39]=8;assert.equal(assessStability(scores).atMost8.rate,.02);assert.ok(!assessStability(scores).passed);
- assert.ok(!assessStability(Array(2000).fill(11)).passed);assert.ok(assessStability(Array(2000).fill(12)).passed);
- assert.ok(!assessStability(Array(1999).fill(12)).passed);assert.ok(!assessStability(Array(2001).fill(12)).passed);
+ assert.equal(assessStability(scores).passed,false);assert.equal(assessStability(scores,{requiredSeeds:2000}).passed,true);
+ scores[39]=8;assert.equal(assessStability(scores,{requiredSeeds:2000}).passed,false);
+ assert.throws(()=>assessStability([12],{requiredSeeds:250}));
 });
 test('全開発条件を見て、平均条件と低得点件数、平均点の事前規則で選ぶ',()=>{
  const g=(mean,count)=>({n:250,mean,atMost8:{count}});
