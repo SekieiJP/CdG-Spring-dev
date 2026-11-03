@@ -1,4 +1,4 @@
-import { createAdvisorObservation, recommendAcquisition } from './freshAcquisitionAdvisor.js?v=20260815-0054';
+import { createAdvisorObservation, recommendAcquisition } from './freshAcquisitionAdvisor.js?v=20260815-0055';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -17,6 +17,7 @@ export class AcquisitionAssistController {
     clear() {
         clearTimeout(this.timer);
         this.shown = false;
+        this.ui.cardDetails?.schedule();
         for (const card of this.container?.children || []) {
             card.classList.remove('acquisition-recommended');
             if (card.dataset.assistAria) { card.setAttribute('aria-label',card.dataset.assistAria); delete card.dataset.assistAria; }
@@ -55,6 +56,7 @@ export class AcquisitionAssistController {
             card.setAttribute('aria-label',`おすすめ。${card.dataset.assistAria}`);
         }
         this.shown = true;
+        this.ui.cardDetails?.schedule();
     }
     setEnabled(enabled) {
         this.enabled = enabled;
@@ -65,7 +67,10 @@ export class AcquisitionAssistController {
         if (!this.enabled || !this.shown || !this.context || !this.eligible()) return '';
         const index = this.context.observation.candidates.findIndex(item => String(item.cardNo) === String(card.cardNo));
         const evaluation = this.context.advice.evaluations.find(item => item.indices.includes(index));
-        return evaluation ? `取得アシスト：${evaluation.reasons.join('・')}を評価しています` : '';
+        if (!evaluation) return '';
+        const recommended = this.context.advice.recommended?.indices?.includes(index);
+        const target = this.context.observation.pickCount > 1 ? 'このカードを含む組み合わせ' : 'このカード';
+        return `取得アシスト（${recommended ? '推奨理由' : '比較評価'}）：${target}の${evaluation.reasons.join('・')}を評価しています`;
     }
     recordChoice(override = null) {
         if (!this.context || this.context.recorded || !this.eligible()) return;

@@ -1,4 +1,4 @@
-import { AnimationClock } from './animationClock.js?v=20260815-0054';
+import { AnimationClock } from './animationClock.js?v=20260815-0055';
 /** 確定した解決結果を表示する。通常のカード効果はここでは再適用しない。 */
 export class ActionAnimationController {
     constructor(ui) {
@@ -21,9 +21,15 @@ export class ActionAnimationController {
 
         let eventEffectsResolved = false;
         this.clock.start();
-        cards.onclick = event => { if (event.target.closest('.animation-card-item')) this.clock.skipCard(); };
-        const skipButton = document.getElementById('btn-animation-skip');
-        if (skipButton) skipButton.onclick = () => this.clock.skipTurn();
+        const advance = event => {
+            if (event.type === 'keydown' && !['Enter', ' '].includes(event.key)) return;
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            this.clock.skipCard();
+        };
+        // 捕捉段階で受け、カード外の余白・数値・ヘッダーも同じ1件送りにする。
+        document.addEventListener('click', advance, true);
+        document.addEventListener('keydown', advance, true);
         try {
             // 現在のステータス（リアルタイム更新用）
             const currentStats = { ...beforeStats };
@@ -130,7 +136,9 @@ export class ActionAnimationController {
             await this._sleep(500);
         } finally {
             overlay.classList.add('hidden');
-            this.clock.finish(); cards.onclick = null;
+            document.removeEventListener('click', advance, true);
+            document.removeEventListener('keydown', advance, true);
+            this.clock.finish();
             await this.ui.finishActionPhase({ eventEffectsResolved });
         }
     }

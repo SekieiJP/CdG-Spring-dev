@@ -57,19 +57,21 @@ test('カード中央は配置、目印の文字部分は詳細としてタッ�
     await page.locator('#hand-cards .card').first().click();
     await expect(page.locator('#slot-leader .card')).toHaveCount(1);
     await expect(page.locator('.effect-tooltip')).toHaveCount(0);
+    await page.evaluate(() => { const ui = window.game.uiController; ui.gameState.player.placed.leader[0].effect += '、情熱1'; ui.renderStaffSlot('leader'); });
+    await expect(page.locator('#slot-leader .card-detail-hint')).toBeVisible();
     await page.locator('#slot-leader .card-detail-hint').click();
     await expect(page.locator('.effect-tooltip')).toBeVisible();
     await expect(page.locator('#slot-leader .card')).toHaveCount(1);
 });
 
-test('通常演出・カードごとのタップ・まとめてスキップでイベントを含む効果と所在が一致する', async ({ page }) => {
+test('通常演出・カードごとのタップ・画面全体のタップでイベントを含む効果と所在が一致する', async ({ page }) => {
     test.setTimeout(60000);
     await startAction(page);
     const results = await page.evaluate(async () => {
         const { getCurrentEvent, createEventState } = await import('./js/eventManager.js?v=test');
         const game = window.game, ui = game.uiController;
         const outputs = [];
-        for (const skip of ['none', 'card', 'turn']) {
+        for (const skip of ['none', 'card', 'screen']) {
             game.gameState.reset('pro', { seed: 'animation-equivalence' });
             game.gameState.phase = 'action'; game.gameState.turn = 7; game.gameState.player.experience = 10;
             game.gameState.player.placed.leader = Array.from({ length: 3 }, () => ({ cardName: '確認', category: '動員', effect: '体験+3、情熱2' }));
@@ -79,10 +81,9 @@ test('通常演出・カードごとのタップ・まとめてスキップで�
             items['spring-homework'].activationReservations = [{ reservationId: 'previous-homework', conditionTurn: 6, creationOrder: 0, status: 'pending' }];
             const before = { experience: 10, enrollment: 0, satisfaction: 3, accounting: 5 };
             const action = game.turnManager.executeActions(); const after = { ...action.cardEffects.leader.afterStats };
-            const observer = new MutationObserver(() => { if (skip === 'card') document.querySelector('.animation-card-item')?.click(); });
+            const observer = new MutationObserver(() => { if (skip !== 'none' && document.querySelector('.animation-card-item')) (skip === 'card' ? document.querySelector('.animation-card-item') : document.getElementById('animation-header')).click(); });
             observer.observe(document.getElementById('animation-cards'), { childList: true, subtree: true });
             const animation = ui.showStatusAnimation(before, after, action);
-            if (skip === 'turn') document.getElementById('btn-animation-skip').click();
             await animation;
             observer.disconnect();
             outputs.push({ stats: [game.gameState.player.experience, game.gameState.player.enrollment, game.gameState.player.satisfaction, game.gameState.player.accounting],

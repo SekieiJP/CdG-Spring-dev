@@ -1,14 +1,35 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0054';
-import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0054';
-import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0054';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0054';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0055';
+import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0055';
+import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0055';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0055';
+import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20260815-0055';
 
 function memoryStorage() {
     const items = new Map();
     return { getItem: key => items.get(key) || null, setItem: (key, value) => items.set(key, value) };
 }
+
+test('評価ログが上限でも取得・配置・取消・削除の履歴を落とさず、版を跨ぐ旧ログも読める', () => {
+    const state=new GameState(); state.startRecording();
+    const card={cardNo:'01',cardName:'履歴確認',rarity:'N'};
+    state.addToDeck(card); state.placeCard(card,'leader'); state.removePlacedCard(card,'leader');
+    state.turn=2; state.removeFromDeck(card);
+    assert.deepEqual(state.turnHistory.map(e=>e.type),['acquire','place','unplace','delete']);
+    for(let i=0;i<3100;i++) state.record('draw',{cards:[]});
+    state.turn=3; state.addToDeck({...card});
+    assert.equal(state.playRecord.truncated,true); assert.equal(state.turnHistory.length,5);
+    const frozen=snapshotTurnHistory(state); state.turnHistory[0].card.cardName='変更';
+    assert.equal(frozen[0].card.cardName,'履歴確認');
+    assert.deepEqual(snapshotTurnHistory({playRecord:{events:[{turn:1,phase:'training',type:'acquire',card},{type:'draw'}]}}).map(e=>e.type),['acquire']);
+});
+
+test('履歴非対応の旧GASの応答を受領済みにせず、再送可能な結果を返す', async () => {
+    const payload={resultId:'new',turnHistory:[{turn:0,type:'acquire',card:{cardName:'確認'}}]};
+    const result=await submitPayload(payload,null,{fetchImpl:async()=>({ok:true,json:async()=>({status:'ok',resultId:'new'})})});
+    assert.equal(result.ok,false); assert.match(result.error,/ターン履歴に未対応/);
+});
 function add(repository, id, overrides = {}) {
     return repository.commit({ resultId: id, difficulty: 'pro', mode: '通常', rulesVersion: '20260815', cardVersion: 'card-1', rankVersion: 'rank-1', ...overrides },
         { resultId: id, completedAt: '2026-10-02T00:00:00Z', finalDeck: ['確定カード'] });

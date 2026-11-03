@@ -1,8 +1,9 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20260815-0054';
-import { makeRunId } from './defaultRules.js?v=20260815-0054';
+import { getEventItem } from './eventManager.js?v=20260815-0055';
+import { makeRunId } from './defaultRules.js?v=20260815-0055';
+import { snapshotTurnHistory } from './turnHistory.js?v=20260815-0055';
 
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;
@@ -101,6 +102,7 @@ export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
         enrollmentDiff: score.enrollmentDiff,
         finalDeck: finalDeck.map(c => c.cardName),
         discardedCards: gameState.discardedCards || [],
+        turnHistory: snapshotTurnHistory(gameState),
         schoolItems: buildSchoolItemsPayload(gameState)
     });
 }
@@ -128,6 +130,7 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
             const result = await response.json();
             if (result.status !== 'ok') throw new Error(`server: ${result.message || 'unknown error'}`);
             if (result.resultId && result.resultId !== payload.resultId) throw new Error('結果IDが応答と一致しません');
+            if (payload.turnHistory?.length && result.turnHistoryStored !== true) throw new Error('送信先がターン履歴に未対応です。結果を端末に保留します');
             return result;
         };
         const result = await Promise.race([request(), stop]);

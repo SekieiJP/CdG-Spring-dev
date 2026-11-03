@@ -44,7 +44,7 @@ test('古い送信の完了が新しい結果の送信状態を上書きしな�
         const originalFetch = window.fetch; window.__responses = [];
         window.fetch = (...args) => {
             if (!String(args[0]).includes('script.google.com')) return originalFetch(...args);
-            return new Promise(resolve => window.__responses.push(() => resolve({ ok: true, json: async () => ({ status: 'ok' }) })));
+            return new Promise(resolve => window.__responses.push(() => resolve({ ok: true, json: async () => ({ status: 'ok', turnHistoryStored: true }) })));
         };
         const game = window.game; game.gameState.phase = 'end'; game.uiController.showResultPhase();
         game.gameState.reset('fresh'); game.gameState.phase = 'end'; game.uiController.showResultPhase();

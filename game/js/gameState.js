@@ -1,10 +1,11 @@
 /**
  * GameState - ゲーム状態管理
  */
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0054';
-import { makeRunId } from './defaultRules.js?v=20260815-0054';
-import { RandomSource } from './randomSource.js?v=20260815-0054';
-import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20260815-0054';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0055';
+import { makeRunId } from './defaultRules.js?v=20260815-0055';
+import { RandomSource } from './randomSource.js?v=20260815-0055';
+import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20260815-0055';
+import { HISTORY_TYPES, toHistoryEvent } from './turnHistory.js?v=20260815-0055';
 
 export class GameState {
     get config() { return getDifficultyConfig(this.difficulty); }
@@ -47,6 +48,7 @@ export class GameState {
         this.rng = new RandomSource(options.seed ?? globalThis.window?.CDG_GAME_SEED ?? this.runId);
         this.recordingMetadata = options;
         this.playRecord = null;
+        this.turnHistory = [];
 
         this.turn = 0;  // 0-7 (1月下旬〜5月上旬)
         this.phase = 'start';  // start, training, action, meeting, end
@@ -73,7 +75,10 @@ export class GameState {
     }
 
     startRecording(metadata = {}) { this.playRecord = createPlayRecord(this, { ...this.recordingMetadata, ...metadata }); }
-    record(type, data) { recordPlayEvent(this, type, data); }
+    record(type, data) {
+        if (HISTORY_TYPES.has(type)) this.turnHistory.push(toHistoryEvent({ turn: this.turn, phase: this.phase, type, ...data }));
+        recordPlayEvent(this, type, data);
+    }
     exportPlayRecord() {
         if (!this.playRecord) return null;
         return { ...structuredClone(this.playRecord), metadata: { ...this.playRecord.metadata,
