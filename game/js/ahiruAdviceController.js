@@ -1,10 +1,11 @@
+import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20260815-0055';
 import {AhiruAdviceView} from './ahiruAdviceView.js?v=20260815-0055';
 import {createAdvisorObservation} from './acquisitionAdvisor.js?v=20260815-0055';
 import {recommendProStatus} from './ahiruProAdvice.js?v=20260815-0055';
 import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20260815-0055';
 /** 助言の公開入力・表示タイミングだけを管理し、カードや乱数を操作しない。 */
 export class AhiruAdviceController {
-    constructor(ui){this.ui=ui;this.phase=null;this.deleteMax=0;this.models=new Map();this.scheduled=false;this.disposed=false;}
+    constructor(ui,{calibrationTimeoutMs=3000}={}){this.calibrationTimeoutMs=calibrationTimeoutMs;this.ui=ui;this.phase=null;this.deleteMax=0;this.models=new Map();this.scheduled=false;this.disposed=false;}
     get modelStatus(){return this.models.get(this.ui.gameState.difficulty)?.status||'unloaded';}
     get calibration(){return this.models.get(this.ui.gameState.difficulty)?.calibration||null;}
     init(){
@@ -22,7 +23,7 @@ export class AhiruAdviceController {
         const difficulty=this.ui.gameState.difficulty,entry={status:'loading',calibration:null};
         this.models.set(difficulty,entry);
         const url=new URL(`../data/ahiru/${difficulty}-projection-calibration.json`,import.meta.url);url.search=new URL(import.meta.url).search;
-        fetch(url).then(r=>{if(!r.ok)throw Error('calibration unavailable');return r.json();}).then(data=>{entry.calibration=data;entry.status='ready';}).catch(()=>{entry.status='failed';}).finally(()=>this.scheduleRefresh());
+        loadAdviceCalibration(url,{timeoutMs:this.calibrationTimeoutMs}).then(data=>{entry.calibration=data;entry.status='ready';}).catch(()=>{entry.status='failed';}).finally(()=>this.scheduleRefresh());
     }
     refresh(){
         if(!this.view||this.disposed)return;
