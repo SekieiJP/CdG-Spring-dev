@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-11-03T12:25:55.188Z",
+  "purpose": "宣言した方針が全開始の実削除で動作したかの照合。新しい判断・ゲーム反復・投影は実行しない。",
+  "manifestFile": "solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/manifest.json",
+  "manifestSha256": "e153140b693ca7ef0dc3eb585b4badbb306708f640d3c642a5340c6980a0fef7",
+  "auditorSha256": "41f37479f6efb76c5428e9f894e47cb3e7efe96eb56a3c3a537ab4e04be04ad6",
+  "groups": {
+    "baseline": {
+      "games": 250,
+      "reportedPolicy": false
+    },
+    "player-basic": {
+      "games": 250,
+      "reportedPolicy": true,
+      "allRealDeletionsChecked": true,
+      "firstQuestionGames": 250,
+      "secondMeetingGames": 250,
+      "allBasicsRemovedGames": 68,
+      "accountingDeletedGames": 135,
+      "gamesWithNonbasicDeletionAfterAllBasics": 52,
+      "deletedBasicCards": 1068,
+      "deletedOtherCards": 109
+    },
+    "player-basic-consistent": {
+      "games": 250,
+      "reportedPolicy": true,
+      "allRealDeletionsChecked": true,
+      "firstQuestionGames": 250,
+      "secondMeetingGames": 250,
+      "allBasicsRemovedGames": 61,
+      "accountingDeletedGames": 136,
+      "gamesWithNonbasicDeletionAfterAllBasics": 46,
+      "deletedBasicCards": 1061,
+      "deletedOtherCards": 100
+    }
+  },
+  "audit": [
+    {
+      "id": "baseline",
+      "file": "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/baseline-batch0.json",
+      "sha256": "becf93d8e84348a26cf0c17e09214d8c49d805c33b6c040fbfdc3239ea3699c6",
+      "n": 250
+    },
+    {
+      "id": "player-basic",
+      "file": "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/player-basic-batch0.json",
+      "sha256": "8b84101e1a3e26426aae185aae437adba118c299f016dc4b1ba1981c11818301",
+      "n": 250
+    },
+    {
+      "id": "player-basic-consistent",
+      "file": "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/player-basic-consistent-batch0.json",
+      "sha256": "c7ec2a6d6f0414b1d8621322229e938c2aa7685febb67a0fb2b3d4ff5688ee3f",
+      "n": 250
+    }
+  ]
+}
