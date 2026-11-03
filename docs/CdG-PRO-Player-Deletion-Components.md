@@ -36,3 +36,10 @@ v2群 `ahiru-pro-ahiru-player-deletion-development-v2-20261103:0..249` の全開
 旧v1の全250開始の実削除も新監査で再照合し、既定の全基本優先/現在値と投影の両方という条件の件数が変わらないことを確認した。既存データの再利用であり、新しいゲーム数に加算しない。[旧群の再照合](../solver/research-results/ahiru-advice-20261103/player-components-prior-audit-check.json)。
 
 方略11ファイルのSHAはcb09c4d0…、本体69ccd7dc…、平均モデルc07e7fe7…で固定する。予約v4群は未使用で、モデルの学習/検証行との重複0を再確認した。少数接続の得点を採否に使わず、これから全4条件各250開始の比較を実行する。全完走するまで条件と開始群を維持する。
+
+
+## v2の比較を開始
+
+固定した4条件各250開始を2ブラウザで開始した。[開始後の固定計画](../solver/research-results/ahiru-advice-20261103/player-components-development-plan.json)。延べ1,000完走を独立1,000シードとは呼ばず、途中で条件と開始群を変えない。
+
+起動時刻と内容の一致を照合した実行プロセスへ、完走待機・全実削除の監査・全得点の集計・新仮説だけからの選択を行う起動係を接続した。条件/方略/本体/モデル/監査器/選択手順の不一致があれば次の実行を拒否する。対象の2新仮説から基準を満たす候補が残った場合だけ予約v4全1,000を確認し、残らなければ対照を再抽選しない。[起動記録](../solver/research-results/ahiru-advice-20261103/player-components-followup-launch.json)、[実行した管理処理の写し](../solver/research-results/ahiru-advice-20261103/player-components-followup-source.txt)。全条件の完走と新しい1,000開始の達成はまだ未確認。
