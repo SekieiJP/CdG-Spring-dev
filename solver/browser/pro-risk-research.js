@@ -1,6 +1,6 @@
 import {selectActionCandidates} from './pro-action-candidates.js';
 /** 研究専用。公開情報から独立した仮想将来をブラウザ内で生成する。実ゲームのseed・山札を読まない。 */
-export const RISK_VERSION='pro-public-rollout-v6';
+export const RISK_VERSION='pro-public-rollout-v7';
 const KEYS=['experience','enrollment','satisfaction','accounting'],SLOTS=['leader','teacher','staff'];
 const mean=a=>a.reduce((s,x)=>s+x,0)/a.length;
 function rng(text){let n=2166136261;for(const c of text)n=Math.imul(n^c.charCodeAt(0),16777619);return()=>{n^=n<<13;n^=n>>>17;n^=n<<5;return(n>>>0)/4294967296;};}
@@ -26,6 +26,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  if(cfg.valueHorizon!==undefined&&(!Number.isInteger(cfg.valueHorizon)||cfg.valueHorizon<1||cfg.valueHorizon>8||!baseline.futureValue))throw Error('固定評価までの先読みは1〜8ターン');
  if(cfg.candidateDiversity!==undefined&&cfg.candidateDiversity!=='axes')throw Error('配置候補の分散方式はaxes');
  if(cfg.consistentFutureRefresh!==undefined&&typeof cfg.consistentFutureRefresh!=='boolean')throw Error('将来リフレッシュの一致条件は真偽値');
+ if(cfg.futureDeletion!==undefined&&!['aggressive','player-basic'].includes(cfg.futureDeletion))throw Error('将来の削除方針はaggressive/player-basic');
  const scoreCache=new Map(),tableKeys=new WeakMap();
  function score(stats,table){if(!tableKeys.has(table))tableKeys.set(table,JSON.stringify(table));const key=tableKeys.get(table)+'|'+KEYS.map(k=>stats[k]).join(',');
   if(!scoreCache.has(key)){if(scoreCache.size>60000)scoreCache.clear();scoreCache.set(key,sourceScore(stats,table));}return scoreCache.get(key);}
@@ -116,7 +117,7 @@ export function createRiskPolicy({baseline,score:sourceScore,cloneState,resolve,
  }
  function deleteFuture(root,state,owned,max){
   if(max<=0)return owned;
-  const decisions=baseline.deletions(observe(root,state,owned),max,'aggressive','engine');const result=[...owned];
+  const decisions=baseline.deletions(observe(root,state,owned),max,cfg.futureDeletion||'aggressive','engine');const result=[...owned];
   for(const d of decisions){const i=result.findIndex(c=>String(c.cardNo)===String(d.cardNo));if(i>=0)result.splice(i,1);}return result;
  }
  function rollout(root,owned,initialState,phase,world){

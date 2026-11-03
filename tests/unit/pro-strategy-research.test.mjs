@@ -421,3 +421,57 @@ test('取得と同じ頻度評価をリフレッシュの候補全体にも使�
  for(const key of ['seed','rng','deckOrder','futureScore'])Object.defineProperty(b,key,{get(){throw Error('private');}});
  const old=zero.strategy.learnedPolicy.refresh(a,'R',3,1),next=risk.strategy.learnedPolicy.refresh(b,'R',3,1);assert.equal(old.shouldRefresh,false);assert.equal(next.shouldRefresh,true);assert.equal(next.currentScore,11);assert.ok(next.expectedScore>next.currentScore);assert.equal(next.opportunityCost,0);
 });
+
+test('報告削除は初回に質問対応、2ターン目に生徒面談を優先し、観測を変えない',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});for(const n of [7,17])state.addToDeck({...card(n)});
+ const ob=observe(),snapshot=JSON.stringify(ob);
+ for(const key of ['seed','rng','deckOrder','trainingDecks','result'])Object.defineProperty(ob,key,{get(){throw Error('private');}});
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[3]);assert.equal(JSON.stringify(ob),snapshot);
+ state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);state.turn=1;
+ assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[4]);
+});
+test('報告削除の初回追加枠は基本動員札に使い、面談と経理札を翌日以降まで残す',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});for(const n of [7,17])state.addToDeck({...card(n)});state.player.accounting=40;
+ assert.deepEqual(strategy.deletions(observe(),10,'player-basic','engine').map(d=>Number(d.cardNo)),[3,1,2]);
+ state.turn=1;state.player.deck=state.player.deck.filter(c=>Number(c.cardNo)!==3);
+ assert.deepEqual(strategy.deletions(observe(),10,'player-basic','engine').map(d=>Number(d.cardNo)),[4,1,2]);
+});
+test('経理の現在値が15未満なら投影が順調でも経理基本を残し、動員基本を消す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=14;state.player.deck=[];for(const n of [1,2,5,16,37])state.addToDeck({...card(n)});
+ const ob=observe(),without=ob.owned.filter(c=>Number(c.cardNo)!==5);
+ assert(strategy.forecast({...ob,turn:3},without,'engine').end.accounting>=15);
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[1]);
+});
+test('経理が現在15でも削除後の投影が15未満なら経理基本を残す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=15;state.player.deck=[];for(const n of [1,2,5,43,50])state.addToDeck({...card(n)});
+ const ob=observe(),without=ob.owned.filter(c=>Number(c.cardNo)!==5);
+ assert(strategy.forecast({...ob,turn:3},without,'engine').end.accounting<15);
+ assert.deepEqual(strategy.deletions(ob,1,'player-basic','engine').map(d=>Number(d.cardNo)),[1]);
+});
+test('3ターン目以降に現在/削除後の投影がともに15以上なら経理基本を先に消す',()=>{
+ const {state,strategy,observe}=setup();state.turn=2;state.player.accounting=15;state.player.deck=[];for(const n of [1,2,5,16,37])state.addToDeck({...card(n)});
+ assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[5]);
+});
+test('経理基本だけが保留なら他のカードを代わりに消さず、最終/削除枠0でも消さない',()=>{
+ const {state,strategy,observe}=setup();state.turn=3;state.player.accounting=10;state.player.deck=[];for(const n of [5,6,7,10,15,17,31])state.addToDeck({...card(n)});
+ assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+ assert.deepEqual(strategy.deletions(observe(),0,'player-basic','engine'),[]);
+ state.turn=7;assert.deepEqual(strategy.deletions(observe(),3,'player-basic','engine'),[]);
+});
+test('基本5枚がなくなった後の残り削除枠は既存の積極削除と一致する',()=>{
+ const {state,strategy,observe}=setup({deleteFloor:4});state.turn=3;state.player.deck=[];for(const n of [1,6,7,10,15,17,31,42])state.addToDeck({...card(n)});
+ const ob=observe(),after={...ob,owned:ob.owned.filter(c=>Number(c.cardNo)!==1)};
+ const actual=strategy.deletions(ob,3,'player-basic','engine'),rest=strategy.deletions(after,2,'aggressive','engine');
+ assert.equal(Number(actual[0].cardNo),1);assert.deepEqual(actual.slice(1),rest);
+ assert.deepEqual(strategy.deletions(after,3,'player-basic','engine'),strategy.deletions(after,3,'aggressive','engine'));
+});
+test('報告の基本削除に既存の保持枚数下限を混ぜない',()=>{
+ const {strategy,observe}=setup({deleteFloor:12});assert.deepEqual(strategy.deletions(observe(),1,'player-basic','engine').map(d=>Number(d.cardNo)),[3]);
+});
+test('仮想将来の削除は既定の積極削除を維持し、明示時だけ報告方針を使う',()=>{
+ const {state,strategy,observe,tm,clone,enumerate}=setup({},tinyModel('count-5'));const ob=observe(),calls=[];
+ const make=futureDeletion=>createRiskPolicy({baseline:{...strategy,deletions:(o,max,mode)=>{calls.push(mode);return [];}},score:proGoal,cloneState:clone,resolve:(c,slot,s)=>tm.resolveCardAction(c,slot,s),enumerateOptions:enumerate,catalog:cm.allCards,config:{planning:{worlds:1,valueHorizon:1,futurePolicy:'baseline',futureBeam:8,...(futureDeletion?{futureDeletion}:{})}}});
+ make().evaluate(ob,ob.owned,clone(state),'after-action');assert(calls.length>0);assert(calls.every(mode=>mode==='aggressive'));
+ calls.length=0;make('player-basic').evaluate(ob,ob.owned,clone(state),'after-action');assert(calls.length>0);assert(calls.every(mode=>mode==='player-basic'));
+ assert.throws(()=>make('unknown'),/将来の削除方針/);
+});

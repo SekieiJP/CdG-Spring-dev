@@ -181,11 +181,38 @@ export function createResearchPolicy({projectDeck,score:sourceScore,cloneState,r
         }
         return frontier[0]?.seq||[];
     }
+    /** ユーザー報告の順序。追加枠も基本札に使い、面談は2ターン目まで残す。 */
+    function playerBasicDeletions(observation,deleteMax,objective) {
+        const isBasic=card=>card.rarity==='N'&&Number(card.cardNo)>=1&&Number(card.cardNo)<=5;
+        const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
+        let owned=[...observation.owned];const removed=[];
+        while(removed.length<deleteMax) {
+            // 基本5枚を消し終えた後の残り枠は、既存の積極削除へ戻す。
+            if(!owned.some(isBasic))return [...removed,...deletions({...observation,owned},deleteMax-removed.length,'aggressive',objective)];
+            const order=observation.turn===0?[3,1,2]:observation.turn===1?[4,3,1,2]:[5,1,2,3,4];
+            let chosen=null;
+            for(const no of order) {
+                const index=owned.findIndex(card=>isBasic(card)&&Number(card.cardNo)===no);
+                if(index<0)continue;
+                const after=[...owned];after.splice(index,1);
+                const evaluated=deckValue(next,after,objective);
+                // 「経理が順調」は現在15以上、削除後の固定投影も15以上とする。
+                if(no===5&&(observation.stats.accounting<15||evaluated.forecast.end.accounting<15))continue;
+                chosen={index,cardNo:owned[index].cardNo,gain:evaluated.score-deckValue(next,owned,objective).score,after:evaluated.forecast.end,rule:'player-basic'};
+                break;
+            }
+            // 経理札などを保留しても、基本以外を代わりに消すことはしない。
+            if(!chosen)break;
+            removed.push(chosen);owned.splice(chosen.index,1);
+        }
+        return removed;
+    }
     /** 1回の会議の削除順を評価。取得・配置とは独立して切り替える。 */
     function deletions(observation,deleteMax,mode,objective='median') {
         if(mode==='rollout')return riskPolicy.deletions(observation,deleteMax);
         if(mode==='learned')return learnedPolicy.deletions(observation,deleteMax);
         if(mode==='off'||observation.turn>=observation.totalTurns-1)return [];
+        if(mode==='player-basic')return playerBasicDeletions(observation,deleteMax,objective);
         const next={...observation,turn:observation.turn+1,tokens:{...observation.tokens,inspiration:0,organize:0}};
         let owned=[...observation.owned];const removed=[];
         for(let k=0;k<deleteMax&&owned.length>(config.deleteFloor??5);k++) {
