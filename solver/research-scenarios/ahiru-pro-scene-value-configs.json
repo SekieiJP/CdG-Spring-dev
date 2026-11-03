@@ -1,0 +1,40 @@
+{
+  "scene-v3": {
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.02,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed",
+      "shortfallWeight": 0
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d"
+  }
+}
