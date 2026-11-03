@@ -10,10 +10,12 @@ async function main(){
  const [dir='solver/local-runs/pro-mean125/value-v1',idsText='depth3,depth4,monotone3']=process.argv.slice(2),datasetBytes=await readFile(path.join(dir,'dataset.json'));
  const dataset=JSON.parse(datasetBytes),specs={shortfall2:{depth:2,iterations:240,learningRate:.05,minRows:80,minWeight:3,l2:3},shortfall3:{depth:3,iterations:180,learningRate:.05,minRows:80,minWeight:3,l2:3},scalar3x4:{depth:3,iterations:640},component3:{depth:3,iterations:160,componentwise:true},depth3:{depth:3,iterations:160},depth4:{depth:4,iterations:160},monotone3:{depth:3,iterations:160,monotone:true},depth2:{depth:2,iterations:240},depth5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},depth6:{depth:6,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05},monotone5:{depth:5,iterations:240,minRows:60,minWeight:2,l2:3,learningRate:.05,monotone:true}},ids=idsText.split(',');
  if(ids.some(id=>!specs[id]))throw Error('学習条件の指定が不正');
+ const shortfall=dataset.targetKind==='pro-shortfall9';
+ if(dataset.targetKind&&!['official-score','pro-shortfall9'].includes(dataset.targetKind)||ids.some(id=>id.startsWith('shortfall')!==shortfall))throw Error('学習対象とモデルの種類が異なる');
  if(dataset.counts.trainSeeds<250||dataset.counts.validationSeeds<250)throw Error('各群250シード以上が必要');
  const trainSeeds=new Set(dataset.train.map(r=>r.seed)),validationSeeds=new Set(dataset.validation.map(r=>r.seed));
  if([...trainSeeds].some(s=>validationSeeds.has(s)))throw Error('学習・検証シードが重複');
- const modelSources=await Promise.all(['solver/pro-value-train.mjs','solver/pro-value-dataset.mjs','solver/pro-value-scene-dataset.mjs','solver/pro-value-train.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
+ const modelSources=await Promise.all(['solver/pro-value-train.mjs','solver/pro-value-dataset.mjs','solver/pro-value-scene-dataset.mjs','solver/browser/pro-value-model.js','solver/browser/pro-strategy-research.js','solver/browser/pro-learned-research.js'].map(file=>readFile(file)));
  const referenceModels=[];for(const reference of dataset.referenceModels||[]){const bytes=await readFile(reference.file),data=JSON.parse(bytes);if(sha(bytes)!==reference.sha256||JSON.stringify(data.provenance.versions)!==JSON.stringify(dataset.versions))throw Error('比較用モデルのSHAまたはゲーム版が異なる');referenceModels.push({...reference,model:data.model});}
  const provenance={datasetSha256:sha(datasetBytes),implementationSha256:sha(Buffer.concat(modelSources)),versions:dataset.versions,counts:dataset.counts,sources:dataset.sources,targetKind:dataset.targetKind||'official-score'};
  const root=path.resolve('game'),port=18680,server=http.createServer(async(req,res)=>{try{
