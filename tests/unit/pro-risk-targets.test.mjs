@@ -10,3 +10,13 @@ test('危険予測は非負にし、頻度だけを1で制限する。平均モ�
     for(const value of [NaN,Infinity,-Infinity])for(const fn of [encodeRiskTarget,clipRiskPrediction])assert.throws(()=>fn(value,'pro-failure8'));
     for(const fn of [encodeRiskTarget,clipRiskPrediction])assert.throws(()=>fn(12,'official-score'));
 });
+
+test('実際の学習入口で、頻度・損失・平均を取り違えたプロファイルを拒否する',async()=>{
+    const {mkdtemp,writeFile,rm}=await import('node:fs/promises'),{tmpdir}=await import('node:os'),{join}=await import('node:path'),{fileURLToPath}=await import('node:url'),{spawnSync}=await import('node:child_process');
+    const dir=await mkdtemp(join(tmpdir(),'cdg-risk-target-'));
+    try{for(const [targetKind,profile]of [['pro-failure8','shortfall3'],['pro-shortfall9','failure3'],['official-score','failure3'],['pro-failure8','depth3']]){
+        await writeFile(join(dir,'dataset.json'),JSON.stringify({targetKind,counts:{trainSeeds:250,validationSeeds:250}}));
+        const r=spawnSync(process.execPath,[fileURLToPath(new URL('../../solver/pro-value-train.mjs',import.meta.url)),dir,profile],{encoding:'utf8',timeout:10000});
+        assert.equal(r.status,1);assert.match(r.stderr,/学習対象とモデルの種類が異なる/);assert.doesNotMatch(r.stdout,/VALUE/);
+    }}finally{await rm(dir,{recursive:true,force:true});}
+});
