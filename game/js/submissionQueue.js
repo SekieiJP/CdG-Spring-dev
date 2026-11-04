@@ -46,6 +46,11 @@ export class SubmissionQueue {
                     this.changed({ result, resultId: row.resultId });
                     break;
                 }
+                if (result.historyPending) {
+                    this.repository.deferHistory(row.resultId);
+                    this.changed({ result, resultId: row.resultId });
+                    break;
+                }
                 this.repository.failed(row.resultId, result.error || '送信失敗');
                 this.notify();
                 if (attempt + 1 < this.attempts && !this.controller.signal.aborted && this.online()) {

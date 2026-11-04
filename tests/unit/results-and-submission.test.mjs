@@ -1,14 +1,68 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0056';
-import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0056';
-import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0056';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0056';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20260815-0057';
+import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20260815-0057';
+import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20260815-0057';
+import { GameState } from '../../game/js/gameState.js?v=20260815-0057';
+import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20260815-0057';
 
 function memoryStorage() {
     const items = new Map();
     return { getItem: key => items.get(key) || null, setItem: (key, value) => items.set(key, value) };
 }
+
+test('評価ログが上限でも取得・配置・取消・削除の履歴を落とさず、版を跨ぐ旧ログも読める', () => {
+    const state=new GameState(); state.startRecording();
+    const card={cardNo:'01',cardName:'履歴確認',rarity:'N'};
+    state.addToDeck(card); state.placeCard(card,'leader'); state.removePlacedCard(card,'leader');
+    state.turn=2; state.removeFromDeck(card);
+    assert.deepEqual(state.turnHistory.map(e=>e.type),['acquire','place','unplace','delete']);
+    for(let i=0;i<3100;i++) state.record('draw',{cards:[]});
+    state.turn=3; state.addToDeck({...card});
+    assert.equal(state.playRecord.truncated,true); assert.equal(state.turnHistory.length,5);
+    const frozen=snapshotTurnHistory(state); state.turnHistory[0].card.cardName='変更';
+    assert.equal(frozen[0].card.cardName,'履歴確認');
+    assert.deepEqual(snapshotTurnHistory({playRecord:{events:[{turn:1,phase:'training',type:'acquire',card},{type:'draw'}]}}).map(e=>e.type),['acquire']);
+});
+
+test('旧GASにはスコア受領だけを記録し、直近5ゲームの履歴を更新後に再送する', async () => {
+    const payload={resultId:'new',turnHistory:[{turn:0,type:'acquire',card:{cardName:'確認'}}]};
+    const storage=memoryStorage();
+    const repository=new ResultRepository(storage);
+    repository.commit({resultId:'new'},payload);
+    repository.commit({resultId:'expired'},{...payload,resultId:'expired'});
+    const sent=[];
+    const send=historySupported=>value=>submitPayload(value,null,{fetchImpl:async(_url,{body})=>{
+        const received=JSON.parse(body); sent.push(received);
+        return {ok:true,json:async()=>({status:'ok',resultId:received.resultId,turnHistoryStored:historySupported})};
+    }});
+    await new SubmissionQueue(repository,send(false)).start();
+    assert.equal(sent.length,2); // 旧GASの正常応答は3回リトライしない
+    assert.equal(repository.find('new').submission,'history-pending');
+    assert.deepEqual(repository.pending()[0].payload,payload);
+    const restored=new ResultRepository(storage);
+    for(let i=0;i<4;i++) add(restored,'next-'+i);
+    assert.equal(restored.find('new').submission,'history-outside-queue');
+    assert.equal(restored.pending().length,5);
+    await new SubmissionQueue(restored,send(true)).start();
+    assert.deepEqual(sent[2],{...payload,resultId:'expired'});
+    assert.equal(restored.find('expired').submission,'sent');
+    assert.equal(restored.pending().length,0);
+});
+
+test('旧GASのサイズ超過では同じ結果IDでスコアを送り、履歴は保持する', async () => {
+    const payload={resultId:'large',displayScore:8,turnHistory:Array.from({length:600},()=>({turn:1,type:'place',card:{cardName:'詳細を保持するカード'}}))};
+    const requests=[];
+    const fetchImpl=async(_url,{body})=>{
+        requests.push(JSON.parse(body));
+        return {ok:true,json:async()=>body.length>32000?{status:'error',message:'payload too large'}:{status:'ok',resultId:'large'}};
+    };
+    const result=await submitPayload(payload,null,{fetchImpl});
+    assert.equal(result.ok,false); assert.equal(result.historyPending,true);
+    assert.deepEqual(requests,[payload,{resultId:'large',displayScore:8}]);
+    const tooLargeOnNew=await submitPayload(payload,null,{fetchImpl:async()=>({ok:true,json:async()=>({status:'error',message:'payload too large',turnHistorySupported:true})})});
+    assert.equal(tooLargeOnNew.historyPending,undefined);
+});
 function add(repository, id, overrides = {}) {
     return repository.commit({ resultId: id, difficulty: 'pro', mode: '通常', rulesVersion: '20260815', cardVersion: 'card-1', rankVersion: 'rank-1', ...overrides },
         { resultId: id, completedAt: '2026-10-02T00:00:00Z', finalDeck: ['確定カード'] });

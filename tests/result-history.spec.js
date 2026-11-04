@@ -6,6 +6,33 @@ async function start(page) {
     await expect(page.locator('#training-cards .card').first()).toBeVisible();
 }
 
+test('旧GASではスコアだけを送信済みと表示し、更新後にターン履歴を再送する', async ({page, scoreSubmissions}) => {
+    const requests = [];
+    const endpoint = 'https://script.google.com/**';
+    await page.route(endpoint, async route => {
+        const payload = route.request().postDataJSON();
+        requests.push(payload);
+        await route.fulfill({json:{status:'ok',resultId:payload.resultId,currentVersion:'v20260815-0053'}});
+    });
+    await start(page);
+    await page.evaluate(() => {
+        const game=window.game;
+        game.gameState.phase='end';
+        game.uiController.showResultPhase();
+    });
+    await expect(page.locator('#result-submission-status')).toHaveText('スコア送信済み。ターン履歴は送信先の更新待ち');
+    expect(requests).toHaveLength(1);
+    expect(requests[0].turnHistory.length).toBeGreaterThan(0);
+    await expect(page.locator('#restart-game')).toBeEnabled();
+    await page.unroute(endpoint);
+    await page.reload();
+    await expect.poll(() => scoreSubmissions.length).toBe(1);
+    expect(scoreSubmissions[0]).toEqual(requests[0]);
+    await page.click('#start-result-history');
+    await page.locator('.result-history-entry summary').click();
+    await expect(page.locator('[data-history-status]')).toHaveText('スコア送信済み');
+});
+
 test('再読込みで保留結果を同じID・完了時刻・デッキのまま送信し履歴を見返せる', async ({ page, scoreSubmissions }) => {
     await start(page);
     const original = await page.evaluate(() => {
@@ -44,7 +71,7 @@ test('古い送信の完了が新しい結果の送信状態を上書きしな�
         const originalFetch = window.fetch; window.__responses = [];
         window.fetch = (...args) => {
             if (!String(args[0]).includes('script.google.com')) return originalFetch(...args);
-            return new Promise(resolve => window.__responses.push(() => resolve({ ok: true, json: async () => ({ status: 'ok' }) })));
+            return new Promise(resolve => window.__responses.push(() => resolve({ ok: true, json: async () => ({ status: 'ok', turnHistoryStored: true }) })));
         };
         const game = window.game; game.gameState.phase = 'end'; game.uiController.showResultPhase();
         game.gameState.reset('fresh'); game.gameState.phase = 'end'; game.uiController.showResultPhase();

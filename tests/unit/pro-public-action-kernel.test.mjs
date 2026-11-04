@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {GameState} from '../../game/js/gameState.js?v=20260815-0056';
-import {CardManager} from '../../game/js/cardManager.js?v=20260815-0056';
-import {TurnManager} from '../../game/js/turnManager.js?v=20260815-0056';
-import {createPublicActionKernel} from '../../solver/browser/pro-public-action-kernel.js?v=20260815-0056';
+import {GameState} from '../../game/js/gameState.js?v=20260815-0057';
+import {CardManager} from '../../game/js/cardManager.js?v=20260815-0057';
+import {TurnManager} from '../../game/js/turnManager.js?v=20260815-0057';
+import {createPublicActionKernel} from '../../solver/browser/pro-public-action-kernel.js?v=20260815-0057';
 const cm=new CardManager(null);cm.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const real=new GameState(null);real.reset('pro',{seed:'kernel-test'});const tm=new TurnManager(real,cm,null),kernel=createPublicActionKernel(real.config.turns,new CardManager(null));
 const clone=s=>({difficulty:'pro',turn:s.turn,totalTurns:8,player:{...s.player},tokens:{...s.tokens},updateStatus(k,d){const before=this.player[k];this.player[k]=Math.max(0,before+d);if(k==='enrollment')this.player[k]=Math.min(this.player[k],this.player.experience);return this.player[k]-before;}});

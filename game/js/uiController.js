@@ -1,13 +1,14 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0056';
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0056';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0056';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0056';
-import { ResultController } from './resultController.js?v=20260815-0056';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0056';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0056';
-import { getPlacementError } from './placementRules.js?v=20260815-0056';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0056';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0056';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0057';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0057';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0057';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0057';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20260815-0057';
+import { ResultController } from './resultController.js?v=20260815-0057';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0057';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0057';
+import { getPlacementError } from './placementRules.js?v=20260815-0057';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0057';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0057';
 
 /**
  * UIController - UI操作・表示制御
@@ -77,6 +78,7 @@ export class UIController {
         this.resultController = new ResultController(this);
         this.actionAnimation = new ActionAnimationController(this);
         this.mobileLayout = new MobileLayoutController(gameState);
+        this.cardDetails = new CardDetailVisibility();
         this.acquisitionAssist = new AcquisitionAssistController(this);
         this.ahiruAdvice = new AhiruAdviceController(this);
     }
@@ -115,15 +117,19 @@ export class UIController {
 
         if (!stickyHeader || !fullStatusPanel) return;
 
-        window.addEventListener('scroll', () => {
+        const update = () => {
             const panelRect = fullStatusPanel.getBoundingClientRect();
+            const safeTop = parseFloat(getComputedStyle(document.body).paddingTop) || 0;
             // ステータスパネルが少しでも隠れたらコンパクトヘッダーを表示
-            if (panelRect.top < 0) {
+            if (panelRect.top < safeTop) {
                 stickyHeader.classList.remove('hidden');
             } else {
                 stickyHeader.classList.add('hidden');
             }
-        });
+        };
+        window.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update);
+        window.visualViewport?.addEventListener('resize', update);
     }
 
     /**
@@ -467,10 +473,12 @@ export class UIController {
                 <div class="card-effect">${this._escapeHTML(displayEffect)}</div>
                 ${thumbnailHTML}
             </div>
-            <span class="card-detail-hint">ⓘ 長押し</span>
+            <span class="card-detail-hint" hidden aria-label="カードの詳細">ⓘ</span>
         `;
         cardDiv.setAttribute('aria-label', `${card.cardName}。長押しで詳細`);
         this.setupCardThumbnailFallback(cardDiv);
+        this.cardDetails.register(cardDiv, { fullEffect: card.effect, displayEffect,
+            extra: () => /情熱|発想|整理|疲労|並行/.test(card.effect || '') || this.acquisitionAssist.explanation(card) });
 
         bindCardInteraction(cardDiv, {
             activate: options.clickable ? () => options.onClick(card, cardDiv) : null,
@@ -3859,11 +3867,19 @@ export class UIController {
     createCalcPlacementSnapshot() {
         return {
             deck: [...this.gameState.player.deck],
-            placed: this.copyPlaced(this.gameState.player.placed)
+            placed: this.copyPlaced(this.gameState.player.placed),
+            historyLength: this.gameState.turnHistory.length,
+            recordLength: this.gameState.playRecord?.events.length,
+            recordTruncated: this.gameState.playRecord?.truncated
         };
     }
 
     restoreCalcPlacementSnapshot(snapshot) {
+        this.gameState.turnHistory.length = snapshot.historyLength;
+        if (this.gameState.playRecord) {
+            this.gameState.playRecord.events.length = snapshot.recordLength;
+            this.gameState.playRecord.truncated = snapshot.recordTruncated;
+        }
         this.gameState.player.deck = [...snapshot.deck];
         this.gameState.player.placed = this.copyPlaced(snapshot.placed);
         this.gameState.slotIds.forEach(staff => this.renderStaffSlot(staff));
@@ -3871,6 +3887,7 @@ export class UIController {
 
     returnPlacedStaffToDeck(staff) {
         const cards = this.gameState.player.placed[staff] || [];
+        cards.forEach(card => this.gameState.record('unplace', { card, staff }));
         this.gameState.player.deck.push(...cards);
         this.gameState.player.placed[staff] = [];
         this.renderStaffSlot(staff);

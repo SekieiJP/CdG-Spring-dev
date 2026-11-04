@@ -18,7 +18,7 @@ test('初期オン、5秒後に2枚を強調し、通常の選択・状態を変
     await glow(page).first().click();
     await expect(page.locator('#training-cards .selected')).toHaveCount(1);
     await expect(glow(page)).toHaveCount(2);
-    await expect.poll(()=>glow(page).first().evaluate(card=>getComputedStyle(card).boxShadow)).toContain('123, 198, 246');
+    await expect.poll(()=>glow(page).first().evaluate(card=>getComputedStyle(card).boxShadow)).toContain('253, 224, 71');
 });
 test('設定オフを保持し、提示から5秒経過後にオンへ戻すとすぐ強調する',async({page})=>{
     await training(page); await page.click('#btn-settings-full');
@@ -44,6 +44,7 @@ test('候補の再提示・中断復帰は5秒を数え直し、確定後はタ�
 });
 test('推薦理由を長押し詳細で確認しても選択されない',async({page})=>{
     await training(page); await page.clock.runFor(5000);
+    await page.clock.runFor(32); // 追加情報の目印を次の描画フレームで更新する。
     await glow(page).first().locator('.card-detail-hint').click();
     await expect(page.locator('.tooltip-assist')).toContainText('取得アシスト');
     await expect(page.locator('#training-cards .selected')).toHaveCount(0);

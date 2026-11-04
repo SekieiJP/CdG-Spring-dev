@@ -1,4 +1,4 @@
-import { CardManager } from './cardManager.js?v=20260815-0056';
+import { CardManager } from './cardManager.js?v=20260815-0057';
 
 /** 公開情報の固定回数の算術投影。抽選・ゲームの将来試行は行わない。 */
 export const ADVISOR_VERSION = 'pro-formula-v1';

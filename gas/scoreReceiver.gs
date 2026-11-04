@@ -1,4 +1,4 @@
-var CURRENT_BUILD_VERSION = 'v20260815-0056';
+var CURRENT_BUILD_VERSION = 'v20260815-0057';
 
 /* ===== ヘルパー関数 ===== */
 
@@ -124,6 +124,19 @@ function buildScoreRecordRow(headers, data) {
  */
 function validatePayload(data) {
     if (!data || typeof data !== 'object' || Array.isArray(data)) return 'invalid payload';
+    if (data.turnHistory != null) {
+        if (!Array.isArray(data.turnHistory) || data.turnHistory.length > 10000) return 'invalid field: turnHistory';
+        for (var h = 0; h < data.turnHistory.length; h++) {
+            var entry = data.turnHistory[h];
+            if (!entry || !Number.isInteger(entry.turn) || entry.turn < 0 || entry.turn >= (data.totalTurns || 8)
+                || ['acquire', 'place', 'unplace', 'delete'].indexOf(entry.type) === -1
+                || ['start', 'training', 'action', 'meeting', 'end'].indexOf(entry.phase) === -1
+                || !entry.card || typeof entry.card.cardName !== 'string' || entry.card.cardName.length > 200
+                || (entry.staff != null && (typeof entry.staff !== 'string' || !/^[a-z][a-z0-9-]{0,31}$/.test(entry.staff)))
+                || (entry.card.instanceId != null && (typeof entry.card.instanceId !== 'string' || entry.card.instanceId.length > 160))
+                || (entry.card.cardNo != null && !/^[a-zA-Z0-9:_-]{1,64}$/.test(String(entry.card.cardNo)))) return 'invalid field: turnHistory[' + h + ']';
+        }
+    }
     if (data.resultId != null && (typeof data.resultId !== 'string' || !/^[a-zA-Z0-9:_-]{1,120}$/.test(data.resultId))) return 'invalid field: resultId';
     if (data.totalTurns != null && (typeof data.totalTurns !== 'number' || data.totalTurns % 1 !== 0 || data.totalTurns < 1 || data.totalTurns > 100)) return 'invalid field: totalTurns';
     var versions = ['buildVersion', 'rulesVersion', 'cardVersion', 'rankVersion'];
@@ -236,7 +249,7 @@ function jsonResponse(value) {
 }
 
 function scoreAcknowledgement(data, duplicate) {
-    return jsonResponse({ status: 'ok', resultId: data.resultId, duplicate: duplicate,
+    return jsonResponse({ status: 'ok', resultId: data.resultId, duplicate: duplicate, turnHistoryStored: true,
         currentVersion: CURRENT_BUILD_VERSION, clientVersion: data.buildVersion || '',
         versionMatch: isClientVersionCurrent(data.buildVersion || '', CURRENT_BUILD_VERSION) });
 }
@@ -244,6 +257,29 @@ function scoreAcknowledgement(data, duplicate) {
 function scoreDigest(value) {
     return Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, value, Utilities.Charset.UTF_8)
         .map(function(b) { return ('0' + (b & 0xFF).toString(16)).slice(-2); }).join('');
+}
+
+/** セル上限を超えないよう、イベント単位でJSONを分割する。ID+分割番号で再送を重複排除する。 */
+function appendTurnHistory(ss, data) {
+    if (!data.turnHistory || !data.turnHistory.length) return;
+    var sheet = ss.getSheetByName('ターン履歴') || ss.insertSheet('ターン履歴');
+    if (!sheet.getLastRow()) sheet.appendRow(['履歴ID', '結果ID', '分割No', 'ターン履歴JSON']);
+    var parts = [], current = [], size = 2;
+    data.turnHistory.forEach(function(event) {
+        event = { turn: event.turn, phase: event.phase, type: event.type,
+            card: { cardNo: event.card.cardNo, cardName: event.card.cardName, instanceId: event.card.instanceId }, staff: event.staff };
+        var eventSize = JSON.stringify(event).length + 1;
+        if (current.length && size + eventSize > 24000) { parts.push(current); current = []; size = 2; }
+        current.push(event); size += eventSize;
+    });
+    if (current.length) parts.push(current);
+    parts.forEach(function(events, index) {
+        var key = data.resultId + ':' + index;
+        var lastRow = sheet.getLastRow();
+        var found = lastRow > 1 && sheet.getRange(2, 1, lastRow - 1, 1).createTextFinder(key)
+            .matchEntireCell(true).matchCase(true).findNext();
+        if (!found) sheet.appendRow([key, data.resultId, index, JSON.stringify(events)]);
+    });
 }
 
 /** 書き込みと重複判定を同じロック内で行う。Cacheの失効後も結果ID列で判定する。 */
@@ -255,7 +291,7 @@ function appendScoreOnce(data) {
         data.resultId = data.resultId || 'legacy-' + scoreDigest(JSON.stringify([
             data.userUUID || '', data.startedAt || '', data.completedAt || '', data.displayScore
         ]));
-        var cacheKey = 'score_' + scoreDigest(data.resultId);
+        var cacheKey = 'score_history_' + scoreDigest(data.resultId + JSON.stringify(data.turnHistory || []));
         var cache = null;
         try {
             cache = CacheService.getScriptCache();
@@ -270,6 +306,7 @@ function appendScoreOnce(data) {
         var existing = lastRow > 1 && sheet.getRange(2, idColumn, lastRow - 1, 1)
             .createTextFinder(data.resultId).matchEntireCell(true).matchCase(true).findNext();
         if (!existing) sheet.appendRow(buildScoreRecordRow(headers, data));
+        appendTurnHistory(ss, data);
         // 永続化できてから受領済みにする。失敗した書き込みをCacheで塞がない。
         SpreadsheetApp.flush();
         try { if (cache) cache.put(cacheKey, '1', 21600); } catch (cacheError) { /* 永続列を使う */ }
@@ -283,9 +320,9 @@ function appendScoreOnce(data) {
 function doPost(e) {
     try {
         // M1: ペイロードサイズ制限
-        if (e.postData.contents.length > 32000) {
+        if (e.postData.contents.length > 2000000) {
             console.error('[scoreReceiver] payload too large: length=' + e.postData.contents.length);
-            return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'payload too large' }))
+            return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'payload too large', turnHistorySupported: true }))
                 .setMimeType(ContentService.MimeType.JSON);
         }
 

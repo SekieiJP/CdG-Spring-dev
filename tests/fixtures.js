@@ -14,7 +14,7 @@ export const test = base.extend({
                 const payload = JSON.parse(request.postData());
                 scoreSubmissions.push(payload);
                 await route.fulfill({ contentType: 'application/json', body: JSON.stringify({
-                    status: 'ok', currentVersion: payload.buildVersion, clientVersion: payload.buildVersion, versionMatch: true
+                    status: 'ok', turnHistoryStored: true, currentVersion: payload.buildVersion, clientVersion: payload.buildVersion, versionMatch: true
                 }) });
                 return;
             }

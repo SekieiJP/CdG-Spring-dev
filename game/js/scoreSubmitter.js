@@ -1,8 +1,9 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20260815-0056';
-import { makeRunId } from './defaultRules.js?v=20260815-0056';
+import { getEventItem } from './eventManager.js?v=20260815-0057';
+import { makeRunId } from './defaultRules.js?v=20260815-0057';
+import { snapshotTurnHistory } from './turnHistory.js?v=20260815-0057';
 
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;
@@ -101,6 +102,7 @@ export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
         enrollmentDiff: score.enrollmentDiff,
         finalDeck: finalDeck.map(c => c.cardName),
         discardedCards: gameState.discardedCards || [],
+        turnHistory: snapshotTurnHistory(gameState),
         schoolItems: buildSchoolItemsPayload(gameState)
     });
 }
@@ -116,25 +118,41 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
         timer = setTimeout(() => { controller.abort(); reject(new Error('通信がタイムアウトしました')); }, timeoutMs);
     });
     try {
-        const request = async () => {
-            if (signal?.aborted) throw new Error('送信を中断しました');
+        const post = async body => {
+            if (controller.signal.aborted) throw new Error('送信を中断しました');
             const response = await fetchImpl(SCORE_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload),
+                body,
                 signal: controller.signal
             });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const result = await response.json();
+            return response.json();
+        };
+        const hasHistory = !!payload.turnHistory?.length;
+        const request = async () => {
+            const body = JSON.stringify(payload);
+            let result = await post(body);
+            let scoreOnly = false;
+            // 旧GASのサイズ上限に達しても、同じ結果IDで従来のスコアを受領できるようにする。
+            if (hasHistory && body.length > 32000 && result.status === 'error'
+                && result.message === 'payload too large' && result.turnHistorySupported !== true) {
+                const { turnHistory, ...score } = payload;
+                const scoreBody = JSON.stringify(score);
+                if (scoreBody.length <= 32000) {
+                    result = await post(scoreBody);
+                    scoreOnly = true;
+                }
+            }
             if (result.status !== 'ok') throw new Error(`server: ${result.message || 'unknown error'}`);
             if (result.resultId && result.resultId !== payload.resultId) throw new Error('結果IDが応答と一致しません');
-            return result;
+            return { result, historyPending: hasHistory && (scoreOnly || result.turnHistoryStored !== true) };
         };
-        const result = await Promise.race([request(), stop]);
-        logger?.log('📤 スコアを送信しました', 'info');
+        const { result, historyPending } = await Promise.race([request(), stop]);
+        logger?.log(historyPending ? '📤 スコア送信済み。ターン履歴は端末に保留しています' : '📤 スコアを送信しました', 'info');
         const currentVersion = result.currentVersion || null;
         const clientVersion = result.clientVersion || payload.buildVersion;
-        return { ok: true, duplicate: !!result.duplicate, currentVersion, clientVersion,
+        return { ok: !historyPending, historyPending, duplicate: !!result.duplicate, currentVersion, clientVersion,
             versionMatch: currentVersion ? isClientVersionCurrent(clientVersion, currentVersion) : result.versionMatch !== false };
     } catch (error) {
         return { ok: false, error: error.message };
@@ -149,7 +167,7 @@ export async function submitScore(gameState, score, finalDeck, logger) {
     const payload = buildScorePayload(gameState, score, finalDeck);
     for (let attempt = 0; attempt < 3; attempt++) {
         const result = await submitPayload(payload, logger);
-        if (result.ok || attempt === 2) return result;
+        if (result.ok || result.historyPending || attempt === 2) return result;
         await new Promise(resolve => setTimeout(resolve, 2000));
     }
 }

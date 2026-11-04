@@ -1,6 +1,6 @@
-import { ResultRepository } from './resultRepository.js?v=20260815-0056';
-import { SubmissionQueue } from './submissionQueue.js?v=20260815-0056';
-import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20260815-0056';
+import { ResultRepository } from './resultRepository.js?v=20260815-0057';
+import { SubmissionQueue } from './submissionQueue.js?v=20260815-0057';
+import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20260815-0057';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {
@@ -48,7 +48,7 @@ export class ResultController {
     }
 
     onQueueChange(update) {
-        if (update.result?.ok && update.result.versionMatch === false && this.warnedVersion !== update.result.currentVersion) {
+        if ((update.result?.ok || update.result?.historyPending) && update.result.versionMatch === false && this.warnedVersion !== update.result.currentVersion) {
             this.warnedVersion = update.result.currentVersion;
             try { localStorage.setItem('cdg_version_updated', 'true'); } catch { /* 警告は画面にも表示する */ }
             this.ui.logger?.log(`⚠️ 新しいバージョンがあります（最新: ${update.result.currentVersion || '最新'}）`, 'info');
@@ -67,6 +67,8 @@ export class ResultController {
         if (this.repository.storageError) return '履歴をこの画面で保持しています。再読み込みすると失われる可能性があります。';
         if (!row) return '履歴はこの端末に残っていません';
         if (row?.submission === 'sent') return 'スコア送信済み';
+        if (row.submission === 'history-pending') return 'スコア送信済み。ターン履歴は送信先の更新待ち';
+        if (row.submission === 'history-outside-queue') return 'スコア送信済み（ターン履歴は送信待ちの上限から除外）';
         if (row?.submission === 'outside-queue') return '履歴に保存済み（送信待ちの上限から除外）';
         if (row?.resultId === this.queue.activeId) return 'スコア送信中。もう一度プレイできます';
         return '履歴に保存済み。通信が戻ると再送します';

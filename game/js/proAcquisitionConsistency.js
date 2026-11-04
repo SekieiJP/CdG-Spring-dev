@@ -1,7 +1,7 @@
-import {recommendProStatus,PRO_STATUS_WEIGHTS} from './ahiruProAdvice.js?v=20260815-0056';
-import {projectProAdviceState} from './ahiruProForecast.js?v=20260815-0056';
-import {getProSGoals} from './ahiruProGoals.js?v=20260815-0056';
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0056';
+import {recommendProStatus,PRO_STATUS_WEIGHTS} from './ahiruProAdvice.js?v=20260815-0057';
+import {projectProAdviceState} from './ahiruProForecast.js?v=20260815-0057';
+import {getProSGoals} from './ahiruProGoals.js?v=20260815-0057';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0057';
 
 const AXES=['experience','enrollment','satisfaction','accounting'];
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'};

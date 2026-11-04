@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {planningOutcomeScore,createRiskPolicy} from '../../solver/browser/pro-risk-research.js?v=20260815-0056';
+import {planningOutcomeScore,createRiskPolicy} from '../../solver/browser/pro-risk-research.js?v=20260815-0057';
 const outcomes=a=>a.map(score=>({score,utility:score}));
 test('同じ平均なら悪い仮想展開を減らす候補を優先し、重み0は従来の平均と一致',()=>{
  const stable=outcomes([12,12,12,12]),risky=outcomes([6,14,14,14]);

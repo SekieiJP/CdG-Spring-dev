@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20260815-0056';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20260815-0056';
-import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20260815-0056';
-import {recommendAcquisition} from '../../game/js/proAcquisitionAdvisor.js?v=20260815-0056';
-import {alignProAcquisition} from '../../game/js/proAcquisitionConsistency.js?v=20260815-0056';
-import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20260815-0056';
+import {CardManager} from '../../game/js/cardManager.js?v=20260815-0057';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20260815-0057';
+import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20260815-0057';
+import {recommendAcquisition} from '../../game/js/proAcquisitionAdvisor.js?v=20260815-0057';
+import {alignProAcquisition} from '../../game/js/proAcquisitionConsistency.js?v=20260815-0057';
+import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20260815-0057';
 const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const scorer=new ScoreManager(null),originalFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});

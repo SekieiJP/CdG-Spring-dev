@@ -1,4 +1,4 @@
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0056';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0057';
 const AXES=['experience','enrollment','satisfaction','accounting'];
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'},SAFETY=['satisfaction','accounting'];
 function result(tone,text,axis,reason,forecast,extra={}){

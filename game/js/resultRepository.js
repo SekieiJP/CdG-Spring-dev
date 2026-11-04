@@ -47,7 +47,7 @@ export class ResultRepository {
         data.pending = data.pending.filter(item => recentIds.has(item.resultId));
         for (const pending of removed) {
             const historyRow = data.history.find(item => item.resultId === pending.resultId);
-            if (historyRow) historyRow.submission = 'outside-queue';
+            if (historyRow) historyRow.submission = historyRow.submission === 'history-pending' ? 'history-outside-queue' : 'outside-queue';
         }
         this.write(data);
         return structuredClone(row);
@@ -68,6 +68,14 @@ export class ResultRepository {
         data.pending = data.pending.filter(item => item.resultId !== resultId);
         const row = data.history.find(item => item.resultId === resultId);
         if (row) row.submission = 'sent';
+        this.write(data);
+    }
+
+    deferHistory(resultId) {
+        const data = this.read();
+        const row = data.history.find(item => item.resultId === resultId);
+        if (!row) return;
+        row.submission = data.pending.some(item => item.resultId === resultId) ? 'history-pending' : 'history-outside-queue';
         this.write(data);
     }
 

@@ -13,12 +13,14 @@ const payload = overrides => ({ resultId: 'game-1', buildVersion: 'v20260815-005
 function server(initialRows = []) {
     const rows = structuredClone(initialRows), cache = new Map();
     const state = { busy: false, locked: false, failWrite: false, failFlush: false, cacheDown: false };
-    const sheet = {
+    const historyRows = [];
+    const makeSheet = (rows, history = false) => ({
         getLastRow: () => rows.length,
         getLastColumn: () => Math.max(0, ...rows.map(row => row.length)),
         appendRow: row => {
             assert.equal(state.locked, true);
             if (state.failWrite && rows.length) { state.failWrite = false; throw new Error('write'); }
+            if (history && state.failHistoryPart === rows.length) { state.failHistoryPart = null; throw new Error('history write'); }
             rows.push([...row]);
         },
         getRange: (row, column, height = 1, width = 1) => ({
@@ -36,20 +38,21 @@ function server(initialRows = []) {
                 }; return finder;
             }
         })
-    };
+    });
+    const sheet = makeSheet(rows), historySheet = makeSheet(historyRows, true);
     const context = vm.createContext({
         console: { log() {}, error() {} },
         ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ text, setMimeType() { return this; } }) },
         LockService: { getScriptLock: () => ({ tryLock: () => { if (state.busy) return false; state.locked = true; return true; }, releaseLock: () => { state.locked = false; } }) },
         SpreadsheetApp: {
-            getActiveSpreadsheet: () => { assert.equal(state.locked, true); return { getSheetByName: () => sheet, insertSheet: () => sheet }; },
+            getActiveSpreadsheet: () => { assert.equal(state.locked, true); return { getSheetByName: name => name === 'ターン履歴' ? historySheet : sheet, insertSheet: name => name === 'ターン履歴' ? historySheet : sheet }; },
             flush: () => { if (state.failFlush) { state.failFlush = false; throw new Error('flush'); } }
         },
         CacheService: { getScriptCache: () => { if (state.cacheDown) throw new Error('cache'); return { get: key => cache.get(key), put: (key, value) => cache.set(key, value) }; } },
         Utilities: { DigestAlgorithm: { MD5: 'md5' }, Charset: { UTF_8: 'utf8' }, computeDigest: (_, value) => [...createHash('md5').update(value).digest()] }
     });
     vm.runInContext(source, context);
-    return { rows, cache, state, submit: data => JSON.parse(context.doPost({ postData: { contents: JSON.stringify(data) } }).text) };
+    return { rows, historyRows, cache, state, submit: data => JSON.parse(context.doPost({ postData: { contents: JSON.stringify(data) } }).text) };
 }
 
 test('応答を失っても同じ結果IDの再送を受領済みとして返し、Cache失効後も1行だけ残す', () => {
@@ -97,4 +100,41 @@ test('既存列・行を維持して版と結果IDを追加し、追加難易度
     assert.equal(receiver.rows[2][receiver.rows[0].indexOf('結果ID')], 'game-1');
     assert.equal(receiver.submit(payload({ resultId: 'too-many', finalDeck: Array(201).fill('カード') })).status, 'error');
     assert.equal(receiver.submit(null).status, 'error');
+});
+
+test('大量のターン履歴をセル上限内で分割し、途中失敗後の再送でも全履歴を一度ずつ保存する', () => {
+    const receiver = server();
+    const turnHistory = Array.from({length:600}, (_,i) => ({turn:i%8, phase:'action', type:'place',
+        card:{cardNo:'01',cardName:'日本語のカード✊💡'+i,instanceId:'instance-'+i}, staff:'leader'}));
+    const data = payload({turnHistory});
+    receiver.state.failHistoryPart = 2;
+    assert.equal(receiver.submit(data).status,'error');
+    assert.equal(receiver.cache.size,0);
+    const retry=receiver.submit(data); assert.equal(retry.status,'ok'); assert.equal(retry.turnHistoryStored,true);
+    const parts=receiver.historyRows.slice(1);
+    assert.ok(parts.length>1);
+    assert.ok(parts.every(row=>row[3].length<=24000));
+    assert.deepEqual(parts.flatMap(row=>JSON.parse(row[3])),turnHistory);
+    receiver.cache.clear(); assert.equal(receiver.submit(data).duplicate,true);
+    assert.equal(receiver.historyRows.length,parts.length+1); assert.equal(receiver.rows.length,2);
+});
+
+test('不正なターン・種別・配置先・カードを履歴として保存しない', () => {
+    for (const patch of [{turn:8}, {type:'unknown'}, {staff:'invalid!'}, {card:{cardName:42}}, {phase:'x'}]) {
+        const receiver=server();
+        assert.equal(receiver.submit(payload({turnHistory:[{turn:0,phase:'action',type:'place',staff:'leader',card:{cardName:'確認'},...patch}]})).status,'error');
+        assert.equal(receiver.rows.length,0); assert.equal(receiver.historyRows.length,0);
+    }
+});
+
+test('先に受領したスコアを再登録せず、更新後の再送ではターン履歴だけを追記する', () => {
+    const receiver=server();
+    const data=payload();
+    assert.equal(receiver.submit(data).status,'ok');
+    const turnHistory=[{turn:0,phase:'training',type:'acquire',card:{cardNo:'01',cardName:'確認'}}];
+    const result=receiver.submit({...data,turnHistory});
+    assert.equal(result.duplicate,true);
+    assert.equal(result.turnHistoryStored,true);
+    assert.equal(receiver.rows.length,2);
+    assert.deepEqual(JSON.parse(receiver.historyRows[1][3]),turnHistory);
 });

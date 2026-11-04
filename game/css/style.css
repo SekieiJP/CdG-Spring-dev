@@ -6,6 +6,8 @@
 }
 
 :root {
+    --app-safe-top: env(safe-area-inset-top, 0px);
+    --sticky-safe-gap: 0px;
     /* カテゴリ別カラー（色覚多様性配慮） */
     --color-mobilization: #3B82F6;
     /* 動員: 青 */
@@ -56,17 +58,20 @@ body {
     color: var(--color-text);
     min-height: 100vh;
     overflow-x: hidden;
-    padding-top: env(safe-area-inset-top, 0px);
+    padding-top: var(--app-safe-top);
     padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-.card-detail-hint { display: block; width: fit-content; margin-left: auto; color: #d9e5fb; font-size: 10px; line-height: 14px; text-align: right; }
+.card-detail-hint { display: block; width: fit-content; margin-left: auto; color: #d9e5fb; font-size: 12px; line-height: 14px; text-align: right; }
+.card-detail-hint[hidden] { display: none; }
+/* アシストの表示期限や描画の再計測で、研修候補の位置を動かさない。 */
+#training-cards .card-detail-hint[hidden] { display: block; visibility: hidden; }
 .card { -webkit-touch-callout: none; touch-action: pan-y; }
-#training-cards .card.acquisition-recommended { box-shadow: 0 0 18px 4px rgba(123, 198, 246, .27), inset 0 0 10px rgba(123, 198, 246, .12); }
+#training-cards .card.acquisition-recommended { outline: 1px solid #FDE047; outline-offset: -1px; box-shadow: 0 0 18px 4px rgba(253, 224, 71, .4), inset 0 0 10px rgba(253, 224, 71, .15); }
 .tooltip-assist:not(:empty) { margin-top: 10px; font-size: 12px; color: var(--color-text-secondary); }
 .effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
-.animation-skip-hint { font-size: 12px; text-align: center; color: var(--color-text-secondary); margin: 6px 0; }
-#btn-animation-skip { padding: 10px; margin-bottom: 12px; }
+@media (display-mode: standalone) { :root { --sticky-safe-gap: 4px; } }
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-safe-top); background: var(--color-bg-light); z-index: 11000; pointer-events: none; }
 
 /* ==================== レイアウト ==================== */
 #app {
@@ -80,14 +85,14 @@ body {
 /* ==================== スクロール追従ヘッダー（コンパクト版） ==================== */
 .sticky-header {
     position: fixed;
-    top: env(safe-area-inset-top, 0px);
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
     max-width: 480px;
     background: var(--color-bg-light);
     border-bottom: 2px solid var(--color-primary);
-    padding: var(--spacing-sm);
+    padding: calc(var(--spacing-sm) + var(--app-safe-top) + var(--sticky-safe-gap)) var(--spacing-sm) var(--spacing-sm);
     z-index: 100;
     display: flex;
     justify-content: space-between;
@@ -438,6 +443,16 @@ body {
 .card-icon-hide .anim-card-thumbnail {
     display: none;
 }
+
+/* 手札は文字を左側の一列へまとめ、右側は画像だけに使う。 */
+#hand-cards .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 5px; align-content: start; }
+#hand-cards .card-header, #hand-cards .card-body { display: contents; }
+#hand-cards .card-name { grid-column: 1; grid-row: 1; }
+#hand-cards .card-meta { grid-column: 1; grid-row: 2; justify-content: flex-start; }
+#hand-cards .card-effect { grid-column: 1; grid-row: 3; }
+#hand-cards .card-thumbnail { grid-column: 2; grid-row: 1 / 5; align-self: center; justify-self: center; width: min(100%, 64px); height: auto; }
+#hand-cards .card-detail-hint { grid-column: 1; grid-row: 4; margin-left: 0; }
+.card-icon-hide #hand-cards .card, #hand-cards .card:not(:has(.card-thumbnail)) { grid-template-columns: minmax(0, 1fr); }
 
 /* 効果詳細ツールチップ */
 .effect-tooltip {
@@ -1169,12 +1184,12 @@ body {
     #hand-cards { gap: 5px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
     #hand-cards .card { padding: 5px; min-height: 64px; }
     #hand-cards .card-header { margin-bottom: 2px; }
-    #hand-cards .card-name { font-size: 13px; }
+    #hand-cards .card-name { font-size: 13px; line-height: 1.25; }
     #hand-cards .card-meta { font-size: 9px; gap: 2px; }
     #hand-cards .card-category-text { padding: 1px 2px; }
     #hand-cards .card-rarity { font-size: 10px; padding: 1px 3px; }
     #hand-cards .card-effect { font-size: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    #hand-cards .card-thumbnail { width: 32px; height: 32px; }
+    #hand-cards .card-thumbnail { width: min(100%, 64px); height: auto; }
     #confirm-action { padding: 12px; min-height: 44px; }
     .draw-notification { margin: 4px 0; padding: 3px; font-size: 12px; }
     .animation-content { padding: 12px; max-height: calc(100dvh - 20px); overflow-y: auto; }

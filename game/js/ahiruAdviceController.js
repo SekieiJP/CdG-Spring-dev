@@ -1,8 +1,8 @@
-import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20260815-0056';
-import {AhiruAdviceView} from './ahiruAdviceView.js?v=20260815-0056';
-import {createAdvisorObservation} from './acquisitionAdvisor.js?v=20260815-0056';
-import {recommendProStatus} from './ahiruProAdvice.js?v=20260815-0056';
-import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20260815-0056';
+import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20260815-0057';
+import {AhiruAdviceView} from './ahiruAdviceView.js?v=20260815-0057';
+import {createAdvisorObservation} from './acquisitionAdvisor.js?v=20260815-0057';
+import {recommendProStatus} from './ahiruProAdvice.js?v=20260815-0057';
+import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20260815-0057';
 /** 助言の公開入力・表示タイミングだけを管理し、カードや乱数を操作しない。 */
 export class AhiruAdviceController {
     constructor(ui,{calibrationTimeoutMs=3000}={}){this.calibrationTimeoutMs=calibrationTimeoutMs;this.ui=ui;this.phase=null;this.deleteMax=0;this.models=new Map();this.scheduled=false;this.disposed=false;}

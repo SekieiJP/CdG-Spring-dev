@@ -130,7 +130,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 return {
                     ok: true,
                     json: async () => ({
-                        status: 'ok',
+                        status: 'ok', turnHistoryStored: true,
                         currentVersion: window.BUILD_VERSION,
                         clientVersion: payload.buildVersion,
                         versionMatch: true
@@ -191,7 +191,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 captured.push(JSON.parse(options.body));
                 return {
                     ok: true,
-                    json: async () => ({ status: 'ok', currentVersion: window.BUILD_VERSION })
+                    json: async () => ({ status: 'ok', turnHistoryStored: true, currentVersion: window.BUILD_VERSION })
                 };
             };
 
@@ -273,7 +273,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 window.fetch = async () => ({
                     ok: true,
                     json: async () => ({
-                        status: 'ok',
+                        status: 'ok', turnHistoryStored: true,
                         currentVersion,
                         clientVersion,
                         versionMatch: clientVersion === currentVersion
@@ -321,7 +321,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 window.__resolveScoreSubmit = () => resolve({
                     ok: true,
                     json: async () => ({
-                        status: 'ok',
+                        status: 'ok', turnHistoryStored: true,
                         currentVersion: window.BUILD_VERSION,
                         clientVersion: window.BUILD_VERSION,
                         versionMatch: true
@@ -384,7 +384,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
             window.fetch = async () => ({
                 ok: true,
                 json: async () => ({
-                    status: 'ok',
+                    status: 'ok', turnHistoryStored: true,
                     currentVersion: 'v99999999-9999',
                     clientVersion: window.BUILD_VERSION,
                     versionMatch: false
