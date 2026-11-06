@@ -16,12 +16,13 @@ test('FRESH専用の補正でパラメータ直下に助言を表示し、開閉
     await page.screenshot({path:`solver/local-runs/pro-mean125/ahiru-ui-fresh-${info.project.name}.png`,fullPage:false});
     await activate(page,face(page));await expect(page.locator('.ahiru-advice__speech')).toBeHidden();
 });
-test('FRESHの初回2枚選択・会議の回復札削除・中断再開に助言が追従する',async({page})=>{
+test('FRESHの取得・削除選択では助言を保ち、実際の場面変更だけに追従する',async({page})=>{
     await startFresh(page);await page.locator('#training-cards .card').nth(0).click();await page.locator('#training-cards .card').nth(1).click();
-    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.forecast.position)).toBe('after');
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.forecast.position)).toBe('before');
     await page.evaluate(()=>{const g=window.game,s=g.gameState;s.turn=5;s.phase='meeting';s.player.deck=[];s.player.hand=[];for(const slot of Object.keys(s.player.placed))s.player.placed[slot]=[];for(const no of [5,44,50])s.addToDeck({...g.cardManager.allCards.find(c=>Number(c.cardNo)===no),acquiredTurn:0});Object.assign(s.player,{experience:20,enrollment:10,satisfaction:15,accounting:15});s.tokens.organize=1;g.uiController.showMeetingPhase();});
+    const beforeDeletion=await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice);
     await page.locator('#deck-cards .card').filter({hasText:'経理精算の基本'}).click();
-    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.axis)).toBe('accounting');await expect(host(page)).toHaveAttribute('data-tone','red');
+    expect(await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice)).toEqual(beforeDeletion);
     await page.evaluate(()=>{const g=window.game;g.gameState.turn=6;g.gameState.phase='training';g.uiController.showTrainingPhase();});
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.forecast.observation.turn)).toBe(6);
     const text=await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.text);await page.reload();await page.waitForSelector('#training-cards .card');

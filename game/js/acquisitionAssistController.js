@@ -1,5 +1,4 @@
-import { createAdvisorObservation, recommendAcquisition, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20260815-0057';
-import {alignProAcquisition} from './proAcquisitionConsistency.js?v=20260815-0057';
+import { supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20260815-0058';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -29,26 +28,18 @@ export class AcquisitionAssistController {
         this.clear(); this.context = null;
         const cards = this.ui.gameState.currentTrainingCards;
         if (!this.eligible() || !cards?.length || this.container.children.length < cards.length) return;
-        const inspiration = this.ui.trainingSelectionMode === 'inspiration';
-        const observation = createAdvisorObservation(this.ui.gameState, cards, {
-            pickCount: this.ui.gameState.turn === 0 && !inspiration ? 2 : 1, allowSkip: inspiration, rankTable: this.ui.scoreManager.rankTable
-        });
         const presentedAt = performance.now();
         try {
-            this.context = { observation, advice: this.evaluate(observation), presentedAt, recorded: false };
+            const scene=this.ui.ahiruAdvice.getSceneDecision();
+            if(!scene?.acquisition)return;
+            this.context = { observation:scene.observation, advice:scene.acquisition, presentedAt, recorded: false };
+            this.ui.ahiruAdvice.scheduleRefresh();
             this.schedule();
         } catch (error) { console.warn('[取得アシスト]',error.message); }
     }
-    evaluate(observation) {
-        const advice=recommendAcquisition(observation);
-        if(observation.difficulty!=='pro')return advice;
-        return alignProAcquisition(observation,advice,{calibration:this.ui.ahiruAdvice?.calibration,
-            versions:{cardVersion:this.ui.cardManager.dataVersion,rankVersion:this.ui.scoreManager.dataVersion}});
-    }
     refreshAdvice() {
-        if(!this.context||!this.eligible())return;
-        try { this.context.advice=this.evaluate(this.context.observation); this.clear(); this.schedule(); }
-        catch(error) { console.warn('[取得アシスト]',error.message); }
+        // 表示済みの候補では補正到着後も順位と提示期限を固定する。
+        if(!this.context&&this.eligible())this.present();
     }
     schedule() {
         clearTimeout(this.timer);

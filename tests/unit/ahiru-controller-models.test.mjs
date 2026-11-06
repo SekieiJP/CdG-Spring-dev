@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {AhiruAdviceController} from '../../game/js/ahiruAdviceController.js?v=20260815-0057';
+import {AhiruAdviceController} from '../../game/js/ahiruAdviceController.js?v=20260815-0058';
 test('難易度を切り替えても、遅れて届いた別難易度の補正を使わない',async()=>{
     const state={difficulty:'fresh'},controller=new AhiruAdviceController({gameState:state}),saved=globalThis.fetch,requests=new Map();
     controller.scheduleRefresh=()=>{};globalThis.fetch=url=>new Promise(resolve=>requests.set(new URL(url).pathname,resolve));

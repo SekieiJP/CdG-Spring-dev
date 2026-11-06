@@ -7,6 +7,9 @@
 
 :root {
     --app-safe-top: env(safe-area-inset-top, 0px);
+    --app-safe-right: env(safe-area-inset-right, 0px);
+    --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --app-safe-left: env(safe-area-inset-left, 0px);
     --sticky-safe-gap: 0px;
     /* カテゴリ別カラー（色覚多様性配慮） */
     --color-mobilization: #3B82F6;
@@ -59,7 +62,9 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     padding-top: var(--app-safe-top);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: var(--app-safe-bottom);
+    padding-left: var(--app-safe-left);
+    padding-right: var(--app-safe-right);
 }
 
 .card-detail-hint { display: block; width: fit-content; margin-left: auto; color: #d9e5fb; font-size: 12px; line-height: 14px; text-align: right; }
@@ -71,7 +76,7 @@ body {
 .tooltip-assist:not(:empty) { margin-top: 10px; font-size: 12px; color: var(--color-text-secondary); }
 .effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
 @media (display-mode: standalone) { :root { --sticky-safe-gap: 4px; } }
-body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-safe-top); background: var(--color-bg-light); z-index: 11000; pointer-events: none; }
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-safe-top); background: var(--color-bg-light); z-index: 900; pointer-events: none; }
 
 /* ==================== レイアウト ==================== */
 #app {
@@ -93,6 +98,8 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     background: var(--color-bg-light);
     border-bottom: 2px solid var(--color-primary);
     padding: calc(var(--spacing-sm) + var(--app-safe-top) + var(--sticky-safe-gap)) var(--spacing-sm) var(--spacing-sm);
+    padding-left: max(var(--spacing-sm),var(--app-safe-left));
+    padding-right: max(var(--spacing-sm),var(--app-safe-right));
     z-index: 100;
     display: flex;
     justify-content: space-between;
@@ -1504,10 +1511,13 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    height: 100vh;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.9);
     z-index: 1500;
-    overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto minmax(0,1fr);
+    overflow: hidden;
     animation: fadeIn 0.2s ease;
 }
 
@@ -1515,20 +1525,24 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+    padding: calc(var(--app-safe-top) + var(--spacing-sm)) max(var(--spacing-md),var(--app-safe-right)) var(--spacing-sm) max(var(--spacing-md),var(--app-safe-left));
     background: var(--color-bg-light);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    min-width: 0;
 }
 
 .info-overlay-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 1.125rem;
     font-weight: bold;
     color: var(--color-text);
 }
 
 .info-overlay-close {
+    flex: 0 0 44px;
+    min-width: 44px;
+    min-height: 44px;
     background: transparent;
     border: none;
     font-size: 1.5rem;
@@ -1542,7 +1556,11 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 }
 
 .info-overlay-content {
-    padding: var(--spacing-md);
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--spacing-md) max(var(--spacing-md),var(--app-safe-right)) calc(var(--spacing-md) + var(--app-safe-bottom)) max(var(--spacing-md),var(--app-safe-left));
 }
 
 /* デッキ内訳スタイル */
@@ -1669,9 +1687,14 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 /* ==================== フロート通知 ==================== */
 .float-notification {
     position: fixed;
-    top: var(--spacing-md);
-    left: 50%;
-    transform: translateX(-50%);
+    top: var(--notification-top,calc(var(--app-safe-top) + var(--spacing-md)));
+    left: calc(var(--app-safe-left) + var(--spacing-sm));
+    right: calc(var(--app-safe-right) + var(--spacing-sm));
+    width: fit-content;
+    max-width: min(420px,calc(100% - var(--app-safe-left) - var(--app-safe-right) - 2 * var(--spacing-sm)));
+    margin-inline: auto;
+    overflow-wrap: anywhere;
+    pointer-events: none;
     padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: var(--border-radius);
     font-size: 0.875rem;
@@ -1703,12 +1726,12 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: translateY(-4px);
     }
 
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -2239,4 +2262,21 @@ html.font-normal .compact-stats {
 
 .calc-action-inputs {
     margin: 14px 0;
+}
+
+/* 背景は画面端まで、操作・文字は各面の安全領域へ一度だけ内包する。 */
+.overlay, .status-overlay, .turn-overlay, .event-presentation-overlay {
+    padding-top: calc(var(--app-safe-top) + var(--spacing-md));
+    padding-right: max(var(--spacing-md),var(--app-safe-right));
+    padding-bottom: calc(var(--app-safe-bottom) + var(--spacing-md));
+    padding-left: max(var(--spacing-md),var(--app-safe-left));
+}
+.overlay-content {
+    min-height: calc(100vh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    min-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+}
+.status-overlay .animation-content {
+    max-height: calc(100vh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    max-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    overflow-y: auto;
 }

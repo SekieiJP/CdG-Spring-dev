@@ -20,7 +20,7 @@ test('PWAの起動先・表示・ホーム画面アイコンを配信する', as
         expect(dimensions).toEqual([size, size]);
     }
     await expect(page.locator('meta[name="apple-mobile-web-app-capable"]')).toHaveAttribute('content', 'yes');
-    await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute('content', 'black');
+    await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute('content', 'black-translucent');
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'pwa/icon-180.png');
 });
 

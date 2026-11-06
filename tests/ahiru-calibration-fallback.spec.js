@@ -1,5 +1,5 @@
 import {test,expect} from './fixtures.js';
-for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}は補正の応答が止まっても3秒で固定式の助言へ戻る`,async({page})=>{
+for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}は補正が止まっても提示時の助言を保ち3秒で通信を打ち切る`,async({page})=>{
     let release;const gate=new Promise(resolve=>release=resolve);
     await page.route(`**/${difficulty}-projection-calibration.json*`,async route=>{await gate;await route.fulfill({contentType:'application/json',body:JSON.stringify({difficulty})}).catch(()=>{});});
     try{
