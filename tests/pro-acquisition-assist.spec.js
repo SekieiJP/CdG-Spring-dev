@@ -27,7 +27,7 @@ test('PROリフレッシュは推薦を再計算し、候補の除外履歴を�
     await page.clock.runFor(5000);await expect(glow(page)).toHaveCount(2);
     expect(await page.evaluate(()=>window.game.uiController.acquisitionAssist.context.observation)).toEqual(before);
 });
-test('あひる先生の経理不足と取得候補を揃え、再計算しても提示から5秒で強調する',async({page})=>{
+test('あひる先生の経理不足と取得候補を揃え、再評価要求でも提示時の判断と5秒期限を保つ',async({page})=>{
     await proTraining(page);
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.modelStatus)).toBe('ready');
     await page.evaluate(()=>{

@@ -16,25 +16,25 @@ test('PRO取得の助言はパラメータ直下で開閉し、選択やゲー�
     await page.screenshot({path:`solver/local-runs/pro-mean125/ahiru-ui-pro-${info.project.name}.png`,fullPage:true});
     await activate(page,face(page));await expect(speech(page)).toBeHidden();
 });
-test('初回の2枚選択と行動画面への切替で助言を更新・非表示にする',async({page})=>{
+test('初回の2枚選択では助言を固定し、行動画面で非表示にする',async({page})=>{
     await startPro(page);await activate(page,face(page));
     await page.locator('#training-cards .card').nth(0).click();await expect(page.locator('#confirm-training')).toBeDisabled();
     await page.locator('#training-cards .card').nth(1).click();await expect(page.locator('#confirm-training')).toBeEnabled();
-    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.forecast.position)).toBe('after');await expect(speech(page)).toBeVisible();
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.forecast.position)).toBe('before');await expect(speech(page)).toBeVisible();
     await page.evaluate(()=>window.game.uiController.showPhaseArea('action'));await expect(host(page)).toBeHidden();
     await page.evaluate(()=>{window.game.uiController.showPhaseArea('training');window.game.uiController.updateStatusDisplay();});await expect(speech(page)).toBeVisible();
 });
-test('削除で最後の経理回復札を選ぶと、実効果から残すように案内する',async({page})=>{
+test('削除予定の選択でも、画面開始時の保有カードと助言を保つ',async({page})=>{
     await startPro(page);
     await page.evaluate(()=>{const g=window.game,s=g.gameState;s.turn=5;s.phase='meeting';s.player.deck=[];s.player.hand=[];for(const slot of Object.keys(s.player.placed))s.player.placed[slot]=[];
         for(const n of [5,40,45])s.addToDeck({...g.cardManager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});Object.assign(s.player,{experience:40,enrollment:24,satisfaction:25,accounting:15});s.tokens.organize=1;g.uiController.showMeetingPhase();});
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.deleteMax)).toBe(1);
-    const before=await page.evaluate(()=>JSON.stringify(window.game.gameState));
+    const before=await page.evaluate(()=>JSON.stringify(window.game.gameState)),advice=await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice);
     await page.locator('#deck-cards .card').filter({hasText:'経理精算の基本'}).click();
-    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.axis)).toBe('accounting');await expect(host(page)).toHaveAttribute('data-tone','red');
-    await activate(page,face(page));await expect(speech(page)).toContainText('残そう');
+    expect(await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice)).toEqual(advice);
+    await activate(page,face(page));await expect(speech(page)).toHaveText(advice.text);
     expect(await page.evaluate(()=>JSON.stringify(window.game.gameState))).toBe(before);
-    expect(await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.forecast.observation.owned.some(c=>String(c.cardNo)==='5'))).toBe(false);
+    expect(await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.forecast.observation.owned.some(c=>String(c.cardNo)==='5'))).toBe(true);
 });
 test('中断再開で同じ助言を復元し、初期表示は閉じた顔ボタンにする',async({page})=>{
     await startPro(page);const before=await page.evaluate(()=>({text:window.game.uiController.ahiruAdvice.lastAdvice.text,cards:window.game.gameState.currentTrainingCards.map(c=>c.cardNo)}));

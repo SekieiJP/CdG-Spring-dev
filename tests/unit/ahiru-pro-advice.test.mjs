@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20260815-0057';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20260815-0057';
-import {createAhiruRoleInspector} from '../../game/js/ahiruCardRoles.js?v=20260815-0057';
-import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20260815-0057';
-import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20260815-0057';
+import {CardManager} from '../../game/js/cardManager.js?v=20260815-0058';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20260815-0058';
+import {createAhiruRoleInspector} from '../../game/js/ahiruCardRoles.js?v=20260815-0058';
+import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20260815-0058';
+import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20260815-0058';
 const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const scorer=new ScoreManager(null),savedFetch=globalThis.fetch;globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});await scorer.loadRankData('test');globalThis.fetch=savedFetch;
 const card=n=>({...manager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});
@@ -16,31 +16,32 @@ test('庶務カテゴリのNo40や経理14固定のNo50を経理15の回復役�
  assert.equal(r.canRecover(card(5),'accounting',15),true);assert.equal(r.canRecover(card(17),'accounting',15),true);assert.equal(r.canRecover(card(39),'accounting',15),true);
  assert.equal(r.supportsHand(card(40)),true);assert.equal(r.supportsHand(card(51)),false);
 });
-test('経理回復できる最後の札を選んでしまった時は、残すように案内する',()=>{
+test('削除候補を選んでも確定前の保有役割と助言を変えない',()=>{
  const o=observation([5,40,45,50]);o.turn=5;o.stats={experience:40,enrollment:24,satisfaction:25,accounting:15};
- assert.ok(scorer.calculateScore({difficulty:'pro',player:o.stats}).points<12);
- const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1,selectedIndices:[0]});
- assert.equal(advice.tone,'red');assert.equal(advice.axis,'accounting');assert.match(advice.text,/残そう/);
+ const before=recommendProStatus(o,{phase:'deletion',deleteMax:1});
+ assert.deepEqual(recommendProStatus(o,{phase:'deletion',deleteMax:1,selectedIndices:[0]}),before);
+ assert.ok(before.forecast.observation.owned.some(c=>String(c.cardNo)==='5'));
 });
-test('推奨日程で経理を補える場合は、最後の直接回復札を一律に必須としない',()=>{
+test('推奨日程も含め、削除せず進む案を比較する',()=>{
  const o=observation([5,40,45,50]);o.turn=5;o.stats={experience:40,enrollment:32,satisfaction:25,accounting:15};o.turns=DEFAULT_TURNS.map(t=>({recommended:t.recommended,recommendedStatus:t.recommendedStatus,training:t.training,deletion:t.delete}));
- const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1,selectedIndices:[0]});assert.equal(advice.tone,'green');assert.equal(advice.reason,'selected-deletion-acceptable');assert.ok(advice.forecast.rawEnd.accounting>=15);
+ const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1});assert.ok(advice.deletion.checked>1);assert.equal(advice.forecast.observation.owned.length,4);
+ assert.equal(advice.deletion.keep.indices.length,0);
 });
 test('満足が高ければ体験40未満でもSへ届く経路を認める',()=>{
  const o=observation([]);o.turn=7;o.stats={experience:32,enrollment:32,satisfaction:35,accounting:15};
- const advice=recommendProStatus(o,{phase:'acquisition'});assert.equal(advice.tone,'green');assert.equal(advice.reason,'on-track-grow');
+ const advice=recommendProStatus(o,{phase:'acquisition'});assert.equal(advice.tone,'green');assert.equal(advice.outlookReason,'on-track-grow');
 });
 test('見込み入塾が体験上限に達している時は体験の補強を先に案内する',()=>{
  const o=observation([]);o.turn=7;o.stats={experience:35,enrollment:35,satisfaction:15,accounting:15};
  const advice=recommendProStatus(o,{phase:'acquisition'});assert.equal(advice.tone,'red');assert.equal(advice.axis,'experience');
 });
-test('十分な経理を持ち、削除が得点を下げない時は経理役の余剰を案内する',()=>{
+test('十分な経理でも削除利益がなければ無削除で進む',()=>{
  const o=observation([5]);o.stats={experience:55,enrollment:48,satisfaction:40,accounting:40};
- const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1});assert.equal(advice.tone,'yellow');assert.equal(advice.axis,'accounting');assert.equal(advice.reason,'surplus-safe-removal');
+ const advice=recommendProStatus(o,{phase:'deletion',deleteMax:1});assert.equal(advice.tone,'green');assert.equal(advice.text,'このまま次に進もう');assert.equal(advice.reason,'deletion-keep');
 });
 test('各パラメータがS表示でも11点なら、必要な次の得点段階を案内する',()=>{
  const o=observation([]);o.turn=7;o.stats={experience:40,enrollment:32,satisfaction:15,accounting:15};
- const advice=recommendProStatus(o,{phase:'acquisition'});assert.equal(advice.tone,'red');assert.equal(advice.reason,'next-score-milestone');assert.match(advice.text,/Sには満足25/);
+ const advice=recommendProStatus(o,{phase:'acquisition'});assert.equal(advice.tone,'red');assert.equal(advice.actionAxis,'satisfaction');assert.match(advice.text,/満足が心配/);assert.ok(advice.preferredIndices.some(i=>o.candidates[i].cardNo==='40'));
 });
 test('最終会議では未来の成長や削除効果でSへ届くと案内しない',()=>{
  const o=observation([1,2,3,4,5]);o.turn=7;o.stats={experience:40,enrollment:32,satisfaction:15,accounting:15};
@@ -68,6 +69,6 @@ test('イベントの最終会議は公式の上限超過加点を含め、成�
 test('現在の総合Sを確保済みなら、コストで下がる予測を不足と呼ばず守るように案内する',()=>{
  const o=observation([45]);o.turn=5;o.stats={experience:50,enrollment:40,satisfaction:25,accounting:15};
  assert.ok(scorer.calculateScore({difficulty:'pro',player:o.stats}).points>=12);const before=JSON.stringify(o);
- for(const phase of ['acquisition','deletion']){const advice=recommendProStatus(o,{phase,deleteMax:1});assert.equal(advice.tone,'yellow');assert.equal(advice.axis,'accounting');assert.equal(advice.reason,'current-s-protect');assert.match(advice.text,/S圏内.*経理を守/);assert.ok(advice.forecast.rawEnd.accounting<15);assert.ok(Array.from(advice.text).length<=25);}
+ for(const phase of ['acquisition','deletion']){const advice=recommendProStatus(o,{phase,deleteMax:1});assert.equal(advice.tone,'yellow');assert.equal(advice.axis,'accounting');assert.equal(advice.outlookReason,'current-s-protect');assert.doesNotMatch(advice.text,/不足|回復札/);assert.ok(advice.forecast.rawEnd.accounting<15);assert.ok(Array.from(advice.text).length<=25);}
  assert.equal(JSON.stringify(o),before);
 });

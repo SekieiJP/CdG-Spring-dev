@@ -1,14 +1,15 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0057';
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0057';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0057';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0057';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20260815-0057';
-import { ResultController } from './resultController.js?v=20260815-0057';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0057';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0057';
-import { getPlacementError } from './placementRules.js?v=20260815-0057';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0057';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0057';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0058';
+import {FloatNotificationView} from './floatNotificationView.js?v=20260815-0058';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0058';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0058';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0058';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20260815-0058';
+import { ResultController } from './resultController.js?v=20260815-0058';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0058';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0058';
+import { getPlacementError } from './placementRules.js?v=20260815-0058';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0058';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0058';
 
 /**
  * UIController - UI操作・表示制御
@@ -78,6 +79,7 @@ export class UIController {
         this.resultController = new ResultController(this);
         this.actionAnimation = new ActionAnimationController(this);
         this.mobileLayout = new MobileLayoutController(gameState);
+        this.floatNotification = new FloatNotificationView();
         this.cardDetails = new CardDetailVisibility();
         this.acquisitionAssist = new AcquisitionAssistController(this);
         this.ahiruAdvice = new AhiruAdviceController(this);
@@ -1243,20 +1245,7 @@ export class UIController {
      * フロート通知を表示
      */
     showFloatNotification(message, type = 'info') {
-        // 既存の通知を削除
-        const existing = document.querySelector('.float-notification');
-        if (existing) existing.remove();
-
-        const notification = document.createElement('div');
-        notification.className = `float-notification float-${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        // 3秒後に消える
-        setTimeout(() => {
-            notification.classList.add('fade-out');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
+        this.floatNotification.show(message,type);
     }
 
     /**
@@ -1669,8 +1658,10 @@ export class UIController {
         this.updateStatusDisplay();
         this.renderTokenDisplay();
 
-        const maxDelete = this.turnManager.getCurrentDeleteMax();
-        const organizeBonus = this.gameState.tokens?.organize || 0;
+        const saved=this.gameState.meetingContext?.turn===this.gameState.turn?this.gameState.meetingContext:null;
+        const maxDelete = saved?.deleteMax ?? this.turnManager.getCurrentDeleteMax();
+        const organizeBonus = saved?.organizeBonus ?? (this.gameState.tokens?.organize || 0);
+        this.gameState.meetingContext={turn:this.gameState.turn,deleteMax:maxDelete,organizeBonus};
         this.gameState.tokens.organize = 0;  // 消費
         const bonusInfo = document.getElementById('organize-bonus-info');
         if (bonusInfo) {
@@ -1764,7 +1755,7 @@ export class UIController {
         }
 
         // Spec1修正: 最大枚数未満の場合は確認ダイアログを表示
-        const maxDelete = this.turnManager.getCurrentDeleteMax();
+        const maxDelete = this.gameState.meetingContext?.turn===this.gameState.turn?this.gameState.meetingContext.deleteMax:this.turnManager.getCurrentDeleteMax();
         if (maxDelete > 0 && this.selectedCardsForDeletion.length < maxDelete) {
             const confirmed = confirm('まだ削除できる枚数が残っています。次のターンに進んでよろしいですか？');
             if (!confirmed) return;
@@ -1777,6 +1768,7 @@ export class UIController {
 
         this.selectedCardsForDeletion = [];
         this.gameState.tokens.organize = 0;
+        this.gameState.meetingContext = null;
 
         // 手札補充は削除（アクションフェーズ開始時に引くため）
         // 代わりに、残りの手札をデッキに戻す
@@ -2133,7 +2125,7 @@ export class UIController {
         // 現在の候補カードを取得してリフレッシュ
         const currentCards = this.gameState.currentTrainingCards || [];
         const isInspiration = this.trainingSelectionMode === 'inspiration';
-        const isInitialTraining = this.gameState.turn === 0;
+        const isInitialTraining = this.gameState.turn === 0 && !isInspiration;
         const rarity = isInspiration ? 'SR' : (isInitialTraining ? 'R' : config.training);
         const count = (isInspiration || !isInitialTraining) ? 3 : 4;
         const newCards = this.cardManager.refreshTrainingCards(rarity, currentCards, count);
@@ -3070,17 +3062,20 @@ export class UIController {
 
         const overlay = document.createElement('div');
         overlay.className = 'info-overlay';
+        overlay.setAttribute('role','dialog');overlay.setAttribute('aria-modal','true');overlay.setAttribute('aria-label',title);
         overlay.innerHTML = `
             <div class="info-overlay-header">
-                <span class="info-overlay-title">${title}</span>
-                <button class="info-overlay-close">×</button>
+                <span class="info-overlay-title">${this._escapeHTML(title)}</span>
+                <button type="button" class="info-overlay-close" aria-label="閉じる">×</button>
             </div>
             <div class="info-overlay-content"></div>
         `;
 
-        overlay.querySelector('.info-overlay-close').addEventListener('click', () => {
-            overlay.remove();
-        });
+        const previousFocus=document.activeElement;
+        const close=()=>{overlay.remove();previousFocus?.focus?.({preventScroll:true});};
+        overlay.querySelector('.info-overlay-close').addEventListener('click',close);
+        overlay.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();}});
+        queueMicrotask(()=>{if(overlay.isConnected)overlay.querySelector('.info-overlay-close').focus({preventScroll:true});});
 
         return overlay;
     }
@@ -3164,7 +3159,7 @@ export class UIController {
         } else if (phase === 'meeting') {
             // 教室会議フェーズの場合
             // 整理トークン消費後にdeleteMax=0になったケースは自動で次フェーズへ進む
-            if (this.turnManager.getCurrentDeleteMax() === 0) {
+            if ((this.gameState.meetingContext?.turn===this.gameState.turn?this.gameState.meetingContext.deleteMax:this.turnManager.getCurrentDeleteMax()) === 0) {
                 this.onConfirmMeeting();
             } else {
                 this.showMeetingPhase();
@@ -3760,7 +3755,7 @@ export class UIController {
     }
 
     confirmCalcMeetingSelection() {
-        const maxDelete = this.turnManager.getCurrentDeleteMax();
+        const maxDelete = this.gameState.meetingContext?.turn===this.gameState.turn?this.gameState.meetingContext.deleteMax:this.turnManager.getCurrentDeleteMax();
         this.selectedCardsForDeletion = [];
         const input = document.getElementById('calc-meeting-input');
         const msg = document.getElementById('calc-meeting-msg');

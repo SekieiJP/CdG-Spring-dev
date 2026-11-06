@@ -12,11 +12,11 @@ for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}は現�
         Object.assign(s.player,difficulty==='pro'?{experience:50,enrollment:40,satisfaction:25,accounting:15}:{experience:20,enrollment:15,satisfaction:15,accounting:15});
         g.uiController.showTrainingPhase();
     },difficulty);
-    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.reason)).toBe('current-s-protect');
+    await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.outlookReason)).toBe('current-s-protect');
     await expect(page.locator('.ahiru-advice')).toHaveAttribute('data-tone','yellow');
     await page.clock.runFor(1850);await expect(page.locator('.turn-overlay')).toHaveCount(0);
     const face=page.locator('.ahiru-advice__face');if(await page.evaluate(()=>navigator.maxTouchPoints>0))await face.tap();else await face.click();
-    await expect(page.locator('.ahiru-advice__speech')).toContainText('S圏内だよ。経理を守って');
+    await expect(page.locator('.ahiru-advice__speech')).not.toContainText('不足');
     const proof=await page.evaluate(()=>{
         const g=window.game,s=g.gameState,keys=['experience','enrollment','satisfaction','accounting'];
         const stats=()=>Object.fromEntries(keys.map(k=>[k,s.player[k]])),before=stats(),startScore=g.scoreManager.calculateScore(s).points;

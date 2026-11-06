@@ -1,4 +1,4 @@
-import { fingerprint, cardIdentity } from './playRecord.js?v=20260815-0057';
+import { fingerprint, cardIdentity } from './playRecord.js?v=20260815-0058';
 /**
  * CardManager - カード管理と効果処理
  */
