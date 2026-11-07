@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { RandomSource } from '../../game/js/randomSource.js?v=20260815-0059';
-import { GameState } from '../../game/js/gameState.js?v=20260815-0059';
-import { CardManager } from '../../game/js/cardManager.js?v=20260815-0059';
-import { TurnManager } from '../../game/js/turnManager.js?v=20260815-0059';
-import { SaveManager } from '../../game/js/saveManager.js?v=20260815-0059';
+import { RandomSource } from '../../game/js/randomSource.js?v=20261107-0060';
+import { GameState } from '../../game/js/gameState.js?v=20261107-0060';
+import { CardManager } from '../../game/js/cardManager.js?v=20261107-0060';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261107-0060';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261107-0060';
 import { aggregateRecords, comparePaired } from '../../solver/card-evaluation.mjs';
 
 test('乱数系列を分け、中断した位置から同じ乱数列を再開する', () => {
