@@ -97,7 +97,7 @@ test('ターン別の取得・配置・取消・削除は再読み込みと次�
     expect(scoreSubmissions[0].turnHistory).toEqual(history);
 });
 
-test('強調は黄色の細い実線で、非推奨の詳細は組み合わせの比較評価と分かる', async ({ page }) => {
+test('未選択の推奨は黄色の細い実線で、非推奨には比較評価を表示しない', async ({ page }) => {
     await page.goto('/'); await page.click('#start-game');
     await page.waitForFunction(()=>window.game?.uiController.acquisitionAssist.context);
     await page.clock.fastForward(5100);
@@ -105,7 +105,10 @@ test('強調は黄色の細い実線で、非推奨の詳細は組み合わせ�
     await expect(recommended).toHaveCSS('outline-color','rgb(253, 224, 71)');
     await expect(recommended).toHaveCSS('outline-style','solid');
     await expect(recommended).toHaveCSS('outline-width','1px');
-    await page.locator('#training-cards .card:not(.acquisition-recommended) .card-detail-hint').first().click();
-    await expect(page.locator('.tooltip-assist')).toContainText('比較評価');
-    await expect(page.locator('.tooltip-assist')).toContainText('組み合わせ');
+    const other=page.locator('#training-cards .card:not(.acquisition-recommended)').first();
+    await other.dispatchEvent('pointerdown',{pointerType:'touch',isPrimary:true,button:0,clientX:20,clientY:20});
+    await page.clock.fastForward(550);
+    await other.dispatchEvent('pointerup',{pointerType:'touch',isPrimary:true});
+    await expect(page.locator('.effect-tooltip')).toBeVisible();
+    await expect(page.locator('.tooltip-assist')).not.toContainText('比較評価');
 });

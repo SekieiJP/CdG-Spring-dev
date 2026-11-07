@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {loadAdviceCalibration} from '../../game/js/ahiruCalibrationLoader.js?v=20260815-0058';
+import {loadAdviceCalibration} from '../../game/js/ahiruCalibrationLoader.js?v=20260815-0059';
 test('補正本文を返して終了し、成功後に時間切れで通信を中断しない',async()=>{
     let signal;const data={difficulty:'pro'},result=await loadAdviceCalibration('local',{timeoutMs:10,fetchImpl:async(_url,options)=>{signal=options.signal;return {ok:true,json:async()=>data};}});
     assert.equal(result,data);await new Promise(resolve=>setTimeout(resolve,20));assert.equal(signal.aborted,false);

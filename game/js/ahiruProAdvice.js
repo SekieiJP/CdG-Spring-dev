@@ -1,7 +1,7 @@
-import {proGoal,withdrawal} from './proAcquisitionAdvisor.js?v=20260815-0058';
-import {projectProAdviceState} from './ahiruProForecast.js?v=20260815-0058';
-import {getProSGoals} from './ahiruProGoals.js?v=20260815-0058';
-import {createAhiruStatusPolicy} from './ahiruStatusPolicy.js?v=20260815-0058';
+import {proGoal,withdrawal} from './proAcquisitionAdvisor.js?v=20260815-0059';
+import {projectProAdviceState} from './ahiruProForecast.js?v=20260815-0059';
+import {getProSGoals} from './ahiruProGoals.js?v=20260815-0059';
+import {createAhiruStatusPolicy} from './ahiruStatusPolicy.js?v=20260815-0059';
 export const PRO_STATUS_WEIGHTS=Object.freeze({experience:2.7,enrollment:4.2,satisfaction:2.5,accounting:3.4});
 export const recommendProStatus=createAhiruStatusPolicy({
     difficulty:'pro',weights:PRO_STATUS_WEIGHTS,getGoals:getProSGoals,projectState:projectProAdviceState,

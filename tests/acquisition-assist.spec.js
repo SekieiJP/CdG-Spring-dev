@@ -46,7 +46,8 @@ test('推薦理由を長押し詳細で確認しても選択されない',async(
     await training(page); await page.clock.runFor(5000);
     await page.clock.runFor(32); // 追加情報の目印を次の描画フレームで更新する。
     await glow(page).first().locator('.card-detail-hint').click();
-    await expect(page.locator('.tooltip-assist')).toContainText('取得アシスト');
+    await expect(page.locator('.tooltip-assist')).toContainText('🐤');
+    await expect(page.locator('.tooltip-assist')).not.toContainText('を評価しています');
     await expect(page.locator('#training-cards .selected')).toHaveCount(0);
 });
 test('発想追加取得を再提示するたびに比較し、PROでも2枚を推薦する',async({page})=>{

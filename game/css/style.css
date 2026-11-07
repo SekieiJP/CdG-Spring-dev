@@ -73,6 +73,9 @@ body {
 #training-cards .card-detail-hint[hidden] { display: block; visibility: hidden; }
 .card { -webkit-touch-callout: none; touch-action: pan-y; }
 #training-cards .card.acquisition-recommended { outline: 1px solid #FDE047; outline-offset: -1px; box-shadow: 0 0 18px 4px rgba(253, 224, 71, .4), inset 0 0 10px rgba(253, 224, 71, .15); }
+/* 推奨の光を残しながら、選択の青枠を最前面で判別できるようにする。 */
+#training-cards .card.acquisition-recommended.selected { border-color: var(--color-primary); outline: 2px solid var(--color-primary); outline-offset: -2px; }
+.tooltip-assist:empty { display: none; }
 .tooltip-assist:not(:empty) { margin-top: 10px; font-size: 12px; color: var(--color-text-secondary); }
 .effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
 @media (display-mode: standalone) { :root { --sticky-safe-gap: 4px; } }

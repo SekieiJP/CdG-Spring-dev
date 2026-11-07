@@ -1,15 +1,15 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0058';
-import {FloatNotificationView} from './floatNotificationView.js?v=20260815-0058';
-import { bindCardInteraction } from './cardInteraction.js?v=20260815-0058';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0058';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0058';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20260815-0058';
-import { ResultController } from './resultController.js?v=20260815-0058';
-import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0058';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0058';
-import { getPlacementError } from './placementRules.js?v=20260815-0058';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0058';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0058';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20260815-0059';
+import {FloatNotificationView} from './floatNotificationView.js?v=20260815-0059';
+import { bindCardInteraction } from './cardInteraction.js?v=20260815-0059';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20260815-0059';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20260815-0059';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20260815-0059';
+import { ResultController } from './resultController.js?v=20260815-0059';
+import { ActionAnimationController } from './actionAnimationController.js?v=20260815-0059';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20260815-0059';
+import { getPlacementError } from './placementRules.js?v=20260815-0059';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20260815-0059';
+import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20260815-0059';
 
 /**
  * UIController - UI操作・表示制御
