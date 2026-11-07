@@ -1,5 +1,5 @@
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0058';
-import {acquisitionAlternatives,evaluateDeletions,evaluateRefresh} from './ahiruActionEvaluation.js?v=20260815-0058';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20260815-0059';
+import {acquisitionAlternatives,evaluateDeletions,evaluateRefresh} from './ahiruActionEvaluation.js?v=20260815-0059';
 const AXES=['experience','enrollment','satisfaction','accounting'];
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'},SAFETY=['satisfaction','accounting'];
 const EPSILON=1e-8;
