@@ -63,6 +63,8 @@ test('不足する効果が候補になく、別の数値で補う選択の場�
 test('疲労・条件未達の注意は現在の発動と残り日程に合わせる',()=>{
     const input=scene({candidates:[14,26,20],recommended:[0],stats:{experience:20,enrollment:0,satisfaction:6,accounting:7}});
     assert.equal(explain(input)[1].reason,'fatigue');assert.match(explain(input)[2].text,/満足10以上/);
+    input.observation.stats.accounting=0;assert.match(explain(input)[2].text,/いまは.*条件を満たしていない/);assert.doesNotMatch(explain(input)[2].text,/使える/);
+    input.observation.stats.accounting=7;
     input.observation.turn=7;assert.equal(explain(input)[1].text,'');
     input.observation.candidates[2]=managers.pro.allCards.find(c=>Number(c.cardNo)===51);assert.equal(explain(input)[2].reason,'late-condition');
 });

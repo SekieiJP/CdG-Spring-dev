@@ -69,7 +69,7 @@ function caution(details,observation){
     const condition=missingCondition(details,observation);
     if(condition?.type==='status'){
         const label=LABELS[condition.status],direction=condition.comparison==='gte'?'以上':'以下';
-        return answer('condition-preparation',`${label}${condition.value}${direction}にすると条件の効果を使えるよ`);
+        return answer('condition-preparation',`いまは${label}${condition.value}${direction}の条件を満たしていないよ`);
     }
     if(condition?.type==='remainingTurns')return answer('late-condition','残りターンでは条件の効果を使えないので注意');
     return empty();
