@@ -39,3 +39,22 @@
 - `git diff --check`に問題なし。HTMLと専用の表示スタイルだけの変更のため、ゲーム全体のテストは重複実行していない。
 
 確認用画像・通信不要のプレビューは、共有ワークスペースの`reviews/november-release-notes-20261107/`に保存した。ゲーム本体や本番サイトへの書込み・スコア送信は行っていない。
+
+## 開発サイトへの公開とmainの照合
+
+追加のユーザー指示により、今回の変更を[このリポジトリの開発サイト](https://sekieijp.github.io/CdG-Spring-dev/game/index.html)へ公開する。別リポジトリの`CdG-Spring`とGASは今回の公開対象ではない。`codex/async-battle`は開発中のため、チェックアウト・変更・マージを行わず、そのまま保持する。
+
+公開前にGitHubのmain `7a02d62`と全9リモートブランチ、元のチェックアウトに残るローカルブランチを読み取り照合した。
+
+| リモートブランチ | 判定・対応 |
+|---|---|
+| `main` | 照合時点は`7a02d62`。直近Pages成功は`89c32fc`で、その後の変更は公開確認の文書だけ |
+| `codex/november-release-notes-20261107` | `b17728c`の3ファイルが未統合。今回mainへ取り込む |
+| `codex/assist-feedback` | mainと同じ先頭。追加マージ不要 |
+| `codex/ahiru-feedback`、`codex/ahiru-release` | mainの祖先として統合済み |
+| `codex/pro-acquisition-assist`、`codex/shared-improvements`、`codex/event-mode` | mainの祖先として統合済み |
+| `codex/shared-mobile-feedback-20261103` | 履歴上は2コミット分岐しているが、スマホ改修は`5fd679c`で統合済み。CIのUbuntu固定も現行へ反映済み。再マージは不要 |
+
+ローカルに残る研究枝の多くもmainの祖先だった。別に残る研究結果・カード評価資料・MASTERのカード案は、今回公開するゲーム画面の更新ではないため追加しない。MASTERは従来どおり別スレッドで扱う。
+
+公開時は通常のfast-forwardでmainへ取り込み、既存のPagesワークフローを使用する。配信完了後に、配信コミットとGitHub mainのSHAを照合し、`game/`の全129ファイルを公開URLから読み取ってmainのバイト列と比較する。さらに実サイトで1000プレイ表示・5ページの文章と画像・前後移動を確認する。今回の実行コードとビルド番号は0059のまま。
