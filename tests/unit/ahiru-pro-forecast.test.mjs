@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20260815-0059';
-import {projectProDeck} from '../../game/js/proAcquisitionAdvisor.js?v=20260815-0059';
-import {createValueForecaster} from '../../solver/browser/pro-value-model.js?v=20260815-0059';
-import {projectProAdviceState} from '../../game/js/ahiruProForecast.js?v=20260815-0059';
+import {CardManager} from '../../game/js/cardManager.js?v=20260815-0060';
+import {projectProDeck} from '../../game/js/proAcquisitionAdvisor.js?v=20260815-0060';
+import {createValueForecaster} from '../../solver/browser/pro-value-model.js?v=20260815-0060';
+import {projectProAdviceState} from '../../game/js/ahiruProForecast.js?v=20260815-0060';
 const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const calibration=JSON.parse(readFileSync(new URL('../../game/data/ahiru/pro-projection-calibration.json',import.meta.url),'utf8')),versions={cardVersion:calibration.cardVersion,rankVersion:calibration.rankVersion};
 const card=n=>({...manager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});

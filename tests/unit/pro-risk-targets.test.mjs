@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {encodeRiskTarget,clipRiskPrediction} from '../../solver/browser/pro-risk-targets.js?v=20260815-0059';
+import {encodeRiskTarget,clipRiskPrediction} from '../../solver/browser/pro-risk-targets.js?v=20260815-0060';
 test('8点以下の頻度と9点までの損失の深さを区別し、8点をどちらも除外しない',()=>{
     for(const [score,failure,loss]of [[-4,1,13],[7,1,2],[8,1,1],[8.5,0,.5],[9,0,0],[12,0,0]]){assert.equal(encodeRiskTarget(score,'pro-failure8'),failure);assert.equal(encodeRiskTarget(score,'pro-shortfall9'),loss);}
 });

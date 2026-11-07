@@ -1,4 +1,4 @@
-import {CardManager} from './cardManager.js?v=20260815-0059';
+import {CardManager} from './cardManager.js?v=20260815-0060';
 /** カテゴリ名ではなく、条件・コストを満たして実際に増やせる効果を調べる。 */
 const parser=new CardManager(null),parsed=new Map(),SLOTS=['leader','teacher','staff'],AXES=['experience','enrollment','satisfaction','accounting'];
 function effect(card){const text=card.effect||'';if(!parsed.has(text)){if(parsed.size>512)parsed.clear();parsed.set(text,parser.parseEffect(text));}return parsed.get(text);}

@@ -22,8 +22,8 @@
     <link rel="icon" type="image/svg+xml" href="pwa/icon.svg">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20260815-0059">
-    <link rel="stylesheet" href="css/ahiru-advice.css?v=20260815-0059">
+    <link rel="stylesheet" href="css/style.css?v=20260815-0060">
+    <link rel="stylesheet" href="css/ahiru-advice.css?v=20260815-0060">
 </head>
 
 <body>
@@ -190,6 +190,12 @@
                 <div id="result-cards"></div>
                 <p id="result-comparison" class="result-note"></p>
                 <p id="result-submission-status" class="result-note" role="status" aria-live="polite"></p>
+                <div class="result-replay-actions">
+                    <button id="result-favorite" class="btn-secondary" type="button" disabled>☆ お気に入りに追加</button>
+                    <button id="result-replay-copy" class="btn-secondary" type="button" disabled>リプレイデータをコピー</button>
+                </div>
+                <p id="result-favorite-status" class="result-note" data-favorite-count aria-live="polite"></p>
+                <p id="result-replay-status" class="result-note" role="status" aria-live="polite"></p>
                 <div class="result-actions">
                     <button id="restart-game" class="btn-primary">もう一度プレイ</button>
                     <button id="view-result-history" class="btn-secondary">プレイ履歴</button>
@@ -253,7 +259,7 @@
                         📢 アップデート情報
                         <span id="badge-release-note" class="notify-badge hidden">！</span>
                     </a>
-                    <button id="start-result-history" class="title-link-btn" type="button">📚 履歴</button>
+                    <button id="start-result-history" class="title-link-btn" type="button">📚 プレイ履歴</button>
                 </div>
             </div>
         </div>
@@ -310,7 +316,7 @@
     </div>
 
     <!-- JavaScriptモジュール（配信資産キャッシュバスター付き v20260815-0050） -->
-    <script type="module" src="js/main.js?v=20260815-0059"></script>
+    <script type="module" src="js/main.js?v=20260815-0060"></script>
 </body>
 
 </html>

@@ -1,11 +1,12 @@
 /**
  * GameState - ゲーム状態管理
  */
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0059';
-import { makeRunId } from './defaultRules.js?v=20260815-0059';
-import { RandomSource } from './randomSource.js?v=20260815-0059';
-import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20260815-0059';
-import { HISTORY_TYPES, toHistoryEvent } from './turnHistory.js?v=20260815-0059';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0060';
+import { makeRunId } from './defaultRules.js?v=20260815-0060';
+import { RandomSource } from './randomSource.js?v=20260815-0060';
+import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20260815-0060';
+import { HISTORY_TYPES, toHistoryEvent } from './turnHistory.js?v=20260815-0060';
+import { recordReplayEvent } from './replayRecorder.js?v=20260815-0060';
 
 export class GameState {
     get config() { return getDifficultyConfig(this.difficulty); }
@@ -48,6 +49,7 @@ export class GameState {
         this.rng = new RandomSource(options.seed ?? globalThis.window?.CDG_GAME_SEED ?? this.runId);
         this.recordingMetadata = options;
         this.playRecord = null;
+        this.replayRecord = null;
         this.adviceScenes = {};
         this.meetingContext = null;
         this.turnHistory = [];
@@ -80,6 +82,7 @@ export class GameState {
     record(type, data) {
         if (HISTORY_TYPES.has(type)) this.turnHistory.push(toHistoryEvent({ turn: this.turn, phase: this.phase, type, ...data }));
         recordPlayEvent(this, type, data);
+        recordReplayEvent(this, type, data);
     }
     exportPlayRecord() {
         if (!this.playRecord) return null;

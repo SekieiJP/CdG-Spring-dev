@@ -1,4 +1,4 @@
-var CURRENT_BUILD_VERSION = 'v20260815-0059';
+var CURRENT_BUILD_VERSION = 'v20260815-0060';
 
 /* ===== ヘルパー関数 ===== */
 

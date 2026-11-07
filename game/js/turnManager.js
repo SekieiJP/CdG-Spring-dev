@@ -1,8 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20260815-0059';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0059';
+import { resolveCardAction } from './actionResolver.js?v=20260815-0060';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20260815-0060';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn } from './replayRecorder.js?v=20260815-0060';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -68,6 +69,7 @@ export class TurnManager {
                 this.startMeetingPhase();
             }
         } else if (currentPhase === 'meeting') {
+            completeReplayTurn(this.gameState);
             // 次のターンへ
             this.gameState.turn++;
 
@@ -134,6 +136,7 @@ export class TurnManager {
 
         // 手札を引く
         this.gameState.drawCards(drawCount);
+        captureReplayBoundary(this.gameState, 'action-start');
         globalThis.window?.CDG_DEBUG && console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
         globalThis.window?.CDG_DEBUG && console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
     }
@@ -151,6 +154,7 @@ export class TurnManager {
 
         // 全カードをデッキに戻す
         this.gameState.returnAllToDeck();
+        captureReplayBoundary(this.gameState, 'meeting-start');
     }
 
     /**
@@ -159,6 +163,7 @@ export class TurnManager {
      */
     executeActions() {
         if (this.gameState.pendingAction?.turn === this.gameState.turn) return this.gameState.pendingAction.actionInfo;
+        beginReplayAction(this.gameState);
         this.gameState.config.rules.beforeAction?.(this.gameState, this.cardManager);
         const placed = this.gameState.player.placed;
         const actionInfo = {
@@ -216,6 +221,7 @@ export class TurnManager {
         this.logger?.log(`イベント用有効カード枚数: ${JSON.stringify(usage)}`, 'info');
         this.gameState.config.rules.afterAction?.(this.gameState, actionInfo);
         this.gameState.pendingAction = { turn: this.gameState.turn, actionInfo };
+        captureReplayAction(this.gameState, actionInfo);
         return actionInfo;
     }
 
@@ -237,7 +243,7 @@ export class TurnManager {
         const state = this.gameState;
         return Object.assign(Object.create(Object.getPrototypeOf(state)), state, {
             player: structuredClone(state.player), tokens: { ...state.tokens },
-            ruleState: structuredClone(state.ruleState), pendingAction: null, logger: null, playRecord: null,
+            ruleState: structuredClone(state.ruleState), pendingAction: null, logger: null, playRecord: null, replayRecord: null,
             rng: state.rng.constructor.restore(state.rng.snapshot())
         });
     }
