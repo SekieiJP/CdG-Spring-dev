@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {selectActionCandidates} from '../../solver/browser/pro-action-candidates.js?v=20261107-0060';
+import {selectActionCandidates} from '../../solver/browser/pro-action-candidates.js?v=20261107-0061';
 const node=(id,value,stats={},tokens={})=>({id,value,seq:[{cardIndex:0,slot:'staff'}],state:{player:{experience:20,enrollment:16,satisfaction:14,accounting:12,...stats},tokens:{passion:0,fatigue:0,inspiration:0,organize:0,...tokens}}});
 test('似た評価上位に偏らず、成長・回復・回転の合法候補を残す',()=>{
  const values=[node('balanced',100),node('similar',99,{experience:21}),node('xp',80,{experience:40}),node('enroll',79,{enrollment:32}),node('safety-s',78,{satisfaction:25}),node('safety-c',77,{accounting:18}),node('draw',76,{}, {passion:3}),node('inspiration',75,{}, {inspiration:2})];

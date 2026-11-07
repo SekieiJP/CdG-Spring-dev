@@ -21,7 +21,7 @@ test('PWAの起動先・表示・ホーム画面アイコンを配信する', as
     }
     await expect(page.locator('meta[name="apple-mobile-web-app-capable"]')).toHaveAttribute('content', 'yes');
     await expect(page.locator('meta[name="apple-mobile-web-app-status-bar-style"]')).toHaveAttribute('content', 'black-translucent');
-    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'pwa/icon-180.png');
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href', 'pwa/icon-180.png?v=20261107-0061');
 });
 
 test('削除履歴と研修の使用済みカードはブラウザ再読み込みでも失わない', async ({ page }) => {

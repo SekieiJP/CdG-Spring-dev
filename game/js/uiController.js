@@ -1,15 +1,16 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0060';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0060';
-import { bindCardInteraction } from './cardInteraction.js?v=20261107-0060';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0060';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0060';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0060';
-import { ResultController } from './resultController.js?v=20261107-0060';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0060';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0060';
-import { getPlacementError } from './placementRules.js?v=20261107-0060';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0060';
-import { getCurrentEvent, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0060';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0061';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0061';
+import { bindCardInteraction } from './cardInteraction.js?v=20261107-0061';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0061';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0061';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0061';
+import { ResultController } from './resultController.js?v=20261107-0061';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0061';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0061';
+import { getPlacementError } from './placementRules.js?v=20261107-0061';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0061';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0061';
+import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0061';
 
 /**
  * UIController - UI操作・表示制御
@@ -620,6 +621,11 @@ export class UIController {
         if (this.gameState.event) this.gameState.phase = 'training';
         localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
         this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
+        startReplayRecording(this.gameState, {
+            cardManager: this.cardManager, scoreManager: this.scoreManager,
+            eventDefinition: this.gameState.event ? getEventDefinition(this.gameState.event.eventId) : null,
+            eventItems: Object.keys(this.gameState.event?.items || {}).map(getEventItem).filter(Boolean)
+        });
         this.slotSelectionMode = false;
         this.selectedCardForPlacement = null;
         const btnSlotManual = document.getElementById('btn-slot-manual');
@@ -1526,6 +1532,7 @@ export class UIController {
      */
     async finishActionPhase(options = {}) {
         if (!options.eventEffectsResolved) await this.resolveEventActionEffects();
+        completeReplayAction(this.gameState);
         this.updateStatusDisplay();
         this.turnManager.advancePhase();
         this.gameState.pendingAction = null;
@@ -1595,15 +1602,17 @@ export class UIController {
         const actual = this.gameState.updateStatus(item.effect.status, item.effect.amount);
         if (reservation) reservation.effectApplied = true;
         this.logger?.log(`イベント効果発動: ${itemId} 実変化=${actual} 使用=${state.usageTotal}`, 'action');
-        this.saveGameState();
-        this.gameState.event.presentation = { type: 'activation', itemId, detail: `${item.description}\n実際の変化量: ${actual >= 0 ? '+' : ''}${actual}` };
-        this.saveGameState();
         const afterStats = {
             experience: this.gameState.player.experience,
             enrollment: this.gameState.player.enrollment,
             satisfaction: this.gameState.player.satisfaction,
             accounting: this.gameState.player.accounting
         };
+        captureReplayEventEffect(this.gameState, { itemId, reservationId: reservation?.reservationId,
+            beforeStats, afterStats, actual, usageTotal: state.usageTotal });
+        this.saveGameState();
+        this.gameState.event.presentation = { type: 'activation', itemId, detail: `${item.description}\n実際の変化量: ${actual >= 0 ? '+' : ''}${actual}` };
+        this.saveGameState();
         if (animationContext) {
             await this.showEventStatusAnimation(itemId, beforeStats, afterStats, actual, animationContext);
         } else {
@@ -2296,6 +2305,7 @@ export class UIController {
         const finalDeck = this.gameState.getOwnedCards().map(card => ({ ...card }));
 
         const score = this.scoreManager.calculateScore(this.gameState);
+        finalizeReplayRecording(this.gameState, score, finalDeck);
         if (this.gameState.playRecord) {
             this.gameState.playRecord.result = { score: structuredClone(score), finalDeck: structuredClone(finalDeck) };
             try { localStorage.setItem('cdg_last_play_record', JSON.stringify(this.gameState.exportPlayRecord())); }
@@ -3993,7 +4003,7 @@ export class UIController {
         const historyButton = document.createElement('button');
         historyButton.id = 'settings-result-history';
         historyButton.className = 'btn-secondary';
-        historyButton.textContent = 'プレイ履歴（直近50ゲーム）';
+        historyButton.textContent = 'プレイ履歴（最大50件）';
         historyButton.addEventListener('click', () => { overlay.remove(); this.resultController.showHistory(); });
         content.querySelector('.settings-content')?.appendChild(historyButton);
 
@@ -4079,6 +4089,7 @@ export class UIController {
         if (this.isRestoring) return;
 
         if (this.saveManager) {
+            captureReplayBoundary(this.gameState, 'checkpoint');
             this.saveManager.save(this.gameState, this.cardManager);
         }
     }

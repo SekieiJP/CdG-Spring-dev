@@ -14,7 +14,11 @@ for (const dir of ['game/js', 'tests/unit']) {
         await writeFile(path, source);
     }
 }
-const html = await readFile('game/index.html', 'utf8');
-await writeFile('game/index.html', html.replace(/\?v=\d{8}-\d{4}/g, `?v=${suffix}`));
+for (const name of await readdir('game')) {
+    if (!name.endsWith('.html') && name !== 'manifest.webmanifest') continue;
+    const path = `game/${name}`;
+    const source = await readFile(path, 'utf8');
+    await writeFile(path, source.replace(/\?v=\d{8}-\d{4}/g, `?v=${suffix}`));
+}
 const gas = await readFile('gas/scoreReceiver.gs', 'utf8');
 await writeFile('gas/scoreReceiver.gs', gas.replace(/var CURRENT_BUILD_VERSION = '[^']+';/, `var CURRENT_BUILD_VERSION = '${version}';`));

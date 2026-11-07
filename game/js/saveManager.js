@@ -1,4 +1,4 @@
-import { RandomSource } from './randomSource.js?v=20261107-0060';
+import { RandomSource } from './randomSource.js?v=20261107-0061';
 /**
  * SaveManager - ゲーム状態の保存・復元管理
  * v20260208-1200: 中断・再開機能実装
@@ -187,6 +187,7 @@ export class SaveManager {
             pendingAction: structuredClone(gameState.pendingAction || null),
             randomState: gameState.rng.snapshot(),
             playRecord: gameState.exportPlayRecord(),
+            replayRecord: structuredClone(gameState.replayRecord || null),
             adviceScenes: structuredClone(gameState.adviceScenes || {}),
             meetingContext: structuredClone(gameState.meetingContext || null),
             turnHistory: structuredClone(gameState.turnHistory),
@@ -260,6 +261,7 @@ export class SaveManager {
         gameState.pendingAction = structuredClone(savedState.pendingAction || null);
         if (savedState.randomState) gameState.rng = RandomSource.restore(savedState.randomState);
         gameState.playRecord = structuredClone(savedState.playRecord || null);
+        gameState.replayRecord = structuredClone(savedState.replayRecord || null);
         gameState.adviceScenes = structuredClone(savedState.adviceScenes || {});
         gameState.meetingContext = structuredClone(savedState.meetingContext || null);
         gameState.turnHistory = structuredClone(savedState.turnHistory ??

@@ -2,10 +2,11 @@
 export class ResultRepository {
     static KEY = 'cdg_results_v1';
     static HISTORY_LIMIT = 50;
+    static FAVORITE_LIMIT = 49;
     static PENDING_LIMIT = 5;
     constructor(storage) {
         this.storage = storage;
-        this.memory = { history: [], pending: [] };
+        this.memory = { history: [], pending: [], recentResultIds: [] };
         this.storageError = null;
     }
 
@@ -14,8 +15,10 @@ export class ResultRepository {
         if (!this.storageError) {
             try {
                 const saved = JSON.parse(this.storage.getItem(ResultRepository.KEY) || 'null');
-                if (Array.isArray(saved?.history) && Array.isArray(saved.pending)) this.memory = saved;
-                else if (saved === null) this.memory = { history: [], pending: [] };
+                if (Array.isArray(saved?.history) && Array.isArray(saved.pending)) {
+                    this.memory = { ...saved, recentResultIds: Array.isArray(saved.recentResultIds)
+                        ? saved.recentResultIds : saved.history.slice(-ResultRepository.PENDING_LIMIT).map(row => row.resultId) };
+                } else if (saved === null) this.memory = { history: [], pending: [], recentResultIds: [] };
             } catch (error) { this.storageError = error.message; }
         }
         return structuredClone(this.memory);
@@ -32,17 +35,50 @@ export class ResultRepository {
     history() { return this.read().history; }
     pending() { return this.read().pending; }
     find(resultId) { return this.history().find(row => row.resultId === resultId) || null; }
+    favoriteCount() { return this.history().filter(row => row.favorite === true).length; }
+
+    setFavorite(resultId, favorite) {
+        const data = this.read();
+        const row = data.history.find(item => item.resultId === resultId);
+        if (!row) return { ok: false, error: '履歴が見つかりません' };
+        const next = Boolean(favorite);
+        if (next && row.favorite !== true && data.history.filter(item => item.favorite === true).length >= ResultRepository.FAVORITE_LIMIT) {
+            return { ok: false, error: 'お気に入りは49件までです。追加するには別の履歴のお気に入りを解除してください' };
+        }
+        row.favorite = next;
+        this.write(data);
+        return { ok: true, row: structuredClone(row) };
+    }
+
+    setReplay(resultId, text) {
+        const data = this.read();
+        const row = data.history.find(item => item.resultId === resultId);
+        if (!row) return null;
+        row.replayText = text;
+        delete row.replayPending;
+        this.write(data);
+        return structuredClone(row);
+    }
 
     commit(summary, payload) {
         const data = this.read();
         const existing = data.history.find(item => item.resultId === summary.resultId);
         if (existing) return existing;
-        const row = { ...structuredClone(summary), submission: 'pending' };
+        if (data.recentResultIds.includes(summary.resultId)) {
+            return { ...structuredClone(summary), favorite: false,
+                submission: data.pending.some(item => item.resultId === summary.resultId) ? 'pending' : 'sent' };
+        }
+        const row = { ...structuredClone(summary), favorite: false, submission: 'pending' };
         data.history.push(row);
-        data.history = data.history.slice(-ResultRepository.HISTORY_LIMIT);
+        while (data.history.length > ResultRepository.HISTORY_LIMIT) {
+            const index = data.history.findIndex(item => item.favorite !== true);
+            if (index === -1) break;
+            data.history.splice(index, 1);
+        }
         data.pending.push({ resultId: summary.resultId, payload: structuredClone(payload), attempts: 0, lastError: null });
-        // 未送信が少なくても、6ゲーム以上前の結果は送信待ちから外す。
-        const recentIds = new Set(data.history.slice(-ResultRepository.PENDING_LIMIT).map(item => item.resultId));
+        // お気に入り保護で保持履歴と実際の直近ゲームがずれるため、送信期限を別に保持する
+        data.recentResultIds = [...data.recentResultIds, summary.resultId].slice(-ResultRepository.PENDING_LIMIT);
+        const recentIds = new Set(data.recentResultIds);
         const removed = data.pending.filter(item => !recentIds.has(item.resultId));
         data.pending = data.pending.filter(item => recentIds.has(item.resultId));
         for (const pending of removed) {
