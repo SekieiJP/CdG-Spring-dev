@@ -1,3 +1,4 @@
+import { fingerprint, cardIdentity } from './playRecord.js?v=20261107-0061';
 /**
  * CardManager - カード管理と効果処理
  */
@@ -20,11 +21,17 @@ export class CardManager {
         try {
             const cb = (typeof window !== 'undefined' && window.BUILD_VERSION) ? '?v=' + window.BUILD_VERSION : '';
             const response = await fetch(csvPath + cb);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const csvText = await response.text();
+            this.dataVersion = await fingerprint(csvText);
 
             // 難易度切替時の混在防止
             this.allCards = [];
             this.parseCSV(csvText);
+            if (this.allCards.length === 0 || this.allCards.some(card => !card.cardName || !card.rarity || !card.effect)) {
+                this.allCards = [];
+                throw new Error('カードデータが空、または形式が不正です');
+            }
             this.logger?.log(`カードデータ読み込み完了: ${this.allCards.length}枚`, 'info');
 
             return true;
@@ -182,10 +189,10 @@ export class CardManager {
         this.trainingDecks = { N: [], R: [], SR: [], SSR: [] };
         this.trainingDiscards = { R: [], SR: [], SSR: [] };
 
-        this.allCards.forEach(card => {
+        this.allCards.forEach((card, index) => {
             if (this.trainingDecks[card.rarity]) {
-                this.trainingDecks[card.rarity].push({ ...card });
-                this.trainingDecks[card.rarity].push({ ...card });
+                this.trainingDecks[card.rarity].push({ ...card, poolId: `training:${index}:0` });
+                this.trainingDecks[card.rarity].push({ ...card, poolId: `training:${index}:1` });
             }
         });
 
@@ -205,10 +212,12 @@ export class CardManager {
     shuffleTrainingDeck(rarity) {
         const deck = this.trainingDecks[rarity];
         for (let i = deck.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
+            const j = Math.floor(this.random(`training-pool:${rarity}`) * (i + 1));
             [deck[i], deck[j]] = [deck[j], deck[i]];
         }
     }
+
+    random(key) { return this.gameState?.rng.next(key) ?? Math.random(); }
 
     /**
      * 研修カードを引く
@@ -241,8 +250,8 @@ export class CardManager {
         const usedNames = new Set();
 
         // デバッグモード: 指定カードを優先的に引く
-        if (window?.debugCards?.training?.length > 0) {
-            for (const cardName of window.debugCards.training) {
+        if (globalThis.window?.debugCards?.training?.length > 0) {
+            for (const cardName of globalThis.window.debugCards.training) {
                 if (drawn.length >= count) break;
                 if (usedNames.has(cardName)) continue;
 
@@ -272,7 +281,7 @@ export class CardManager {
         // シャッフル（Fisher-Yates）
         const shuffleNames = () => {
             for (let i = availableNames.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(this.random(`offers:${this.gameState?.turn || 0}:${this.gameState?.trainingSelectionMode || 'normal'}:${rarity}`) * (i + 1));
                 [availableNames[i], availableNames[j]] = [availableNames[j], availableNames[i]];
             }
         };
@@ -307,6 +316,7 @@ export class CardManager {
         }
 
         this.logger?.log(`研修カード提示: ${drawn.map(c => c.cardName).join(', ')} (${rarity}プール残: ${deck.length}枚)`, 'info');
+        this.gameState?.record('offer', { rarity, cards: drawn.map(cardIdentity) });
         return drawn;
     }
 
@@ -326,15 +336,19 @@ export class CardManager {
             this.trainingDiscards[rarity] = [];
         }
 
+        this.gameState?.record('refresh', { rarity, cards: currentCards.map(card => ({ cardNo:card.cardNo, cardName:card.cardName, rarity:card.rarity, effect:card.effect })) });
         // 現在の候補カードをゲームから永久除外（捨て札にも戻さない）
         currentCards.forEach(card => {
-            const idx = this.trainingDecks[rarity]?.findIndex(c => c === card);
-            if (idx > -1) {
-                this.trainingDecks[rarity].splice(idx, 1);
-            }
-            const discardIdx = this.trainingDiscards[rarity]?.findIndex(c => c === card);
+            // 候補はdraw時にコピーされ、復元でも別オブジェクトになる。参照一致で探さない。
+            const discardIdx = this.trainingDiscards[rarity].findIndex(candidate => card.poolId
+                ? candidate.poolId === card.poolId
+                : candidate.cardName === card.cardName && candidate.cardNo === card.cardNo);
             if (discardIdx > -1) {
                 this.trainingDiscards[rarity].splice(discardIdx, 1);
+            } else {
+                const idx = this.trainingDecks[rarity]?.findIndex(candidate => candidate === card ||
+                    (card.poolId && candidate.poolId === card.poolId));
+                if (idx > -1) this.trainingDecks[rarity].splice(idx, 1);
             }
         });
 
@@ -363,7 +377,8 @@ export class CardManager {
         return {
             '室長': 'leader',
             '講師': 'teacher',
-            '事務': 'staff'
+            '事務': 'staff',
+            ...Object.fromEntries((this.slots || []).map(slot => [slot.name, slot.id]))
         };
     }
 
@@ -700,7 +715,12 @@ export class CardManager {
      */
     simulateCardEffect(card, staff, stats, recommendedStatus = null, gameState = null) {
         const beforeStats = { ...stats };
-        const parsed = this.parseEffect(card.effect || '');
+        const parsed = this.parseEffect(card?.effect || '');
+        const skippedReason = !card?.effect ? 'empty_effect'
+            : parsed.staffRestrictions.length && !parsed.staffRestrictions.includes(staff) ? 'staff_restriction' : null;
+        if (skippedReason) {
+            return { beforeStats, afterStats: { ...beforeStats }, applied: false, skippedReason, shortageEffects: [] };
+        }
         const statsSnapshot = { ...beforeStats };
         const applicableEffects = this.getApplicableEffects(parsed, staff, statsSnapshot, gameState);
         const shortageEffects = this.getCostShortageEffects(applicableEffects, beforeStats);

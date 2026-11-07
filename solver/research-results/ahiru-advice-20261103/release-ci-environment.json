@@ -1,0 +1,9 @@
+{
+  "runId": 41663689475,
+  "headSha": "1b784e333f27c22c6bb06044069a9c139c952dc5",
+  "result": "failure before tests",
+  "step": "npx playwright install --with-deps chromium webkit",
+  "reason": "Playwright 1.58.2 does not support ubuntu26.04-x64 selected by ubuntu-latest",
+  "fix": "Pin test job to supported ubuntu-24.04; keep locked dependencies, production code and tests unchanged",
+  "retest": "GitHub pull request CI"
+}

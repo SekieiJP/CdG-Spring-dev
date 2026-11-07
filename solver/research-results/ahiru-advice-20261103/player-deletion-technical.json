@@ -1,0 +1,92 @@
+{
+  "createdAt": "2026-11-03T11:28:03.672Z",
+  "purpose": "報告削除の本体接続と実取得/実削除の照合。3条件各1ゲームの技術確認のみで、得点の強さの傾向ではない。",
+  "fingerprints": {
+    "strategyVersion": "29ad73b91ff76d28eb1eab171512733e3c4436d1522b1fdc6136a3ddca62092c",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "checks": [
+    {
+      "id": "baseline",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-deletion-technical-20261103/baseline.json",
+      "sha256": "547de99f6e4e1c78f2a625ffbe86f7678e2965a73f0abb46a46bad381ef59204",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0
+    },
+    {
+      "id": "player-basic",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-deletion-technical-20261103/player-basic.json",
+      "sha256": "bdbff74476fdaed67ef45fc240be1ee7c16c47c529e3852525b3d3ff0b833754",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0,
+      "removedBasics": 4,
+      "removedOthers": 0,
+      "accountingDeleted": false,
+      "allBasicsRemoved": false,
+      "firstQuestion": true,
+      "secondMeeting": true
+    },
+    {
+      "id": "player-basic-consistent",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-deletion-technical-20261103/player-basic-consistent.json",
+      "sha256": "728f9565379f13b0094eb35d959e7135dd1f8030e4f5ad877aac31a5db225434",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0,
+      "removedBasics": 4,
+      "removedOthers": 0,
+      "accountingDeleted": false,
+      "allBasicsRemoved": false,
+      "firstQuestion": true,
+      "secondMeeting": true
+    }
+  ],
+  "configFile": "solver/research-scenarios/ahiru-pro-player-deletion-configs.json",
+  "configSha256": "9299daf082d150b4824ee4b34b5b881f7b917f81d12f778d8f17d47e032c849f",
+  "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+  "baselineTraceMatchesOldV1": true,
+  "reference": {
+    "file": "solver/local-runs/pro-mean125/ahiru-failure-technical-20261103/legacy-zero.json",
+    "sha256": "e09772088f1279f8aba71dc8511f4f5036aeb78a1dbf50d0990de19a50d82020"
+  },
+  "negativeChecks": {
+    "oldAggressiveRejectedAsReportedPolicy": true,
+    "declaredDeletionTamperRejected": true
+  },
+  "unitTests": {
+    "passed": 189,
+    "log": "/private/tmp/cdg-pro-player-deletion-unit.log",
+    "logSha256": "332fbf8ed8c077148c637d9d5674d9011b9e746ed6092de6e1de714e7bcb7a70"
+  },
+  "nextDevelopment": {
+    "seed": "ahiru-pro-ahiru-player-deletion-development-v1-20261103",
+    "n": 250,
+    "ids": [
+      "baseline",
+      "player-basic",
+      "player-basic-consistent"
+    ]
+  },
+  "reservedValidation": {
+    "seed": "ahiru-pro-ahiru-stability-validation-v4-20261103",
+    "n": 1000
+  },
+  "modelTrainingAudit": {
+    "modelFile": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+    "dataFile": "solver/local-runs/pro-mean125/value-v1/dataset.json",
+    "datasetSha256": "b0cc7acc5760f00509dc979c5a1c8627fef3e460e486581af69bfe809ad1786c",
+    "counts": {
+      "trainSeeds": 3000,
+      "validationSeeds": 250,
+      "trainRows": 73261,
+      "validationRows": 6071
+    },
+    "overlapWithReservedValidation": 0
+  },
+  "auditorSha256": "41f37479f6efb76c5428e9f894e47cb3e7efe96eb56a3c3a537ab4e04be04ad6"
+}

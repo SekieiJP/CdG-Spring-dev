@@ -1,0 +1,153 @@
+{
+  "createdAt": "2026-11-03T13:38:15.476Z",
+  "purpose": "4条件各1ゲームの本体接続と実削除の照合。少数の得点を強さの証拠に使わない。",
+  "fingerprints": {
+    "strategyVersion": "cb09c4d03296acd8373e9dad98e1a203edcad3d8457444aaa6f2cf307fff79e0",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "checks": [
+    {
+      "id": "baseline",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-components-technical-20261103/baseline.json",
+      "sha256": "62a5e51bc5d9d401f97eaccc5dcf16c84e1ec0036a76cd71321bfc7e3ebe7d71",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0
+    },
+    {
+      "id": "strict-control",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-components-technical-20261103/strict-control.json",
+      "sha256": "37d795d91c16196f9ea801a7ef21b20a5f74c59b8f343f024dcbb2a5154b6650",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0,
+      "scope": "all",
+      "accountingRule": "current-and-forecast",
+      "removedBasics": 4,
+      "removedOthers": 0,
+      "accountingDeleted": false,
+      "allBasicsRemoved": false,
+      "firstQuestion": true,
+      "secondMeeting": true
+    },
+    {
+      "id": "forecast-cash",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-components-technical-20261103/forecast-cash.json",
+      "sha256": "42cfbcb6b9a7c29a795ab426bd732d9d1457856853ad280366021d77b3ef1ef4",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0,
+      "scope": "all",
+      "accountingRule": "forecast",
+      "removedBasics": 4,
+      "removedOthers": 0,
+      "accountingDeleted": false,
+      "allBasicsRemoved": false,
+      "firstQuestion": true,
+      "secondMeeting": true
+    },
+    {
+      "id": "opening-only",
+      "file": "solver/local-runs/pro-mean125/ahiru-player-components-technical-20261103/opening-only.json",
+      "sha256": "cea7ee517f1fee400da1feee321272ec5ae2bf2301b1ef9aa7c7fc80a47593ad",
+      "placementTurns": 8,
+      "allStartsAccepted": true,
+      "rerolls": 0,
+      "scope": "opening",
+      "accountingRule": "current-and-forecast",
+      "removedBasics": 4,
+      "removedOthers": 0,
+      "accountingDeleted": false,
+      "allBasicsRemoved": false,
+      "firstQuestion": true,
+      "secondMeeting": true
+    }
+  ],
+  "referenceChecks": [
+    {
+      "id": "baseline",
+      "oldFile": "solver/local-runs/pro-mean125/ahiru-player-deletion-technical-20261103/baseline.json",
+      "oldSha256": "547de99f6e4e1c78f2a625ffbe86f7678e2965a73f0abb46a46bad381ef59204",
+      "allActualEventsAndFinalScoreMatch": true
+    },
+    {
+      "id": "strict-control",
+      "oldFile": "solver/local-runs/pro-mean125/ahiru-player-deletion-technical-20261103/player-basic-consistent.json",
+      "oldSha256": "728f9565379f13b0094eb35d959e7135dd1f8030e4f5ad877aac31a5db225434",
+      "allActualEventsAndFinalScoreMatch": true
+    }
+  ],
+  "priorAll250AuditsStillMatch": true,
+  "invalidRuleFieldsRejected": [
+    null,
+    0,
+    false,
+    "",
+    "unknown"
+  ],
+  "declaredDeletionTamperRejected": true,
+  "auditorSha256": "20bb285bf7873c0d0552762de7857f7d862f856c3ee4f857f8a437760b53013e",
+  "unitTests": {
+    "passed": 193,
+    "log": "/private/tmp/cdg-pro-player-components-unit.log",
+    "logSha256": "5e861a5622718a6f26cc71d8068e513855b048c1f9b400986150857ec362247d"
+  },
+  "configFile": "solver/research-scenarios/ahiru-pro-player-components-configs.json",
+  "configSha256": "2e7174b2f133c73cda99102a9b4a73dd8ea2055f8ba713458fb978576ab30962",
+  "protocolFile": "solver/research-scenarios/ahiru-pro-player-components-plan.json",
+  "protocolSha256": "c3a13f9ab824cb79ba4c5076df7ac6fa646405f411c09f5aeba38a2283452143",
+  "model": {
+    "file": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "sha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba",
+    "datasetFile": "solver/local-runs/pro-mean125/value-v1/dataset.json",
+    "datasetSha256": "b0cc7acc5760f00509dc979c5a1c8627fef3e460e486581af69bfe809ad1786c",
+    "counts": {
+      "trainSeeds": 3000,
+      "validationSeeds": 250,
+      "trainRows": 73261,
+      "validationRows": 6071
+    },
+    "overlapWithReservedValidation": 0
+  },
+  "nextDevelopment": {
+    "stage": "ahiru-player-deletion-development-v2-20261103",
+    "seed": "ahiru-pro-ahiru-player-deletion-development-v2-20261103",
+    "n": 250,
+    "ids": [
+      "baseline",
+      "strict-control",
+      "forecast-cash",
+      "opening-only"
+    ],
+    "allStartsAccepted": true,
+    "rerolls": 0
+  },
+  "selection": {
+    "eligibleIds": [
+      "forecast-cash",
+      "opening-only"
+    ],
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 4,
+    "order": [
+      "atMost8.count ascending",
+      "mean descending"
+    ],
+    "controlsNotEligible": [
+      "baseline",
+      "strict-control"
+    ],
+    "interpretation": "既に独立検証で未達の基準や、今回変更しない旧報告方針を再抽選しない。2つの新仮説から目標に近い候補を選ぶ探索で、対照より優れるという証明ではない。"
+  },
+  "reservedValidation": {
+    "stage": "ahiru-stability-validation-v4-20261103",
+    "seed": "ahiru-pro-ahiru-stability-validation-v4-20261103",
+    "n": 1000,
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "meanAtLeast": 12,
+    "atMost8CountAtMost": 19
+  }
+}

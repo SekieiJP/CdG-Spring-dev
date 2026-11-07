@@ -1,0 +1,93 @@
+{
+  "createdAt": "2026-11-03T13:25:15.249Z",
+  "purpose": "報告の「経理が順調」の別解釈の対象を、既存の全250開始の公開会議で診断する。新しいゲームの実行は0。",
+  "manifestFile": "solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/manifest.json",
+  "manifestSha256": "e153140b693ca7ef0dc3eb585b4badbb306708f640d3c642a5340c6980a0fef7",
+  "id": "player-basic-consistent",
+  "rawFile": "/private/tmp/cdg-pro-player-deletion/solver/local-runs/pro-mean125/ahiru-player-deletion-development-v1-20261103/player-basic-consistent-batch0.json",
+  "rawSha256": "c7ec2a6d6f0414b1d8621322229e938c2aa7685febb67a0fb2b3d4ff5688ee3f",
+  "sources": [
+    {
+      "file": "solver/ahiru-player-cash-diagnostics.mjs",
+      "sha256": "1a53b4450046e9ed5fc51de938844b4eddc622018933160d206a11e2a1f00574"
+    },
+    {
+      "file": "solver/browser/ahiru-player-cash-diagnostics.js",
+      "sha256": "67b758da4d603614d6dc7a31391959393a1d093addb85af001c42c6beb8008db"
+    },
+    {
+      "file": "solver/ahiru-browser.mjs",
+      "sha256": "1e462343508930a47efeafb57e25baf744f79bb34c8907d2c7f0c029a319048b"
+    },
+    {
+      "file": "solver/browser/pro-strategy-research.js",
+      "sha256": "14375a05fe95228acf3c0e936f31f5941bf9a44ed569c60bbee8a498fbb17bd2"
+    },
+    {
+      "file": "game/js/proAcquisitionAdvisor.js",
+      "sha256": "bff3e55ab6224881f28afc4ad6817985bd41ed8bd3daa602d413f58a69cc27d1"
+    },
+    {
+      "file": "game/js/scoreManager.js",
+      "sha256": "cb524e46ccc12a9da5c484dff54d4384397d8427cf57a21c1d866bba018b235e"
+    }
+  ],
+  "result": {
+    "games": 250,
+    "meetings": 619,
+    "frames": 532,
+    "groups": {
+      "currentBelow15ButForecastAtLeast15": {
+        "games": 149,
+        "endedAtMost8": 4
+      },
+      "currentBelow15ButForecastAtLeast17": {
+        "games": 108,
+        "endedAtMost8": 2
+      },
+      "currentAtLeast15ButForecastBelow15": {
+        "games": 1,
+        "endedAtMost8": 0
+      }
+    },
+    "examples": [
+      {
+        "gameId": "g0",
+        "turn": 2,
+        "currentAccounting": 6,
+        "forecastWithoutBasic": 18.61714285714286
+      },
+      {
+        "gameId": "g0",
+        "turn": 3,
+        "currentAccounting": 14,
+        "forecastWithoutBasic": 23.69883116883117
+      },
+      {
+        "gameId": "g2",
+        "turn": 2,
+        "currentAccounting": 7,
+        "forecastWithoutBasic": 15.30967741935484
+      },
+      {
+        "gameId": "g2",
+        "turn": 3,
+        "currentAccounting": 13,
+        "forecastWithoutBasic": 20.49885617316267
+      },
+      {
+        "gameId": "g3",
+        "turn": 3,
+        "currentAccounting": 12,
+        "forecastWithoutBasic": 18.23076923076923
+      },
+      {
+        "gameId": "g4",
+        "turn": 2,
+        "currentAccounting": 11,
+        "forecastWithoutBasic": 15.200000000000001
+      }
+    ],
+    "interpretation": "同じ開始の複数会議を別の開始と数えない、全開始の記述件数。将来の実結果は件数の併記だけで、投影には渡さない。条件を緩める介入の改善数や因果効果ではない。250未満の該当群の条件付き成功率を推定しない。"
+  }
+}

@@ -2,7 +2,7 @@
  * カードエフェクトパーサーの単体テスト
  * ブラウザ上でJavaScriptモジュールをテスト
  */
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('カード効果パーサーテスト', () => {
     test.beforeEach(async ({ page }) => {
@@ -77,11 +77,12 @@ test.describe('カード効果テスト - 基本効果', () => {
     });
 
     test('カードをスタッフスロットに配置できる', async ({ page }) => {
-        // 最初のカードを室長スロットにドラッグ
+        // タッチ端末でも利用できる手動指定で配置する
         const card = page.locator('#hand-cards .card').first();
         const slot = page.locator('#slot-leader');
-
-        await card.dragTo(slot);
+        await page.click('#btn-slot-manual');
+        await card.click();
+        await slot.click();
 
         // スロットにカードが配置されたことを確認
         await expect(slot.locator('.card')).toHaveCount(1);
@@ -640,10 +641,11 @@ test.describe('[情熱✊] トークン効果テスト', () => {
             game.uiController.showActionPhase();
         });
 
-        await expect(page.locator('#draw-notification')).toContainText('✊情熱 +2');
+        await expect(page.locator('#draw-notification-top')).toContainText('✊情熱 +2');
+        await expect(page.locator('#draw-notification-bottom')).toContainText('✊情熱 +2');
         const order = await page.evaluate(() => {
             const staffArea = document.querySelector('.staff-area');
-            const drawNotification = document.querySelector('#draw-notification');
+            const drawNotification = document.querySelector('#draw-notification-top');
             const handArea = document.querySelector('.hand-area');
             return staffArea.compareDocumentPosition(drawNotification) === Node.DOCUMENT_POSITION_FOLLOWING &&
                 drawNotification.compareDocumentPosition(handArea) === Node.DOCUMENT_POSITION_FOLLOWING;

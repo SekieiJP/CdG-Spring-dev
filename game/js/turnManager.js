@@ -1,21 +1,17 @@
 /**
  * TurnManager - ターン進行管理
  */
+import { resolveCardAction } from './actionResolver.js?v=20261107-0061';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261107-0061';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn } from './replayRecorder.js?v=20261107-0061';
+
 export class TurnManager {
-    static TURN_CONFIG = [
-        { name: '1月下旬', week: '1月下旬', training: 'R', recommended: '動員', recommendedStatus: 'experience', delete: 1 },
-        { name: '2月上旬', week: '2月上旬', training: 'SR', recommended: '応対', recommendedStatus: 'satisfaction', delete: 1 },
-        { name: '2月下旬', week: '2月下旬', training: 'SSR', recommended: '動員', recommendedStatus: 'experience', delete: 1 },
-        { name: '3月上旬', week: '3月上旬', training: 'R', recommended: '庶務', recommendedStatus: 'accounting', delete: 1 },
-        { name: '3月下旬', week: '3月下旬', training: 'SSR', recommended: '教務', recommendedStatus: 'enrollment', delete: 0 },
-        { name: '4月上旬', week: '4月上旬', training: 'SR', recommended: '応対', recommendedStatus: 'satisfaction', delete: 0 },
-        { name: '4月下旬', week: '4月下旬', training: 'SR', recommended: '教務', recommendedStatus: 'enrollment', delete: 0 },
-        { name: '5月上旬', week: '5月上旬', training: 'SR', recommended: '庶務', recommendedStatus: 'accounting', delete: 0 }
-    ];
+    static TURN_CONFIG = DEFAULT_TURNS;
 
     constructor(gameState, cardManager, logger) {
         this.gameState = gameState;
         this.cardManager = cardManager;
+        this.cardManager.gameState = gameState;
         this.logger = logger;
     }
 
@@ -23,7 +19,7 @@ export class TurnManager {
      * 現在のターン設定を取得
      */
     getCurrentTurnConfig() {
-        return TurnManager.TURN_CONFIG[this.gameState.turn];
+        return this.getTurnConfigs()[this.gameState.turn];
     }
 
     /**
@@ -38,7 +34,7 @@ export class TurnManager {
      * 全ターン設定を取得
      */
     getTurnConfigs() {
-        return TurnManager.TURN_CONFIG;
+        return this.gameState.config.turns;
     }
 
     /**
@@ -47,7 +43,7 @@ export class TurnManager {
     advancePhase() {
         const currentPhase = this.gameState.phase;
         this.logger?.log(`[DEBUG] advancePhase呼び出し: currentPhase=${currentPhase}`, 'info');
-        window.CDG_DEBUG && console.log('[DEBUG] advancePhase: currentPhase=', currentPhase);
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] advancePhase: currentPhase=', currentPhase);
 
         if (currentPhase === 'start') {
             this.gameState.phase = 'training';
@@ -56,12 +52,13 @@ export class TurnManager {
         } else if (currentPhase === 'training') {
             this.gameState.phase = 'action';
             this.logger?.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し', 'info');
-            window.CDG_DEBUG && console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
+            globalThis.window?.CDG_DEBUG && console.log('[DEBUG] training→action遷移、startActionPhaseを呼び出し');
             this.startActionPhase();
         } else if (currentPhase === 'action') {
+            this.gameState.pendingAction = null;
             const maxDelete = this.getCurrentDeleteMax();
             // 最終ターン(turn===7)は会議スキップ。それ以外はmaxDelete>0なら開く
-            if (maxDelete === 0 || this.gameState.turn === 7) {
+            if (maxDelete === 0 || this.gameState.turn === this.gameState.totalTurns - 1) {
                 this.logger?.log('[DEBUG] 会議フェーズをスキップして次ターンへ遷移', 'info');
                 this.gameState.returnAllToDeck(); // 手札・配置カードをデッキへ戻す
                 this.gameState.tokens.organize = 0; // 整理トークンをリセット（最終ターンで残存する可能性あり）
@@ -72,13 +69,14 @@ export class TurnManager {
                 this.startMeetingPhase();
             }
         } else if (currentPhase === 'meeting') {
+            completeReplayTurn(this.gameState);
             // 次のターンへ
             this.gameState.turn++;
 
-            if (this.gameState.turn >= 8) {
+            if (this.gameState.turn >= this.gameState.totalTurns) {
                 // ゲーム終了
                 this.gameState.phase = 'end';
-                this.logger?.log('ゲーム終了: 8ターン完了', 'info');
+                this.logger?.log(`ゲーム終了: ${this.gameState.totalTurns}ターン完了`, 'info');
             } else {
                 this.gameState.phase = 'training';
                 const config = this.getCurrentTurnConfig();
@@ -87,7 +85,7 @@ export class TurnManager {
             }
         } else {
             this.logger?.log(`[DEBUG] 未知のフェーズ: ${currentPhase}`, 'error');
-            window.CDG_DEBUG && console.error('[DEBUG] 未知のフェーズ:', currentPhase);
+            globalThis.window?.CDG_DEBUG && console.error('[DEBUG] 未知のフェーズ:', currentPhase);
         }
     }
 
@@ -104,9 +102,9 @@ export class TurnManager {
      */
     startActionPhase() {
         this.logger?.log('教室行動フェーズ開始', 'info');
-        window.CDG_DEBUG && console.log('[DEBUG] startActionPhase: 実行開始');
-        window.CDG_DEBUG && console.log('[DEBUG] デッキ枚数（シャッフル前）:', this.gameState.player.deck.length);
-        window.CDG_DEBUG && console.log('[DEBUG] 手札枚数（ドロー前）:', this.gameState.player.hand.length);
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] startActionPhase: 実行開始');
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] デッキ枚数（シャッフル前）:', this.gameState.player.deck.length);
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] 手札枚数（ドロー前）:', this.gameState.player.hand.length);
 
         if (!this.gameState.tokens) {
             this.gameState.tokens = { passion: 0, inspiration: 0, organize: 0, fatigue: 0 };
@@ -134,12 +132,13 @@ export class TurnManager {
 
         // デッキをシャッフル
         this.gameState.shuffleDeck();
-        window.CDG_DEBUG && console.log('[DEBUG] デッキシャッフル完了');
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] デッキシャッフル完了');
 
         // 手札を引く
         this.gameState.drawCards(drawCount);
-        window.CDG_DEBUG && console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
-        window.CDG_DEBUG && console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
+        captureReplayBoundary(this.gameState, 'action-start');
+        globalThis.window?.CDG_DEBUG && console.log(`[DEBUG] 手札を${drawCount}枚引いた後の手札枚数:`, this.gameState.player.hand.length);
+        globalThis.window?.CDG_DEBUG && console.log('[DEBUG] 手札内容:', this.gameState.player.hand);
     }
 
     /**
@@ -155,6 +154,7 @@ export class TurnManager {
 
         // 全カードをデッキに戻す
         this.gameState.returnAllToDeck();
+        captureReplayBoundary(this.gameState, 'meeting-start');
     }
 
     /**
@@ -162,8 +162,10 @@ export class TurnManager {
      * @returns {Object} 各カードの効果情報
      */
     executeActions() {
+        if (this.gameState.pendingAction?.turn === this.gameState.turn) return this.gameState.pendingAction.actionInfo;
+        beginReplayAction(this.gameState);
+        this.gameState.config.rules.beforeAction?.(this.gameState, this.cardManager);
         const placed = this.gameState.player.placed;
-        const config = this.getCurrentTurnConfig();
         const actionInfo = {
             cardEffects: {} // staff -> { beforeStats, afterStats, isRecommended, cards }
         };
@@ -171,7 +173,7 @@ export class TurnManager {
         this.logger?.log('--- アクション実行開始 ---', 'info');
 
         // 各スタッフのカード効果を実行（おすすめボーナスも含めて記録）
-        const staffOrder = ['leader', 'teacher', 'staff'];
+        const staffOrder = this.gameState.slotIds;
         staffOrder.forEach(staff => {
             const cards = Array.isArray(placed[staff]) ? placed[staff] : (placed[staff] ? [placed[staff]] : []);
             if (cards.length > 0) {
@@ -186,51 +188,9 @@ export class TurnManager {
                 const perCard = [];
 
                 cards.forEach(card => {
-                    const beforeStats = {
-                        experience: this.gameState.player.experience,
-                        enrollment: this.gameState.player.enrollment,
-                        satisfaction: this.gameState.player.satisfaction,
-                        accounting: this.gameState.player.accounting
-                    };
-
-                    const isRecommended = !!(config.recommended && card.category === config.recommended);
-                    const costCheck = this.cardManager.simulateCardEffect(card, staff, beforeStats, null, this.gameState);
-                    let effectResult = costCheck;
-                    let recommendedAppliedForCard = false;
-
-                    if (costCheck.applied && isRecommended && config.recommendedStatus) {
-                        this.gameState.updateStatus(config.recommendedStatus, 1);
-                        this.logger?.log(`おすすめ行動ボーナス: ${config.recommended} x1`, 'action');
-                        recommendedApplied = true;
-                        recommendedAppliedForCard = true;
-                    }
-
-                    if (costCheck.applied) {
-                        effectResult = this.cardManager.applyCardEffect(card, staff, this.gameState, beforeStats, {
-                            costStats: beforeStats
-                        });
-                    } else {
-                        this.logger?.log(`コスト不足: ${card.cardName}の効果は無効`, 'warning');
-                    }
-
-                    const afterStats = {
-                        experience: this.gameState.player.experience,
-                        enrollment: this.gameState.player.enrollment,
-                        satisfaction: this.gameState.player.satisfaction,
-                        accounting: this.gameState.player.accounting
-                    };
-
-                    perCard.push({
-                        cardName: card.cardName,
-                        category: card.category,
-                        beforeStats,
-                        afterStats,
-                        isRecommended,
-                        recommendedApplied: recommendedAppliedForCard,
-                        applied: effectResult.applied,
-                        skippedReason: effectResult.skippedReason,
-                        shortageEffects: effectResult.shortageEffects || []
-                    });
+                    const resolved = this.resolveCardAction(card, staff);
+                    recommendedApplied ||= resolved.recommendedApplied;
+                    perCard.push(resolved);
                 });
 
                 const staffAfterStats = {
@@ -259,7 +219,33 @@ export class TurnManager {
         }));
         this.gameState.eventCardUsage = usage;
         this.logger?.log(`イベント用有効カード枚数: ${JSON.stringify(usage)}`, 'info');
+        this.gameState.config.rules.afterAction?.(this.gameState, actionInfo);
+        this.gameState.pendingAction = { turn: this.gameState.turn, actionInfo };
+        captureReplayAction(this.gameState, actionInfo);
         return actionInfo;
+    }
+
+    /** 本体とsolverが同じコスト・条件・おすすめ順序で1枚を解決する入口。 */
+    resolveCardAction(card, staff, state = this.gameState) {
+        const isSimulation = state !== this.gameState;
+        const manager = isSimulation
+            ? Object.assign(Object.create(this.cardManager), { logger: null, gameState: state,
+                ...(this.gameState.config.rules.resolveCard ? {
+                    trainingDecks: structuredClone(this.cardManager.trainingDecks),
+                    trainingDiscards: structuredClone(this.cardManager.trainingDiscards)
+                } : {}) })
+            : this.cardManager;
+        const resolver = this.gameState.config.rules.resolveCard || resolveCardAction;
+        return resolver(manager, state, card, staff, this.getTurnConfigs()[state.turn], isSimulation ? null : this.logger);
+    }
+
+    createSimulationState() {
+        const state = this.gameState;
+        return Object.assign(Object.create(Object.getPrototypeOf(state)), state, {
+            player: structuredClone(state.player), tokens: { ...state.tokens },
+            ruleState: structuredClone(state.ruleState), pendingAction: null, logger: null, playRecord: null, replayRecord: null,
+            rng: state.rng.constructor.restore(state.rng.snapshot())
+        });
     }
 
     /**
@@ -286,11 +272,13 @@ export class TurnManager {
 
         // 研修候補プールを初期化（各カード2枚ずつ）
         this.cardManager.initTrainingPool();
+        this.gameState.startRecording({ cardVersion: this.cardManager.dataVersion, rankVersion: this.cardManager.rankVersion,
+            catalog: this.cardManager.allCards.map(card => ({ ...card })) });
 
         // 基本カード（N）を取得
         const basicCards = this.cardManager.getBasicCards();
         basicCards.forEach(card => {
-            this.gameState.player.deck.push(card);
+            this.gameState.addToDeck(card);
         });
 
         this.logger?.log(`基本カード${basicCards.length}枚をデッキに追加`, 'info');

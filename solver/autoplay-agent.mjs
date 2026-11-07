@@ -2,8 +2,13 @@
 import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { chromium } from 'playwright';
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { readdir } from 'node:fs/promises';
+import {prepareSceneBatch} from './pro-card-scene-input.mjs';
+import {prepareOpeningTableInput} from './pro-opening-table-input.mjs';
 import { buildNaturalLanguageReport } from './reportBuilder.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -12,6 +17,7 @@ const repoRoot = path.resolve(__dirname, '..');
 const gameRoot = path.join(repoRoot, 'game');
 
 function normalizePolicyName(name) {
+    if (['pro_goal','pro_engine','pro_bridge','pro_precision'].includes(name)) return name;
     if (name === 'random') return 'random';
     if (name === 'beam') return 'beam';
     if (name === 'deep_beam' || name === 'deepbeam' || name === 'deep') return 'deep_beam';
@@ -100,11 +106,23 @@ function parseArgs(argv) {
     const args = {
         episodes: 200,
         difficulty: 'fresh',
+        acquisitionModel: null,
+        researchConfig: null,
+        refreshPolicy: 'auto',
+        refreshModel: null,
+        acquisitionAblation: null,
+        episodeOffset: 0,
+        decisionFile: null,
+        decisionBatch: null,
+        sceneArm: null,
+        forcedChoice: null,
         policies: null,
         output: 'solver/latest-simulation.json',
         report: 'solver/latest-report.md',
         traceSamples: 0,
         headful: false,
+        seed: 'cdg-evaluation-1',
+        replacement: null,
         port: 4173
     };
 
@@ -116,8 +134,30 @@ function parseArgs(argv) {
             args.episodes = Math.max(1, Number.parseInt(next, 10) || args.episodes);
             i += 1;
         } else if (key === '--difficulty' && next) {
-            args.difficulty = next.toLowerCase() === 'pro' ? 'pro' : 'fresh';
+            args.difficulty = next.toLowerCase();
             i += 1;
+        } else if (key === '--decision-file' && next) {
+            args.decisionFile = next; i++;
+        } else if (key === '--decision-batch' && next) {
+            args.decisionBatch=next; i++;
+        } else if (key === '--scene-arm' && next) {
+            if(!['target','reference'].includes(next))throw Error('--scene-arm はtargetまたはreference');
+            args.sceneArm=next; i++;
+        } else if (key === '--forced-choice' && next) {
+            if (next !== 'skip' && !/^\d+(,\d+)*$/.test(next)) throw new Error('--forced-choice は候補番号0,1など、またはskip');
+            args.forcedChoice = next === 'skip' ? [] : next.split(',').map(Number); i++;
+        } else if (key === '--refresh-policy' && next) {
+            if(!['auto','legacy','public','none'].includes(next))throw new Error('--refresh-policy: auto|legacy|public|none');
+            args.refreshPolicy=next;i++;
+        } else if(key === '--refresh-model' && next){args.refreshModel=next;i++;
+        } else if (key === '--research-config' && next) {
+            args.researchConfig = next; i++;
+        } else if (key === '--acquisition-model' && next) {
+            args.acquisitionModel = next; i++;
+        } else if (key === '--acquisition-ablation' && next) {
+            args.acquisitionAblation = next; i++;
+        } else if (key === '--episode-offset' && next) {
+            args.episodeOffset = Math.max(0, Number.parseInt(next, 10) || 0); i++;
         } else if (key === '--policies' && next) {
             args.policies = next
                 .split(',')
@@ -133,6 +173,11 @@ function parseArgs(argv) {
         } else if (key === '--trace-samples' && next) {
             args.traceSamples = Math.max(0, Number.parseInt(next, 10) || 0);
             i += 1;
+        } else if (key === '--seed' && next) {
+            args.seed = next; i++;
+        } else if (key === '--replace-card' && next) {
+            if (!/^\d{1,2}:\d{1,2}$/.test(next)) throw new Error('--replace-card は元No:差替Noです');
+            args.replacement = next; i++;
         } else if (key === '--no-report') {
             args.report = null;
         } else if (key === '--port' && next) {
@@ -170,9 +215,10 @@ async function createStaticServer(rootDir, port) {
             const url = new URL(req.url || '/', `http://127.0.0.1:${port}`);
             const rawPath = decodeURIComponent(url.pathname);
             const relPath = rawPath === '/' ? '/index.html' : rawPath;
-            const absPath = path.resolve(rootDir, `.${relPath}`);
+            const researchPath = ['/research/pro-strategy-research.js','/research/pro-risk-research.js','/research/pro-value-model.js','/research/pro-learned-research.js','/research/pro-public-action-kernel.js','/research/pro-intrinsic-recovery.js','/research/pro-action-candidates.js','/research/pro-opening-table.js'].includes(relPath);
+            const absPath = researchPath ? path.join(__dirname, 'browser',path.basename(relPath)) : path.resolve(rootDir, `.${relPath}`);
 
-            if (!absPath.startsWith(rootDir)) {
+            if (!researchPath && absPath !== rootDir && !absPath.startsWith(rootDir + path.sep)) {
                 res.writeHead(403);
                 res.end('Forbidden');
                 return;
@@ -198,16 +244,23 @@ async function createStaticServer(rootDir, port) {
     return server;
 }
 
-async function runPolicy(page, { episodes, difficulty, policyName, traceSamples }) {
-    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount }) => {
+async function runPolicy(page, { episodes, difficulty, policyName, traceSamples, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable }) {
+    return page.evaluate(async ({ episodes: epCount, difficulty: diff, policyName: policy, traceSampleCount, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable }) => {
         const game = window.game;
         if (!game) {
             throw new Error('window.game が見つかりません。');
         }
+        const acquisitionAdvisor = acquisitionModel || diff==='pro' ? await import('/js/acquisitionAdvisor.js?v=' + window.BUILD_VERSION.slice(1)) : null;
+        if (acquisitionModel && (!['fresh','pro'].includes(diff) || !acquisitionAdvisor.PROFILES[acquisitionModel] || acquisitionModel.startsWith('pro_') !== (diff==='pro'))) throw new Error('難易度と取得モデルの指定が不正です');
+        if (initialObservation && (!['fresh','pro'].includes(diff) || initialObservation.difficulty !== diff || initialObservation.mode !== 'normal' ||
+            !Number.isInteger(initialObservation.turn) || initialObservation.turn < 0 || initialObservation.turn >= 8 || !Array.isArray(forcedChoice) ||
+            new Set(forcedChoice).size !== forcedChoice.length || forcedChoice.some(index => !initialObservation.candidates[index]) ||
+            (forcedChoice.length !== initialObservation.pickCount && !(initialObservation.allowSkip && forcedChoice.length === 0)))) throw new Error('状況再試行の入力・選択が不正です');
 
         // 余計なUI/ログ処理を抑制
         window.alert = () => {};
         window.confirm = () => true;
+        const reportProgress=console.log.bind(console);
         console.log = () => {};
         if (game.logger) {
             game.logger.log = () => {};
@@ -215,9 +268,19 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         await game.setDifficulty(diff);
+        if (game.cardLoadFailed) throw new Error(`難易度データを読み込めません: ${diff}`);
+        if(decisionBatch){const publicTurns=game.gameState.config.turns.map(({recommended,recommendedStatus,training,delete:deletion})=>({recommended,recommendedStatus,training,deletion}));
+            if(decisionBatch.scenes.some(s=>JSON.stringify(s.observation.turns)!==JSON.stringify(publicTurns)))throw Error('局面集と実ゲームのターン設定が異なる');}
+        if (replacement) {
+            const [from, to] = replacement.split(':');
+            const target = game.cardManager.getCardByNo(to);
+            if (!target || !game.cardManager.getCardByNo(from)) throw new Error('差し替えるカードNoがありません');
+            game.cardManager.allCards = game.cardManager.allCards.map(card => game.cardManager.normalizeCardNo(card.cardNo) === game.cardManager.normalizeCardNo(from)
+                ? { ...target, cardNo: card.cardNo, definitionId: `card:${card.cardNo}->${to}` } : card);
+        }
 
         const freshOnlyPolicies = new Set(['fresh_adaptive', 'deep_beam', 'deep_beam_satcap', 'fresh_rule_nonly', 'fresh_s50', 'fresh_stable', 'fresh_stable_classic', 'fresh_stable_push', 'fresh_upside']);
-        const proPolicies = new Set(['pro_foundation', 'pro_stable', 'pro_stable_refreshless', 'pro_stable_refresh_init', 'pro_nonly', 'pro_nonly_refreshless', 'pro_adaptive', 'pro_adaptive_nonly', 'pro_smax', 'pro_hybrid', 'pro_upside', 'pro_strategic1', 'pro_strategic1_stable', 'pro_strategic1_upside', 'pro_compress', 'pro_spike12', 'pro_expand']);
+        const proPolicies = new Set(['pro_goal','pro_engine','pro_bridge','pro_precision','pro_foundation', 'pro_stable', 'pro_stable_refreshless', 'pro_stable_refresh_init', 'pro_nonly', 'pro_nonly_refreshless', 'pro_adaptive', 'pro_adaptive_nonly', 'pro_smax', 'pro_hybrid', 'pro_upside', 'pro_strategic1', 'pro_strategic1_stable', 'pro_strategic1_upside', 'pro_compress', 'pro_spike12', 'pro_expand']);
         let strategyPolicy = policy;
         if (diff !== 'fresh' && freshOnlyPolicies.has(policy)) {
             // FRESH方略をPROで使う場合は、合法手選択を重視したPRO基盤へ寄せる
@@ -227,6 +290,12 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
         const isFreshAdaptive = freshOnlyPolicies.has(strategyPolicy);
         const isProDifficulty = diff === 'pro';
+        const isProGoal = ['pro_goal','pro_engine','pro_bridge','pro_precision'].includes(strategyPolicy);
+        const effectiveRefreshPolicy=refreshPolicy==='auto'?(isProDifficulty&&acquisitionModel?'public':'legacy'):(refreshPolicy||'legacy');
+        const effectiveRefreshModel=refreshModel || acquisitionModel || 'pro_splus';
+        if(effectiveRefreshPolicy==='public'&&(!isProDifficulty||!acquisitionAdvisor.PROFILES[effectiveRefreshModel]?.goal))throw new Error('公開リフレッシュにはPROモデルが必要です');
+        const proFormula = isProDifficulty ? await import('/js/proAcquisitionAdvisor.js?v='+window.BUILD_VERSION.slice(1)) : null;
+        const goalWeights = proFormula?.PROFILES[strategyPolicy==='pro_goal'?'pro_balanced':strategyPolicy] || proFormula?.PROFILES.pro_balanced;
         const isProFoundation = strategyPolicy === 'pro_foundation';
         const isProRefreshless = strategyPolicy === 'pro_stable_refreshless' || strategyPolicy === 'pro_nonly_refreshless';
         const isProRefreshInit = strategyPolicy === 'pro_stable_refresh_init';
@@ -245,7 +314,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         const isProSpike12 = strategyPolicy === 'pro_spike12';
         const isProCompress = strategyPolicy === 'pro_compress' || isProSpike12;
         const isProExpand = strategyPolicy === 'pro_expand';
-        const isProStrategy = isProDifficulty && (isProFoundation || isProStable || isProAdaptive || isProSmax || isProHybrid || isProUpside || isProStrategic1 || isProCompress || isProExpand);
+        const isProStrategy = isProDifficulty && (isProGoal || isProFoundation || isProStable || isProAdaptive || isProSmax || isProHybrid || isProUpside || isProStrategic1 || isProCompress || isProExpand);
         const isDeepBeam = strategyPolicy === 'deep_beam';
         const isDeepBeamSatCap = strategyPolicy === 'deep_beam_satcap';
         const isRuleNOnly = strategyPolicy === 'fresh_rule_nonly' || isProNOnly;
@@ -258,8 +327,15 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             ? { aPoints: 8, sClearPoints: 12, aPlusPoints: 10, sPlusPoints: 14 }
             : { aPoints: 7, sClearPoints: 8, aPlusPoints: 7, sPlusPoints: 9 };
 
+        // 分析中の純粋な効果文の解析だけをキャッシュする。本体ファイル・ゲーム規則は変更しない。
+        if(research?.planning||research?.cacheEffects){const original=game.cardManager.parseEffect,cache=new Map();
+            game.cardManager.parseEffect=function(text){if(!cache.has(text))cache.set(text,original.call(this,text));return cache.get(text);};}
+        const researchModule = research ? await import('/research/pro-strategy-research.js') : null;
+        const researchPolicy = researchModule?.createResearchPolicy({ projectDeck: proFormula.projectProDeck, score: proFormula.proGoal,
+            cloneState: cloneForSimulation, resolve: (card,slot,state) => game.turnManager.resolveCardAction(card,slot,state), enumerateOptions: enumeratePlacementOptions,catalog:game.cardManager.allCards,turns:game.gameState.config.turns,publicActionParser:research.fastPublicActions?new game.cardManager.constructor(null):null,config:research,valueModel,openingTable,refreshAdvice:ob=>acquisitionAdvisor.recommendAcquisition(ob,{profile:effectiveRefreshModel}) });
+
         const STATUS_KEYS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
-        const SLOT_KEYS = ['leader', 'teacher', 'staff'];
+        const SLOT_KEYS = game.gameState.slotIds;
         const statusWeights = {
             experience: 2.0,
             enrollment: 2.8,
@@ -785,7 +861,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             };
         }
 
-        function calcProExactPointsFromPlayer(player) {
+        // 過去の方略の再現用の近似。新しいS+方略は公式ランク表を参照する。
+        function calcLegacyProApproxPointsFromPlayer(player) {
             const withdrawal = calcWithdrawalFromPlayer(player);
             const mobilization = player.experience || 0;
             const enrollmentDiff = (player.enrollment || 0) - withdrawal;
@@ -834,7 +911,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         function calcProObjectivePotential(stateLike) {
-            const exact = calcProExactPointsFromPlayer(stateLike.player);
+            const exact = calcLegacyProApproxPointsFromPlayer(stateLike.player);
             let potential = exact.points;
 
             potential += Math.min(Math.max(exact.mobilization, 0), 40) / 40 * 2.2;
@@ -888,7 +965,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             if (!isProStrategy || !card) return 0;
 
             const beforePlayer = snapshotStatus(stateLike.player);
-            const beforeExact = calcProExactPointsFromPlayer(stateLike.player);
+            const beforeExact = calcLegacyProApproxPointsFromPlayer(stateLike.player);
             const beforePotential = calcProObjectivePotential(stateLike);
             const beforeSignal = calcProThresholdSignal(beforeExact);
             const legalSlots = listLegalSlots(card, null);
@@ -897,10 +974,10 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             let best = -999;
             legalSlots.forEach((slot) => {
                 const sim = cloneForSimulation(stateLike);
-                const applied = game.cardManager.applyCardEffect(card, slot, sim);
-                if (!applied) return;
+                const result = game.turnManager.resolveCardAction(card, slot, sim);
+                if (!result.applied) return;
 
-                const afterExact = calcProExactPointsFromPlayer(sim.player);
+                const afterExact = calcLegacyProApproxPointsFromPlayer(sim.player);
                 const afterPotential = calcProObjectivePotential(sim);
                 const afterSignal = calcProThresholdSignal(afterExact);
                 const delta = calcStatusDelta(beforePlayer, snapshotStatus(sim.player));
@@ -1220,6 +1297,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
 
         function cloneForSimulation(srcState) {
             return {
+                difficulty: srcState.difficulty || game.gameState.difficulty,
+                turn: srcState.turn ?? game.gameState.turn,
+                totalTurns: srcState.totalTurns ?? game.gameState.totalTurns ?? game.turnManager.getTurnConfigs().length,
                 player: snapshotStatus(srcState.player),
                 tokens: ensureTokens(srcState.tokens),
                 updateStatus(type, delta) {
@@ -1354,7 +1434,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         function transitionPlacement(simState, card, slot, recommendedByStaff, placedCounts) {
-            const turnConfig = game.turnManager.getCurrentTurnConfig();
+            // 探索でも室長→講師→事務の順序を守る。後のスタッフを解決した状態で前へ戻らない。
+            if (SLOT_KEYS.slice(SLOT_KEYS.indexOf(slot) + 1).some(later => (placedCounts[later] || 0) > 0)) return null;
             const nextState = cloneForSimulation(simState);
             const beforeStatus = snapshotStatus(nextState.player);
             const beforeTokens = ensureTokens(nextState.tokens);
@@ -1367,17 +1448,9 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             const beforeProNeeds = isProStrategy ? buildProNeeds(nextState.player) : null;
 
             const nextRecommended = { ...recommendedByStaff };
-            if (
-                turnConfig?.recommended &&
-                turnConfig?.recommendedStatus &&
-                card.category === turnConfig.recommended
-            ) {
-                nextState.updateStatus(turnConfig.recommendedStatus, 1);
-                nextRecommended[slot] = true;
-            }
-
-            const applied = game.cardManager.applyCardEffect(card, slot, nextState);
-            if (!applied) return null;
+            const result = game.turnManager.resolveCardAction(card, slot, nextState);
+            if (!result.applied) return null;
+            if (result.recommendedApplied) nextRecommended[slot] = true;
 
             const afterStatus = snapshotStatus(nextState.player);
             const afterTokens = ensureTokens(nextState.tokens);
@@ -1673,7 +1746,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         function randomPick(cards, count = 1) {
             const shuffled = [...cards];
             for (let i = shuffled.length - 1; i > 0; i -= 1) {
-                const j = Math.floor(Math.random() * (i + 1));
+                const j = Math.floor(game.gameState.rng.next(`policy:${game.gameState.turn}`) * (i + 1));
                 [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
             }
             return shuffled.slice(0, Math.min(count, shuffled.length));
@@ -1684,8 +1757,8 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             const before = calcFreshSObjectiveSignal(simState);
             const beforeNeeds = buildFreshNeeds(simState.player);
             const beforePotential = calcFreshObjectivePotential(simState);
-            const applied = game.cardManager.applyCardEffect(card, slotHint, simState);
-            if (!applied) return -999;
+            const result = game.turnManager.resolveCardAction(card, slotHint, simState);
+            if (!result.applied) return -999;
             const after = calcFreshSObjectiveSignal(simState);
             const afterNeeds = buildFreshNeeds(simState.player);
             const afterPotential = calcFreshObjectivePotential(simState);
@@ -2122,7 +2195,20 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             return score;
         }
 
-        function pickTrainingCards(cards, count = 1) {
+        function pickTrainingCards(cards, count = 1, allowSkip = false, recordChoice = true) {
+            if (research?.acquisition !== 'control' && researchPolicy) {
+                const observation = publicObservation(cards,{pickCount:count,allowSkip});
+                const advice = researchPolicy.acquisition(observation,research.acquisition);
+                if(recordChoice)game.gameState.record('research-acquisition-decision',{observation,advice,chosenIndices:advice.recommended.indices});
+                return advice.recommended.indices.map(i=>cards[i]);
+            }
+            if (acquisitionAdvisor && acquisitionModel) {
+                const observation = acquisitionAdvisor.createAdvisorObservation(game.gameState, cards, { pickCount: count, allowSkip, rankTable: game.scoreManager.rankTable });
+                const advice = acquisitionAdvisor.recommendAcquisition(observation, { profile: acquisitionModel, ablation: acquisitionAblation });
+                const chosenIndices = advice.recommended.indices;
+                if(recordChoice) game.gameState.record('acquisition-decision', { observation, advice, chosenIndices });
+                return chosenIndices.map(index => cards[index]);
+            }
             if (strategyPolicy === 'random') {
                 return randomPick(cards, count);
             }
@@ -2260,7 +2346,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
 
         function evaluateTrainingPackScore(cards, pickCount, turnIndex = game.gameState.turn) {
             if (!Array.isArray(cards) || cards.length === 0) return -999;
-            const picked = pickTrainingCards(cards, pickCount);
+            const picked = pickTrainingCards(cards, pickCount, false, false);
             if (picked.length === 0) return -999;
             return picked.reduce((acc, card) => acc + scoreTrainingCardByPolicy(card, turnIndex), 0);
         }
@@ -2306,6 +2392,10 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         }
 
         function maybeRefreshTrainingCandidates({ rarity, candidates, drawCount, pickCount, phaseTag }) {
+            if(research?.refresh==='learned')return refreshByLearnedValue({rarity,candidates,drawCount,pickCount,phaseTag});
+            if(research?.refresh&&['seek49','seek13-49'].includes(research.refresh))return refreshForResearch({rarity,candidates,drawCount,phaseTag});
+            if(effectiveRefreshPolicy==='none')return candidates;
+            if(effectiveRefreshPolicy==='public') return refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag});
             if (!isProStrategy || rarity === 'N') {
                 return candidates;
             }
@@ -2370,6 +2460,106 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 decisionTelemetry.training.refreshByPhase[phaseTag] = (decisionTelemetry.training.refreshByPhase[phaseTag] || 0) + 1;
             }
             return current;
+        }
+
+        function refreshByLearnedValue({rarity,candidates,drawCount,pickCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining||rarity==='N'||phaseTag==='inspiration')return candidates;
+            let current=candidates;
+            while(game.gameState.trainingRefreshRemaining>0){
+                const observation=publicObservation(current,{pickCount,allowSkip:false}),advice=researchPolicy.learnedPolicy.refresh(observation,rarity,drawCount,pickCount);
+                game.gameState.record('research-refresh-decision',{observation,rarity,drawCount,pickCount,advice});if(!advice.shouldRefresh)break;
+                const refreshed=game.cardManager.refreshTrainingCards(rarity,current,drawCount);if(!refreshed.length)break;current=refreshed;
+                game.gameState.trainingRefreshRemaining--;episodeRefreshUsage[phaseTag]++;
+                decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;
+            }
+            return current;
+        }
+        function refreshForResearch({rarity,candidates,drawCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining||phaseTag==='inspiration')return candidates;
+            const owned=game.gameState.getOwnedCards(),target=rarity==='SSR'?49:
+                research.refresh==='seek13-49'&&rarity==='R'&&game.gameState.turn===0?13:null;
+            if(!target||owned.some(c=>Number(c.cardNo)===target)||candidates.some(c=>Number(c.cardNo)===target))return candidates;
+            // 見た恒久除外だけで目標が残るか確認。未公開の研修デッキを参照しない。
+            const removed=game.gameState.playRecord.events.filter(e=>e.type==='refresh').flatMap(e=>e.cards).filter(c=>Number(c.cardNo)===target).length;
+            if(removed>=2)return candidates;
+            const refreshed=game.cardManager.refreshTrainingCards(rarity,candidates,drawCount);if(!refreshed.length)return candidates;
+            game.gameState.trainingRefreshRemaining--;episodeRefreshUsage[phaseTag]++;
+            decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;return refreshed;
+        }
+        function publicObservation(cards=[],options={}) {
+            return acquisitionAdvisor.createAdvisorObservation(game.gameState,cards,{...options,rankTable:game.scoreManager.rankTable});
+        }
+        function refreshByPublicFormula({rarity,candidates,drawCount,pickCount,phaseTag}) {
+            if(!game.gameState.trainingRefreshRemaining || rarity==='N' || phaseTag==='inspiration')return candidates;
+            // カタログと提示・除外履歴だけを使う。未公開の研修山札を読まない。
+            const removed=new Map();
+            for(const e of game.gameState.playRecord.events.filter(e=>e.type==='refresh'))for(const c of e.cards)removed.set(String(c.cardNo),(removed.get(String(c.cardNo))||0)+1);
+            const catalog=game.cardManager.allCards.filter(c=>c.rarity===rarity&&(removed.get(String(c.cardNo))||0)<2);
+            if(!catalog.length)return candidates;
+            const reference=acquisitionAdvisor.recommendAcquisition(publicObservation(catalog,{pickCount:1}),{profile:effectiveRefreshModel}).evaluations;
+            const current=acquisitionAdvisor.recommendAcquisition(publicObservation(candidates,{pickCount}),{profile:effectiveRefreshModel}).recommended.score/pickCount;
+            const cutoff=reference[Math.min(reference.length-1,Math.floor(reference.length*.35))].score;
+            // 残り回数はSSR研修に温存する。初回に使うのは候補が下位の場合だけ。
+            if(current>=cutoff || (rarity!=='SSR' && game.gameState.trainingRefreshRemaining<2 && game.gameState.turn<4))return candidates;
+            const refreshed=game.cardManager.refreshTrainingCards(rarity,candidates,drawCount);
+            if(!refreshed.length)return candidates;
+            game.gameState.trainingRefreshRemaining--;
+            episodeRefreshUsage[phaseTag]++;decisionTelemetry.training.refreshUsed++;decisionTelemetry.training.refreshByPhase[phaseTag]++;
+            return refreshed;
+        }
+        function planProGoalPlacements() {
+            if(!acquisitionModel)throw new Error('S+方略にはPRO取得モデルを指定してください');
+            const observation=publicObservation(),cards=[...game.gameState.player.hand],remaining=8-observation.turn;
+            // 既知のデッキから将来成長を一度だけ近似し、今の手札の順序を比較する。
+            const future=proFormula.projectProDeck({...observation,turn:observation.turn+1},{weights:goalWeights});
+            const growth=Object.fromEntries(STATUS_KEYS.map(k=>[k,Math.max(0,future.end[k]-observation.stats[k])]));
+            function value(state) {
+                const end=Object.fromEntries(STATUS_KEYS.map(k=>[k,Math.max(0,state.player[k]+growth[k])]));
+                end.enrollment=Math.min(end.enrollment,end.experience);
+                let v=proFormula.proUtility(end,observation.rankTable,goalWeights);
+                if(remaining<=1)v+=proFormula.proGoal(state.player,observation.rankTable).points*20;
+                else {
+                    v+=(state.tokens.passion-state.tokens.fatigue)*(strategyPolicy==='pro_engine'?9:5);
+                    v+=state.tokens.inspiration*(strategyPolicy==='pro_engine'?5:2.5)+state.tokens.organize*3;
+                    // 次のターンのコスト支払いを守るが、十分なバッファの経理は攻めに使える。
+                    v-=Math.max(0,3-state.player.accounting)*2;
+                }
+                return v;
+            }
+            let frontier=[{state:cloneForSimulation(game.gameState),counts:Object.fromEntries(SLOT_KEYS.map(k=>[k,0])),seq:[],used:0n,value:0}];
+            frontier[0].value=value(frontier[0].state);
+            for(let depth=0;depth<Math.min(cards.length,12);depth++){
+                const expanded=[...frontier],seen=new Map();
+                for(const node of frontier)for(const option of enumeratePlacementOptions(cards,node.counts)){
+                    if(node.used & (1n<<BigInt(option.cardIndex)))continue;
+                    if(SLOT_KEYS.slice(SLOT_KEYS.indexOf(option.slot)+1).some(k=>node.counts[k]>0))continue;
+                    const state=cloneForSimulation(node.state);
+                    const result=game.turnManager.resolveCardAction(option.card,option.slot,state);
+                    if(!result.applied)continue;
+                    const counts={...node.counts,[option.slot]:node.counts[option.slot]+1},used=node.used|(1n<<BigInt(option.cardIndex));
+                    const key=JSON.stringify([used.toString(),counts,state.player,state.tokens]);
+                    if(seen.has(key))continue;seen.set(key,true);
+                    expanded.push({state,counts,used,seq:[...node.seq,{cardIndex:option.cardIndex,slot:option.slot}],value:value(state)});
+                }
+                expanded.sort((a,b)=>b.value-a.value||a.seq.length-b.seq.length);
+                frontier=expanded.slice(0,180);
+            }
+            return frontier[0]?.seq||[];
+        }
+        function deleteByPublicFormula(deleteMax) {
+            const removed=[];
+            if(game.gameState.turn>=7)return removed;
+            for(let k=0;k<deleteMax;k++){
+                const observation={...publicObservation(),turn:game.gameState.turn+1,tokens:{passion:game.gameState.tokens.passion,fatigue:game.gameState.tokens.fatigue,inspiration:0,organize:0}};
+                const utility=cards=>{const forecast=proFormula.projectProDeck(observation,{weights:goalWeights,cards});return proFormula.proUtility(forecast.end,observation.rankTable,goalWeights)+forecast.engine*goalWeights.engine;};
+                const baseline=utility(observation.owned);
+                let best=null,gain=0;
+                for(const card of game.gameState.player.deck){const i=observation.owned.findIndex(c=>String(c.cardNo)===String(card.cardNo));if(i<0)continue;
+                    const after=[...observation.owned];after.splice(i,1);const improvement=utility(after)-baseline;
+                    if(improvement>gain){gain=improvement;best=card;}}
+                if(!best)break;game.gameState.removeFromDeck(best);removed.push(best.cardName);
+            }
+            return removed;
         }
 
         function planPlacementsBeamLike(mode) {
@@ -2563,19 +2753,24 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                         .map((opt) => ({ card: opt.card, slot: opt.slot }));
 
                     if (options.length === 0) break;
-                    const selected = options[Math.floor(Math.random() * options.length)];
+                    const selected = options[Math.floor(game.gameState.rng.next(`policy:${game.gameState.turn}`) * options.length)];
                     game.gameState.placeCard(selected.card, selected.slot);
                     game.gameState.removeFromHand(selected.card);
                     placements.push({ cardName: selected.card.cardName, slot: selected.slot });
                     if (hasParallelEffect(selected.card)) decisionTelemetry.action.parallelPlacements += 1;
 
-                    if (Math.random() < 0.35) break;
+                    if (game.gameState.rng.next(`policy:${game.gameState.turn}`) < 0.35) break;
                 }
                 decisionTelemetry.action.placedCards += placements.length;
                 return placements;
             }
 
-            const seq = planPlacementsBeamLike(strategyPolicy);
+            const observation = researchPolicy ? publicObservation() : null;
+            const seq = researchPolicy && research.placement !== 'control'
+                ? researchPolicy.placements(observation,[...game.gameState.player.hand],game.gameState,research.placement)
+                : isProGoal ? planProGoalPlacements() : planPlacementsBeamLike(strategyPolicy);
+            if(researchPolicy)game.gameState.record('research-placement-decision',{observation,hand:game.gameState.player.hand.map(c=>({cardNo:c.cardNo,cardName:c.cardName})),
+                placements:seq.map(step=>({...step,cardNo:game.gameState.player.hand[step.cardIndex].cardNo}))});
             const handCards = [...game.gameState.player.hand];
 
             seq.forEach((step) => {
@@ -2597,11 +2792,30 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
         function performMeetingDeletion() {
             const deleteMax = game.turnManager.getCurrentDeleteMax();
             decisionTelemetry.meeting.phaseCount += 1;
+            if (meetingIntervention) {
+                const instruction=meetingIntervention;meetingIntervention=null;
+                const card=game.gameState.player.deck[instruction.ownedIndex];
+                if(deleteMax!==instruction.deleteMax||deleteMax<1||Number(card?.cardNo)!==instruction.cardNo)
+                    throw Error('会議対照試験の対象札・合法削除枠が復元されていません');
+                const observation=publicObservation([],{pickCount:0});
+                // この会議の他の削除を両群で固定して、対象1枚の差だけを作る。
+                const removed=instruction.action==='delete'?[card.cardName]:[];
+                if(instruction.action==='delete'&&!game.gameState.removeFromDeck(card))throw Error('指定した会議削除が失敗');
+                game.gameState.record('research-meeting-intervention',{observation,instruction,removedCardNo:removed.length?String(card.cardNo):null});
+                decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;
+            }
             if (deleteMax <= 0 || game.gameState.player.deck.length === 0) {
                 game.gameState.tokens.organize = 0;
                 return [];
             }
 
+            if(researchPolicy && research.deletion !== 'control') {
+                const observation=publicObservation(),decisions=researchPolicy.deletions(observation,deleteMax,research.deletion,research.objective),removed=[];
+                for(const decision of decisions){const card=game.gameState.player.deck.find(c=>String(c.cardNo)===String(decision.cardNo));if(card){game.gameState.removeFromDeck(card);removed.push(card.cardName);}}
+                game.gameState.record('research-deletion-decision',{observation,deleteMax,decisions});
+                decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;
+            }
+            if(isProGoal){const removed=deleteByPublicFormula(deleteMax);decisionTelemetry.meeting.deletedCards+=removed.length;game.gameState.tokens.organize=0;return removed;}
             let candidates = [...game.gameState.player.deck];
             decisionTelemetry.meeting.optionCountTotal += candidates.length + 1;
             if (isRuleNOnly) {
@@ -2992,14 +3206,19 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             }
         };
         const episodeTraces = [];
+        const playRecords = [];
 
         function listCardNames(cards) {
             return (cards || []).map((card) => card?.cardName || 'UNKNOWN');
         }
 
         let episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
+        let meetingIntervention=null;
 
         for (let episode = 0; episode < epCount; episode += 1) {
+            const scene=decisionBatch?.scenes[episode+(episodeOffset||0)];
+            if(decisionBatch){if(!scene)throw Error('実行する公開局面がない');initialObservation=scene.observation;forcedChoice=scene.forcedChoice;}
+            meetingIntervention=scene?.kind==='meeting'?scene.forcedMeeting:null;
             const episodeTrace = traceSampleCount > 0
                 ? {
                     episode: episode + 1,
@@ -3009,27 +3228,87 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 }
                 : null;
             episodeRefreshUsage = { initial: 0, main: 0, inspiration: 0 };
-            game.gameState.reset(diff);
-            game.cardManager.initTrainingPool();
+            const sessionSeed = `${seedBase}:${episode + (episodeOffset || 0)}`;
+            const rejectedStarts=[];
+            let initialDecision=null,initialCandidatesForRule=null;
+            // タイトルへ戻って開始し直す。失敗した候補やRNG状態を次の判断へ渡さない。
+            for(let attempt=0;;attempt++) {
+                if(attempt>=10000)throw new Error('初期ペア条件が10000開始で成立しません');
+                const actualSeed=attempt?`${seedBase}-reset${attempt}:${episode + (episodeOffset || 0)}`:sessionSeed;
+                game.gameState.reset(diff, { seed: actualSeed, source: 'autoplay', strategy: strategyPolicy });
+                game.cardManager.initTrainingPool();
+                if(!research?.initial)break;
+                game.cardManager.getBasicCards().forEach(card=>game.gameState.addToDeck({...card}));
+                initialCandidatesForRule=game.cardManager.drawTrainingCards('R',4);
+                initialDecision=researchPolicy.initial(publicObservation(initialCandidatesForRule,{pickCount:2}),research.initial,research.acquisition==='control'?'engine':research.acquisition);
+                if(initialDecision.accept)break;
+                rejectedStarts.push({seed:actualSeed,cards:initialCandidatesForRule.map(c=>c.cardNo)});
+            }
+            game.gameState.startRecording({ cardVersion: game.cardManager.dataVersion, rankVersion: game.cardManager.rankVersion,
+                catalog: game.cardManager.allCards, provenance, replacement,
+                strategy: acquisitionModel ? `formula:${acquisitionModel}:${acquisitionAblation || 'full'}@${strategyPolicy}` : strategyPolicy,
+                acquisitionModel, acquisitionAblation, continuationPolicy: strategyPolicy, refreshPolicy:effectiveRefreshPolicy,refreshModel:effectiveRefreshPolicy==='public'?effectiveRefreshModel:null,
+                research,
+                source: initialObservation ? 'counterfactual' : 'autoplay', forcedChoice: initialObservation ? forcedChoice : null,
+                ...(scene?{sceneId:scene.sceneId,sceneArm:decisionBatch.arm,sceneTurn:initialObservation.turn,sceneCardNo:decisionBatch.cardNo,sceneBankSha256:decisionBatch.sha256,sceneObservationSha256:scene.observationSha256,
+                    ...(scene.kind?{sceneKind:scene.kind,...(scene.kind==='meeting'?{forcedMeeting:scene.forcedMeeting}:{})}:{})}:{}) });
+            if(research?.initial) {
+                game.gameState.playRecord.metadata.reroll={sessionSeed,rejectedStarts,attempts:rejectedStarts.length+1,
+                    initialCards:initialCandidatesForRule.map(c=>c.cardNo),chosenIndices:initialDecision.chosenIndices,initialRefreshUsed:0};
+                game.gameState.record('offer',{rarity:'R',cards:initialCandidatesForRule.map(c=>({...c}))});
+                game.gameState.record('research-initial-decision',{rule:research.initial,observation:publicObservation(initialCandidatesForRule,{pickCount:2}),decision:initialDecision});
+            }
             game.gameState.phase = 'start';
             game.gameState.turn = 0;
             game.gameState.currentTrainingCards = null;
             game.gameState.lastDrawNotification = null;
             game.gameState.clearPlaced();
 
+            if (initialObservation) {
+                game.gameState.turn = initialObservation.turn;
+                game.gameState.record('research-counterfactual-start',{sceneId:scene?.sceneId||null,observation:initialObservation,forcedChoice});
+                Object.assign(game.gameState.player, initialObservation.stats);
+                game.gameState.tokens = { ...initialObservation.tokens };
+                game.gameState.trainingRefreshRemaining=initialObservation.refreshRemaining ?? game.gameState.trainingRefreshRemaining;
+                initialObservation.owned.forEach(card => game.gameState.addToDeck({ ...card }));
+                // 提示履歴から既知の使用済み枚数だけを再構成し、未公開の並びは使わない。
+                for (const offer of initialObservation.offerHistory || initialObservation.offers || []) {
+                    for (const card of offer.cards) {
+                        if(offer.type==='refresh') {const discards=game.cardManager.trainingDiscards[offer.rarity]||[];const i=discards.findIndex(c=>String(c.cardNo)===String(card.cardNo));if(i>=0)discards.splice(i,1);continue;}
+                        let pool = game.cardManager.trainingDecks[offer.rarity];
+                        if (!pool) continue;
+                        if (!pool.length) { game.cardManager.trainingDecks[offer.rarity] = [...game.cardManager.trainingDiscards[offer.rarity]]; game.cardManager.trainingDiscards[offer.rarity] = []; pool = game.cardManager.trainingDecks[offer.rarity]; }
+                        const index = pool.findIndex(item => String(item.cardNo) === String(card.cardNo));
+                        if (index >= 0) game.cardManager.trainingDiscards[offer.rarity].push(...pool.splice(index, 1));
+                    }
+                    game.gameState.record(offer.type||'offer',{rarity:offer.rarity,cards:offer.cards,restoredPublicHistory:true});
+                }
+                if(scene?.kind!=='meeting') {
+                forcedChoice.forEach(index => game.gameState.addToDeck({ ...initialObservation.candidates[index] }));
+                if (initialObservation.allowSkip) game.gameState.tokens.inspiration = Math.max(0, game.gameState.tokens.inspiration - 1);
+                while (game.gameState.tokens.inspiration > 0) {
+                    if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='inspiration';
+                    const extra = game.cardManager.drawTrainingCards('SR', 3);
+                    pickTrainingCards(extra,1,true).forEach(card => game.gameState.addToDeck({ ...card }));
+                    game.gameState.tokens.inspiration--;
+                }
+                if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='normal';
+                }
+            } else {
             // 初期デッキ
             const basicCards = game.cardManager.getBasicCards();
-            basicCards.forEach((card) => {
-                game.gameState.player.deck.push({ ...card });
+            if(!research?.initial)basicCards.forEach((card) => {
+                game.gameState.addToDeck({ ...card });
             });
+            else game.gameState.getOwnedCards().forEach(card=>game.gameState.record('acquire',{card:{...card},restoredInitialBasic:true}));
             game.gameState.recordStartTime();
 
             // 初回研修（R4枚から2枚）
-            let initialCandidates = game.cardManager.drawTrainingCards('R', 4);
+            let initialCandidates = initialCandidatesForRule || game.cardManager.drawTrainingCards('R', 4);
             const initialCandidatesBeforeRefresh = [...initialCandidates];
             decisionTelemetry.training.rounds += 1;
             decisionTelemetry.training.candidateCountTotal += initialCandidates.length;
-            initialCandidates = maybeRefreshTrainingCandidates({
+            if(!research?.initial)initialCandidates = maybeRefreshTrainingCandidates({
                 rarity: 'R',
                 candidates: initialCandidates,
                 drawCount: 4,
@@ -3037,7 +3316,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 phaseTag: 'initial'
             });
             decisionTelemetry.training.candidateCountTotal += initialCandidates.length;
-            const initialPicks = pickTrainingCards(initialCandidates, 2);
+            const initialPicks = initialDecision ? initialDecision.chosenIndices.map(i=>initialCandidates[i]) : pickTrainingCards(initialCandidates, 2);
             initialPicks.forEach((card) => {
                 game.gameState.addToDeck({ ...card });
             });
@@ -3051,9 +3330,10 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 };
             }
 
-            // training -> action
-            game.gameState.phase = 'training';
-            game.turnManager.advancePhase();
+            }
+            // 会議局面の再開では取得・ドロー・配置をもう一度行わない。
+            game.gameState.phase = scene?.kind==='meeting'?'meeting':'training';
+            if(scene?.kind!=='meeting')game.turnManager.advancePhase();
 
             const playedCardsInEpisode = new Set();
             let phaseGuard = 0;
@@ -3144,6 +3424,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
 
                     while ((game.gameState.tokens?.inspiration || 0) > 0) {
                         decisionTelemetry.training.inspirationRounds += 1;
+                        if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='inspiration';
                         let extraCandidates = game.cardManager.drawTrainingCards('SR', 3);
                         const extraCandidatesBeforeRefresh = [...extraCandidates];
                         decisionTelemetry.training.candidateCountTotal += extraCandidates.length;
@@ -3156,7 +3437,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                             phaseTag: 'inspiration'
                         });
                         decisionTelemetry.training.candidateCountTotal += extraCandidates.length;
-                        const extraPicked = pickTrainingCards(extraCandidates, 1);
+                        const extraPicked = pickTrainingCards(extraCandidates, 1, true);
                         if (extraPicked[0]) {
                             game.gameState.addToDeck({ ...extraPicked[0] });
                         }
@@ -3168,6 +3449,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                         });
                         game.gameState.tokens.inspiration -= 1;
                     }
+                    if(research?.uiTrainingStreams)game.gameState.trainingSelectionMode='normal';
                     if (episodeTrace) {
                         episodeTrace.turns.push({
                             turn: trainingTurn,
@@ -3191,6 +3473,14 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
             }
 
             const score = game.scoreManager.calculateScore(game.gameState);
+            game.gameState.playRecord.result = { score, finalDeck: game.gameState.getOwnedCards() };
+            const exportedRecord=game.gameState.exportPlayRecord();
+            if(research)for(const event of exportedRecord.events) {
+                // 同一版のカタログ・ランク表はハッシュで追跡し、各判断に巨大な複製を残さない。
+                if(event.observation){delete event.observation.catalog;delete event.observation.rankTable;}
+            }
+            playRecords.push(exportedRecord);
+            if((episode+1)%25===0||episode+1===epCount)reportProgress('CDG_RESEARCH_PROGRESS '+JSON.stringify({policy,completed:episode+1,total:epCount}));
             const displayScore = Number(score.displayScore ?? score.points ?? 0);
             const scorePoints = Number(score.points ?? 0);
             const thresholdMetric = diff === 'pro' ? scorePoints : displayScore;
@@ -3500,6 +3790,7 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 categoryBalance: lowCategoryBalance
             },
             episodeTraces,
+            playRecords,
             cardPool: {
                 uniqueByRarity: poolUniqueByRarity,
                 uniqueByCategory: poolUniqueByCategory,
@@ -3507,16 +3798,55 @@ async function runPolicy(page, { episodes, difficulty, policyName, traceSamples 
                 supplyByCategory
             }
         };
-    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0 });
+    }, { episodes, difficulty, policyName, traceSampleCount: traceSamples || 0, seedBase, provenance, replacement, acquisitionModel, acquisitionAblation, refreshPolicy, refreshModel, episodeOffset, initialObservation, forcedChoice, decisionBatch, research, valueModel, openingTable });
+}
+
+async function readGitProvenance() {
+    // クラウド保存先のGit管理ファイルが一時的に読めない場合だけ短く再試行する。
+    // 最後まで読めなければ実験を停止し、版情報を推測して続けない。
+    for(let attempt=0;attempt<4;attempt++) {
+        try { return {gitCommit:execFileSync('git',['rev-parse','HEAD'],{cwd:repoRoot,encoding:'utf8',stdio:'pipe'}).trim(),
+            workingTreeDirty:!!execFileSync('git',['status','--porcelain'],{cwd:repoRoot,encoding:'utf8',stdio:'pipe'}).trim()}; }
+        catch(error) { if(attempt===3)throw error; await new Promise(resolve=>setTimeout(resolve,500*(attempt+1))); }
+    }
 }
 
 async function main() {
     const args = parseArgs(process.argv.slice(2));
+    const research = args.researchConfig ? JSON.parse(await readFile(path.resolve(repoRoot,args.researchConfig),'utf8')) : null;
+    if(research && (args.difficulty !== 'pro' || !['control','median','ceiling','engine','rollout','learned'].includes(research.acquisition) ||
+        !['control','median','ceiling','engine','myopic','rollout','learned'].includes(research.placement) ||
+        !['control','adaptive','basic','aggressive','off','rollout','learned','player-basic'].includes(research.deletion) || !['median','ceiling','engine'].includes(research.objective)))throw new Error('攻略分析の設定が不正です');
+    if(research?.initial){const {validateInitialRule}=await import('./browser/pro-strategy-research.js');validateInitialRule(research.initial);if(args.decisionFile||args.decisionBatch)throw new Error('局面再試行とリセマラは同時指定できません');}
+    if(args.decisionBatch&&(args.decisionFile||args.forcedChoice!==null||args.difficulty!=='pro')||args.sceneArm&&!args.decisionBatch||args.decisionBatch&&!args.sceneArm)throw Error('局面集はPROで単独指定し、scene-armを指定');
+    const decision = args.decisionFile ? JSON.parse(await readFile(path.resolve(repoRoot, args.decisionFile), 'utf8')) : null;
+    const initialObservation = decision?.observation || decision;
+    const gameSources = await Promise.all((await readdir(path.join(gameRoot, 'js'))).filter(name => name.endsWith('.js')).sort()
+        .map(async name => name + await readFile(path.join(gameRoot, 'js', name), 'utf8')));
+    const provenance = { codeHash: createHash('sha256').update(gameSources.join('\n')).digest('hex'),
+        strategyVersion: createHash('sha256').update(await readFile(__filename)).update(await readFile(path.join(__dirname,'browser/pro-strategy-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-risk-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-value-model.js'))).update(await readFile(path.join(__dirname,'browser/pro-learned-research.js'))).update(await readFile(path.join(__dirname,'browser/pro-public-action-kernel.js'))).update(await readFile(path.join(__dirname,'pro-card-scene-input.mjs'))).update(await readFile(path.join(__dirname,'browser/pro-intrinsic-recovery.js'))).update(await readFile(path.join(__dirname,'browser/pro-action-candidates.js'))).update(await readFile(path.join(__dirname,'browser/pro-opening-table.js'))).update(await readFile(path.join(__dirname,'pro-opening-table-input.mjs'))).digest('hex'),
+        ...await readGitProvenance() };
+    const sceneVersions=[provenance.codeHash,'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex'),'sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex')];
+    const decisionBatch=args.decisionBatch?prepareSceneBatch(await readFile(path.resolve(repoRoot,args.decisionBatch)),args.sceneArm,{episodes:args.episodes,offset:args.episodeOffset,versions:sceneVersions}):null;
+    let valueModel=null;
+    if(research?.valueModelPath){
+        const bytes=await readFile(path.resolve(repoRoot,research.valueModelPath)),hash=createHash('sha256').update(bytes).digest('hex'),data=JSON.parse(bytes);
+        if(hash!==research.valueModelSha256||data.provenance.versions[0]!==provenance.codeHash||data.provenance.versions[1]!=='sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/cards_pro.csv'))).digest('hex')||data.provenance.versions[2]!=='sha256:'+createHash('sha256').update(await readFile(path.join(gameRoot,'data/rankPro.csv'))).digest('hex'))throw Error('学習モデルまたは本体・カード・ランク版が異なる');
+        // 過去の結果・学習用シード・ソースパスは実行中の評価器に渡さない。
+        valueModel=data.model;
+    }
+    if(research&&([research.acquisition,research.placement,research.deletion,research.planning?.futureAcquisition,research.planning?.futureRefresh].includes('learned')||research.refresh==='learned'||research.planning?.valueHorizon)&&!valueModel)throw Error('学習済みモデルが必要');
+    if(research?.openingTablePath&&(research.initial||research.acquisition!=='learned'||research.refresh!=='learned'||!valueModel))throw Error('初回表はリセマラなしの学習リフレッシュ方略専用');
+    const openingTable=research?.openingTablePath?prepareOpeningTableInput(await readFile(path.resolve(repoRoot,research.openingTablePath)),{expectedSha256:research.openingTableSha256,versions:sceneVersions,modelSha256:research.valueModelSha256}):null;
     const server = await createStaticServer(gameRoot, args.port);
     const browser = await chromium.launch({ headless: !args.headful });
 
     try {
         const page = await browser.newPage();
+        page.on('console',message=>{const line=message.text();if(line.startsWith('CDG_RESEARCH_PROGRESS '))console.log(line);});
+        // 自動評価から実際のスコア送信・解析サービスへ通信しない。
+        await page.route('**/*', route => new URL(route.request().url()).origin === `http://127.0.0.1:${args.port}`
+            ? route.continue() : route.abort());
         await page.goto(`http://127.0.0.1:${args.port}/index.html`, { waitUntil: 'domcontentloaded' });
         await page.waitForFunction(() => !!window.game && !!window.game.cardManager && window.game.cardManager.allCards.length > 0, null, { timeout: 30000 });
 
@@ -3527,7 +3857,9 @@ async function main() {
                 episodes: args.episodes,
                 difficulty: args.difficulty,
                 policyName: normalized,
-                traceSamples: args.traceSamples
+                traceSamples: args.traceSamples, seedBase: args.seed, provenance, replacement: args.replacement,
+                acquisitionModel: args.acquisitionModel, acquisitionAblation: args.acquisitionAblation, refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
+                initialObservation, forcedChoice: args.forcedChoice, decisionBatch, research, valueModel, openingTable
             });
             simulations.push(result);
         }
@@ -3537,6 +3869,9 @@ async function main() {
             generatedAt: new Date().toISOString(),
             settings: {
                 episodes: args.episodes,
+                seed: args.seed, provenance, replacement: args.replacement, acquisitionModel: args.acquisitionModel,
+                acquisitionAblation: args.acquisitionAblation,refreshPolicy:args.refreshPolicy,refreshModel:args.refreshModel,episodeOffset: args.episodeOffset,
+                initialObservation, forcedChoice: args.forcedChoice, sceneBatch:decisionBatch?{cardNo:decisionBatch.cardNo,sha256:decisionBatch.sha256,arm:decisionBatch.arm,n:args.episodes,offset:args.episodeOffset}:null,research,
                 difficulty: args.difficulty,
                 scoreTargets: getScoreTargets(args.difficulty),
                 policies: args.policies.map(normalizePolicyName)
@@ -3544,12 +3879,14 @@ async function main() {
             simulations
         };
 
+        await mkdir(path.dirname(outputAbs), { recursive: true });
         await writeFile(outputAbs, `${JSON.stringify(reportJson, null, 2)}\n`, 'utf-8');
 
         let reportAbs = null;
         if (args.report) {
             reportAbs = path.resolve(repoRoot, args.report);
             const markdown = buildNaturalLanguageReport(reportJson);
+            await mkdir(path.dirname(reportAbs), { recursive: true });
             await writeFile(reportAbs, markdown, 'utf-8');
         }
 

@@ -1,0 +1,130 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "buffer2": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2
+  },
+  "adaptive-draw": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "adaptiveDraw": true
+  },
+  "adaptive-horizon": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "adaptiveDraw": true,
+    "tokenHorizon": true
+  },
+  "draw6-insp4": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "weights": {
+      "draw": 6,
+      "inspiration": 4
+    }
+  },
+  "draw4-engine4": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "weights": {
+      "draw": 4,
+      "engine": 4,
+      "inspiration": 4
+    }
+  },
+  "draw8-engine4": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "weights": {
+      "draw": 8,
+      "engine": 4,
+      "inspiration": 4
+    }
+  },
+  "adaptive-engine4": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "adaptiveDraw": true,
+    "weights": {
+      "engine": 4,
+      "inspiration": 4
+    }
+  },
+  "adaptive-allowance": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "adaptiveDraw": true,
+    "futureAllowance": 0.5
+  },
+  "rollout-acq-baseline": {
+    "acquisition": "rollout",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "planning": {
+      "worlds": 16,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureRefresh": true
+    }
+  }
+}

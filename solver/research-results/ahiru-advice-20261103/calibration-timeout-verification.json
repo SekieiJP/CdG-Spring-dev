@@ -1,0 +1,41 @@
+{
+  "createdAt": "2026-11-03T03:47:15.870Z",
+  "purpose": "任意の補正通信が停止しても助言を出せるようにする接続検査。方略成績の検証ではない。",
+  "behavior": {
+    "timeoutMs": 3000,
+    "covers": [
+      "通信応答待ち",
+      "JSON本文待ち",
+      "Abortを無視する通信",
+      "時間切れ後の遅い応答",
+      "HTTPエラー",
+      "難易度別の補正の分離"
+    ],
+    "fallback": "現在デッキの固定2回の投影。ゲーム状態や実乱数を操作せず、反復シミュレーションを使わない。"
+  },
+  "unit": {
+    "command": "npm run test:unit",
+    "passed": 202,
+    "failed": 0
+  },
+  "browser": {
+    "rawFile": "solver/local-runs/pro-mean125/ahiru-calibration-timeout-ui.json",
+    "sha256": "e085796c9fa957ab6cb6f4c65d5d10d1c5e49ac05a7f46a76791e3f15064fae5",
+    "stats": {
+      "startTime": "2026-11-03T03:44:38.659Z",
+      "duration": 43666.927,
+      "expected": 42,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "scope": "PRO/FRESHの通信停止を含む42検査、3種類のChromium画面。実機Safariは未確認。"
+  },
+  "sources": {
+    "game/js/ahiruCalibrationLoader.js": "174cf25afe51f20b0fd6204c020f5d03d7461c9becb8637a66ac130218017c9b",
+    "game/js/ahiruAdviceController.js": "6383cd5e464592fffea03ebbd252268b1ac53fb06656787e22edf139abe2a4a2",
+    "tests/unit/ahiru-calibration-loader.test.mjs": "df9f8fe2188404cc8e9b1f299574164cd9ea493126861d70481694ddaae0ba61",
+    "tests/unit/ahiru-controller-models.test.mjs": "fa84c12d5ff1e2cbba09788c8dd30eb0bbe65c16199ebf88b3a1b76b665d6f27",
+    "tests/ahiru-calibration-fallback.spec.js": "20621bd9f4a12aa0c5f615d3107132072236a0bdb50eec526398422c055aafc0"
+  }
+}

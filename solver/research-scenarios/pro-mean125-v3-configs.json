@@ -1,0 +1,189 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "buffer2": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2
+  },
+  "horizon": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true
+  },
+  "allowance": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "futureAllowance": 1
+  },
+  "allowance-half": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "futureAllowance": 0.5
+  },
+  "payload": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "caps": {
+      "satisfaction": 25
+    },
+    "weights": {
+      "experience": 3.4,
+      "enrollment": 4.5,
+      "satisfaction": 1.6,
+      "engine": 6,
+      "draw": 9,
+      "inspiration": 4,
+      "route": 14
+    }
+  },
+  "payload-allowance": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "caps": {
+      "satisfaction": 25
+    },
+    "weights": {
+      "experience": 3.4,
+      "enrollment": 4.5,
+      "satisfaction": 1.6,
+      "engine": 6,
+      "draw": 9,
+      "inspiration": 4,
+      "route": 14
+    },
+    "futureAllowance": 1
+  },
+  "scored": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "statScale": 0.35,
+    "smoothWeight": 12,
+    "pointWeight": 3,
+    "weights": {
+      "engine": 6,
+      "draw": 9,
+      "inspiration": 4,
+      "route": 12
+    }
+  },
+  "scored-allowance": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "statScale": 0.35,
+    "smoothWeight": 12,
+    "pointWeight": 3,
+    "weights": {
+      "engine": 6,
+      "draw": 9,
+      "inspiration": 4,
+      "route": 12
+    },
+    "futureAllowance": 1
+  },
+  "caps25": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "caps": {
+      "satisfaction": 25
+    }
+  },
+  "caps25-allowance": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "caps": {
+      "satisfaction": 25
+    },
+    "futureAllowance": 1
+  },
+  "endgame": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "tokenHorizon": true,
+    "endgameRollout": true,
+    "planning": {
+      "worlds": 16,
+      "rolloutBeam": 32,
+      "actionCandidates": 6
+    }
+  }
+}

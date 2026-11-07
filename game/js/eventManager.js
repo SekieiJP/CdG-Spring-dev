@@ -81,6 +81,7 @@ export function recordItemConditionMetTurn(itemState, zeroBasedTurn) {
 }
 
 export function getOwnedCardCount(gameState) {
+    if (gameState.getOwnedCards) return gameState.getOwnedCards().length;
     const placed = Object.values(gameState.player.placed || {}).flatMap(v => Array.isArray(v) ? v : (v ? [v] : []));
-    return gameState.player.deck.length + gameState.player.hand.length + placed.length;
+    return gameState.player.deck.length + gameState.player.hand.length + placed.length + Object.values(gameState.player.zones || {}).flat().length;
 }

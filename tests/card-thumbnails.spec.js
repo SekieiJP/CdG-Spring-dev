@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 test.describe('カード画像サムネイル', () => {
     test.beforeEach(async ({ page }) => {

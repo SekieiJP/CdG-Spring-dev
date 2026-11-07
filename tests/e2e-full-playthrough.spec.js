@@ -1,11 +1,11 @@
 /**
  * E2Eフルプレイスルーテスト
  * - FRESHモードで8ターン（初回研修 → ターン0〜7）を完走
- * - ゲーム終了時に実際のGAS Web Appへスコアが送信されることを検証
+ * - ゲーム終了時の送信をテスト用応答に差し替えて検証
  * - 送信ペイロードに必須フィールドが含まれていることを確認
  * - セーブ/ロードを経ても startedAt が保持され正常送信されることを確認
  */
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures.js';
 
 /**
  * 指定ターン（fromTurn）から8ターン目まで進めるヘルパー。
@@ -40,10 +40,12 @@ async function playTurnsToEnd(page, fromTurn) {
             break;
         }
 
-        // ── 会議フェーズ (turn 0〜6) ──
-        await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 15000 });
-        // カード削除なしで次のターンへ（確認ダイアログが出るが自動承認）
-        await page.click('#confirm-meeting');
+        // 削除上限0のターンは会議をスキップする。実際の遷移に合わせる。
+        await page.waitForFunction(() => window.game.gameState.phase !== 'action', null, { timeout: 15000 });
+        if (await page.evaluate(() => window.game.gameState.phase === 'meeting')) {
+            await page.waitForSelector('#meeting-area:not(.hidden)', { timeout: 15000 });
+            await page.click('#confirm-meeting');
+        }
 
         // ── 次ターン研修 (ターン1〜7) ──
         // ターンオーバーレイが消えるのを待つ（自動消去まで最大3秒）
@@ -68,8 +70,9 @@ async function waitForScoreLog(page) {
     await page.waitForFunction(
         () => {
             const text = document.getElementById('log-messages')?.textContent ?? '';
-            return text.includes('📤 スコアを送信しました') || text.includes('⚠️ スコア送信に失敗しました');
+            return text.includes('📤 スコアを送信しました') || text.includes('❌ スコア送信に失敗しました');
         },
+        null,
         { timeout: 20000 }
     );
 }
@@ -120,7 +123,7 @@ test.describe('8ターン完走 + スコア送信', () => {
     // 8ターン分のアニメーション時間 + GAS応答時間を考慮して十分なタイムアウトを設定
     test.setTimeout(120000);
 
-    test('FRESHモードで8ターン完走し、GASへスコアが実際に送信される', async ({ page }) => {
+    test('FRESHモードで8ターン完走し、スコア送信ペイロードを検証する', async ({ page }) => {
         page.on('dialog', dialog => dialog.accept());
 
         // ゲーム開始（FRESH難易度）

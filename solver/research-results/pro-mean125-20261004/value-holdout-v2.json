@@ -1,0 +1,2708 @@
+{
+  "generatedAt": "2026-10-03T19:05:14.125Z",
+  "manifest": {
+    "stage": "value-holdout-v2",
+    "n": 250,
+    "seed": "pro-mean125-value-holdout-v2",
+    "goal": "no rerolls; mean score >=12.5",
+    "fingerprints": {
+      "strategyVersion": "6c0e000f944e76bf4a7e50454ab871cda3ffb46f367a26f23179b0a7148fa2b5",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    },
+    "runs": [
+      {
+        "id": "champion",
+        "description": "{\"id\":\"champion\",\"acquisition\":\"learned\",\"placement\":\"engine\",\"deletion\":\"aggressive\",\"objective\":\"engine\",\"uiTrainingStreams\":true,\"cacheEffects\":true,\"learned\":{\"blend\":0.005,\"beam\":72,\"refreshCost\":0.12,\"reserveCost\":0.25},\"valueModelPath\":\"solver/local-runs/pro-mean125/value-v1/depth3-model.json\",\"refresh\":\"learned\",\"signedGrowth\":true,\"safetyBuffer\":2,\"targetScore\":13,\"deleteFloor\":4,\"valueModelSha256\":\"c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba\"}",
+        "files": [
+          "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json"
+        ]
+      }
+    ],
+    "comparisons": []
+  },
+  "groups": {
+    "champion": {
+      "description": "{\"id\":\"champion\",\"acquisition\":\"learned\",\"placement\":\"engine\",\"deletion\":\"aggressive\",\"objective\":\"engine\",\"uiTrainingStreams\":true,\"cacheEffects\":true,\"learned\":{\"blend\":0.005,\"beam\":72,\"refreshCost\":0.12,\"reserveCost\":0.25},\"valueModelPath\":\"solver/local-runs/pro-mean125/value-v1/depth3-model.json\",\"refresh\":\"learned\",\"signedGrowth\":true,\"safetyBuffer\":2,\"targetScore\":13,\"deleteFloor\":4,\"valueModelSha256\":\"c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba\"}",
+      "n": 250,
+      "mean": 11.852,
+      "median": 12,
+      "p10": 10,
+      "p90": 14,
+      "min": -5,
+      "max": 15,
+      "score15": {
+        "count": 4,
+        "rate": 0.016,
+        "interval95": [
+          0.006239123654412256,
+          0.04041044048322319
+        ]
+      },
+      "score14": {
+        "count": 41,
+        "rate": 0.164
+      },
+      "score12Rate": 0.652,
+      "scoreBelow8Rate": 0.016,
+      "withdrawalZeroRate": 0.896,
+      "meanStats": {
+        "experience": 44.828,
+        "enrollment": 33.216,
+        "satisfaction": 32.896,
+        "accounting": 18.28,
+        "withdrawal": 0.192,
+        "difference": 33.024
+      },
+      "milestones": {
+        "experience50": 0.328,
+        "difference40": 0.196,
+        "difference48": 0.004,
+        "satisfaction25": 0.9,
+        "satisfaction35": 0.484
+      },
+      "activity": {
+        "deckSize": 9.836,
+        "acquisitions": 9.748,
+        "deleted": 4.912,
+        "drawn": 36.872,
+        "placed": 30.852,
+        "applied": 30.852,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "5": 1,
+        "7": 1,
+        "8": 4,
+        "9": 10,
+        "10": 20,
+        "11": 49,
+        "12": 65,
+        "13": 57,
+        "14": 37,
+        "15": 4,
+        "-5": 1,
+        "-4": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 62.5,
+        "expectedAttempts95": [
+          24.746080172403968,
+          160.27891982759604
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.14895801818995646,
+            "interval95": [
+              0.06066836501783768,
+              0.3380043414345838
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.5535684065197863,
+            "interval95": [
+              0.2687013963833693,
+              0.8728619030364386
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.8006988323427172,
+            "interval95": [
+              0.46520235234836604,
+              0.9838359043004841
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "mean95": [
+        11.564,
+        12.1
+      ],
+      "resets": 0,
+      "predictionCalibration": [],
+      "failure": {
+        "below8Count": 4,
+        "below8Mean": 0.75,
+        "noWithdrawalCount": 224,
+        "noWithdrawalMean": 12.129464285714286,
+        "withdrawalCount": 26,
+        "withdrawalMean": 9.461538461538462
+      },
+      "analysis": "developmentは方略の選択用。mean125達成は独立した1000シード以上の検証で判断する。",
+      "cards": [
+        {
+          "cardNo": "1",
+          "name": "問合対応の基本",
+          "rarity": "N",
+          "category": "動員",
+          "gamesOffered": 0,
+          "gamesAcquired": 250,
+          "acquisitionTurns": {
+            "0": 250
+          },
+          "drawn": 335,
+          "placed": 276,
+          "applied": 276,
+          "failed": 0,
+          "meaningful": 276,
+          "placedByStaff": {
+            "teacher": 82,
+            "leader": 98,
+            "staff": 96
+          },
+          "stats": {
+            "experience": 724,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.852,
+          "scoreMeanWhenNotAcquired": null,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": true,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "2",
+          "name": "問合対応の基本",
+          "rarity": "N",
+          "category": "動員",
+          "gamesOffered": 0,
+          "gamesAcquired": 250,
+          "acquisitionTurns": {
+            "0": 250
+          },
+          "drawn": 661,
+          "placed": 507,
+          "applied": 507,
+          "failed": 0,
+          "meaningful": 507,
+          "placedByStaff": {
+            "staff": 219,
+            "teacher": 180,
+            "leader": 108
+          },
+          "stats": {
+            "experience": 1255,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.852,
+          "scoreMeanWhenNotAcquired": null,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": true,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "3",
+          "name": "質問対応の基本",
+          "rarity": "N",
+          "category": "教務",
+          "gamesOffered": 0,
+          "gamesAcquired": 250,
+          "acquisitionTurns": {
+            "0": 250
+          },
+          "drawn": 935,
+          "placed": 737,
+          "applied": 737,
+          "failed": 0,
+          "meaningful": 737,
+          "placedByStaff": {
+            "leader": 90,
+            "teacher": 367,
+            "staff": 280
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 1621,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.852,
+          "scoreMeanWhenNotAcquired": null,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": true,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "4",
+          "name": "生徒面談の基本",
+          "rarity": "N",
+          "category": "応対",
+          "gamesOffered": 0,
+          "gamesAcquired": 250,
+          "acquisitionTurns": {
+            "0": 250
+          },
+          "drawn": 366,
+          "placed": 276,
+          "applied": 276,
+          "failed": 0,
+          "meaningful": 276,
+          "placedByStaff": {
+            "staff": 143,
+            "leader": 59,
+            "teacher": 74
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 658,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.852,
+          "scoreMeanWhenNotAcquired": null,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": true,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "5",
+          "name": "経理精算の基本",
+          "rarity": "N",
+          "category": "庶務",
+          "gamesOffered": 0,
+          "gamesAcquired": 250,
+          "acquisitionTurns": {
+            "0": 250
+          },
+          "drawn": 416,
+          "placed": 288,
+          "applied": 288,
+          "failed": 0,
+          "meaningful": 288,
+          "placedByStaff": {
+            "leader": 94,
+            "teacher": 113,
+            "staff": 81
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 624
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.852,
+          "scoreMeanWhenNotAcquired": null,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": true,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "6",
+          "name": "チラシ折り",
+          "rarity": "R",
+          "category": "動員",
+          "gamesOffered": 138,
+          "gamesAcquired": 84,
+          "acquisitionTurns": {
+            "0": 62,
+            "3": 26
+          },
+          "drawn": 330,
+          "placed": 330,
+          "applied": 330,
+          "failed": 0,
+          "meaningful": 330,
+          "placedByStaff": {
+            "teacher": 103,
+            "leader": 42,
+            "staff": 185
+          },
+          "stats": {
+            "experience": 738,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.714285714285714,
+          "scoreMeanWhenNotAcquired": 11.921686746987952,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "7",
+          "name": "元塾生に講習案内",
+          "rarity": "R",
+          "category": "動員",
+          "gamesOffered": 137,
+          "gamesAcquired": 58,
+          "acquisitionTurns": {
+            "0": 35,
+            "3": 29
+          },
+          "drawn": 237,
+          "placed": 196,
+          "applied": 196,
+          "failed": 0,
+          "meaningful": 196,
+          "placedByStaff": {
+            "staff": 40,
+            "leader": 129,
+            "teacher": 27
+          },
+          "stats": {
+            "experience": 884,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.862068965517242,
+          "scoreMeanWhenNotAcquired": 11.848958333333334,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "8",
+          "name": "校門前ビラ配り",
+          "rarity": "R",
+          "category": "動員",
+          "gamesOffered": 140,
+          "gamesAcquired": 55,
+          "acquisitionTurns": {
+            "0": 39,
+            "3": 17
+          },
+          "drawn": 195,
+          "placed": 184,
+          "applied": 184,
+          "failed": 0,
+          "meaningful": 184,
+          "placedByStaff": {
+            "leader": 57,
+            "staff": 41,
+            "teacher": 86
+          },
+          "stats": {
+            "experience": 600,
+            "enrollment": 0,
+            "satisfaction": 184,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.945454545454545,
+          "scoreMeanWhenNotAcquired": 11.825641025641026,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "9",
+          "name": "宿題チェック",
+          "rarity": "R",
+          "category": "教務",
+          "gamesOffered": 143,
+          "gamesAcquired": 38,
+          "acquisitionTurns": {
+            "0": 16,
+            "3": 23
+          },
+          "drawn": 150,
+          "placed": 142,
+          "applied": 142,
+          "failed": 0,
+          "meaningful": 142,
+          "placedByStaff": {
+            "leader": 35,
+            "teacher": 54,
+            "staff": 53
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 330,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.105263157894736,
+          "scoreMeanWhenNotAcquired": 11.806603773584905,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "10",
+          "name": "日々の授業",
+          "rarity": "R",
+          "category": "教務",
+          "gamesOffered": 135,
+          "gamesAcquired": 19,
+          "acquisitionTurns": {
+            "0": 1,
+            "3": 18
+          },
+          "drawn": 63,
+          "placed": 59,
+          "applied": 59,
+          "failed": 0,
+          "meaningful": 59,
+          "placedByStaff": {
+            "leader": 34,
+            "teacher": 25
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 234,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.526315789473685,
+          "scoreMeanWhenNotAcquired": 11.796536796536797,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "11",
+          "name": "褒めて励ます授業",
+          "rarity": "R",
+          "category": "教務",
+          "gamesOffered": 133,
+          "gamesAcquired": 4,
+          "acquisitionTurns": {
+            "0": 2,
+            "3": 2
+          },
+          "drawn": 12,
+          "placed": 10,
+          "applied": 10,
+          "failed": 0,
+          "meaningful": 10,
+          "placedByStaff": {
+            "teacher": 9,
+            "leader": 1
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 22,
+            "satisfaction": 20,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 7.75,
+          "scoreMeanWhenNotAcquired": 11.91869918699187,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "12",
+          "name": "日々の出迎え",
+          "rarity": "R",
+          "category": "応対",
+          "gamesOffered": 145,
+          "gamesAcquired": 1,
+          "acquisitionTurns": {
+            "3": 1
+          },
+          "drawn": 3,
+          "placed": 3,
+          "applied": 3,
+          "failed": 0,
+          "meaningful": 3,
+          "placedByStaff": {
+            "staff": 3
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 7,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 14,
+          "scoreMeanWhenNotAcquired": 11.843373493975903,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "13",
+          "name": "休み時間トーク",
+          "rarity": "R",
+          "category": "応対",
+          "gamesOffered": 142,
+          "gamesAcquired": 123,
+          "acquisitionTurns": {
+            "0": 96,
+            "3": 33
+          },
+          "drawn": 519,
+          "placed": 519,
+          "applied": 519,
+          "failed": 0,
+          "meaningful": 519,
+          "placedByStaff": {
+            "leader": 105,
+            "teacher": 126,
+            "staff": 288
+          },
+          "stats": {
+            "experience": 252,
+            "enrollment": 0,
+            "satisfaction": 989,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 105,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.894308943089431,
+          "scoreMeanWhenNotAcquired": 11.811023622047244,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "14",
+          "name": "保護者面談",
+          "rarity": "R",
+          "category": "応対",
+          "gamesOffered": 156,
+          "gamesAcquired": 83,
+          "acquisitionTurns": {
+            "0": 64,
+            "3": 23
+          },
+          "drawn": 321,
+          "placed": 272,
+          "applied": 272,
+          "failed": 0,
+          "meaningful": 272,
+          "placedByStaff": {
+            "leader": 98,
+            "teacher": 121,
+            "staff": 53
+          },
+          "stats": {
+            "experience": 544,
+            "enrollment": 0,
+            "satisfaction": 880,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.819277108433734,
+          "scoreMeanWhenNotAcquired": 11.868263473053892,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "15",
+          "name": "提出書類ファイリング",
+          "rarity": "R",
+          "category": "庶務",
+          "gamesOffered": 138,
+          "gamesAcquired": 31,
+          "acquisitionTurns": {
+            "0": 19,
+            "3": 14
+          },
+          "drawn": 152,
+          "placed": 152,
+          "applied": 152,
+          "failed": 0,
+          "meaningful": 152,
+          "placedByStaff": {
+            "staff": 76,
+            "teacher": 29,
+            "leader": 47
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 351
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.838709677419354,
+          "scoreMeanWhenNotAcquired": 11.853881278538813,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "16",
+          "name": "備品注文",
+          "rarity": "R",
+          "category": "庶務",
+          "gamesOffered": 151,
+          "gamesAcquired": 105,
+          "acquisitionTurns": {
+            "0": 84,
+            "3": 26
+          },
+          "drawn": 403,
+          "placed": 277,
+          "applied": 277,
+          "failed": 0,
+          "meaningful": 277,
+          "placedByStaff": {
+            "staff": 277
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 277,
+            "accounting": 1174
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.714285714285714,
+          "scoreMeanWhenNotAcquired": 11.951724137931034,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "17",
+          "name": "振込用紙印刷",
+          "rarity": "R",
+          "category": "庶務",
+          "gamesOffered": 140,
+          "gamesAcquired": 111,
+          "acquisitionTurns": {
+            "0": 82,
+            "3": 38
+          },
+          "drawn": 510,
+          "placed": 482,
+          "applied": 482,
+          "failed": 0,
+          "meaningful": 482,
+          "placedByStaff": {
+            "teacher": 255,
+            "leader": 107,
+            "staff": 120
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 936,
+            "satisfaction": 0,
+            "accounting": 1089
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.891891891891891,
+          "scoreMeanWhenNotAcquired": 11.820143884892087,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "18",
+          "name": "心を掴む1日見学",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 145,
+          "gamesAcquired": 86,
+          "acquisitionTurns": {
+            "1": 33,
+            "2": 1,
+            "4": 1,
+            "5": 14,
+            "6": 17,
+            "7": 33
+          },
+          "drawn": 201,
+          "placed": 189,
+          "applied": 189,
+          "failed": 0,
+          "meaningful": 189,
+          "placedByStaff": {
+            "teacher": 39,
+            "leader": 150
+          },
+          "stats": {
+            "experience": 584,
+            "enrollment": 489,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.744186046511627,
+          "scoreMeanWhenNotAcquired": 11.908536585365853,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "19",
+          "name": "保護者説明会",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 141,
+          "gamesAcquired": 75,
+          "acquisitionTurns": {
+            "1": 25,
+            "3": 2,
+            "4": 5,
+            "5": 17,
+            "6": 15,
+            "7": 13
+          },
+          "drawn": 169,
+          "placed": 135,
+          "applied": 135,
+          "failed": 0,
+          "meaningful": 135,
+          "placedByStaff": {
+            "leader": 135
+          },
+          "stats": {
+            "experience": 689,
+            "enrollment": 135,
+            "satisfaction": 135,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.773333333333333,
+          "scoreMeanWhenNotAcquired": 11.885714285714286,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "20",
+          "name": "友人紹介",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 142,
+          "gamesAcquired": 26,
+          "acquisitionTurns": {
+            "1": 2,
+            "3": 1,
+            "4": 1,
+            "5": 9,
+            "6": 7,
+            "7": 8
+          },
+          "drawn": 34,
+          "placed": 25,
+          "applied": 25,
+          "failed": 0,
+          "meaningful": 25,
+          "placedByStaff": {
+            "teacher": 21,
+            "leader": 4
+          },
+          "stats": {
+            "experience": 73,
+            "enrollment": 72,
+            "satisfaction": 0,
+            "accounting": -24
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.538461538461538,
+          "scoreMeanWhenNotAcquired": 11.888392857142858,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "21",
+          "name": "兄弟紹介",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 161,
+          "gamesAcquired": 113,
+          "acquisitionTurns": {
+            "1": 9,
+            "2": 1,
+            "3": 1,
+            "4": 7,
+            "5": 40,
+            "6": 41,
+            "7": 32
+          },
+          "drawn": 214,
+          "placed": 214,
+          "applied": 214,
+          "failed": 0,
+          "meaningful": 214,
+          "placedByStaff": {
+            "leader": 70,
+            "staff": 90,
+            "teacher": 54
+          },
+          "stats": {
+            "experience": 434,
+            "enrollment": 424,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.238938053097344,
+          "scoreMeanWhenNotAcquired": 11.532846715328468,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "22",
+          "name": "進学相談フェア出展",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 148,
+          "gamesAcquired": 36,
+          "acquisitionTurns": {
+            "3": 1,
+            "5": 8,
+            "6": 13,
+            "7": 18
+          },
+          "drawn": 44,
+          "placed": 29,
+          "applied": 29,
+          "failed": 0,
+          "meaningful": 29,
+          "placedByStaff": {
+            "leader": 19,
+            "teacher": 10
+          },
+          "stats": {
+            "experience": 203,
+            "enrollment": 38,
+            "satisfaction": 0,
+            "accounting": -29
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 29,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.055555555555555,
+          "scoreMeanWhenNotAcquired": 11.817757009345794,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "23",
+          "name": "人気の秘密は？他塾研究",
+          "rarity": "SR",
+          "category": "動員",
+          "gamesOffered": 139,
+          "gamesAcquired": 6,
+          "acquisitionTurns": {
+            "1": 2,
+            "5": 2,
+            "7": 2
+          },
+          "drawn": 6,
+          "placed": 4,
+          "applied": 4,
+          "failed": 0,
+          "meaningful": 4,
+          "placedByStaff": {
+            "teacher": 4
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 4,
+            "organize": 4
+          },
+          "scoreMeanWhenAcquired": 10.5,
+          "scoreMeanWhenNotAcquired": 11.885245901639344,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "24",
+          "name": "苦手発見！質問対応",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 156,
+          "gamesAcquired": 42,
+          "acquisitionTurns": {
+            "1": 7,
+            "5": 5,
+            "6": 18,
+            "7": 15
+          },
+          "drawn": 63,
+          "placed": 58,
+          "applied": 58,
+          "failed": 0,
+          "meaningful": 58,
+          "placedByStaff": {
+            "teacher": 55,
+            "leader": 3
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 198,
+            "satisfaction": 165,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12,
+          "scoreMeanWhenNotAcquired": 11.822115384615385,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "25",
+          "name": "ここが出る！テスト対策",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 150,
+          "gamesAcquired": 39,
+          "acquisitionTurns": {
+            "1": 5,
+            "5": 13,
+            "6": 9,
+            "7": 13
+          },
+          "drawn": 55,
+          "placed": 49,
+          "applied": 49,
+          "failed": 0,
+          "meaningful": 49,
+          "placedByStaff": {
+            "teacher": 33,
+            "leader": 16
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 251,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.41025641025641,
+          "scoreMeanWhenNotAcquired": 11.748815165876778,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "26",
+          "name": "できるまで居残り！",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 134,
+          "gamesAcquired": 40,
+          "acquisitionTurns": {
+            "1": 1,
+            "4": 1,
+            "5": 13,
+            "6": 7,
+            "7": 18
+          },
+          "drawn": 44,
+          "placed": 38,
+          "applied": 38,
+          "failed": 0,
+          "meaningful": 38,
+          "placedByStaff": {
+            "teacher": 17,
+            "staff": 14,
+            "leader": 7
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 229,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 38,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.85,
+          "scoreMeanWhenNotAcquired": 11.852380952380953,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "27",
+          "name": "補習大会",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 144,
+          "gamesAcquired": 2,
+          "acquisitionTurns": {
+            "7": 2
+          },
+          "drawn": 1,
+          "placed": 1,
+          "applied": 1,
+          "failed": 0,
+          "meaningful": 1,
+          "placedByStaff": {
+            "leader": 1
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 4,
+            "satisfaction": 2,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 13,
+          "scoreMeanWhenNotAcquired": 11.84274193548387,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "28",
+          "name": "テスト予想問題的中！",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 141,
+          "gamesAcquired": 47,
+          "acquisitionTurns": {
+            "1": 17,
+            "5": 12,
+            "6": 20,
+            "7": 3
+          },
+          "drawn": 124,
+          "placed": 103,
+          "applied": 103,
+          "failed": 0,
+          "meaningful": 103,
+          "placedByStaff": {
+            "leader": 103
+          },
+          "stats": {
+            "experience": 103,
+            "enrollment": 232,
+            "satisfaction": 103,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 103,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.957446808510639,
+          "scoreMeanWhenNotAcquired": 11.827586206896552,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "29",
+          "name": "設問の急所は？教材研究",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 135,
+          "gamesAcquired": 18,
+          "acquisitionTurns": {
+            "1": 2,
+            "5": 7,
+            "6": 5,
+            "7": 4
+          },
+          "drawn": 27,
+          "placed": 23,
+          "applied": 23,
+          "failed": 0,
+          "meaningful": 23,
+          "placedByStaff": {
+            "teacher": 15,
+            "staff": 4,
+            "leader": 4
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 67,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 23,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.666666666666666,
+          "scoreMeanWhenNotAcquired": 11.866379310344827,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "30",
+          "name": "最新入試情報リサーチ",
+          "rarity": "SR",
+          "category": "教務",
+          "gamesOffered": 154,
+          "gamesAcquired": 79,
+          "acquisitionTurns": {
+            "1": 3,
+            "3": 2,
+            "5": 34,
+            "6": 36,
+            "7": 16
+          },
+          "drawn": 132,
+          "placed": 131,
+          "applied": 131,
+          "failed": 0,
+          "meaningful": 131,
+          "placedByStaff": {
+            "leader": 75,
+            "teacher": 56
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 447,
+            "satisfaction": 250,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.455696202531646,
+          "scoreMeanWhenNotAcquired": 11.573099415204679,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "31",
+          "name": "教室清掃",
+          "rarity": "SR",
+          "category": "応対",
+          "gamesOffered": 125,
+          "gamesAcquired": 70,
+          "acquisitionTurns": {
+            "1": 22,
+            "2": 1,
+            "3": 1,
+            "4": 1,
+            "5": 32,
+            "6": 21,
+            "7": 8
+          },
+          "drawn": 198,
+          "placed": 198,
+          "applied": 198,
+          "failed": 0,
+          "meaningful": 198,
+          "placedByStaff": {
+            "teacher": 55,
+            "staff": 88,
+            "leader": 55
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 441,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 198,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.7,
+          "scoreMeanWhenNotAcquired": 11.911111111111111,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "32",
+          "name": "スタンプ帳キャンペーン",
+          "rarity": "SR",
+          "category": "応対",
+          "gamesOffered": 134,
+          "gamesAcquired": 34,
+          "acquisitionTurns": {
+            "1": 8,
+            "5": 9,
+            "6": 12,
+            "7": 8
+          },
+          "drawn": 52,
+          "placed": 45,
+          "applied": 45,
+          "failed": 0,
+          "meaningful": 45,
+          "placedByStaff": {
+            "teacher": 21,
+            "staff": 13,
+            "leader": 11
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 131,
+            "satisfaction": 237,
+            "accounting": -45
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.058823529411764,
+          "scoreMeanWhenNotAcquired": 11.976851851851851,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "33",
+          "name": "私も載ったよ！成績UP掲示",
+          "rarity": "SR",
+          "category": "応対",
+          "gamesOffered": 139,
+          "gamesAcquired": 46,
+          "acquisitionTurns": {
+            "1": 3,
+            "4": 1,
+            "5": 8,
+            "6": 14,
+            "7": 20
+          },
+          "drawn": 50,
+          "placed": 47,
+          "applied": 47,
+          "failed": 0,
+          "meaningful": 47,
+          "placedByStaff": {
+            "teacher": 18,
+            "leader": 14,
+            "staff": 15
+          },
+          "stats": {
+            "experience": 88,
+            "enrollment": 0,
+            "satisfaction": 242,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.456521739130435,
+          "scoreMeanWhenNotAcquired": 11.941176470588236,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "34",
+          "name": "笑顔伝わる教室通信",
+          "rarity": "SR",
+          "category": "応対",
+          "gamesOffered": 155,
+          "gamesAcquired": 23,
+          "acquisitionTurns": {
+            "1": 4,
+            "5": 9,
+            "6": 3,
+            "7": 7
+          },
+          "drawn": 32,
+          "placed": 27,
+          "applied": 27,
+          "failed": 0,
+          "meaningful": 27,
+          "placedByStaff": {
+            "leader": 27
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 50,
+            "satisfaction": 142,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.565217391304348,
+          "scoreMeanWhenNotAcquired": 11.881057268722467,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "35",
+          "name": "季節のデコレーション",
+          "rarity": "SR",
+          "category": "応対",
+          "gamesOffered": 134,
+          "gamesAcquired": 81,
+          "acquisitionTurns": {
+            "1": 43,
+            "2": 1,
+            "3": 1,
+            "4": 1,
+            "5": 24,
+            "6": 10,
+            "7": 14
+          },
+          "drawn": 222,
+          "placed": 186,
+          "applied": 186,
+          "failed": 0,
+          "meaningful": 186,
+          "placedByStaff": {
+            "teacher": 12,
+            "staff": 168,
+            "leader": 6
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 400,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 186,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 186
+          },
+          "scoreMeanWhenAcquired": 11.74074074074074,
+          "scoreMeanWhenNotAcquired": 11.905325443786982,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "36",
+          "name": "締切間近の書類リマインド",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 139,
+          "gamesAcquired": 46,
+          "acquisitionTurns": {
+            "1": 18,
+            "2": 1,
+            "4": 1,
+            "5": 11,
+            "6": 6,
+            "7": 9
+          },
+          "drawn": 101,
+          "placed": 86,
+          "applied": 86,
+          "failed": 0,
+          "meaningful": 86,
+          "placedByStaff": {
+            "staff": 81,
+            "teacher": 4,
+            "leader": 1
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 162,
+            "accounting": 203
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 81
+          },
+          "scoreMeanWhenAcquired": 12.08695652173913,
+          "scoreMeanWhenNotAcquired": 11.799019607843137,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "37",
+          "name": "教材発注",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 130,
+          "gamesAcquired": 41,
+          "acquisitionTurns": {
+            "1": 3,
+            "2": 1,
+            "5": 11,
+            "6": 8,
+            "7": 19
+          },
+          "drawn": 51,
+          "placed": 39,
+          "applied": 39,
+          "failed": 0,
+          "meaningful": 39,
+          "placedByStaff": {
+            "staff": 34,
+            "teacher": 2,
+            "leader": 3
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 35,
+            "satisfaction": 0,
+            "accounting": 204
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.170731707317072,
+          "scoreMeanWhenNotAcquired": 11.789473684210526,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "38",
+          "name": "未入金家庭へ電話",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 137,
+          "gamesAcquired": 23,
+          "acquisitionTurns": {
+            "1": 1,
+            "5": 4,
+            "6": 7,
+            "7": 13
+          },
+          "drawn": 24,
+          "placed": 17,
+          "applied": 17,
+          "failed": 0,
+          "meaningful": 17,
+          "placedByStaff": {
+            "staff": 17
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 114
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.26086956521739,
+          "scoreMeanWhenNotAcquired": 11.911894273127754,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "39",
+          "name": "機材故障は本部に相談",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 142,
+          "gamesAcquired": 15,
+          "acquisitionTurns": {
+            "6": 3,
+            "7": 12
+          },
+          "drawn": 10,
+          "placed": 6,
+          "applied": 6,
+          "failed": 0,
+          "meaningful": 6,
+          "placedByStaff": {
+            "staff": 4,
+            "teacher": 1,
+            "leader": 1
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 28
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.066666666666666,
+          "scoreMeanWhenNotAcquired": 11.838297872340426,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 130,
+          "gamesAcquired": 75,
+          "acquisitionTurns": {
+            "1": 43,
+            "2": 2,
+            "3": 1,
+            "4": 4,
+            "5": 14,
+            "6": 14,
+            "7": 2
+          },
+          "drawn": 273,
+          "placed": 236,
+          "applied": 236,
+          "failed": 0,
+          "meaningful": 236,
+          "placedByStaff": {
+            "leader": 236
+          },
+          "stats": {
+            "experience": 236,
+            "enrollment": 236,
+            "satisfaction": 236,
+            "accounting": 58
+          },
+          "tokens": {
+            "passion": 472,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.186666666666667,
+          "scoreMeanWhenNotAcquired": 11.708571428571428,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "41",
+          "name": "入塾手続きのご案内",
+          "rarity": "SR",
+          "category": "庶務",
+          "gamesOffered": 133,
+          "gamesAcquired": 24,
+          "acquisitionTurns": {
+            "5": 5,
+            "6": 10,
+            "7": 9
+          },
+          "drawn": 29,
+          "placed": 25,
+          "applied": 25,
+          "failed": 0,
+          "meaningful": 25,
+          "placedByStaff": {
+            "staff": 12,
+            "leader": 13
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 49,
+            "satisfaction": 0,
+            "accounting": 104
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.541666666666666,
+          "scoreMeanWhenNotAcquired": 11.88495575221239,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "42",
+          "name": "努力の結晶 合格実績掲示",
+          "rarity": "SSR",
+          "category": "動員",
+          "gamesOffered": 145,
+          "gamesAcquired": 115,
+          "acquisitionTurns": {
+            "2": 78,
+            "4": 43
+          },
+          "drawn": 401,
+          "placed": 323,
+          "applied": 323,
+          "failed": 0,
+          "meaningful": 323,
+          "placedByStaff": {
+            "leader": 101,
+            "teacher": 146,
+            "staff": 76
+          },
+          "stats": {
+            "experience": 2609,
+            "enrollment": 0,
+            "satisfaction": 780,
+            "accounting": -323
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.08695652173913,
+          "scoreMeanWhenNotAcquired": 11.651851851851852,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "43",
+          "name": "テレビCM放映",
+          "rarity": "SSR",
+          "category": "動員",
+          "gamesOffered": 152,
+          "gamesAcquired": 4,
+          "acquisitionTurns": {
+            "2": 1,
+            "4": 3
+          },
+          "drawn": 10,
+          "placed": 6,
+          "applied": 6,
+          "failed": 0,
+          "meaningful": 6,
+          "placedByStaff": {
+            "leader": 6
+          },
+          "stats": {
+            "experience": 49,
+            "enrollment": 12,
+            "satisfaction": 30,
+            "accounting": -24
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11,
+          "scoreMeanWhenNotAcquired": 11.865853658536585,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "44",
+          "name": "今だけ！体験生特典",
+          "rarity": "SSR",
+          "category": "動員",
+          "gamesOffered": 152,
+          "gamesAcquired": 39,
+          "acquisitionTurns": {
+            "2": 19,
+            "4": 20
+          },
+          "drawn": 106,
+          "placed": 74,
+          "applied": 74,
+          "failed": 0,
+          "meaningful": 74,
+          "placedByStaff": {
+            "leader": 74
+          },
+          "stats": {
+            "experience": 529,
+            "enrollment": 222,
+            "satisfaction": 0,
+            "accounting": -148
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.256410256410257,
+          "scoreMeanWhenNotAcquired": 11.962085308056873,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "45",
+          "name": "学力確認＆向上 公開模試",
+          "rarity": "SSR",
+          "category": "教務",
+          "gamesOffered": 150,
+          "gamesAcquired": 36,
+          "acquisitionTurns": {
+            "2": 5,
+            "4": 31
+          },
+          "drawn": 95,
+          "placed": 87,
+          "applied": 87,
+          "failed": 0,
+          "meaningful": 87,
+          "placedByStaff": {
+            "teacher": 74,
+            "leader": 13
+          },
+          "stats": {
+            "experience": 104,
+            "enrollment": 625,
+            "satisfaction": 0,
+            "accounting": -100
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.5,
+          "scoreMeanWhenNotAcquired": 11.742990654205608,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "46",
+          "name": "入塾後の未来へ 進路説明会",
+          "rarity": "SSR",
+          "category": "教務",
+          "gamesOffered": 146,
+          "gamesAcquired": 43,
+          "acquisitionTurns": {
+            "2": 26,
+            "4": 17
+          },
+          "drawn": 105,
+          "placed": 94,
+          "applied": 94,
+          "failed": 0,
+          "meaningful": 94,
+          "placedByStaff": {
+            "leader": 94
+          },
+          "stats": {
+            "experience": 188,
+            "enrollment": 568,
+            "satisfaction": 282,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 94,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.55813953488372,
+          "scoreMeanWhenNotAcquired": 11.91304347826087,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "47",
+          "name": "プロジェクター授業",
+          "rarity": "SSR",
+          "category": "教務",
+          "gamesOffered": 149,
+          "gamesAcquired": 41,
+          "acquisitionTurns": {
+            "2": 14,
+            "4": 27
+          },
+          "drawn": 108,
+          "placed": 82,
+          "applied": 82,
+          "failed": 0,
+          "meaningful": 82,
+          "placedByStaff": {
+            "leader": 16,
+            "teacher": 66
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 647,
+            "satisfaction": 0,
+            "accounting": -82
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.902439024390244,
+          "scoreMeanWhenNotAcquired": 11.842105263157896,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "48",
+          "name": "赤字覚悟！？ 大抽選会",
+          "rarity": "SSR",
+          "category": "応対",
+          "gamesOffered": 163,
+          "gamesAcquired": 49,
+          "acquisitionTurns": {
+            "2": 27,
+            "4": 24
+          },
+          "drawn": 146,
+          "placed": 107,
+          "applied": 107,
+          "failed": 0,
+          "meaningful": 107,
+          "placedByStaff": {
+            "staff": 37,
+            "teacher": 49,
+            "leader": 21
+          },
+          "stats": {
+            "experience": 321,
+            "enrollment": 0,
+            "satisfaction": 773,
+            "accounting": -107
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.959183673469388,
+          "scoreMeanWhenNotAcquired": 11.82587064676617,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "49",
+          "name": "卒業生からの手紙",
+          "rarity": "SSR",
+          "category": "応対",
+          "gamesOffered": 140,
+          "gamesAcquired": 104,
+          "acquisitionTurns": {
+            "2": 52,
+            "4": 64
+          },
+          "drawn": 380,
+          "placed": 252,
+          "applied": 252,
+          "failed": 0,
+          "meaningful": 252,
+          "placedByStaff": {
+            "leader": 164,
+            "staff": 35,
+            "teacher": 53
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 79,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 500,
+            "fatigue": 0,
+            "inspiration": 250,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12.01923076923077,
+          "scoreMeanWhenNotAcquired": 11.732876712328768,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "50",
+          "name": "事務リーダー1日派遣",
+          "rarity": "SSR",
+          "category": "庶務",
+          "gamesOffered": 178,
+          "gamesAcquired": 47,
+          "acquisitionTurns": {
+            "2": 28,
+            "4": 20
+          },
+          "drawn": 100,
+          "placed": 67,
+          "applied": 67,
+          "failed": 0,
+          "meaningful": 67,
+          "placedByStaff": {
+            "teacher": 20,
+            "leader": 21,
+            "staff": 26
+          },
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 253
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 11.085106382978724,
+          "scoreMeanWhenNotAcquired": 12.029556650246306,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": 1,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        },
+        {
+          "cardNo": "51",
+          "name": "明るく広く！教室リフォーム",
+          "rarity": "SSR",
+          "category": "応対",
+          "gamesOffered": 136,
+          "gamesAcquired": 1,
+          "acquisitionTurns": {
+            "4": 1
+          },
+          "drawn": 3,
+          "placed": 0,
+          "applied": 0,
+          "failed": 0,
+          "meaningful": 0,
+          "placedByStaff": {},
+          "stats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 0,
+            "accounting": 0
+          },
+          "tokens": {
+            "passion": 0,
+            "fatigue": 0,
+            "inspiration": 0,
+            "organize": 0
+          },
+          "scoreMeanWhenAcquired": 12,
+          "scoreMeanWhenNotAcquired": 11.85140562248996,
+          "descriptiveOnly": true,
+          "trendSupportAtLeast250": false,
+          "meaningfulPerPlacement": null,
+          "notes": "保有と得点の共起は因果効果ではない。直接変化量は実際の条件・コスト・上限を適用した解決記録。相性・取得時期の優位は別途対照試験が必要。"
+        }
+      ],
+      "examplesHigh": [
+        {
+          "seed": "pro-mean125-value-holdout-v2:0",
+          "score": 14,
+          "stats": {
+            "experience": 45,
+            "enrollment": 42,
+            "satisfaction": 39,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 42
+          },
+          "turnStats": {
+            "0": {
+              "experience": 8,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 0,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 13,
+              "enrollment": 2,
+              "satisfaction": 14,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 17,
+              "enrollment": 2,
+              "satisfaction": 19,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 23,
+              "enrollment": 11,
+              "satisfaction": 24,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 27,
+              "enrollment": 19,
+              "satisfaction": 30,
+              "accounting": 13
+            },
+            "6": {
+              "experience": 36,
+              "enrollment": 31,
+              "satisfaction": 35,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 45,
+              "enrollment": 42,
+              "satisfaction": 39,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "16",
+              "cardName": "備品注文"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            }
+          ]
+        },
+        {
+          "seed": "pro-mean125-value-holdout-v2:9",
+          "score": 14,
+          "stats": {
+            "experience": 54,
+            "enrollment": 42,
+            "satisfaction": 30,
+            "accounting": 22,
+            "withdrawal": 0,
+            "difference": 42
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 0,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 13,
+              "enrollment": 5,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 8,
+              "satisfaction": 12,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 25,
+              "enrollment": 13,
+              "satisfaction": 12,
+              "accounting": 14
+            },
+            "4": {
+              "experience": 34,
+              "enrollment": 16,
+              "satisfaction": 20,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 23,
+              "satisfaction": 21,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 32,
+              "satisfaction": 30,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 54,
+              "enrollment": 42,
+              "satisfaction": 30,
+              "accounting": 22
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "8",
+              "cardName": "校門前ビラ配り"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "48",
+              "cardName": "赤字覚悟！？ 大抽選会"
+            },
+            {
+              "cardNo": "34",
+              "cardName": "笑顔伝わる教室通信"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            }
+          ]
+        },
+        {
+          "seed": "pro-mean125-value-holdout-v2:11",
+          "score": 14,
+          "stats": {
+            "experience": 54,
+            "enrollment": 42,
+            "satisfaction": 34,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 42
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 0,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 6,
+              "enrollment": 2,
+              "satisfaction": 11,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 10,
+              "enrollment": 4,
+              "satisfaction": 14,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 18,
+              "enrollment": 8,
+              "satisfaction": 16,
+              "accounting": 13
+            },
+            "4": {
+              "experience": 26,
+              "enrollment": 13,
+              "satisfaction": 21,
+              "accounting": 14
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 27,
+              "satisfaction": 24,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 46,
+              "enrollment": 34,
+              "satisfaction": 29,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 54,
+              "enrollment": 42,
+              "satisfaction": 34,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "45",
+              "cardName": "学力確認＆向上 公開模試"
+            },
+            {
+              "cardNo": "36",
+              "cardName": "締切間近の書類リマインド"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            }
+          ]
+        },
+        {
+          "seed": "pro-mean125-value-holdout-v2:18",
+          "score": 14,
+          "stats": {
+            "experience": 53,
+            "enrollment": 42,
+            "satisfaction": 31,
+            "accounting": 22,
+            "withdrawal": 0,
+            "difference": 42
+          },
+          "turnStats": {
+            "0": {
+              "experience": 10,
+              "enrollment": 0,
+              "satisfaction": 4,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 15,
+              "enrollment": 0,
+              "satisfaction": 8,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 23,
+              "enrollment": 12,
+              "satisfaction": 14,
+              "accounting": 8
+            },
+            "4": {
+              "experience": 26,
+              "enrollment": 24,
+              "satisfaction": 18,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 34,
+              "enrollment": 32,
+              "satisfaction": 21,
+              "accounting": 13
+            },
+            "6": {
+              "experience": 42,
+              "enrollment": 41,
+              "satisfaction": 24,
+              "accounting": 17
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 42,
+              "satisfaction": 31,
+              "accounting": 22
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "28",
+              "cardName": "テスト予想問題的中！"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "45",
+              "cardName": "学力確認＆向上 公開模試"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "8",
+              "cardName": "校門前ビラ配り"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            }
+          ]
+        },
+        {
+          "seed": "pro-mean125-value-holdout-v2:21",
+          "score": 14,
+          "stats": {
+            "experience": 51,
+            "enrollment": 36,
+            "satisfaction": 35,
+            "accounting": 25,
+            "withdrawal": 0,
+            "difference": 36
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 6,
+              "accounting": 11
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 5,
+              "satisfaction": 8,
+              "accounting": 12
+            },
+            "3": {
+              "experience": 20,
+              "enrollment": 9,
+              "satisfaction": 10,
+              "accounting": 14
+            },
+            "4": {
+              "experience": 20,
+              "enrollment": 14,
+              "satisfaction": 14,
+              "accounting": 16
+            },
+            "5": {
+              "experience": 33,
+              "enrollment": 17,
+              "satisfaction": 24,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 46,
+              "enrollment": 27,
+              "satisfaction": 32,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 51,
+              "enrollment": 36,
+              "satisfaction": 35,
+              "accounting": 25
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "comparisons": {},
+  "audit": [
+    {
+      "id": "champion",
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-holdout-v2/champion-batch0.json",
+      "sha256": "9fcb77202f7242a2c7b64728bb48cf0eab5b6f16e9e8203ba22066d06b204ea9",
+      "n": 250,
+      "version": "6c0e000f944e76bf4a7e50454ab871cda3ffb46f367a26f23179b0a7148fa2b5"
+    }
+  ]
+}

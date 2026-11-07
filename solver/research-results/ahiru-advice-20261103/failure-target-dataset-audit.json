@@ -1,0 +1,18 @@
+{
+  "createdAt": "2026-11-03T03:53:44.887Z",
+  "source": "solver/local-runs/pro-mean125/ahiru-shortfall-v1/dataset.json",
+  "sourceSha256": "c1311ab620b0df774edac7febc136a10cb58e2187f6b0cbba29f1fbfdaa34ba8",
+  "dataset": "solver/local-runs/pro-mean125/ahiru-failure-v1/dataset.json",
+  "datasetSha256": "add4c6ed31bbb720f3cf8934b31eba06f2cf97b5dda669e0853914ad8acceacb",
+  "targetKind": "pro-failure8",
+  "transform": "score <= 8 ? 1 : 0; performed in browser only",
+  "counts": {
+    "trainSeeds": 1500,
+    "validationSeeds": 500,
+    "trainRows": 36583,
+    "validationRows": 12187
+  },
+  "validation": "開始順0..1499を学習、1500..1999を比較。全開始採用、1ゲームの総重み1。",
+  "liveValidationOverlap": 0,
+  "unchangedActor": "48105419afcd1a5bb22e41ae950719c9fdbfcdc93e5f415e625faa446b517d05"
+}

@@ -1,14 +1,15 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey } from './difficultyConfig.js';
-import { isEventActive } from './eventManager.js';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261107-0061';
+import { isEventActive } from './eventManager.js?v=20261107-0061';
+import { fingerprint } from './playRecord.js?v=20261107-0061';
 
 export class ScoreManager {
-    constructor(logger) {
+    constructor(logger, { migrateHighScore = true } = {}) {
         this.logger = logger;
         this.rankTable = null;
-        this.migrateOldHighScore();
+        if (migrateHighScore) this.migrateOldHighScore();
     }
 
     /**
@@ -36,20 +37,21 @@ export class ScoreManager {
      */
     async loadRankData(csvPath) {
         try {
-            const response = await fetch(csvPath);
+            const version = globalThis.window?.BUILD_VERSION;
+            const response = await fetch(csvPath + (version ? `?v=${version}` : ''));
             if (!response.ok) {
                 throw new Error(`CSV読み込み失敗: ${response.status}`);
             }
 
             const text = await response.text();
+            this.dataVersion = await fingerprint(text);
             const lines = text
                 .split(/\r?\n/)
                 .map((line) => line.trim())
                 .filter((line) => line !== '');
 
             if (lines.length <= 1) {
-                this.rankTable = [];
-                return this.rankTable;
+                throw new Error('ランクデータが空です');
             }
 
             const headers = lines[0]
@@ -101,6 +103,8 @@ export class ScoreManager {
                     return baseRow;
                 })
                 .filter(Boolean);
+
+            if (this.rankTable.length === 0) throw new Error('ランクデータの形式が不正です');
 
             return this.rankTable;
         } catch (error) {
@@ -204,7 +208,7 @@ export class ScoreManager {
         let currentEnrollmentDiffScore = 0;
         let currentFreshDiffScore = 0;
 
-        if (difficulty === 'pro') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
             if (statKey === 'experience') {
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
@@ -305,7 +309,7 @@ export class ScoreManager {
         // --- startThreshold の計算 ---
         let startThreshold = currentThreshold; // デフォルト（逐次の場合）
 
-        if (difficulty === 'pro') {
+        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
             if (statKey === 'experience') {
                 startThreshold = getScoreGroupStartThreshold(
                     'mobilization',
@@ -486,8 +490,10 @@ export class ScoreManager {
      * スコアを計算
      */
     calculateScore(gameState) {
+        const custom = getDifficultyConfig(gameState.difficulty).rules?.calculateScore;
+        if (custom) return custom(gameState, this);
         // PROの場合はPRO専用ロジックを使う
-        if ((gameState.difficulty || 'fresh') === 'pro' && this.rankTable) {
+        if (getDifficultyConfig(gameState.difficulty).scoringModel === 'pro' && this.rankTable) {
             return this.calculateScorePro(gameState);
         }
 

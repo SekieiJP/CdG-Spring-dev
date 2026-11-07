@@ -1,0 +1,409 @@
+{
+  "createdAt": "2026-11-03T01:41:12.368Z",
+  "purpose": "リセマラなしPRO。過去の結果だけを教師として使用。予測精度は実プレイ改善の証明ではない。",
+  "sourceSummarySha256": "12b50c1101b19f4201a3d3fb8635f21978123d9e1d55b067f41c712db88c0e50",
+  "provenance": {
+    "datasetSha256": "c1311ab620b0df774edac7febc136a10cb58e2187f6b0cbba29f1fbfdaa34ba8",
+    "implementationSha256": "098024f55d3a29090c61ba25a0af5cbae0c7321dd4c2a2e4218683d309dd41e3",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 1500,
+      "validationSeeds": 500,
+      "trainRows": 36583,
+      "validationRows": 12187
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch0.json",
+        "n": 250,
+        "sha256": "a1b3f0dcabadfecf661837a97f1c8a2f4fa9b21da563d52ed115e5de12a41e9a"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch1.json",
+        "n": 250,
+        "sha256": "d0ace6e22032f1e64662b21d00cfe4e5d990f32d633be96cbab411e3ee2f6e02"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch2.json",
+        "n": 250,
+        "sha256": "d744e2fb7180cbab0cdef5b5f50e8815624c008219ed16141b099c681e1a3a2c"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch3.json",
+        "n": 250,
+        "sha256": "d8e16c2e2467a519ee9aef76a696d9cfe96d07b134e9a238753617fab24b65cc"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch4.json",
+        "n": 250,
+        "sha256": "411171d11326379bc80af61050a73b0534e43dc6964a7bf47431d70becad6083"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch5.json",
+        "n": 250,
+        "sha256": "7fddb9fa8c08345340bfeee93325224538c8785bc19fba5a70b49d0b91d3653e"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch6.json",
+        "n": 250,
+        "sha256": "b35eda02c110733af8df6e60e1e252c60d426e741646b42b68c3025a3a54e310"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch7.json",
+        "n": 250,
+        "sha256": "b12b8579ede6423a6d09032444a77588a41f94835f9e4e329d20b6228631fb63"
+      }
+    ],
+    "targetKind": "pro-shortfall9"
+  },
+  "models": {
+    "shortfall2": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-shortfall-v1/shortfall2-model.json",
+      "sha256": "c87076ce9f3c8c0944e0db4145e66c6b3823bdb7e225f21d7db1c434cd2283a5",
+      "settings": {
+        "iterations": 240,
+        "depth": 2,
+        "learningRate": 0.05,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 80,
+        "minWeight": 3,
+        "l2": 3,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 36583,
+          "weight": 1499.9999999997526,
+          "rmse": 0.7409881983801193,
+          "mae": 0.16101774427107324,
+          "bias": 0.007635449831437353,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "validation": {
+          "rows": 12187,
+          "weight": 500.0000000000181,
+          "rmse": 0.6665984801952859,
+          "mae": 0.1482037737237811,
+          "bias": 0.008908745305776075,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 500,
+            "rows": 4687,
+            "weight": 190.90010991010894,
+            "rmse": 0.6487655849475517,
+            "mae": 0.1502571263858984,
+            "bias": 0.01852382945076456,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "after-action": {
+            "seeds": 500,
+            "rows": 4000,
+            "weight": 164.85327471460295,
+            "rmse": 0.6715149924316085,
+            "mae": 0.14906344666644106,
+            "bias": 0.006634121460136909,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "before-training": {
+            "seeds": 500,
+            "rows": 3500,
+            "weight": 144.2466153752783,
+            "rmse": 0.6840162148157563,
+            "mae": 0.14450382452725438,
+            "bias": -0.0012165628449612711,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 500,
+            "rows": 1000,
+            "weight": 41.21331867865143,
+            "rmse": 0.7346041251074653,
+            "mae": 0.17558724023233874,
+            "bias": 0.020009162176130205,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "1": {
+            "seeds": 500,
+            "rows": 1538,
+            "weight": 63.27653295420311,
+            "rmse": 0.7398429434465345,
+            "mae": 0.1603512303343641,
+            "bias": 0.006082682023116786,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "2": {
+            "seeds": 500,
+            "rows": 1545,
+            "weight": 63.557728360010564,
+            "rmse": 0.7470670128509193,
+            "mae": 0.1797303087786938,
+            "bias": 0.029451770401759846,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "3": {
+            "seeds": 500,
+            "rows": 1553,
+            "weight": 63.8409351723553,
+            "rmse": 0.7325399906856239,
+            "mae": 0.16254796967466312,
+            "bias": 0.014210682411432614,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "4": {
+            "seeds": 500,
+            "rows": 1570,
+            "weight": 64.44957837153247,
+            "rmse": 0.6971182495129505,
+            "mae": 0.14096837852986066,
+            "bias": -0.004355224223682896,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "5": {
+            "seeds": 500,
+            "rows": 1654,
+            "weight": 67.64841928168337,
+            "rmse": 0.6198983703448254,
+            "mae": 0.13616600140746213,
+            "bias": 0.0023764018931762216,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "6": {
+            "seeds": 500,
+            "rows": 1679,
+            "weight": 68.5988755097856,
+            "rmse": 0.5373649937232571,
+            "mae": 0.12192753370867203,
+            "bias": 0.005705097268003506,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "7": {
+            "seeds": 500,
+            "rows": 1648,
+            "weight": 67.41461167177178,
+            "rmse": 0.5230813451460478,
+            "mae": 0.1224891800162828,
+            "bias": 0.0028821058201831526,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        },
+        "planningLeaves": {
+          "seeds": 500,
+          "rows": 3000,
+          "weight": 123.63995603595423,
+          "rmse": 0.6790984231734067,
+          "mae": 0.14877365449601976,
+          "bias": 0.00523802966254789,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "planningLeavesBaselines": {
+          "zero": {
+            "rows": 3000,
+            "weight": 123.63995603595423,
+            "rmse": 0.7373887667031854,
+            "mae": 0.0811437420176267,
+            "bias": -0.0811437420176267,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "trainingMean": {
+            "rows": 3000,
+            "weight": 123.63995603595423,
+            "rmse": 0.7329491665775313,
+            "mae": 0.16505548503685735,
+            "bias": 0.007522924649056212,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        }
+      },
+      "seconds": 6.48
+    },
+    "shortfall3": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-shortfall-v1/shortfall3-model.json",
+      "sha256": "bce577db5ffcbac98f5e894305931e9d53de0adb10fc2a9e63dac63d8a6d5b40",
+      "settings": {
+        "iterations": 180,
+        "depth": 3,
+        "learningRate": 0.05,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 80,
+        "minWeight": 3,
+        "l2": 3,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 36583,
+          "weight": 1499.9999999997526,
+          "rmse": 0.7146160426237387,
+          "mae": 0.1535454717669404,
+          "bias": 0.005528809257835351,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "validation": {
+          "rows": 12187,
+          "weight": 500.0000000000181,
+          "rmse": 0.6549182577083824,
+          "mae": 0.14436074164390894,
+          "bias": 0.00771737300204612,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 500,
+            "rows": 4687,
+            "weight": 190.90010991010894,
+            "rmse": 0.640584187604912,
+            "mae": 0.14976814122812168,
+            "bias": 0.020123130885640394,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "after-action": {
+            "seeds": 500,
+            "rows": 4000,
+            "weight": 164.85327471460295,
+            "rmse": 0.6559670205154354,
+            "mae": 0.14167819768618287,
+            "bias": 0.0028400291516975803,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "before-training": {
+            "seeds": 500,
+            "rows": 3500,
+            "weight": 144.2466153752783,
+            "rmse": 0.67225185153749,
+            "mae": 0.1402701983932557,
+            "bias": -0.0031266557038442822,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 500,
+            "rows": 1000,
+            "weight": 41.21331867865143,
+            "rmse": 0.7335179356246422,
+            "mae": 0.16363336559508462,
+            "bias": 0.00782465562027434,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "1": {
+            "seeds": 500,
+            "rows": 1538,
+            "weight": 63.27653295420311,
+            "rmse": 0.7427850878118927,
+            "mae": 0.1608690103972023,
+            "bias": 0.007405055135677976,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "2": {
+            "seeds": 500,
+            "rows": 1545,
+            "weight": 63.557728360010564,
+            "rmse": 0.7528277344862895,
+            "mae": 0.18292803913662115,
+            "bias": 0.03271158057672257,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "3": {
+            "seeds": 500,
+            "rows": 1553,
+            "weight": 63.8409351723553,
+            "rmse": 0.7284555002152249,
+            "mae": 0.16547243815272183,
+            "bias": 0.01841428600682926,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "4": {
+            "seeds": 500,
+            "rows": 1570,
+            "weight": 64.44957837153247,
+            "rmse": 0.6859746775906563,
+            "mae": 0.14003831488742827,
+            "bias": -0.0022380095903552855,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "5": {
+            "seeds": 500,
+            "rows": 1654,
+            "weight": 67.64841928168337,
+            "rmse": 0.5903200375651745,
+            "mae": 0.12880342095753,
+            "bias": -0.00032202911936327305,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "6": {
+            "seeds": 500,
+            "rows": 1679,
+            "weight": 68.5988755097856,
+            "rmse": 0.5105657524135906,
+            "mae": 0.11487477016257638,
+            "bias": 0.0016216244936142217,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "7": {
+            "seeds": 500,
+            "rows": 1648,
+            "weight": 67.41461167177178,
+            "rmse": 0.48244077463860013,
+            "mae": 0.11047782231815242,
+            "bias": -0.0019615452757167713,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        },
+        "planningLeaves": {
+          "seeds": 500,
+          "rows": 3000,
+          "weight": 123.63995603595423,
+          "rmse": 0.6642588690291511,
+          "mae": 0.1442465533922982,
+          "bias": 0.00390566619023991,
+          "prediction": "max(0, fixed-tree prediction)"
+        },
+        "planningLeavesBaselines": {
+          "zero": {
+            "rows": 3000,
+            "weight": 123.63995603595423,
+            "rmse": 0.7373887667031854,
+            "mae": 0.0811437420176267,
+            "bias": -0.0811437420176267,
+            "prediction": "max(0, fixed-tree prediction)"
+          },
+          "trainingMean": {
+            "rows": 3000,
+            "weight": 123.63995603595423,
+            "rmse": 0.7329491665775313,
+            "mae": 0.16505548503685735,
+            "bias": 0.007522924649056212,
+            "prediction": "max(0, fixed-tree prediction)"
+          }
+        }
+      },
+      "seconds": 7.048
+    }
+  },
+  "references": {},
+  "selected": "shortfall3",
+  "selectionRule": "after-action turn1..6の別500元開始のRMSEが小さい方。全体MAEやゲーム成績の最適性を示さない。"
+}

@@ -1,0 +1,109 @@
+{
+  "createdAt": "2026-11-02T19:15:10.399Z",
+  "purpose": "FRESH全開始の公開材料抽出と独立性の監査。予測品質や新しい助言の成績を示すものではない。",
+  "training": {
+    "createdAt": "2026-11-02T19:07:44.242Z",
+    "purpose": "FRESH過去完走からの観測診断材料。PROの2000開始の達成とは別。",
+    "diagnostic": true,
+    "counts": {
+      "games": 500,
+      "decisions": 6000,
+      "acquisition": 4000,
+      "deletion": 2000
+    },
+    "sourceFile": "solver/local-runs/fresh-assist/validation-reach.json",
+    "sourceSha256": "5b05cf2fca6afe7edb034e5718499025e7345005a4f168cbf681e2843337822c",
+    "sourceActor": "77c91cfd1e14d15c24a80c7a284444ef0e746817e58eb32f8b4df3d06ad03173",
+    "physical": {
+      "cardVersion": "sha256:62f21ff28555a9b595d66639b52e4bdfcc878bd6b35271bf6f48d35cf7c46b23",
+      "rankVersion": "sha256:6489ecc6732939ead9190e370a744ecdd5de60852e0416b5c3bfbe60fa840f54",
+      "codeHash": "2da9a429491a34243884580140479ee8b103e6f8e57e7caf30872b8be434c69a"
+    },
+    "config": {
+      "episodes": 500,
+      "seed": "fresh-assist-v1-validation",
+      "provenance": {
+        "codeHash": "2da9a429491a34243884580140479ee8b103e6f8e57e7caf30872b8be434c69a",
+        "strategyVersion": "77c91cfd1e14d15c24a80c7a284444ef0e746817e58eb32f8b4df3d06ad03173",
+        "gitCommit": "121efc8b577652e24f7dc008616b6eaea9686c15",
+        "workingTreeDirty": true
+      },
+      "replacement": null,
+      "acquisitionModel": "reach",
+      "acquisitionAblation": null,
+      "episodeOffset": 0,
+      "initialObservation": null,
+      "forcedChoice": null,
+      "difficulty": "fresh",
+      "scoreTargets": {
+        "aPoints": 7,
+        "sClearPoints": 8,
+        "aPlusPoints": 7,
+        "sPlusPoints": 9
+      },
+      "policies": [
+        "fresh_stable"
+      ]
+    },
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "sourceSeedsUnique": true,
+    "publicInputSha256": "27b0746f5814ddb8b3783a2e687fa2cff1699b7c5f0a80332d129dfdf82ed462",
+    "teachersSha256": "78e3d34220107106ec4716b71b176daf59d7129e138ee78aeefb2e8e3c28bec7",
+    "generatorSha256": "44c4bb2819b50ba64112135602e04ee837f4d9a5f398bb855c1d3e149a01196c"
+  },
+  "validation": {
+    "createdAt": "2026-11-02T19:08:40.937Z",
+    "purpose": "FRESH過去完走からの観測診断材料。PROの2000開始の達成とは別。",
+    "diagnostic": true,
+    "counts": {
+      "games": 1000,
+      "decisions": 12000,
+      "acquisition": 8000,
+      "deletion": 4000
+    },
+    "sourceFile": "solver/local-runs/fresh-assist/holdout-reach.json",
+    "sourceSha256": "bbd0e851009e5065e1f7fb4d3c58d9aee2ab09c9e11c238e34f4951cc899f013",
+    "sourceActor": "77c91cfd1e14d15c24a80c7a284444ef0e746817e58eb32f8b4df3d06ad03173",
+    "physical": {
+      "cardVersion": "sha256:62f21ff28555a9b595d66639b52e4bdfcc878bd6b35271bf6f48d35cf7c46b23",
+      "rankVersion": "sha256:6489ecc6732939ead9190e370a744ecdd5de60852e0416b5c3bfbe60fa840f54",
+      "codeHash": "135c8b53e2668c3b16dec47f7af6b1c05c0ad9e4cc0b1cb2317ab68bb2e534dc"
+    },
+    "config": {
+      "episodes": 1000,
+      "seed": "fresh-assist-v1-holdout",
+      "provenance": {
+        "codeHash": "135c8b53e2668c3b16dec47f7af6b1c05c0ad9e4cc0b1cb2317ab68bb2e534dc",
+        "strategyVersion": "77c91cfd1e14d15c24a80c7a284444ef0e746817e58eb32f8b4df3d06ad03173",
+        "gitCommit": "bbf006e77f33612dc46114abe593b2f9a3068a68",
+        "workingTreeDirty": false
+      },
+      "replacement": null,
+      "acquisitionModel": "reach",
+      "acquisitionAblation": null,
+      "episodeOffset": 0,
+      "initialObservation": null,
+      "forcedChoice": null,
+      "difficulty": "fresh",
+      "scoreTargets": {
+        "aPoints": 7,
+        "sClearPoints": 8,
+        "aPlusPoints": 7,
+        "sPlusPoints": 9
+      },
+      "policies": [
+        "fresh_stable"
+      ]
+    },
+    "allStartsAccepted": true,
+    "rerolls": 0,
+    "sourceSeedsUnique": true,
+    "publicInputSha256": "5f03bd995c825bdf58596f6b47656d3a8459b5fb67651cd10666fbee9aa56ce1",
+    "teachersSha256": "c24bdc06ec6d4c5deaa5496b68b13c48161a8ffca82b01bf4484773f3848927a",
+    "generatorSha256": "44c4bb2819b50ba64112135602e04ee837f4d9a5f398bb855c1d3e149a01196c"
+  },
+  "startOverlap": 0,
+  "allStartsAccepted": true,
+  "interpretation": "両群は別の開始群・固定取得reach。UI追加などで本体JS全体の識別値は異なるため、それも残す。ブラウザ診断で各最終値の公式得点を再確認する。"
+}

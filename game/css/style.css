@@ -6,6 +6,11 @@
 }
 
 :root {
+    --app-safe-top: env(safe-area-inset-top, 0px);
+    --app-safe-right: env(safe-area-inset-right, 0px);
+    --app-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --app-safe-left: env(safe-area-inset-left, 0px);
+    --sticky-safe-gap: 0px;
     /* カテゴリ別カラー（色覚多様性配慮） */
     --color-mobilization: #3B82F6;
     /* 動員: 青 */
@@ -56,7 +61,25 @@ body {
     color: var(--color-text);
     min-height: 100vh;
     overflow-x: hidden;
+    padding-top: var(--app-safe-top);
+    padding-bottom: var(--app-safe-bottom);
+    padding-left: var(--app-safe-left);
+    padding-right: var(--app-safe-right);
 }
+
+.card-detail-hint { display: block; width: fit-content; margin-left: auto; color: #d9e5fb; font-size: 12px; line-height: 14px; text-align: right; }
+.card-detail-hint[hidden] { display: none; }
+/* アシストの表示期限や描画の再計測で、研修候補の位置を動かさない。 */
+#training-cards .card-detail-hint[hidden] { display: block; visibility: hidden; }
+.card { -webkit-touch-callout: none; touch-action: pan-y; }
+#training-cards .card.acquisition-recommended { outline: 1px solid #FDE047; outline-offset: -1px; box-shadow: 0 0 18px 4px rgba(253, 224, 71, .4), inset 0 0 10px rgba(253, 224, 71, .15); }
+/* 推奨の光を残しながら、選択の青枠を最前面で判別できるようにする。 */
+#training-cards .card.acquisition-recommended.selected { border-color: var(--color-primary); outline: 2px solid var(--color-primary); outline-offset: -2px; }
+.tooltip-assist:empty { display: none; }
+.tooltip-assist:not(:empty) { margin-top: 10px; font-size: 12px; color: var(--color-text-secondary); }
+.effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
+@media (display-mode: standalone) { :root { --sticky-safe-gap: 4px; } }
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-safe-top); background: var(--color-bg-light); z-index: 900; pointer-events: none; }
 
 /* ==================== レイアウト ==================== */
 #app {
@@ -77,7 +100,9 @@ body {
     max-width: 480px;
     background: var(--color-bg-light);
     border-bottom: 2px solid var(--color-primary);
-    padding: var(--spacing-sm);
+    padding: calc(var(--spacing-sm) + var(--app-safe-top) + var(--sticky-safe-gap)) var(--spacing-sm) var(--spacing-sm);
+    padding-left: max(var(--spacing-sm),var(--app-safe-left));
+    padding-right: max(var(--spacing-sm),var(--app-safe-right));
     z-index: 100;
     display: flex;
     justify-content: space-between;
@@ -429,6 +454,16 @@ body {
     display: none;
 }
 
+/* 手札は文字を左側の一列へまとめ、右側は画像だけに使う。 */
+#hand-cards .card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 5px; align-content: start; }
+#hand-cards .card-header, #hand-cards .card-body { display: contents; }
+#hand-cards .card-name { grid-column: 1; grid-row: 1; }
+#hand-cards .card-meta { grid-column: 1; grid-row: 2; justify-content: flex-start; }
+#hand-cards .card-effect { grid-column: 1; grid-row: 3; }
+#hand-cards .card-thumbnail { grid-column: 2; grid-row: 1 / 5; align-self: center; justify-self: center; width: min(100%, 64px); height: auto; }
+#hand-cards .card-detail-hint { grid-column: 1; grid-row: 4; margin-left: 0; }
+.card-icon-hide #hand-cards .card, #hand-cards .card:not(:has(.card-thumbnail)) { grid-template-columns: minmax(0, 1fr); }
+
 /* 効果詳細ツールチップ */
 .effect-tooltip {
     position: fixed;
@@ -555,7 +590,7 @@ body {
 
 .staff-area {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(var(--slot-count, 3), minmax(0, 1fr));
     gap: var(--spacing-sm);
     margin-bottom: var(--spacing-lg);
 }
@@ -788,6 +823,7 @@ body {
 /* タイトル画面リンクボタン */
 .title-links {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-md);
     justify-content: center;
     margin-top: var(--spacing-lg);
@@ -1070,6 +1106,14 @@ body {
     display: grid;
     gap: var(--spacing-md);
 }
+.result-replay-actions, .history-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: var(--spacing-sm); margin: var(--spacing-md) 0; }
+.result-replay-actions button, .history-actions button { min-height: 44px; white-space: normal; }
+.result-note { font-size: .8rem; color: var(--color-text-secondary); margin: 8px 0; line-height: 1.5; }
+#result-history-overlay { background: var(--color-bg); }
+.result-history-entry { margin: 12px 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; }
+.result-history-entry summary { cursor: pointer; min-height: 44px; }
+.result-history-entry p { margin: 8px 0; font-size: .8rem; line-height: 1.5; }
+.history-versions { overflow-wrap: anywhere; }
 
 .selected-info {
     text-align: center;
@@ -1091,7 +1135,11 @@ body {
 
 @media (max-width: 480px) {
     .staff-area {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(var(--slot-count, 3), minmax(0, 1fr));
+        gap: 4px;
+        max-height: 220px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
     }
 
     .staff-label {
@@ -1100,10 +1148,9 @@ body {
     }
 
     .card-slot {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        display: flex;
         align-items: stretch;
-        min-height: 88px;
+        min-height: 64px;
         gap: var(--spacing-xs);
     }
 
@@ -1115,9 +1162,49 @@ body {
     .card-slot .slot-placeholder {
         grid-column: 1 / -1;
         width: 100%;
-        min-height: 72px;
+        min-height: 56px;
         flex: none;
     }
+}
+
+@media (max-width: 480px) {
+    body[data-phase="action"][data-calc-mode="false"] .game-main { overflow-anchor: none; }
+    .game-header { padding: 4px 8px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 6px; }
+    .game-header h1 { font-size: 16px; margin-bottom: 0; text-align: left; }
+    .game-header .turn-info { grid-column: 1 / -1; font-size: 12px; gap: 10px; }
+    .game-header .header-buttons .info-btn { min-height: 44px; min-width: 44px; padding: 4px; }
+    #full-status-panel { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 6px; }
+    #full-status-panel .status-item { padding: 5px 2px; border-left-width: 3px; }
+    #full-status-panel .status-value { font-size: 22px; margin-bottom: 0; }
+    #full-status-panel .status-label { font-size: 12px; margin-bottom: 0; }
+    #full-status-panel .rank-label, #full-status-panel .rank-deficit { font-size: 10px; }
+    .game-main { padding: 8px; }
+    .phase-area h2 { font-size: 16px; margin-bottom: 4px; }
+    #action-area > h2 { display: none; }
+    .phase-area .instruction { font-size: 12px; padding: 4px; margin-bottom: 6px; }
+    .staff-area { margin-bottom: 6px; }
+    #action-area .card-slot { padding: 2px; }
+    #action-area .card-slot .card { padding: 4px; }
+    #action-area .card-slot .card-header { display: block; margin-bottom: 2px; }
+    #action-area .card-slot .card-name { font-size: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    #action-area .card-slot .card-meta { font-size: 9px; }
+    #action-area .card-slot .card-rarity { font-size: 9px; padding: 0 2px; }
+    #action-area .card-slot .card-effect { font-size: 11px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    #action-area .card-slot .card-thumbnail { display: none; }
+    #action-area .hand-area { padding: 6px; margin-bottom: 6px; }
+    #action-area .hand-area h3 { font-size: 12px; margin-bottom: 4px; }
+    #hand-cards { gap: 5px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+    #hand-cards .card { padding: 5px; min-height: 64px; }
+    #hand-cards .card-header { margin-bottom: 2px; }
+    #hand-cards .card-name { font-size: 13px; line-height: 1.25; }
+    #hand-cards .card-meta { font-size: 9px; gap: 2px; }
+    #hand-cards .card-category-text { padding: 1px 2px; }
+    #hand-cards .card-rarity { font-size: 10px; padding: 1px 3px; }
+    #hand-cards .card-effect { font-size: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    #hand-cards .card-thumbnail { width: min(100%, 64px); height: auto; }
+    #confirm-action { padding: 12px; min-height: 44px; }
+    .draw-notification { margin: 4px 0; padding: 3px; font-size: 12px; }
+    .animation-content { padding: 12px; max-height: calc(100dvh - 20px); overflow-y: auto; }
 }
 
 @media (min-width: 481px) {
@@ -1429,10 +1516,13 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    height: 100vh;
+    height: 100dvh;
     background: rgba(0, 0, 0, 0.9);
     z-index: 1500;
-    overflow-y: auto;
+    display: grid;
+    grid-template-rows: auto minmax(0,1fr);
+    overflow: hidden;
     animation: fadeIn 0.2s ease;
 }
 
@@ -1440,20 +1530,24 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+    padding: calc(var(--app-safe-top) + var(--spacing-sm)) max(var(--spacing-md),var(--app-safe-right)) var(--spacing-sm) max(var(--spacing-md),var(--app-safe-left));
     background: var(--color-bg-light);
-    position: sticky;
-    top: 0;
-    z-index: 10;
+    min-width: 0;
 }
 
 .info-overlay-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
     font-size: 1.125rem;
     font-weight: bold;
     color: var(--color-text);
 }
 
 .info-overlay-close {
+    flex: 0 0 44px;
+    min-width: 44px;
+    min-height: 44px;
     background: transparent;
     border: none;
     font-size: 1.5rem;
@@ -1467,7 +1561,11 @@ body {
 }
 
 .info-overlay-content {
-    padding: var(--spacing-md);
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    padding: var(--spacing-md) max(var(--spacing-md),var(--app-safe-right)) calc(var(--spacing-md) + var(--app-safe-bottom)) max(var(--spacing-md),var(--app-safe-left));
 }
 
 /* デッキ内訳スタイル */
@@ -1594,9 +1692,14 @@ body {
 /* ==================== フロート通知 ==================== */
 .float-notification {
     position: fixed;
-    top: var(--spacing-md);
-    left: 50%;
-    transform: translateX(-50%);
+    top: var(--notification-top,calc(var(--app-safe-top) + var(--spacing-md)));
+    left: calc(var(--app-safe-left) + var(--spacing-sm));
+    right: calc(var(--app-safe-right) + var(--spacing-sm));
+    width: fit-content;
+    max-width: min(420px,calc(100% - var(--app-safe-left) - var(--app-safe-right) - 2 * var(--spacing-sm)));
+    margin-inline: auto;
+    overflow-wrap: anywhere;
+    pointer-events: none;
     padding: var(--spacing-sm) var(--spacing-lg);
     border-radius: var(--border-radius);
     font-size: 0.875rem;
@@ -1628,12 +1731,12 @@ body {
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateX(-50%) translateY(-20px);
+        transform: translateY(-4px);
     }
 
     to {
         opacity: 1;
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
 }
 
@@ -1851,6 +1954,7 @@ html.font-normal .compact-stats {
 }
 
 .event-mode-panel { margin: 14px 0; padding: 12px; border: 2px solid #f59e0b; border-radius: 10px; background: #fffbeb; color: #1f2937; text-align: left; }
+.event-mode-panel.hidden { display: none; }
 .event-title { font-weight: 700; color: #92400e; }
 .event-end { font-size: .85em; margin: 4px 0 8px; color: #78350f; }
 .event-mode-panel details { margin-top: 8px; color: #1f2937; }
@@ -2163,4 +2267,21 @@ html.font-normal .compact-stats {
 
 .calc-action-inputs {
     margin: 14px 0;
+}
+
+/* 背景は画面端まで、操作・文字は各面の安全領域へ一度だけ内包する。 */
+.overlay, .status-overlay, .turn-overlay, .event-presentation-overlay {
+    padding-top: calc(var(--app-safe-top) + var(--spacing-md));
+    padding-right: max(var(--spacing-md),var(--app-safe-right));
+    padding-bottom: calc(var(--app-safe-bottom) + var(--spacing-md));
+    padding-left: max(var(--spacing-md),var(--app-safe-left));
+}
+.overlay-content {
+    min-height: calc(100vh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    min-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+}
+.status-overlay .animation-content {
+    max-height: calc(100vh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    max-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 2 * var(--spacing-md));
+    overflow-y: auto;
 }

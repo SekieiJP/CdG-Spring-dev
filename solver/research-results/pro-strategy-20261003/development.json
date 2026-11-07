@@ -1,0 +1,5402 @@
+{
+  "generatedAt": "2026-10-03T09:37:40.277Z",
+  "manifest": {
+    "stage": "development",
+    "n": 250,
+    "seed": "pro-strategy-v1-development",
+    "runs": [
+      {
+        "id": "control",
+        "description": "{\"id\":\"control\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/control-batch0.json"
+        ]
+      },
+      {
+        "id": "full-median",
+        "description": "{\"id\":\"full-median\",\"acquisition\":\"median\",\"placement\":\"median\",\"deletion\":\"adaptive\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/full-median-batch0.json"
+        ]
+      },
+      {
+        "id": "full-ceiling",
+        "description": "{\"id\":\"full-ceiling\",\"acquisition\":\"ceiling\",\"placement\":\"ceiling\",\"deletion\":\"adaptive\",\"objective\":\"ceiling\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/full-ceiling-batch0.json"
+        ]
+      },
+      {
+        "id": "full-engine",
+        "description": "{\"id\":\"full-engine\",\"acquisition\":\"engine\",\"placement\":\"engine\",\"deletion\":\"aggressive\",\"objective\":\"engine\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/full-engine-batch0.json"
+        ]
+      },
+      {
+        "id": "acq-median",
+        "description": "{\"id\":\"acq-median\",\"acquisition\":\"median\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/acq-median-batch0.json"
+        ]
+      },
+      {
+        "id": "acq-ceiling",
+        "description": "{\"id\":\"acq-ceiling\",\"acquisition\":\"ceiling\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"ceiling\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/acq-ceiling-batch0.json"
+        ]
+      },
+      {
+        "id": "acq-engine",
+        "description": "{\"id\":\"acq-engine\",\"acquisition\":\"engine\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"engine\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/acq-engine-batch0.json"
+        ]
+      },
+      {
+        "id": "place-median",
+        "description": "{\"id\":\"place-median\",\"acquisition\":\"control\",\"placement\":\"median\",\"deletion\":\"control\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/place-median-batch0.json"
+        ]
+      },
+      {
+        "id": "place-ceiling",
+        "description": "{\"id\":\"place-ceiling\",\"acquisition\":\"control\",\"placement\":\"ceiling\",\"deletion\":\"control\",\"objective\":\"ceiling\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/place-ceiling-batch0.json"
+        ]
+      },
+      {
+        "id": "place-engine",
+        "description": "{\"id\":\"place-engine\",\"acquisition\":\"control\",\"placement\":\"engine\",\"deletion\":\"control\",\"objective\":\"engine\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/place-engine-batch0.json"
+        ]
+      },
+      {
+        "id": "place-myopic",
+        "description": "{\"id\":\"place-myopic\",\"acquisition\":\"control\",\"placement\":\"myopic\",\"deletion\":\"control\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/place-myopic-batch0.json"
+        ]
+      },
+      {
+        "id": "delete-off",
+        "description": "{\"id\":\"delete-off\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"off\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/delete-off-batch0.json"
+        ]
+      },
+      {
+        "id": "delete-basic",
+        "description": "{\"id\":\"delete-basic\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"basic\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/delete-basic-batch0.json"
+        ]
+      },
+      {
+        "id": "delete-adaptive",
+        "description": "{\"id\":\"delete-adaptive\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"adaptive\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/delete-adaptive-batch0.json"
+        ]
+      },
+      {
+        "id": "delete-aggressive",
+        "description": "{\"id\":\"delete-aggressive\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"aggressive\",\"objective\":\"median\"}",
+        "files": [
+          "solver/local-runs/pro-strategy/development/delete-aggressive-batch0.json"
+        ]
+      }
+    ],
+    "comparisons": [
+      {
+        "id": "control-to-full-median",
+        "before": "control",
+        "after": "full-median"
+      },
+      {
+        "id": "control-to-full-ceiling",
+        "before": "control",
+        "after": "full-ceiling"
+      },
+      {
+        "id": "control-to-full-engine",
+        "before": "control",
+        "after": "full-engine"
+      },
+      {
+        "id": "control-to-acq-median",
+        "before": "control",
+        "after": "acq-median"
+      },
+      {
+        "id": "control-to-acq-ceiling",
+        "before": "control",
+        "after": "acq-ceiling"
+      },
+      {
+        "id": "control-to-acq-engine",
+        "before": "control",
+        "after": "acq-engine"
+      },
+      {
+        "id": "control-to-place-median",
+        "before": "control",
+        "after": "place-median"
+      },
+      {
+        "id": "control-to-place-ceiling",
+        "before": "control",
+        "after": "place-ceiling"
+      },
+      {
+        "id": "control-to-place-engine",
+        "before": "control",
+        "after": "place-engine"
+      },
+      {
+        "id": "control-to-place-myopic",
+        "before": "control",
+        "after": "place-myopic"
+      },
+      {
+        "id": "control-to-delete-off",
+        "before": "control",
+        "after": "delete-off"
+      },
+      {
+        "id": "control-to-delete-basic",
+        "before": "control",
+        "after": "delete-basic"
+      },
+      {
+        "id": "control-to-delete-adaptive",
+        "before": "control",
+        "after": "delete-adaptive"
+      },
+      {
+        "id": "control-to-delete-aggressive",
+        "before": "control",
+        "after": "delete-aggressive"
+      }
+    ]
+  },
+  "groups": {
+    "control": {
+      "description": "{\"id\":\"control\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.404,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 10,
+        "rate": 0.04
+      },
+      "score12Rate": 0.484,
+      "scoreBelow8Rate": 0.092,
+      "withdrawalZeroRate": 0.704,
+      "meanStats": {
+        "experience": 41.464,
+        "enrollment": 35.192,
+        "satisfaction": 31.72,
+        "accounting": 16.556,
+        "withdrawal": 0.852,
+        "difference": 34.34
+      },
+      "milestones": {
+        "experience50": 0.132,
+        "difference40": 0.184,
+        "difference48": 0.004,
+        "satisfaction25": 0.824,
+        "satisfaction35": 0.36
+      },
+      "activity": {
+        "deckSize": 10.424,
+        "acquisitions": 9.428,
+        "deleted": 4.004,
+        "drawn": 32.936,
+        "placed": 28.368,
+        "applied": 28.368,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "3": 1,
+        "6": 5,
+        "7": 3,
+        "8": 11,
+        "9": 17,
+        "10": 35,
+        "11": 43,
+        "12": 68,
+        "13": 43,
+        "14": 9,
+        "15": 1,
+        "-4": 4,
+        "-3": 2,
+        "-2": 4,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 44,
+            "satisfaction": 38,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 9,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 4,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 23,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 33,
+              "enrollment": 20,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 30,
+              "satisfaction": 28,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 38,
+              "satisfaction": 35,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 44,
+              "satisfaction": 38,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "full-median": {
+      "description": "{\"id\":\"full-median\",\"acquisition\":\"median\",\"placement\":\"median\",\"deletion\":\"adaptive\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.976,
+      "median": 11,
+      "p10": 9,
+      "p90": 13,
+      "min": -1,
+      "max": 15,
+      "score15": {
+        "count": 3,
+        "rate": 0.012,
+        "interval95": [
+          0.004089245839774545,
+          0.034681389075857876
+        ]
+      },
+      "score14": {
+        "count": 15,
+        "rate": 0.06
+      },
+      "score12Rate": 0.448,
+      "scoreBelow8Rate": 0.052,
+      "withdrawalZeroRate": 0.828,
+      "meanStats": {
+        "experience": 41.82,
+        "enrollment": 34.724,
+        "satisfaction": 28.856,
+        "accounting": 17.312,
+        "withdrawal": 0.412,
+        "difference": 34.312
+      },
+      "milestones": {
+        "experience50": 0.164,
+        "difference40": 0.2,
+        "difference48": 0.02,
+        "satisfaction25": 0.732,
+        "satisfaction35": 0.244
+      },
+      "activity": {
+        "deckSize": 10.512,
+        "acquisitions": 9.532,
+        "deleted": 4.02,
+        "drawn": 33.708,
+        "placed": 28.904,
+        "applied": 28.904,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "4": 3,
+        "5": 1,
+        "6": 1,
+        "7": 6,
+        "8": 11,
+        "9": 23,
+        "10": 29,
+        "11": 62,
+        "12": 61,
+        "13": 36,
+        "14": 12,
+        "15": 3,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 83.33333333333333,
+        "expectedAttempts95": [
+          28.83390852115874,
+          244.5438692566191
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.11372306752288797,
+            "interval95": [
+              0.04014811865554757,
+              0.2974021883173046
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.45317642562118576,
+            "interval95": [
+              0.18525612867931662,
+              0.8287880932246786
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.7009839785035774,
+            "interval95": [
+              0.33619242414538575,
+              0.9706864829783587
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:86",
+          "score": 15,
+          "stats": {
+            "experience": 55,
+            "enrollment": 41,
+            "satisfaction": 38,
+            "accounting": 23,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 4,
+              "enrollment": 4,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 7,
+              "satisfaction": 15,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 13,
+              "satisfaction": 20,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 30,
+              "enrollment": 25,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 38,
+              "enrollment": 36,
+              "satisfaction": 29,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 47,
+              "enrollment": 37,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 55,
+              "enrollment": 41,
+              "satisfaction": 38,
+              "accounting": 23
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:104",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 40,
+            "satisfaction": 36,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 7,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 11,
+              "enrollment": 5,
+              "satisfaction": 11,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 20,
+              "enrollment": 8,
+              "satisfaction": 14,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 15,
+              "satisfaction": 18,
+              "accounting": 11
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 22,
+              "satisfaction": 26,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 31,
+              "satisfaction": 29,
+              "accounting": 14
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 40,
+              "satisfaction": 36,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 48,
+            "satisfaction": 28,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 48
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 19,
+              "enrollment": 4,
+              "satisfaction": 10,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 30,
+              "enrollment": 7,
+              "satisfaction": 14,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 31,
+              "enrollment": 24,
+              "satisfaction": 15,
+              "accounting": 11
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 34,
+              "satisfaction": 18,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 42,
+              "satisfaction": 25,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 48,
+              "satisfaction": 28,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "full-ceiling": {
+      "description": "{\"id\":\"full-ceiling\",\"acquisition\":\"ceiling\",\"placement\":\"ceiling\",\"deletion\":\"adaptive\",\"objective\":\"ceiling\"}",
+      "n": 250,
+      "mean": 10.772,
+      "median": 12,
+      "p10": 8,
+      "p90": 13,
+      "min": -5,
+      "max": 15,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 22,
+        "rate": 0.088
+      },
+      "score12Rate": 0.52,
+      "scoreBelow8Rate": 0.076,
+      "withdrawalZeroRate": 0.728,
+      "meanStats": {
+        "experience": 42.136,
+        "enrollment": 34.436,
+        "satisfaction": 32.416,
+        "accounting": 16.48,
+        "withdrawal": 0.768,
+        "difference": 33.668
+      },
+      "milestones": {
+        "experience50": 0.184,
+        "difference40": 0.172,
+        "difference48": 0,
+        "satisfaction25": 0.876,
+        "satisfaction35": 0.432
+      },
+      "activity": {
+        "deckSize": 10.64,
+        "acquisitions": 9.632,
+        "deleted": 3.992,
+        "drawn": 33.968,
+        "placed": 29.096,
+        "applied": 29.096,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "2": 1,
+        "5": 1,
+        "6": 4,
+        "7": 4,
+        "8": 13,
+        "9": 13,
+        "10": 32,
+        "11": 43,
+        "12": 71,
+        "13": 37,
+        "14": 21,
+        "15": 1,
+        "-5": 1,
+        "-4": 2,
+        "-2": 3,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:158",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 41,
+            "satisfaction": 39,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 0,
+              "satisfaction": 7,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 8,
+              "enrollment": 3,
+              "satisfaction": 11,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 8,
+              "satisfaction": 11,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 25,
+              "enrollment": 11,
+              "satisfaction": 19,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 27,
+              "enrollment": 21,
+              "satisfaction": 24,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 32,
+              "enrollment": 28,
+              "satisfaction": 30,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 40,
+              "enrollment": 33,
+              "satisfaction": 33,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 41,
+              "satisfaction": 39,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "full-engine": {
+      "description": "{\"id\":\"full-engine\",\"acquisition\":\"engine\",\"placement\":\"engine\",\"deletion\":\"aggressive\",\"objective\":\"engine\"}",
+      "n": 250,
+      "mean": 10.956,
+      "median": 12,
+      "p10": 8,
+      "p90": 13,
+      "min": -5,
+      "max": 15,
+      "score15": {
+        "count": 4,
+        "rate": 0.016,
+        "interval95": [
+          0.006239123654412256,
+          0.04041044048322319
+        ]
+      },
+      "score14": {
+        "count": 16,
+        "rate": 0.064
+      },
+      "score12Rate": 0.544,
+      "scoreBelow8Rate": 0.072,
+      "withdrawalZeroRate": 0.804,
+      "meanStats": {
+        "experience": 41.372,
+        "enrollment": 34.128,
+        "satisfaction": 33.296,
+        "accounting": 16.924,
+        "withdrawal": 0.584,
+        "difference": 33.544
+      },
+      "milestones": {
+        "experience50": 0.148,
+        "difference40": 0.148,
+        "difference48": 0.008,
+        "satisfaction25": 0.912,
+        "satisfaction35": 0.456
+      },
+      "activity": {
+        "deckSize": 10.684,
+        "acquisitions": 9.944,
+        "deleted": 4.26,
+        "drawn": 36.196,
+        "placed": 30.668,
+        "applied": 30.668,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "6": 2,
+        "7": 7,
+        "8": 10,
+        "9": 7,
+        "10": 36,
+        "11": 43,
+        "12": 70,
+        "13": 50,
+        "14": 12,
+        "15": 4,
+        "-5": 1,
+        "-4": 2,
+        "-2": 2,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 62.5,
+        "expectedAttempts95": [
+          24.746080172403968,
+          160.27891982759604
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.14895801818995646,
+            "interval95": [
+              0.06066836501783768,
+              0.3380043414345838
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.5535684065197863,
+            "interval95": [
+              0.2687013963833693,
+              0.8728619030364386
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.8006988323427172,
+            "interval95": [
+              0.46520235234836604,
+              0.9838359043004841
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:39",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 49,
+            "satisfaction": 34,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 49
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 8,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 9,
+              "satisfaction": 15,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 17,
+              "enrollment": 14,
+              "satisfaction": 18,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 20,
+              "enrollment": 18,
+              "satisfaction": 22,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 34,
+              "enrollment": 26,
+              "satisfaction": 27,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 35,
+              "satisfaction": 31,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 49,
+              "satisfaction": 34,
+              "accounting": 16
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:104",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 41,
+            "satisfaction": 35,
+            "accounting": 17,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 7,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 4,
+              "satisfaction": 7,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 15,
+              "enrollment": 7,
+              "satisfaction": 9,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 19,
+              "enrollment": 12,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "4": {
+              "experience": 28,
+              "enrollment": 16,
+              "satisfaction": 17,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 23,
+              "satisfaction": 25,
+              "accounting": 10
+            },
+            "6": {
+              "experience": 42,
+              "enrollment": 32,
+              "satisfaction": 28,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 41,
+              "satisfaction": 35,
+              "accounting": 17
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:161",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 40,
+            "satisfaction": 38,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 7,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 5,
+              "satisfaction": 12,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 5,
+              "enrollment": 5,
+              "satisfaction": 16,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 14,
+              "enrollment": 8,
+              "satisfaction": 21,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 21,
+              "enrollment": 18,
+              "satisfaction": 24,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 28,
+              "enrollment": 26,
+              "satisfaction": 32,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 39,
+              "enrollment": 37,
+              "satisfaction": 35,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 40,
+              "satisfaction": 38,
+              "accounting": 16
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "45",
+              "cardName": "学力確認＆向上 公開模試"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:199",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 44,
+            "satisfaction": 38,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 4,
+              "enrollment": 4,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 8,
+              "enrollment": 7,
+              "satisfaction": 13,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 13,
+              "enrollment": 10,
+              "satisfaction": 16,
+              "accounting": 13
+            },
+            "4": {
+              "experience": 20,
+              "enrollment": 15,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "5": {
+              "experience": 25,
+              "enrollment": 23,
+              "satisfaction": 31,
+              "accounting": 16
+            },
+            "6": {
+              "experience": 37,
+              "enrollment": 32,
+              "satisfaction": 34,
+              "accounting": 17
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 44,
+              "satisfaction": 38,
+              "accounting": 16
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "2",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "32",
+              "cardName": "スタンプ帳キャンペーン"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "acq-median": {
+      "description": "{\"id\":\"acq-median\",\"acquisition\":\"median\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.916,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 3,
+        "rate": 0.012,
+        "interval95": [
+          0.004089245839774545,
+          0.034681389075857876
+        ]
+      },
+      "score14": {
+        "count": 18,
+        "rate": 0.072
+      },
+      "score12Rate": 0.464,
+      "scoreBelow8Rate": 0.056,
+      "withdrawalZeroRate": 0.784,
+      "meanStats": {
+        "experience": 41.736,
+        "enrollment": 34.728,
+        "satisfaction": 30.576,
+        "accounting": 17.2,
+        "withdrawal": 0.54,
+        "difference": 34.188
+      },
+      "milestones": {
+        "experience50": 0.14,
+        "difference40": 0.184,
+        "difference48": 0.004,
+        "satisfaction25": 0.792,
+        "satisfaction35": 0.312
+      },
+      "activity": {
+        "deckSize": 10.42,
+        "acquisitions": 9.488,
+        "deleted": 4.068,
+        "drawn": 33.524,
+        "placed": 28.852,
+        "applied": 28.852,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "4": 1,
+        "5": 2,
+        "6": 6,
+        "7": 2,
+        "8": 15,
+        "9": 16,
+        "10": 35,
+        "11": 54,
+        "12": 65,
+        "13": 33,
+        "14": 15,
+        "15": 3,
+        "-4": 1,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 83.33333333333333,
+        "expectedAttempts95": [
+          28.83390852115874,
+          244.5438692566191
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.11372306752288797,
+            "interval95": [
+              0.04014811865554757,
+              0.2974021883173046
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.45317642562118576,
+            "interval95": [
+              0.18525612867931662,
+              0.8287880932246786
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.7009839785035774,
+            "interval95": [
+              0.33619242414538575,
+              0.9706864829783587
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:33",
+          "score": 15,
+          "stats": {
+            "experience": 58,
+            "enrollment": 40,
+            "satisfaction": 35,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 5,
+              "enrollment": 4,
+              "satisfaction": 8,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 11,
+              "enrollment": 6,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 20,
+              "enrollment": 9,
+              "satisfaction": 11,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 31,
+              "enrollment": 13,
+              "satisfaction": 15,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 42,
+              "enrollment": 21,
+              "satisfaction": 24,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 47,
+              "enrollment": 32,
+              "satisfaction": 27,
+              "accounting": 19
+            },
+            "7": {
+              "experience": 58,
+              "enrollment": 40,
+              "satisfaction": 35,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:86",
+          "score": 15,
+          "stats": {
+            "experience": 55,
+            "enrollment": 41,
+            "satisfaction": 38,
+            "accounting": 23,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 4,
+              "enrollment": 4,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 14,
+              "enrollment": 7,
+              "satisfaction": 15,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 22,
+              "enrollment": 13,
+              "satisfaction": 20,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 30,
+              "enrollment": 25,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 38,
+              "enrollment": 36,
+              "satisfaction": 29,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 47,
+              "enrollment": 37,
+              "satisfaction": 33,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 55,
+              "enrollment": 41,
+              "satisfaction": 38,
+              "accounting": 23
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "39",
+              "cardName": "機材故障は本部に相談"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 44,
+            "satisfaction": 38,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 9,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 4,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 23,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 33,
+              "enrollment": 20,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 30,
+              "satisfaction": 28,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 38,
+              "satisfaction": 35,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 44,
+              "satisfaction": 38,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "acq-ceiling": {
+      "description": "{\"id\":\"acq-ceiling\",\"acquisition\":\"ceiling\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"ceiling\"}",
+      "n": 250,
+      "mean": 10.732,
+      "median": 12,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 3,
+        "rate": 0.012,
+        "interval95": [
+          0.004089245839774545,
+          0.034681389075857876
+        ]
+      },
+      "score14": {
+        "count": 20,
+        "rate": 0.08
+      },
+      "score12Rate": 0.504,
+      "scoreBelow8Rate": 0.076,
+      "withdrawalZeroRate": 0.724,
+      "meanStats": {
+        "experience": 42.156,
+        "enrollment": 34.904,
+        "satisfaction": 32.124,
+        "accounting": 16.424,
+        "withdrawal": 0.752,
+        "difference": 34.152
+      },
+      "milestones": {
+        "experience50": 0.168,
+        "difference40": 0.192,
+        "difference48": 0.008,
+        "satisfaction25": 0.844,
+        "satisfaction35": 0.396
+      },
+      "activity": {
+        "deckSize": 10.476,
+        "acquisitions": 9.556,
+        "deleted": 4.08,
+        "drawn": 33.564,
+        "placed": 28.852,
+        "applied": 28.852,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "1": 1,
+        "4": 1,
+        "6": 6,
+        "7": 1,
+        "8": 8,
+        "9": 13,
+        "10": 38,
+        "11": 46,
+        "12": 70,
+        "13": 36,
+        "14": 17,
+        "15": 3,
+        "-4": 3,
+        "-2": 4,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 83.33333333333333,
+        "expectedAttempts95": [
+          28.83390852115874,
+          244.5438692566191
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.11372306752288797,
+            "interval95": [
+              0.04014811865554757,
+              0.2974021883173046
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.45317642562118576,
+            "interval95": [
+              0.18525612867931662,
+              0.8287880932246786
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.7009839785035774,
+            "interval95": [
+              0.33619242414538575,
+              0.9706864829783587
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:158",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 41,
+            "satisfaction": 39,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 0,
+              "satisfaction": 7,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 8,
+              "enrollment": 3,
+              "satisfaction": 11,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 8,
+              "satisfaction": 11,
+              "accounting": 11
+            },
+            "3": {
+              "experience": 25,
+              "enrollment": 11,
+              "satisfaction": 19,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 27,
+              "enrollment": 21,
+              "satisfaction": 24,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 32,
+              "enrollment": 28,
+              "satisfaction": 30,
+              "accounting": 12
+            },
+            "6": {
+              "experience": 40,
+              "enrollment": 33,
+              "satisfaction": 33,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 41,
+              "satisfaction": 39,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 44,
+            "satisfaction": 38,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 9,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 4,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 23,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 33,
+              "enrollment": 20,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 30,
+              "satisfaction": 28,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 38,
+              "satisfaction": 35,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 44,
+              "satisfaction": 38,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:199",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 46,
+            "satisfaction": 35,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 46
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 4,
+              "enrollment": 4,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 8,
+              "enrollment": 7,
+              "satisfaction": 13,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 13,
+              "enrollment": 10,
+              "satisfaction": 16,
+              "accounting": 13
+            },
+            "4": {
+              "experience": 20,
+              "enrollment": 15,
+              "satisfaction": 19,
+              "accounting": 15
+            },
+            "5": {
+              "experience": 28,
+              "enrollment": 23,
+              "satisfaction": 25,
+              "accounting": 16
+            },
+            "6": {
+              "experience": 42,
+              "enrollment": 36,
+              "satisfaction": 29,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 46,
+              "satisfaction": 35,
+              "accounting": 15
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "1",
+              "cardName": "問合対応の基本"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "32",
+              "cardName": "スタンプ帳キャンペーン"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "12",
+              "cardName": "日々の出迎え"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "22",
+              "cardName": "進学相談フェア出展"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "acq-engine": {
+      "description": "{\"id\":\"acq-engine\",\"acquisition\":\"engine\",\"placement\":\"control\",\"deletion\":\"control\",\"objective\":\"engine\"}",
+      "n": 250,
+      "mean": 10.78,
+      "median": 11,
+      "p10": 9,
+      "p90": 13,
+      "min": -4,
+      "max": 16,
+      "score15": {
+        "count": 2,
+        "rate": 0.008,
+        "interval95": [
+          0.0021965911168378306,
+          0.028695114576791587
+        ]
+      },
+      "score14": {
+        "count": 18,
+        "rate": 0.072
+      },
+      "score12Rate": 0.46,
+      "scoreBelow8Rate": 0.068,
+      "withdrawalZeroRate": 0.764,
+      "meanStats": {
+        "experience": 41.556,
+        "enrollment": 33.888,
+        "satisfaction": 31.964,
+        "accounting": 16.888,
+        "withdrawal": 0.636,
+        "difference": 33.252
+      },
+      "milestones": {
+        "experience50": 0.18,
+        "difference40": 0.144,
+        "difference48": 0.012,
+        "satisfaction25": 0.848,
+        "satisfaction35": 0.408
+      },
+      "activity": {
+        "deckSize": 10.6,
+        "acquisitions": 9.664,
+        "deleted": 4.064,
+        "drawn": 34.9,
+        "placed": 29.62,
+        "applied": 29.62,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "1": 1,
+        "5": 2,
+        "6": 5,
+        "7": 2,
+        "8": 7,
+        "9": 16,
+        "10": 41,
+        "11": 54,
+        "12": 60,
+        "13": 37,
+        "14": 16,
+        "15": 1,
+        "16": 1,
+        "-4": 4,
+        "-2": 1,
+        "-1": 2
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 125,
+        "expectedAttempts95": [
+          34.849137727743845,
+          455.2508622722559
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.07718058804273675,
+            "interval95": [
+              0.0217500525577895,
+              0.2525954603951629
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.3307573538670161,
+            "interval95": [
+              0.10412139268191734,
+              0.7667730908819198
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.5521142805969217,
+            "interval95": [
+              0.19740152094981256,
+              0.9456052088632267
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 53,
+            "enrollment": 44,
+            "satisfaction": 38,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 9,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 20,
+              "enrollment": 4,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 23,
+              "enrollment": 7,
+              "satisfaction": 17,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 33,
+              "enrollment": 20,
+              "satisfaction": 23,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 36,
+              "enrollment": 30,
+              "satisfaction": 28,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 38,
+              "satisfaction": 35,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 53,
+              "enrollment": 44,
+              "satisfaction": 38,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:220",
+          "score": 16,
+          "stats": {
+            "experience": 52,
+            "enrollment": 48,
+            "satisfaction": 39,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 48
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 0,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 2,
+              "satisfaction": 9,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 13,
+              "enrollment": 5,
+              "satisfaction": 13,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 18,
+              "enrollment": 8,
+              "satisfaction": 17,
+              "accounting": 11
+            },
+            "4": {
+              "experience": 23,
+              "enrollment": 15,
+              "satisfaction": 21,
+              "accounting": 13
+            },
+            "5": {
+              "experience": 31,
+              "enrollment": 22,
+              "satisfaction": 30,
+              "accounting": 14
+            },
+            "6": {
+              "experience": 40,
+              "enrollment": 37,
+              "satisfaction": 36,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 48,
+              "satisfaction": 39,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "20",
+              "cardName": "友人紹介"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "place-median": {
+      "description": "{\"id\":\"place-median\",\"acquisition\":\"control\",\"placement\":\"median\",\"deletion\":\"control\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.436,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 16,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 11,
+        "rate": 0.044
+      },
+      "score12Rate": 0.416,
+      "scoreBelow8Rate": 0.088,
+      "withdrawalZeroRate": 0.764,
+      "meanStats": {
+        "experience": 40.824,
+        "enrollment": 34.82,
+        "satisfaction": 29.48,
+        "accounting": 16.904,
+        "withdrawal": 0.668,
+        "difference": 34.152
+      },
+      "milestones": {
+        "experience50": 0.128,
+        "difference40": 0.192,
+        "difference48": 0.004,
+        "satisfaction25": 0.756,
+        "satisfaction35": 0.268
+      },
+      "activity": {
+        "deckSize": 10.404,
+        "acquisitions": 9.388,
+        "deleted": 3.984,
+        "drawn": 32.9,
+        "placed": 27.964,
+        "applied": 27.964,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 3,
+        "3": 1,
+        "4": 2,
+        "5": 2,
+        "6": 1,
+        "7": 6,
+        "8": 10,
+        "9": 22,
+        "10": 38,
+        "11": 54,
+        "12": 56,
+        "13": 37,
+        "14": 10,
+        "16": 1,
+        "-4": 3,
+        "-3": 2,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:39",
+          "score": 16,
+          "stats": {
+            "experience": 50,
+            "enrollment": 48,
+            "satisfaction": 36,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 48
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 8,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 9,
+              "satisfaction": 15,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 17,
+              "enrollment": 14,
+              "satisfaction": 18,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 21,
+              "enrollment": 19,
+              "satisfaction": 19,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 34,
+              "enrollment": 26,
+              "satisfaction": 28,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 35,
+              "satisfaction": 31,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 48,
+              "satisfaction": 36,
+              "accounting": 16
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "place-ceiling": {
+      "description": "{\"id\":\"place-ceiling\",\"acquisition\":\"control\",\"placement\":\"ceiling\",\"deletion\":\"control\",\"objective\":\"ceiling\"}",
+      "n": 250,
+      "mean": 10.652,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 11,
+        "rate": 0.044
+      },
+      "score12Rate": 0.476,
+      "scoreBelow8Rate": 0.088,
+      "withdrawalZeroRate": 0.748,
+      "meanStats": {
+        "experience": 40.936,
+        "enrollment": 34.876,
+        "satisfaction": 31.708,
+        "accounting": 16.712,
+        "withdrawal": 0.716,
+        "difference": 34.16
+      },
+      "milestones": {
+        "experience50": 0.124,
+        "difference40": 0.188,
+        "difference48": 0,
+        "satisfaction25": 0.852,
+        "satisfaction35": 0.36
+      },
+      "activity": {
+        "deckSize": 10.384,
+        "acquisitions": 9.392,
+        "deleted": 4.008,
+        "drawn": 32.988,
+        "placed": 28.288,
+        "applied": 28.288,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "5": 3,
+        "6": 4,
+        "7": 6,
+        "8": 8,
+        "9": 19,
+        "10": 24,
+        "11": 58,
+        "12": 67,
+        "13": 41,
+        "14": 10,
+        "15": 1,
+        "-4": 3,
+        "-3": 2,
+        "-2": 2,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:104",
+          "score": 15,
+          "stats": {
+            "experience": 54,
+            "enrollment": 40,
+            "satisfaction": 39,
+            "accounting": 21,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 4,
+              "satisfaction": 9,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 11,
+              "enrollment": 5,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 20,
+              "enrollment": 6,
+              "satisfaction": 14,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 14,
+              "satisfaction": 18,
+              "accounting": 11
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 22,
+              "satisfaction": 27,
+              "accounting": 10
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 35,
+              "satisfaction": 30,
+              "accounting": 15
+            },
+            "7": {
+              "experience": 54,
+              "enrollment": 40,
+              "satisfaction": 39,
+              "accounting": 21
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "place-engine": {
+      "description": "{\"id\":\"place-engine\",\"acquisition\":\"control\",\"placement\":\"engine\",\"deletion\":\"control\",\"objective\":\"engine\"}",
+      "n": 250,
+      "mean": 10.568,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 1,
+        "rate": 0.004,
+        "interval95": [
+          0.0007064293567593388,
+          0.02230634711486706
+        ]
+      },
+      "score14": {
+        "count": 10,
+        "rate": 0.04
+      },
+      "score12Rate": 0.448,
+      "scoreBelow8Rate": 0.092,
+      "withdrawalZeroRate": 0.748,
+      "meanStats": {
+        "experience": 40.452,
+        "enrollment": 34.592,
+        "satisfaction": 31.392,
+        "accounting": 16.868,
+        "withdrawal": 0.692,
+        "difference": 33.9
+      },
+      "milestones": {
+        "experience50": 0.124,
+        "difference40": 0.192,
+        "difference48": 0.004,
+        "satisfaction25": 0.816,
+        "satisfaction35": 0.34
+      },
+      "activity": {
+        "deckSize": 10.532,
+        "acquisitions": 9.504,
+        "deleted": 3.972,
+        "drawn": 33.44,
+        "placed": 28.536,
+        "applied": 28.536,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 2,
+        "3": 1,
+        "5": 3,
+        "6": 4,
+        "7": 7,
+        "8": 7,
+        "9": 22,
+        "10": 34,
+        "11": 52,
+        "12": 64,
+        "13": 38,
+        "14": 9,
+        "15": 1,
+        "-4": 3,
+        "-3": 1,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 250,
+        "expectedAttempts95": [
+          44.830289551690214,
+          1415.5697104483056
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.039287626497189865,
+            "interval95": [
+              0.007041878910301835,
+              0.20195393988415267
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.18159754932390026,
+            "interval95": [
+              0.03471699361911351,
+              0.6763021690168098
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.33021742872735416,
+            "interval95": [
+              0.06822871759227755,
+              0.895219714216778
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:39",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 49,
+            "satisfaction": 34,
+            "accounting": 16,
+            "withdrawal": 0,
+            "difference": 49
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 2,
+              "satisfaction": 8,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 12,
+              "enrollment": 9,
+              "satisfaction": 15,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 17,
+              "enrollment": 14,
+              "satisfaction": 18,
+              "accounting": 10
+            },
+            "4": {
+              "experience": 20,
+              "enrollment": 18,
+              "satisfaction": 22,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 34,
+              "enrollment": 26,
+              "satisfaction": 27,
+              "accounting": 11
+            },
+            "6": {
+              "experience": 45,
+              "enrollment": 35,
+              "satisfaction": 31,
+              "accounting": 16
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 49,
+              "satisfaction": 34,
+              "accounting": 16
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "26",
+              "cardName": "できるまで居残り！"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "place-myopic": {
+      "description": "{\"id\":\"place-myopic\",\"acquisition\":\"control\",\"placement\":\"myopic\",\"deletion\":\"control\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.66,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -4,
+      "max": 15,
+      "score15": {
+        "count": 3,
+        "rate": 0.012,
+        "interval95": [
+          0.004089245839774545,
+          0.034681389075857876
+        ]
+      },
+      "score14": {
+        "count": 23,
+        "rate": 0.092
+      },
+      "score12Rate": 0.476,
+      "scoreBelow8Rate": 0.076,
+      "withdrawalZeroRate": 0.764,
+      "meanStats": {
+        "experience": 41.436,
+        "enrollment": 34.204,
+        "satisfaction": 32.48,
+        "accounting": 16.992,
+        "withdrawal": 0.716,
+        "difference": 33.488
+      },
+      "milestones": {
+        "experience50": 0.176,
+        "difference40": 0.168,
+        "difference48": 0,
+        "satisfaction25": 0.88,
+        "satisfaction35": 0.444
+      },
+      "activity": {
+        "deckSize": 10.4,
+        "acquisitions": 9.408,
+        "deleted": 4.008,
+        "drawn": 33.28,
+        "placed": 28.74,
+        "applied": 28.74,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "4": 2,
+        "5": 3,
+        "7": 3,
+        "8": 8,
+        "9": 23,
+        "10": 36,
+        "11": 45,
+        "12": 56,
+        "13": 40,
+        "14": 20,
+        "15": 3,
+        "-4": 1,
+        "-3": 3,
+        "-2": 3,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 83.33333333333333,
+        "expectedAttempts95": [
+          28.83390852115874,
+          244.5438692566191
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.11372306752288797,
+            "interval95": [
+              0.04014811865554757,
+              0.2974021883173046
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.45317642562118576,
+            "interval95": [
+              0.18525612867931662,
+              0.8287880932246786
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.7009839785035774,
+            "interval95": [
+              0.33619242414538575,
+              0.9706864829783587
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:154",
+          "score": 15,
+          "stats": {
+            "experience": 51,
+            "enrollment": 40,
+            "satisfaction": 39,
+            "accounting": 25,
+            "withdrawal": 0,
+            "difference": 40
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 7,
+              "enrollment": 4,
+              "satisfaction": 7,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 16,
+              "enrollment": 7,
+              "satisfaction": 13,
+              "accounting": 7
+            },
+            "3": {
+              "experience": 24,
+              "enrollment": 9,
+              "satisfaction": 16,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 15,
+              "satisfaction": 20,
+              "accounting": 14
+            },
+            "5": {
+              "experience": 39,
+              "enrollment": 19,
+              "satisfaction": 26,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 49,
+              "enrollment": 31,
+              "satisfaction": 34,
+              "accounting": 19
+            },
+            "7": {
+              "experience": 51,
+              "enrollment": 40,
+              "satisfaction": 39,
+              "accounting": 25
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "13",
+              "cardName": "休み時間トーク"
+            },
+            {
+              "cardNo": "46",
+              "cardName": "入塾後の未来へ 進路説明会"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 41,
+            "satisfaction": 41,
+            "accounting": 19,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 2,
+              "enrollment": 0,
+              "satisfaction": 8,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 4,
+              "enrollment": 2,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 18,
+              "enrollment": 4,
+              "satisfaction": 15,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 21,
+              "enrollment": 7,
+              "satisfaction": 19,
+              "accounting": 12
+            },
+            "4": {
+              "experience": 31,
+              "enrollment": 20,
+              "satisfaction": 25,
+              "accounting": 12
+            },
+            "5": {
+              "experience": 32,
+              "enrollment": 32,
+              "satisfaction": 26,
+              "accounting": 16
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 33,
+              "satisfaction": 35,
+              "accounting": 17
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 41,
+              "satisfaction": 41,
+              "accounting": 19
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "19",
+              "cardName": "保護者説明会"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "33",
+              "cardName": "私も載ったよ！成績UP掲示"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:234",
+          "score": 15,
+          "stats": {
+            "experience": 51,
+            "enrollment": 46,
+            "satisfaction": 42,
+            "accounting": 15,
+            "withdrawal": 0,
+            "difference": 46
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 2,
+              "satisfaction": 3,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 2,
+              "satisfaction": 6,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 19,
+              "enrollment": 5,
+              "satisfaction": 9,
+              "accounting": 10
+            },
+            "3": {
+              "experience": 27,
+              "enrollment": 12,
+              "satisfaction": 15,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 35,
+              "enrollment": 25,
+              "satisfaction": 20,
+              "accounting": 7
+            },
+            "5": {
+              "experience": 43,
+              "enrollment": 32,
+              "satisfaction": 25,
+              "accounting": 8
+            },
+            "6": {
+              "experience": 51,
+              "enrollment": 40,
+              "satisfaction": 35,
+              "accounting": 9
+            },
+            "7": {
+              "experience": 51,
+              "enrollment": 46,
+              "satisfaction": 42,
+              "accounting": 15
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "41",
+              "cardName": "入塾手続きのご案内"
+            },
+            {
+              "cardNo": "10",
+              "cardName": "日々の授業"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "36",
+              "cardName": "締切間近の書類リマインド"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1"
+      ]
+    },
+    "delete-off": {
+      "description": "{\"id\":\"delete-off\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"off\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 8.608,
+      "median": 9,
+      "p10": 5,
+      "p90": 12,
+      "min": -7,
+      "max": 14,
+      "score15": {
+        "count": 0,
+        "rate": 0,
+        "interval95": [
+          0,
+          0.015133847249623387
+        ]
+      },
+      "score14": {
+        "count": 2,
+        "rate": 0.008
+      },
+      "score12Rate": 0.108,
+      "scoreBelow8Rate": 0.16,
+      "withdrawalZeroRate": 0.656,
+      "meanStats": {
+        "experience": 36.708,
+        "enrollment": 29.176,
+        "satisfaction": 29.072,
+        "accounting": 16.256,
+        "withdrawal": 1.064,
+        "difference": 28.112
+      },
+      "milestones": {
+        "experience50": 0.084,
+        "difference40": 0.044,
+        "difference48": 0,
+        "satisfaction25": 0.768,
+        "satisfaction35": 0.212
+      },
+      "activity": {
+        "deckSize": 14.168,
+        "acquisitions": 9.168,
+        "deleted": 0,
+        "drawn": 32.12,
+        "placed": 27.32,
+        "applied": 27.32,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "2": 2,
+        "3": 3,
+        "4": 1,
+        "5": 4,
+        "6": 6,
+        "7": 8,
+        "8": 34,
+        "9": 56,
+        "10": 51,
+        "11": 42,
+        "12": 20,
+        "13": 5,
+        "14": 2,
+        "-7": 1,
+        "-6": 1,
+        "-5": 1,
+        "-4": 4,
+        "-3": 7,
+        "-2": 1,
+        "-1": 1
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": null,
+        "expectedAttempts95": [
+          66.07705122865472,
+          null
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.14143709292335405
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.5334903760533465
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0,
+            "interval95": [
+              0,
+              0.7823687707651519
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [],
+      "strategyVersions": [
+        "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7"
+      ]
+    },
+    "delete-basic": {
+      "description": "{\"id\":\"delete-basic\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"basic\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.54,
+      "median": 12,
+      "p10": 8,
+      "p90": 13,
+      "min": -6,
+      "max": 15,
+      "score15": {
+        "count": 2,
+        "rate": 0.008,
+        "interval95": [
+          0.0021965911168378306,
+          0.028695114576791587
+        ]
+      },
+      "score14": {
+        "count": 13,
+        "rate": 0.052
+      },
+      "score12Rate": 0.52,
+      "scoreBelow8Rate": 0.096,
+      "withdrawalZeroRate": 0.692,
+      "meanStats": {
+        "experience": 42.016,
+        "enrollment": 35.336,
+        "satisfaction": 32.66,
+        "accounting": 16.532,
+        "withdrawal": 0.92,
+        "difference": 34.416
+      },
+      "milestones": {
+        "experience50": 0.16,
+        "difference40": 0.208,
+        "difference48": 0.008,
+        "satisfaction25": 0.868,
+        "satisfaction35": 0.404
+      },
+      "activity": {
+        "deckSize": 10.376,
+        "acquisitions": 9.464,
+        "deleted": 4.088,
+        "drawn": 33.2,
+        "placed": 28.616,
+        "applied": 28.616,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "0": 1,
+        "3": 1,
+        "5": 4,
+        "6": 3,
+        "7": 3,
+        "8": 8,
+        "9": 18,
+        "10": 23,
+        "11": 47,
+        "12": 72,
+        "13": 45,
+        "14": 11,
+        "15": 2,
+        "-6": 1,
+        "-5": 1,
+        "-3": 5,
+        "-2": 2,
+        "-1": 3
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 125,
+        "expectedAttempts95": [
+          34.849137727743845,
+          455.2508622722559
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.07718058804273675,
+            "interval95": [
+              0.0217500525577895,
+              0.2525954603951629
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.3307573538670161,
+            "interval95": [
+              0.10412139268191734,
+              0.7667730908819198
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.5521142805969217,
+            "interval95": [
+              0.19740152094981256,
+              0.9456052088632267
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:33",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 44,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 9,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 18,
+              "enrollment": 12,
+              "satisfaction": 18,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 19,
+              "satisfaction": 24,
+              "accounting": 8
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 27,
+              "satisfaction": 33,
+              "accounting": 7
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 39,
+              "satisfaction": 38,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 44,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:167",
+          "score": 15,
+          "stats": {
+            "experience": 62,
+            "enrollment": 41,
+            "satisfaction": 35,
+            "accounting": 21,
+            "withdrawal": 0,
+            "difference": 41
+          },
+          "turnStats": {
+            "0": {
+              "experience": 5,
+              "enrollment": 0,
+              "satisfaction": 6,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 9,
+              "enrollment": 2,
+              "satisfaction": 10,
+              "accounting": 7
+            },
+            "2": {
+              "experience": 21,
+              "enrollment": 4,
+              "satisfaction": 10,
+              "accounting": 8
+            },
+            "3": {
+              "experience": 32,
+              "enrollment": 7,
+              "satisfaction": 14,
+              "accounting": 8
+            },
+            "4": {
+              "experience": 41,
+              "enrollment": 21,
+              "satisfaction": 18,
+              "accounting": 8
+            },
+            "5": {
+              "experience": 44,
+              "enrollment": 23,
+              "satisfaction": 23,
+              "accounting": 15
+            },
+            "6": {
+              "experience": 52,
+              "enrollment": 40,
+              "satisfaction": 29,
+              "accounting": 13
+            },
+            "7": {
+              "experience": 62,
+              "enrollment": 41,
+              "satisfaction": 35,
+              "accounting": 21
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "47",
+              "cardName": "プロジェクター授業"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "14",
+              "cardName": "保護者面談"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "15",
+              "cardName": "提出書類ファイリング"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7"
+      ]
+    },
+    "delete-adaptive": {
+      "description": "{\"id\":\"delete-adaptive\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"adaptive\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.496,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -5,
+      "max": 15,
+      "score15": {
+        "count": 2,
+        "rate": 0.008,
+        "interval95": [
+          0.0021965911168378306,
+          0.028695114576791587
+        ]
+      },
+      "score14": {
+        "count": 11,
+        "rate": 0.044
+      },
+      "score12Rate": 0.44,
+      "scoreBelow8Rate": 0.088,
+      "withdrawalZeroRate": 0.66,
+      "meanStats": {
+        "experience": 41.36,
+        "enrollment": 34.804,
+        "satisfaction": 31.732,
+        "accounting": 16.324,
+        "withdrawal": 0.896,
+        "difference": 33.908
+      },
+      "milestones": {
+        "experience50": 0.144,
+        "difference40": 0.168,
+        "difference48": 0.012,
+        "satisfaction25": 0.864,
+        "satisfaction35": 0.38
+      },
+      "activity": {
+        "deckSize": 10.492,
+        "acquisitions": 9.46,
+        "deleted": 3.968,
+        "drawn": 33.128,
+        "placed": 28.632,
+        "applied": 28.632,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 5,
+        "7": 7,
+        "8": 8,
+        "9": 23,
+        "10": 40,
+        "11": 47,
+        "12": 60,
+        "13": 39,
+        "14": 9,
+        "15": 2,
+        "-5": 1,
+        "-4": 1,
+        "-3": 3,
+        "-2": 3,
+        "-1": 2
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 125,
+        "expectedAttempts95": [
+          34.849137727743845,
+          455.2508622722559
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.07718058804273675,
+            "interval95": [
+              0.0217500525577895,
+              0.2525954603951629
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.3307573538670161,
+            "interval95": [
+              0.10412139268191734,
+              0.7667730908819198
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.5521142805969217,
+            "interval95": [
+              0.19740152094981256,
+              0.9456052088632267
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:33",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 44,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 9,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 18,
+              "enrollment": 12,
+              "satisfaction": 18,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 19,
+              "satisfaction": 24,
+              "accounting": 8
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 27,
+              "satisfaction": 33,
+              "accounting": 7
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 39,
+              "satisfaction": 38,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 44,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:165",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 49,
+            "satisfaction": 27,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 49
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 2,
+              "satisfaction": 3,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 5,
+              "satisfaction": 10,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 22,
+              "enrollment": 7,
+              "satisfaction": 10,
+              "accounting": 6
+            },
+            "3": {
+              "experience": 30,
+              "enrollment": 11,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "4": {
+              "experience": 38,
+              "enrollment": 16,
+              "satisfaction": 16,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 25,
+              "satisfaction": 17,
+              "accounting": 13
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 38,
+              "satisfaction": 25,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 49,
+              "satisfaction": 27,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "36",
+              "cardName": "締切間近の書類リマインド"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7"
+      ]
+    },
+    "delete-aggressive": {
+      "description": "{\"id\":\"delete-aggressive\",\"acquisition\":\"control\",\"placement\":\"control\",\"deletion\":\"aggressive\",\"objective\":\"median\"}",
+      "n": 250,
+      "mean": 10.592,
+      "median": 11,
+      "p10": 8,
+      "p90": 13,
+      "min": -5,
+      "max": 15,
+      "score15": {
+        "count": 2,
+        "rate": 0.008,
+        "interval95": [
+          0.0021965911168378306,
+          0.028695114576791587
+        ]
+      },
+      "score14": {
+        "count": 11,
+        "rate": 0.044
+      },
+      "score12Rate": 0.448,
+      "scoreBelow8Rate": 0.072,
+      "withdrawalZeroRate": 0.66,
+      "meanStats": {
+        "experience": 41.396,
+        "enrollment": 34.96,
+        "satisfaction": 31.656,
+        "accounting": 16.512,
+        "withdrawal": 0.84,
+        "difference": 34.12
+      },
+      "milestones": {
+        "experience50": 0.136,
+        "difference40": 0.172,
+        "difference48": 0.012,
+        "satisfaction25": 0.864,
+        "satisfaction35": 0.368
+      },
+      "activity": {
+        "deckSize": 10.376,
+        "acquisitions": 9.476,
+        "deleted": 4.1,
+        "drawn": 33.104,
+        "placed": 28.552,
+        "applied": 28.552,
+        "failed": 0
+      },
+      "scoreDistribution": {
+        "6": 3,
+        "7": 6,
+        "8": 9,
+        "9": 24,
+        "10": 41,
+        "11": 46,
+        "12": 61,
+        "13": 40,
+        "14": 9,
+        "15": 2,
+        "-5": 1,
+        "-4": 1,
+        "-3": 3,
+        "-2": 2,
+        "-1": 2
+      },
+      "retries": {
+        "assumption": "independent full games with an unchanged strategy; no early restart",
+        "expectedAttempts": 125,
+        "expectedAttempts95": [
+          34.849137727743845,
+          455.2508622722559
+        ],
+        "successWithin": [
+          {
+            "count": 10,
+            "probability": 0.07718058804273675,
+            "interval95": [
+              0.0217500525577895,
+              0.2525954603951629
+            ]
+          },
+          {
+            "count": 50,
+            "probability": 0.3307573538670161,
+            "interval95": [
+              0.10412139268191734,
+              0.7667730908819198
+            ]
+          },
+          {
+            "count": 100,
+            "probability": 0.5521142805969217,
+            "interval95": [
+              0.19740152094981256,
+              0.9456052088632267
+            ]
+          }
+        ]
+      },
+      "versions": [
+        [
+          "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+          "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+          "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+          "autoplay"
+        ]
+      ],
+      "examples15": [
+        {
+          "seed": "pro-strategy-v1-development:33",
+          "score": 15,
+          "stats": {
+            "experience": 52,
+            "enrollment": 44,
+            "satisfaction": 44,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 44
+          },
+          "turnStats": {
+            "0": {
+              "experience": 3,
+              "enrollment": 2,
+              "satisfaction": 5,
+              "accounting": 7
+            },
+            "1": {
+              "experience": 3,
+              "enrollment": 3,
+              "satisfaction": 10,
+              "accounting": 9
+            },
+            "2": {
+              "experience": 9,
+              "enrollment": 7,
+              "satisfaction": 12,
+              "accounting": 9
+            },
+            "3": {
+              "experience": 18,
+              "enrollment": 12,
+              "satisfaction": 18,
+              "accounting": 9
+            },
+            "4": {
+              "experience": 29,
+              "enrollment": 19,
+              "satisfaction": 24,
+              "accounting": 8
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 27,
+              "satisfaction": 33,
+              "accounting": 7
+            },
+            "6": {
+              "experience": 43,
+              "enrollment": 39,
+              "satisfaction": 38,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 52,
+              "enrollment": 44,
+              "satisfaction": 44,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "11",
+              "cardName": "褒めて励ます授業"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "6",
+              "cardName": "チラシ折り"
+            },
+            {
+              "cardNo": "18",
+              "cardName": "心を掴む1日見学"
+            },
+            {
+              "cardNo": "40",
+              "cardName": "ごほうび差し入れスイーツ"
+            },
+            {
+              "cardNo": "30",
+              "cardName": "最新入試情報リサーチ"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            },
+            {
+              "cardNo": "37",
+              "cardName": "教材発注"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "38",
+              "cardName": "未入金家庭へ電話"
+            }
+          ]
+        },
+        {
+          "seed": "pro-strategy-v1-development:165",
+          "score": 15,
+          "stats": {
+            "experience": 50,
+            "enrollment": 49,
+            "satisfaction": 27,
+            "accounting": 18,
+            "withdrawal": 0,
+            "difference": 49
+          },
+          "turnStats": {
+            "0": {
+              "experience": 6,
+              "enrollment": 2,
+              "satisfaction": 3,
+              "accounting": 5
+            },
+            "1": {
+              "experience": 10,
+              "enrollment": 5,
+              "satisfaction": 10,
+              "accounting": 5
+            },
+            "2": {
+              "experience": 22,
+              "enrollment": 7,
+              "satisfaction": 10,
+              "accounting": 6
+            },
+            "3": {
+              "experience": 30,
+              "enrollment": 11,
+              "satisfaction": 13,
+              "accounting": 8
+            },
+            "4": {
+              "experience": 38,
+              "enrollment": 16,
+              "satisfaction": 16,
+              "accounting": 9
+            },
+            "5": {
+              "experience": 40,
+              "enrollment": 25,
+              "satisfaction": 17,
+              "accounting": 13
+            },
+            "6": {
+              "experience": 48,
+              "enrollment": 38,
+              "satisfaction": 25,
+              "accounting": 12
+            },
+            "7": {
+              "experience": 50,
+              "enrollment": 49,
+              "satisfaction": 27,
+              "accounting": 18
+            }
+          },
+          "deck": [
+            {
+              "cardNo": "3",
+              "cardName": "質問対応の基本"
+            },
+            {
+              "cardNo": "5",
+              "cardName": "経理精算の基本"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "49",
+              "cardName": "卒業生からの手紙"
+            },
+            {
+              "cardNo": "31",
+              "cardName": "教室清掃"
+            },
+            {
+              "cardNo": "17",
+              "cardName": "振込用紙印刷"
+            },
+            {
+              "cardNo": "21",
+              "cardName": "兄弟紹介"
+            },
+            {
+              "cardNo": "25",
+              "cardName": "ここが出る！テスト対策"
+            },
+            {
+              "cardNo": "9",
+              "cardName": "宿題チェック"
+            },
+            {
+              "cardNo": "36",
+              "cardName": "締切間近の書類リマインド"
+            },
+            {
+              "cardNo": "24",
+              "cardName": "苦手発見！質問対応"
+            },
+            {
+              "cardNo": "42",
+              "cardName": "努力の結晶 合格実績掲示"
+            }
+          ]
+        }
+      ],
+      "strategyVersions": [
+        "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7"
+      ]
+    }
+  },
+  "comparisons": {
+    "control-to-full-median": {
+      "id": "control-to-full-median",
+      "before": "control",
+      "after": "full-median",
+      "n": 250,
+      "meanDifference": 0.572,
+      "meanDifference95": [
+        0.12,
+        1.048
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0.008,
+      "score15RateDifference95": [
+        0,
+        0.02
+      ],
+      "newly15": 2,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-full-ceiling": {
+      "id": "control-to-full-ceiling",
+      "before": "control",
+      "after": "full-ceiling",
+      "n": 250,
+      "meanDifference": 0.368,
+      "meanDifference95": [
+        -0.064,
+        0.828
+      ],
+      "medianDifference": 1,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        -0.012,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-full-engine": {
+      "id": "control-to-full-engine",
+      "before": "control",
+      "after": "full-engine",
+      "n": 250,
+      "meanDifference": 0.552,
+      "meanDifference95": [
+        0.104,
+        1.016
+      ],
+      "medianDifference": 1,
+      "medianDifference95": [
+        0,
+        1
+      ],
+      "score15RateDifference": 0.012,
+      "score15RateDifference95": [
+        -0.004,
+        0.028
+      ],
+      "newly15": 4,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-acq-median": {
+      "id": "control-to-acq-median",
+      "before": "control",
+      "after": "acq-median",
+      "n": 250,
+      "meanDifference": 0.512,
+      "meanDifference95": [
+        0.124,
+        0.936
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0.008,
+      "score15RateDifference95": [
+        0,
+        0.02
+      ],
+      "newly15": 2,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-acq-ceiling": {
+      "id": "control-to-acq-ceiling",
+      "before": "control",
+      "after": "acq-ceiling",
+      "n": 250,
+      "meanDifference": 0.328,
+      "meanDifference95": [
+        0.06,
+        0.624
+      ],
+      "medianDifference": 1,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0.008,
+      "score15RateDifference95": [
+        0,
+        0.02
+      ],
+      "newly15": 2,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-acq-engine": {
+      "id": "control-to-acq-engine",
+      "before": "control",
+      "after": "acq-engine",
+      "n": 250,
+      "meanDifference": 0.376,
+      "meanDifference95": [
+        -0.024,
+        0.784
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0.004,
+      "score15RateDifference95": [
+        0,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-place-median": {
+      "id": "control-to-place-median",
+      "before": "control",
+      "after": "place-median",
+      "n": 250,
+      "meanDifference": 0.032,
+      "meanDifference95": [
+        -0.332,
+        0.416
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        -0.012,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-place-ceiling": {
+      "id": "control-to-place-ceiling",
+      "before": "control",
+      "after": "place-ceiling",
+      "n": 250,
+      "meanDifference": 0.248,
+      "meanDifference95": [
+        -0.024,
+        0.54
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        -0.012,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-place-engine": {
+      "id": "control-to-place-engine",
+      "before": "control",
+      "after": "place-engine",
+      "n": 250,
+      "meanDifference": 0.164,
+      "meanDifference95": [
+        -0.12,
+        0.472
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0,
+      "score15RateDifference95": [
+        -0.012,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-place-myopic": {
+      "id": "control-to-place-myopic",
+      "before": "control",
+      "after": "place-myopic",
+      "n": 250,
+      "meanDifference": 0.256,
+      "meanDifference95": [
+        -0.2,
+        0.712
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        1
+      ],
+      "score15RateDifference": 0.008,
+      "score15RateDifference95": [
+        0,
+        0.02
+      ],
+      "newly15": 2,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-delete-off": {
+      "id": "control-to-delete-off",
+      "before": "control",
+      "after": "delete-off",
+      "n": 250,
+      "meanDifference": -1.796,
+      "meanDifference95": [
+        -2.34,
+        -1.24
+      ],
+      "medianDifference": -2,
+      "medianDifference95": [
+        -3,
+        -1
+      ],
+      "score15RateDifference": -0.004,
+      "score15RateDifference95": [
+        -0.012,
+        0
+      ],
+      "newly15": 0,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-delete-basic": {
+      "id": "control-to-delete-basic",
+      "before": "control",
+      "after": "delete-basic",
+      "n": 250,
+      "meanDifference": 0.136,
+      "meanDifference95": [
+        -0.288,
+        0.576
+      ],
+      "medianDifference": 1,
+      "medianDifference95": [
+        -0.5,
+        1
+      ],
+      "score15RateDifference": 0.004,
+      "score15RateDifference95": [
+        0,
+        0.012
+      ],
+      "newly15": 1,
+      "lost15": 0,
+      "firstOfferMismatches": 0
+    },
+    "control-to-delete-adaptive": {
+      "id": "control-to-delete-adaptive",
+      "before": "control",
+      "after": "delete-adaptive",
+      "n": 250,
+      "meanDifference": 0.092,
+      "meanDifference95": [
+        -0.332,
+        0.528
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0.004,
+      "score15RateDifference95": [
+        -0.008,
+        0.016
+      ],
+      "newly15": 2,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    },
+    "control-to-delete-aggressive": {
+      "id": "control-to-delete-aggressive",
+      "before": "control",
+      "after": "delete-aggressive",
+      "n": 250,
+      "meanDifference": 0.188,
+      "meanDifference95": [
+        -0.208,
+        0.6
+      ],
+      "medianDifference": 0,
+      "medianDifference95": [
+        -1,
+        0
+      ],
+      "score15RateDifference": 0.004,
+      "score15RateDifference95": [
+        -0.008,
+        0.016
+      ],
+      "newly15": 2,
+      "lost15": 1,
+      "firstOfferMismatches": 0
+    }
+  }
+}

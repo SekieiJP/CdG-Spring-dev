@@ -1,0 +1,211 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true
+  },
+  "signed": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true
+  },
+  "buffer2": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 2
+  },
+  "engine14": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    }
+  },
+  "engine24": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 24,
+      "draw": 24,
+      "inspiration": 14
+    }
+  },
+  "combo": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "cardBonus": {
+      "13": 20,
+      "17": 5,
+      "21": 10,
+      "30": 10,
+      "31": 25,
+      "35": 8,
+      "40": 55,
+      "49": 90
+    }
+  },
+  "seek49": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "refresh": "seek49"
+  },
+  "combo-seek49": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "cardBonus": {
+      "13": 20,
+      "17": 5,
+      "21": 10,
+      "30": 10,
+      "31": 25,
+      "35": 8,
+      "40": 55,
+      "49": 90
+    },
+    "refresh": "seek49"
+  },
+  "combo-seek13": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "cardBonus": {
+      "13": 20,
+      "17": 5,
+      "21": 10,
+      "30": 10,
+      "31": 25,
+      "35": 8,
+      "40": 55,
+      "49": 90
+    },
+    "refresh": "seek13-49"
+  },
+  "combo-guard": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "cardBonus": {
+      "13": 20,
+      "17": 5,
+      "21": 10,
+      "30": 10,
+      "31": 25,
+      "35": 8,
+      "40": 55,
+      "49": 90
+    },
+    "refresh": "seek49",
+    "protectFinance": true
+  },
+  "sigma": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "signedGrowth": true,
+    "safetyBuffer": 1,
+    "statScale": 0.5,
+    "smoothWeight": 10,
+    "weights": {
+      "engine": 14,
+      "draw": 18,
+      "inspiration": 11
+    },
+    "sigma": 0.6
+  }
+}

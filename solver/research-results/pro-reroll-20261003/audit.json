@@ -1,0 +1,71 @@
+{
+  "generatedAt": "2026-10-03T14:48:52.523Z",
+  "branch": "codex/pro-strategy-research",
+  "sourceCommit": "cd9bd83371d5f175fea44823ee8a325bf0be689d",
+  "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+  "strategyVersions": [
+    "bc6e081276f5ee52161bc98cdf203e2d56f90216fbf6eede0485671a3651e30d"
+  ],
+  "hashes": {
+    "solver/autoplay-agent.mjs": "61c28c0958ecd2bd30d6b860a90549647b27d08dc7bcf62ac5f0b565f57df894",
+    "solver/browser/pro-strategy-research.js": "ca05245f30e3b76fd16aee9e6f35e417f1e9ab15866cd6b54aebff3f97367c3e",
+    "solver/pro-reroll-study.mjs": "61a746ab5f56696fe0976071a096864e59e8f321bf7cce7b4f53109a24367fff",
+    "solver/pro-reroll-metrics.mjs": "cda317184ce3c54a76ee46699545562b851676aa3cb686cd0b3d4b20188409d1",
+    "solver/pro-strategy-metrics.mjs": "134b1776b05cd850c4ac1ee2ebcf28c5ff59c7e971b2e5129d10be89a7063f43",
+    "solver/compress-research-runs.mjs": "ee60dd72773adc9fd60616b884a32b5afe86400c46101c134a446aa419e71300",
+    "solver/research-scenarios/pro-reroll-configs.json": "3991562c8a2ea3310f6b18c8280c7fd3ca7f115a6e7b8d57f1d2ddc012f95e80"
+  },
+  "counts": {
+    "development": {
+      "groups": 14,
+      "files": 14,
+      "completed": 3500,
+      "starts": 33116,
+      "resets": 29616,
+      "sessionSeed": "pro-reroll-v1-development",
+      "perGroupMinimum": 250
+    },
+    "validation": {
+      "groups": 5,
+      "files": 20,
+      "completed": 5000,
+      "starts": 29031,
+      "resets": 24031,
+      "sessionSeed": "pro-reroll-v1-validation",
+      "perGroupMinimum": 1000
+    },
+    "confirmation": {
+      "groups": 6,
+      "files": 6,
+      "completed": 1500,
+      "starts": 16890,
+      "resets": 15390,
+      "sessionSeed": "pro-reroll-v1-confirmation",
+      "perGroupMinimum": 250
+    }
+  },
+  "totalCompleted": 10000,
+  "totalStarts": 79037,
+  "totalResets": 69037,
+  "unitTests": {
+    "passed": 70,
+    "failed": 0
+  },
+  "baselineParity": {
+    "fixedSeeds": 5,
+    "score": true,
+    "finalStats": true,
+    "turnStats": true,
+    "finalDeck": true,
+    "excludedFromTrend": true
+  },
+  "gameFilesUnchanged": true,
+  "rawRecords": "gitignored JSON or losslessly compressed JSON.gz; uncompressed SHA stored per batch",
+  "comparisonUnit": "common initial session seed; accepted actual seeds may differ across start conditions; all accepted seeds distinct within each group",
+  "notes": [
+    "No initial same-card pair: initial offer has four distinct names.",
+    "No decisions depend on future draws or seed.",
+    "No midgame restart or result-dependent acceptance.",
+    "Fixed browser autoplay; human UI time and identical UI seed sequence not measured."
+  ]
+}

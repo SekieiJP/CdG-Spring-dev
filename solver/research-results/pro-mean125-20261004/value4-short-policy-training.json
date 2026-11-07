@@ -1,0 +1,355 @@
+{
+  "createdAt": "2026-10-04T02:40:21.889Z",
+  "purpose": "\u30ea\u30bb\u30de\u30e9\u306a\u3057PRO\u3002\u904e\u53bb\u306e\u7d50\u679c\u3060\u3051\u3092\u6559\u5e2b\u3068\u3057\u3066\u4f7f\u7528\u3002\u4e88\u6e2c\u7cbe\u5ea6\u306f\u5b9f\u30d7\u30ec\u30a4\u6539\u5584\u306e\u8a3c\u660e\u3067\u306f\u306a\u3044\u3002",
+  "provenance": {
+    "datasetSha256": "b69370b11b82b271af8f426065e3989f8650df001d09deb27c792fab5cce9355",
+    "implementationSha256": "3fcd39a37430b6a6eb4d052f1a0e7f9410da106217c502bfee11fe1fa8763165",
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 1000,
+      "validationSeeds": 250,
+      "trainRows": 24530,
+      "validationRows": 6058
+    },
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/leaf-development/leaf2-v1-8-batch0.json",
+        "n": 250,
+        "sha256": "bce8be6f9e71bc552b214f7440317da3af85c49b159117c778c39fcb90ee0ff8"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/place-leaf-development/place2-v1-8-batch0.json",
+        "n": 250,
+        "sha256": "e102e0d47facb319c99d89f46424d826c9aff0fe459a120ed0a754d59e02147e"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+        "n": 250,
+        "sha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/risk2-development/both-late48-batch0.json",
+        "n": 250,
+        "sha256": "c95382a13cb805271c279f5d7bf59bb24fbfb25a48c90ccc0c94280843f7959f"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/scene-value-development/both2-v2-batch0.json",
+        "n": 250,
+        "sha256": "0dfd1fa2d0412d8d80f9dc2e6c2438ef2fa335a49f636286b27bfc54f2417a2d"
+      }
+    ]
+  },
+  "models": {
+    "depth3": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v4-short-policy/depth3-model.json",
+      "sha256": "195451dff0a43d1486e5c8c9835b3f9ed0905ba7c341b02e4daeebdbdda24818",
+      "settings": {
+        "iterations": 160,
+        "depth": 3,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 24530,
+          "weight": 1000.0000000002399,
+          "rmse": 1.2384947393294254,
+          "mae": 0.8737029902105947,
+          "bias": 0.0014835506917376523
+        },
+        "validation": {
+          "rows": 6058,
+          "weight": 249.9999999999901,
+          "rmse": 1.4832111652093136,
+          "mae": 1.0058896224099731,
+          "bias": 0.18869400609518838
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2308,
+            "weight": 94.5150183722231,
+            "rmse": 1.4884522197861614,
+            "mae": 1.0155357288706546,
+            "bias": 0.20768951948586947
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.92532353481276,
+            "rmse": 1.4514004702667944,
+            "mae": 0.9682367796678915,
+            "bias": 0.17532622674445345
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 72.55965809296103,
+            "rmse": 1.5120569162663733,
+            "mae": 1.0363565829102694,
+            "bias": 0.17922822459123408
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.731330883703464,
+            "rmse": 1.7712709177309367,
+            "mae": 1.2615083878249191,
+            "bias": 0.19378145044617237
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 757,
+            "weight": 31.37119860475767,
+            "rmse": 1.7407266889635649,
+            "mae": 1.2355192961442554,
+            "bias": 0.1839945405385897
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 767,
+            "weight": 31.77223406993107,
+            "rmse": 1.6856361445009234,
+            "mae": 1.192792576012796,
+            "bias": 0.22780029259705362
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 771,
+            "weight": 31.872169265642132,
+            "rmse": 1.6013837286430816,
+            "mae": 1.1262012607716678,
+            "bias": 0.26375267479752196
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 783,
+            "weight": 32.31698506287172,
+            "rmse": 1.4592431756646347,
+            "mae": 0.9994287253834455,
+            "bias": 0.21865736696699659
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 829,
+            "weight": 34.067726084302315,
+            "rmse": 1.4185166425088003,
+            "mae": 0.9342008652483406,
+            "bias": 0.19186379576675844
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 833,
+            "weight": 34.216644164944526,
+            "rmse": 1.186114144129938,
+            "mae": 0.8031989157534783,
+            "bias": 0.13464677141109116
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 818,
+            "weight": 33.651711863848455,
+            "rmse": 0.9806577646695167,
+            "mae": 0.6288054725745574,
+            "bias": 0.10489986411847914
+          }
+        }
+      },
+      "seconds": 9.194
+    },
+    "depth4": {
+      "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/value-v4-short-policy/depth4-model.json",
+      "sha256": "3655163b64c194c1752a1c49e3f99199060c2695e36e3d633a7edf8f7334e9b5",
+      "settings": {
+        "iterations": 160,
+        "depth": 4,
+        "learningRate": 0.07,
+        "bins": 16,
+        "featureFraction": 0.65,
+        "rowFraction": 0.8,
+        "minRows": 100,
+        "minWeight": 3,
+        "l2": 2,
+        "monotone": false,
+        "seed": 904125
+      },
+      "metrics": {
+        "train": {
+          "rows": 24530,
+          "weight": 1000.0000000002399,
+          "rmse": 1.1843017735987968,
+          "mae": 0.8356697183807105,
+          "bias": 0.0014664891784650052
+        },
+        "validation": {
+          "rows": 6058,
+          "weight": 249.9999999999901,
+          "rmse": 1.4730544793757232,
+          "mae": 0.9989066319659364,
+          "bias": 0.1966683730664502
+        },
+        "byPhase": {
+          "acquisition": {
+            "seeds": 250,
+            "rows": 2308,
+            "weight": 94.5150183722231,
+            "rmse": 1.4779223138054463,
+            "mae": 1.0063850176781846,
+            "bias": 0.21150477416326474
+          },
+          "after-action": {
+            "seeds": 250,
+            "rows": 2000,
+            "weight": 82.92532353481276,
+            "rmse": 1.4412661543192415,
+            "mae": 0.9627682517973277,
+            "bias": 0.18738367667824152
+          },
+          "before-training": {
+            "seeds": 250,
+            "rows": 1750,
+            "weight": 72.55965809296103,
+            "rmse": 1.5023494645084352,
+            "mae": 1.030466415524699,
+            "bias": 0.1879538023676802
+          }
+        },
+        "byTurn": {
+          "0": {
+            "seeds": 250,
+            "rows": 500,
+            "weight": 20.731330883703464,
+            "rmse": 1.777972881356862,
+            "mae": 1.266580203055851,
+            "bias": 0.22651620409340006
+          },
+          "1": {
+            "seeds": 250,
+            "rows": 757,
+            "weight": 31.37119860475767,
+            "rmse": 1.7432257888948093,
+            "mae": 1.2418435956718583,
+            "bias": 0.19263111101644603
+          },
+          "2": {
+            "seeds": 250,
+            "rows": 767,
+            "weight": 31.77223406993107,
+            "rmse": 1.6757655252161077,
+            "mae": 1.1821505773905414,
+            "bias": 0.24056080166626442
+          },
+          "3": {
+            "seeds": 250,
+            "rows": 771,
+            "weight": 31.872169265642132,
+            "rmse": 1.5867526488726205,
+            "mae": 1.1112767150739729,
+            "bias": 0.2826204756389343
+          },
+          "4": {
+            "seeds": 250,
+            "rows": 783,
+            "weight": 32.31698506287172,
+            "rmse": 1.4447115552569563,
+            "mae": 0.9941498792290739,
+            "bias": 0.23424949886448265
+          },
+          "5": {
+            "seeds": 250,
+            "rows": 829,
+            "weight": 34.067726084302315,
+            "rmse": 1.4063704091139906,
+            "mae": 0.9283270320811771,
+            "bias": 0.19291309412257207
+          },
+          "6": {
+            "seeds": 250,
+            "rows": 833,
+            "weight": 34.216644164944526,
+            "rmse": 1.1663348177301147,
+            "mae": 0.7893232997310301,
+            "bias": 0.1308699427357197
+          },
+          "7": {
+            "seeds": 250,
+            "rows": 818,
+            "weight": 33.651711863848455,
+            "rmse": 0.9559984426896825,
+            "mae": 0.6172157298828631,
+            "bias": 0.09381044440332026
+          }
+        }
+      },
+      "seconds": 11.87
+    }
+  },
+  "datasetAudit": {
+    "schema": 1,
+    "createdAt": "2026-10-04T02:38:20.516Z",
+    "purpose": "\u5b66\u7fd2\u7528\u306e\u516c\u958b\u72b6\u614b\u3068\u904e\u53bb\u306e\u7d50\u679c\u3002\u65b0\u898f\u30d7\u30ec\u30a4\u4e2d\u306e\u4e88\u6e2c\u306b\u306ftarget\u30fbseed\u3092\u6e21\u3055\u306a\u3044\u3002",
+    "sources": [
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/leaf-development/leaf2-v1-8-batch0.json",
+        "n": 250,
+        "sha256": "bce8be6f9e71bc552b214f7440317da3af85c49b159117c778c39fcb90ee0ff8"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/place-leaf-development/place2-v1-8-batch0.json",
+        "n": 250,
+        "sha256": "e102e0d47facb319c99d89f46424d826c9aff0fe459a120ed0a754d59e02147e"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+        "n": 250,
+        "sha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f"
+      },
+      {
+        "split": "train",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/risk2-development/both-late48-batch0.json",
+        "n": 250,
+        "sha256": "c95382a13cb805271c279f5d7bf59bb24fbfb25a48c90ccc0c94280843f7959f"
+      },
+      {
+        "split": "validation",
+        "file": "/Users/sekiei/.codex/worktrees/pro-strategy-research/CdG-Spring-dev/solver/local-runs/pro-mean125/scene-value-development/both2-v2-batch0.json",
+        "n": 250,
+        "sha256": "0dfd1fa2d0412d8d80f9dc2e6c2438ef2fa335a49f636286b27bfc54f2417a2d"
+      }
+    ],
+    "versions": [
+      "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "autoplay"
+    ],
+    "counts": {
+      "trainSeeds": 1000,
+      "validationSeeds": 250,
+      "trainRows": 24530,
+      "validationRows": 6058
+    }
+  }
+}

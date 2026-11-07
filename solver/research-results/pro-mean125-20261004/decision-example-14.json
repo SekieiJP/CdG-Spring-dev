@@ -1,0 +1,1801 @@
+{
+  "purpose": "One completed development-game example selected after results; not causal or final mean125 evidence",
+  "source": "solver/local-runs/pro-mean125/combo2-development/both2-batch0.json",
+  "sourceSha256": "b360cfdbde4ecedecd6b0b7694b734e7b3aaf488d2cc00d68f86eb656565a78f",
+  "sourceN": 250,
+  "sourceMean": 12.244,
+  "seedForReproductionOnly": "pro-mean125-combo2-development:48",
+  "provenance": {
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "strategyVersion": "d00974a54e3fc464ee014f575f0f74c8d70ad59d1a57cee5b1c9a71d9a1c47c9",
+    "gitCommit": "15afd11ae955d769663e17b27a95051ed6ef6931",
+    "workingTreeDirty": true
+  },
+  "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+  "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+  "research": {
+    "id": "both2",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "score": {
+    "points": 14,
+    "displayScore": 14,
+    "withdrawal": 0,
+    "mobilization": 41,
+    "enrollmentDiff": 40,
+    "experience": 41,
+    "enrollment": 40,
+    "satisfaction": 35,
+    "accounting": 22,
+    "rank": {
+      "grade": "S+",
+      "name": "全社最優秀教室！！"
+    },
+    "breakdown": {
+      "mobilizationPoints": 4,
+      "withdrawalPoints": 1,
+      "enrollmentDiffPoints": 7,
+      "satisfactionPoints": 2
+    },
+    "basePoints": 14,
+    "overflow": {
+      "experience": 0,
+      "enrollmentDiff": 0,
+      "satisfaction": 0
+    }
+  },
+  "turns": [
+    {
+      "turn": 1,
+      "acquisitions": [
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "16",
+          "name": "備品注文"
+        }
+      ],
+      "beforeStats": {
+        "experience": 0,
+        "enrollment": 0,
+        "satisfaction": 3,
+        "accounting": 5
+      },
+      "hand": [
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "1",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "3",
+          "name": "質問対応の基本"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本"
+        }
+      ],
+      "placements": [
+        {
+          "no": "1",
+          "name": "問合対応の基本",
+          "slot": "leader"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "leader"
+        },
+        {
+          "no": "3",
+          "name": "質問対応の基本",
+          "slot": "teacher"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 6,
+        "enrollment": 2,
+        "satisfaction": 3,
+        "accounting": 5
+      },
+      "deletions": [
+        {
+          "no": "5",
+          "name": "経理精算の基本"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "1",
+          "name": "問合対応の基本",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 0,
+            "enrollment": 0,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 3,
+            "enrollment": 0,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 3,
+            "enrollment": 0,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 3,
+            "enrollment": 0,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "3",
+          "name": "質問対応の基本",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 3,
+            "enrollment": 0,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 3,
+            "enrollment": 2,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 3,
+            "enrollment": 2,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 6,
+            "enrollment": 2,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 2,
+      "acquisitions": [
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        }
+      ],
+      "beforeStats": {
+        "experience": 6,
+        "enrollment": 2,
+        "satisfaction": 3,
+        "accounting": 5
+      },
+      "hand": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "1",
+          "name": "問合対応の基本"
+        }
+      ],
+      "placements": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本",
+          "slot": "teacher"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 9,
+        "enrollment": 3,
+        "satisfaction": 6,
+        "accounting": 7
+      },
+      "deletions": [
+        {
+          "no": "4",
+          "name": "生徒面談の基本"
+        },
+        {
+          "no": "16",
+          "name": "備品注文"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 6,
+            "enrollment": 2,
+            "satisfaction": 3,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 4,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 7,
+            "enrollment": 3,
+            "satisfaction": 4,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 9,
+            "enrollment": 3,
+            "satisfaction": 4,
+            "accounting": 5
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 9,
+            "enrollment": 3,
+            "satisfaction": 4,
+            "accounting": 5
+          },
+          "afterStats": {
+            "experience": 9,
+            "enrollment": 3,
+            "satisfaction": 6,
+            "accounting": 7
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 3,
+      "acquisitions": [
+        {
+          "no": "47",
+          "name": "プロジェクター授業"
+        }
+      ],
+      "beforeStats": {
+        "experience": 9,
+        "enrollment": 3,
+        "satisfaction": 6,
+        "accounting": 7
+      },
+      "hand": [
+        {
+          "no": "1",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業"
+        },
+        {
+          "no": "3",
+          "name": "質問対応の基本"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本"
+        }
+      ],
+      "placements": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "teacher"
+        },
+        {
+          "no": "1",
+          "name": "問合対応の基本",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 13,
+        "enrollment": 4,
+        "satisfaction": 7,
+        "accounting": 9
+      },
+      "deletions": [
+        {
+          "no": "3",
+          "name": "質問対応の基本"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 9,
+            "enrollment": 3,
+            "satisfaction": 6,
+            "accounting": 7
+          },
+          "afterStats": {
+            "experience": 10,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 7
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 10,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 7
+          },
+          "afterStats": {
+            "experience": 10,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 9
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "1",
+          "name": "問合対応の基本",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 10,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 9
+          },
+          "afterStats": {
+            "experience": 13,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 9
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 4,
+      "acquisitions": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内"
+        }
+      ],
+      "beforeStats": {
+        "experience": 13,
+        "enrollment": 4,
+        "satisfaction": 7,
+        "accounting": 9
+      },
+      "hand": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "1",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        }
+      ],
+      "placements": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader"
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業",
+          "slot": "teacher"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 16,
+        "enrollment": 14,
+        "satisfaction": 10,
+        "accounting": 12
+      },
+      "deletions": [
+        {
+          "no": "1",
+          "name": "問合対応の基本"
+        },
+        {
+          "no": "2",
+          "name": "問合対応の基本"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 13,
+            "enrollment": 4,
+            "satisfaction": 7,
+            "accounting": 9
+          },
+          "afterStats": {
+            "experience": 14,
+            "enrollment": 5,
+            "satisfaction": 8,
+            "accounting": 10
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 14,
+            "enrollment": 5,
+            "satisfaction": 8,
+            "accounting": 10
+          },
+          "afterStats": {
+            "experience": 14,
+            "enrollment": 14,
+            "satisfaction": 8,
+            "accounting": 9
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 14,
+            "enrollment": 14,
+            "satisfaction": 8,
+            "accounting": 9
+          },
+          "afterStats": {
+            "experience": 16,
+            "enrollment": 14,
+            "satisfaction": 8,
+            "accounting": 9
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 16,
+            "enrollment": 14,
+            "satisfaction": 8,
+            "accounting": 9
+          },
+          "afterStats": {
+            "experience": 16,
+            "enrollment": 14,
+            "satisfaction": 10,
+            "accounting": 12
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 5,
+      "acquisitions": [
+        {
+          "no": "49",
+          "name": "卒業生からの手紙"
+        }
+      ],
+      "beforeStats": {
+        "experience": 16,
+        "enrollment": 14,
+        "satisfaction": 10,
+        "accounting": 12
+      },
+      "hand": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内"
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業"
+        }
+      ],
+      "placements": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader"
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業",
+          "slot": "teacher"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "staff"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 21,
+        "enrollment": 21,
+        "satisfaction": 15,
+        "accounting": 13
+      },
+      "deletions": [
+        {
+          "no": "47",
+          "name": "プロジェクター授業"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 16,
+            "enrollment": 14,
+            "satisfaction": 10,
+            "accounting": 12
+          },
+          "afterStats": {
+            "experience": 21,
+            "enrollment": 14,
+            "satisfaction": 10,
+            "accounting": 12
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "47",
+          "name": "プロジェクター授業",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 21,
+            "enrollment": 14,
+            "satisfaction": 10,
+            "accounting": 12
+          },
+          "afterStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 10,
+            "accounting": 11
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 10,
+            "accounting": 11
+          },
+          "afterStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 12,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 12,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 6,
+      "acquisitions": [
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応"
+        }
+      ],
+      "beforeStats": {
+        "experience": 21,
+        "enrollment": 21,
+        "satisfaction": 15,
+        "accounting": 13
+      },
+      "hand": [
+        {
+          "no": "49",
+          "name": "卒業生からの手紙"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内"
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応"
+        }
+      ],
+      "placements": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "leader"
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher"
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 28,
+        "enrollment": 24,
+        "satisfaction": 22,
+        "accounting": 15
+      },
+      "deletions": [
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド"
+        }
+      ],
+      "resolves": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 21,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 26,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 26,
+            "enrollment": 21,
+            "satisfaction": 15,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 26,
+            "enrollment": 21,
+            "satisfaction": 16,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 26,
+            "enrollment": 21,
+            "satisfaction": 16,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 26,
+            "enrollment": 24,
+            "satisfaction": 19,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 26,
+            "enrollment": 24,
+            "satisfaction": 19,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 28,
+            "enrollment": 24,
+            "satisfaction": 20,
+            "accounting": 13
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "36",
+          "name": "締切間近の書類リマインド",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 28,
+            "enrollment": 24,
+            "satisfaction": 20,
+            "accounting": 13
+          },
+          "afterStats": {
+            "experience": 28,
+            "enrollment": 24,
+            "satisfaction": 22,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 1,
+            "organize": 1,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 7,
+      "acquisitions": [
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ"
+        }
+      ],
+      "beforeStats": {
+        "experience": 28,
+        "enrollment": 24,
+        "satisfaction": 22,
+        "accounting": 15
+      },
+      "hand": [
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙"
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内"
+        },
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        }
+      ],
+      "placements": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "leader"
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher"
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 34,
+        "enrollment": 31,
+        "satisfaction": 28,
+        "accounting": 15
+      },
+      "deletions": [],
+      "resolves": [
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 28,
+            "enrollment": 24,
+            "satisfaction": 22,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 29,
+            "enrollment": 25,
+            "satisfaction": 23,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 29,
+            "enrollment": 25,
+            "satisfaction": 23,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 29,
+            "enrollment": 25,
+            "satisfaction": 23,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 2,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 29,
+            "enrollment": 25,
+            "satisfaction": 23,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 29,
+            "enrollment": 29,
+            "satisfaction": 26,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 29,
+            "enrollment": 29,
+            "satisfaction": 26,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 31,
+            "enrollment": 29,
+            "satisfaction": 26,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 31,
+            "enrollment": 29,
+            "satisfaction": 26,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 31,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 31,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 34,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 4,
+            "inspiration": 1,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    },
+    {
+      "turn": 8,
+      "acquisitions": [
+        {
+          "no": "38",
+          "name": "未入金家庭へ電話"
+        }
+      ],
+      "beforeStats": {
+        "experience": 34,
+        "enrollment": 31,
+        "satisfaction": 28,
+        "accounting": 15
+      },
+      "hand": [
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ"
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応"
+        },
+        {
+          "no": "49",
+          "name": "卒業生からの手紙"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク"
+        },
+        {
+          "no": "40",
+          "name": "ごほうび差し入れスイーツ"
+        },
+        {
+          "no": "7",
+          "name": "元塾生に講習案内"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ"
+        },
+        {
+          "no": "38",
+          "name": "未入金家庭へ電話"
+        }
+      ],
+      "placements": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader"
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher"
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher"
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher"
+        },
+        {
+          "no": "38",
+          "name": "未入金家庭へ電話",
+          "slot": "staff"
+        }
+      ],
+      "afterStats": {
+        "experience": 41,
+        "enrollment": 40,
+        "satisfaction": 35,
+        "accounting": 22
+      },
+      "deletions": [],
+      "resolves": [
+        {
+          "no": "7",
+          "name": "元塾生に講習案内",
+          "slot": "leader",
+          "beforeStats": {
+            "experience": 34,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 39,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "24",
+          "name": "苦手発見！質問対応",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 39,
+            "enrollment": 31,
+            "satisfaction": 28,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 39,
+            "enrollment": 34,
+            "satisfaction": 31,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "13",
+          "name": "休み時間トーク",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 39,
+            "enrollment": 34,
+            "satisfaction": 31,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 41,
+            "enrollment": 34,
+            "satisfaction": 31,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 41,
+            "enrollment": 34,
+            "satisfaction": 31,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 41,
+            "enrollment": 37,
+            "satisfaction": 33,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "30",
+          "name": "最新入試情報リサーチ",
+          "slot": "teacher",
+          "beforeStats": {
+            "experience": 41,
+            "enrollment": 37,
+            "satisfaction": 33,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 41,
+            "enrollment": 40,
+            "satisfaction": 35,
+            "accounting": 15
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        },
+        {
+          "no": "38",
+          "name": "未入金家庭へ電話",
+          "slot": "staff",
+          "beforeStats": {
+            "experience": 41,
+            "enrollment": 40,
+            "satisfaction": 35,
+            "accounting": 15
+          },
+          "afterStats": {
+            "experience": 41,
+            "enrollment": 40,
+            "satisfaction": 35,
+            "accounting": 22
+          },
+          "beforeTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "afterTokens": {
+            "passion": 0,
+            "inspiration": 0,
+            "organize": 0,
+            "fatigue": 0
+          },
+          "applied": true
+        }
+      ]
+    }
+  ]
+}

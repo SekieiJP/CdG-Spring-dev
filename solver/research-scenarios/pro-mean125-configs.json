@@ -1,0 +1,44 @@
+{
+  "baseline": {
+    "acquisition": "engine",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true
+  },
+  "rollout-acq": {
+    "acquisition": "rollout",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "planning": {
+      "worlds": 16
+    },
+    "uiTrainingStreams": true
+  },
+  "rollout-all": {
+    "acquisition": "rollout",
+    "placement": "rollout",
+    "deletion": "rollout",
+    "objective": "engine",
+    "planning": {
+      "worlds": 16,
+      "rolloutBeam": 8,
+      "actionCandidates": 6
+    },
+    "uiTrainingStreams": true
+  },
+  "rollout-risk": {
+    "acquisition": "rollout",
+    "placement": "rollout",
+    "deletion": "rollout",
+    "objective": "engine",
+    "planning": {
+      "worlds": 16,
+      "rolloutBeam": 8,
+      "actionCandidates": 6,
+      "tailPenalty": 0.15
+    },
+    "uiTrainingStreams": true
+  }
+}

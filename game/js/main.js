@@ -2,22 +2,28 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20260815-0050';
-import { GameState } from './gameState.js?v=20260815-0050';
-import { CardManager } from './cardManager.js?v=20260815-0050';
-import { TurnManager } from './turnManager.js?v=20260815-0050';
-import { ScoreManager } from './scoreManager.js?v=20260815-0050';
-import { UIController } from './uiController.js?v=20260815-0050';
-import { SaveManager } from './saveManager.js?v=20260815-0050';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20260815-0050';
-import { getEventDefinition } from './eventManager.js?v=20260815-0050';
+import { Logger } from './logger.js?v=20261107-0061';
+import { GameState } from './gameState.js?v=20261107-0061';
+import { CardManager } from './cardManager.js?v=20261107-0061';
+import { TurnManager } from './turnManager.js?v=20261107-0061';
+import { ScoreManager } from './scoreManager.js?v=20261107-0061';
+import { UIController } from './uiController.js?v=20261107-0061';
+import { SaveManager } from './saveManager.js?v=20261107-0061';
+import { getDifficultyConfig, registerDifficulty } from './difficultyConfig.js?v=20261107-0061';
+import { getEventDefinition } from './eventManager.js?v=20261107-0061';
+import './difficultyExtensions.js?v=20261107-0061';
 
-const CACHE_BUSTER = 'v20260815-0050';
+const CACHE_BUSTER = 'v20261107-0061';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;
 
 class Game {
+    registerDifficulty(config) {
+        const registered = registerDifficulty(config);
+        this.uiController.renderDifficultyOptions();
+        return registered;
+    }
     constructor() {
         this.logger = new Logger();
         this.gameState = new GameState(this.logger);
@@ -73,6 +79,10 @@ class Game {
                     if (savedDifficulty !== this.difficulty) {
                         await this.loadCardsForDifficulty(savedDifficulty);
                     }
+                    if (this.cardLoadFailed) {
+                        this.uiController.showFloatNotification('データを読み込めませんでした。中断データは残っています。再読み込みしてください。', 'error');
+                        return;
+                    }
                     // ゲーム状態を復元
                     this.restoreFromSave(saveData);
                     return;
@@ -98,8 +108,15 @@ class Game {
      * @returns {boolean} 読み込み成功/失敗
      */
     async loadCardsForDifficulty(difficultyId) {
-        const config = getDifficultyConfig(difficultyId);
+        let config;
+        try { config = getDifficultyConfig(difficultyId); }
+        catch (error) {
+            this.cardLoadFailed = true;
+            this.logger.log(error.message, 'error');
+            return false;
+        }
         this.difficulty = difficultyId;
+        this.cardManager.slots = config.slots;
         this.cardLoadFailed = false;
 
         const success = await this.cardManager.loadCards(config.csvPath);
@@ -111,7 +128,13 @@ class Game {
 
         // ランクCSV読み込み
         if (config.rankCsvPath) {
-            await this.scoreManager.loadRankData(config.rankCsvPath);
+            const ranks = await this.scoreManager.loadRankData(config.rankCsvPath);
+            if (!ranks?.length) {
+                this.cardLoadFailed = true;
+                this.logger.log(`${config.name}のランクデータの読み込みに失敗しました`, 'error');
+                return false;
+            }
+            this.cardManager.rankVersion = this.scoreManager.dataVersion;
         }
 
         return true;
@@ -175,7 +198,7 @@ class Game {
         this.logger.log('前回のゲームを復元しています...', 'info');
 
         // 研修デッキを復元
-        this.saveManager.restoreTrainingDecks(this.cardManager, saveData.trainingDecks);
+        this.saveManager.restoreTrainingDecks(this.cardManager, saveData.trainingDecks, saveData.trainingDiscards);
 
         // ゲーム状態を復元
         this.saveManager.restoreGameState(this.gameState, saveData.gameState);

@@ -1,0 +1,25 @@
+{
+  "createdAt": "2026-11-03T01:39:41.177Z",
+  "purpose": "最新1000開始条件。旧計画の先頭0..999を全採用。良い区間の選別なし。",
+  "source": "solver/research-results/ahiru-advice-20261103/validation-progress-1000.json",
+  "sourceSha256": "a36eb96c30c0b42f00606c3366b186dca66ab16f09b4dec85d5a338e0a678f51",
+  "assessment": {
+    "n": 1000,
+    "mean": 12.026,
+    "atMost8": {
+      "count": 26,
+      "rate": 0.026,
+      "interval95": [
+        0.01780381535792082,
+        0.0378240845019774
+      ]
+    },
+    "requirements": {
+      "seeds": 1000,
+      "meanAtLeast": 12,
+      "scoreCutoffInclusive": 8,
+      "lowRateStrictlyBelow": 0.02
+    },
+    "passed": false
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "createdAt": "2026-11-03T02:13:05.145Z",
+  "purpose": "少数のブラウザ接続と全8配置の技術確認。得点から強さの傾向は主張しない。",
+  "fingerprints": {
+    "strategyVersion": "48105419afcd1a5bb22e41ae950719c9fdbfcdc93e5f415e625faa446b517d05",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "configPath": "solver/research-scenarios/ahiru-pro-shortfall-configs.json",
+  "configSha256": "16c3e4a9f4d7ab780c97a4fd53f8c1ae50ca3374ac66bb6f971604966116b09c",
+  "checks": [
+    {
+      "id": "legacy-zero",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "7ed559cd8aad30a4ff3ff93b12d921c50fbcd73a25952756be6346f007a12f32",
+      "output": "solver/local-runs/pro-mean125/ahiru-shortfall-technical-20261103/legacy-zero.json",
+      "modelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+    },
+    {
+      "id": "baseline",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "6fe94138a13ea0d3237512688df8b270fc5a9dda6c7381b964dfce0d9f977a75",
+      "output": "solver/local-runs/pro-mean125/ahiru-shortfall-technical-20261103/baseline.json",
+      "modelSha256": "3db2deea156c78dd9fccf6abb04c7c93967a61a9506b3713e02c216ce91022bb"
+    },
+    {
+      "id": "shortfall1",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "c605059f4b383c8bd33bf48ecb1ba83015bba1492bded4e6f8b488c4f3ce4917",
+      "output": "solver/local-runs/pro-mean125/ahiru-shortfall-technical-20261103/shortfall1.json",
+      "modelSha256": "3db2deea156c78dd9fccf6abb04c7c93967a61a9506b3713e02c216ce91022bb"
+    },
+    {
+      "id": "shortfall3",
+      "complete": true,
+      "placementTurns": 8,
+      "rerolls": 0,
+      "sha256": "2e0a5975b59175977cda052dc551d786e158b719b833332219321372270a8d25",
+      "output": "solver/local-runs/pro-mean125/ahiru-shortfall-technical-20261103/shortfall3.json",
+      "modelSha256": "3db2deea156c78dd9fccf6abb04c7c93967a61a9506b3713e02c216ce91022bb"
+    }
+  ],
+  "zeroWeightTraceMatchesLegacy": true,
+  "zeroWeightDrawsMatchLegacy": true
+}

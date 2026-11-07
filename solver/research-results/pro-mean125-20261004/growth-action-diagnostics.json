@@ -1,0 +1,887 @@
+{
+  "generatedAt": "2026-10-04T09:54:06.086Z",
+  "groupId": "both2",
+  "implementationSha256": "5dbc8d7257479737ea537e8eb28d4bf713f41658f9935296b08ca321159a6dcd",
+  "versions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+    "de06283e6049cd60f2bfa6ef897513a5ab729d9a83df9605b7d384b98a3e6775"
+  ],
+  "audit": [
+    {
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+      "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390"
+    }
+  ],
+  "n": 250,
+  "browserScoreReplayMatches": true,
+  "clippingRecoveryScenario": {
+    "n": 250,
+    "gamesWithClipping": 60,
+    "meanLostUnits": 0.652,
+    "meanRestoredUnits": 0.404,
+    "meanGain": 0.076,
+    "scoreImprovedCount": 19,
+    "interpretation": "過去の切り捨て量を最後に加え直し、最終体験上限と公式得点を適用する仮定。過去の配置順を変更して同じ回復を実現できるという因果効果ではない。"
+  },
+  "endpointSensitivity": {
+    "rows": [
+      {
+        "axes": [
+          "experience"
+        ],
+        "delta": 1,
+        "n": 250,
+        "improvedCount": 16,
+        "declinedCount": 0,
+        "meanGain": 0.064,
+        "score13Count": 116,
+        "score14Count": 50,
+        "score15Count": 14
+      },
+      {
+        "axes": [
+          "enrollment"
+        ],
+        "delta": 1,
+        "n": 250,
+        "improvedCount": 28,
+        "declinedCount": 0,
+        "meanGain": 0.112,
+        "score13Count": 124,
+        "score14Count": 51,
+        "score15Count": 11
+      },
+      {
+        "axes": [
+          "satisfaction"
+        ],
+        "delta": 1,
+        "n": 250,
+        "improvedCount": 11,
+        "declinedCount": 0,
+        "meanGain": 0.044,
+        "score13Count": 115,
+        "score14Count": 49,
+        "score15Count": 10
+      },
+      {
+        "axes": [
+          "accounting"
+        ],
+        "delta": 1,
+        "n": 250,
+        "improvedCount": 11,
+        "declinedCount": 0,
+        "meanGain": 0.056,
+        "score13Count": 116,
+        "score14Count": 48,
+        "score15Count": 10
+      },
+      {
+        "axes": [
+          "experience",
+          "enrollment"
+        ],
+        "delta": 1,
+        "n": 250,
+        "improvedCount": 44,
+        "declinedCount": 0,
+        "meanGain": 0.176,
+        "score13Count": 128,
+        "score14Count": 54,
+        "score15Count": 15
+      },
+      {
+        "axes": [
+          "experience"
+        ],
+        "delta": 2,
+        "n": 250,
+        "improvedCount": 31,
+        "declinedCount": 0,
+        "meanGain": 0.124,
+        "score13Count": 120,
+        "score14Count": 50,
+        "score15Count": 16
+      },
+      {
+        "axes": [
+          "enrollment"
+        ],
+        "delta": 2,
+        "n": 250,
+        "improvedCount": 50,
+        "declinedCount": 0,
+        "meanGain": 0.2,
+        "score13Count": 131,
+        "score14Count": 57,
+        "score15Count": 11
+      },
+      {
+        "axes": [
+          "satisfaction"
+        ],
+        "delta": 2,
+        "n": 250,
+        "improvedCount": 23,
+        "declinedCount": 0,
+        "meanGain": 0.092,
+        "score13Count": 117,
+        "score14Count": 51,
+        "score15Count": 10
+      },
+      {
+        "axes": [
+          "accounting"
+        ],
+        "delta": 2,
+        "n": 250,
+        "improvedCount": 11,
+        "declinedCount": 0,
+        "meanGain": 0.076,
+        "score13Count": 116,
+        "score14Count": 49,
+        "score15Count": 10
+      },
+      {
+        "axes": [
+          "experience",
+          "enrollment"
+        ],
+        "delta": 2,
+        "n": 250,
+        "improvedCount": 81,
+        "declinedCount": 0,
+        "meanGain": 0.328,
+        "score13Count": 139,
+        "score14Count": 61,
+        "score15Count": 17
+      },
+      {
+        "axes": [
+          "experience"
+        ],
+        "delta": 5,
+        "n": 250,
+        "improvedCount": 85,
+        "declinedCount": 0,
+        "meanGain": 0.34,
+        "score13Count": 140,
+        "score14Count": 61,
+        "score15Count": 20
+      },
+      {
+        "axes": [
+          "enrollment"
+        ],
+        "delta": 5,
+        "n": 250,
+        "improvedCount": 131,
+        "declinedCount": 0,
+        "meanGain": 0.528,
+        "score13Count": 158,
+        "score14Count": 76,
+        "score15Count": 21
+      },
+      {
+        "axes": [
+          "satisfaction"
+        ],
+        "delta": 5,
+        "n": 250,
+        "improvedCount": 64,
+        "declinedCount": 0,
+        "meanGain": 0.256,
+        "score13Count": 131,
+        "score14Count": 64,
+        "score15Count": 11
+      },
+      {
+        "axes": [
+          "accounting"
+        ],
+        "delta": 5,
+        "n": 250,
+        "improvedCount": 11,
+        "declinedCount": 0,
+        "meanGain": 0.084,
+        "score13Count": 116,
+        "score14Count": 49,
+        "score15Count": 10
+      },
+      {
+        "axes": [
+          "experience",
+          "enrollment"
+        ],
+        "delta": 5,
+        "n": 250,
+        "improvedCount": 187,
+        "declinedCount": 0,
+        "meanGain": 0.936,
+        "score13Count": 183,
+        "score14Count": 110,
+        "score15Count": 33
+      }
+    ],
+    "interpretation": "全開始の実際の最終値に決めた増加を加え、本体の更新規則と公式得点を計算する事後診断。カードや操作の費用・配置競合を含まない。全ゲームで増分を実現できるという改善効果ではない。体験と入塾の組は体験を先に上げる。"
+  },
+  "byTurn": [
+    {
+      "turn": 0,
+      "games": 250,
+      "requestedEnrollment": 240,
+      "actualEnrollment": 215,
+      "lostEnrollment": 25,
+      "gamesWithLoss": 14,
+      "meanRequested": 0.96,
+      "meanActual": 0.86,
+      "meanLoss": 0.1
+    },
+    {
+      "turn": 1,
+      "games": 250,
+      "requestedEnrollment": 432,
+      "actualEnrollment": 417,
+      "lostEnrollment": 15,
+      "gamesWithLoss": 11,
+      "meanRequested": 1.728,
+      "meanActual": 1.668,
+      "meanLoss": 0.06
+    },
+    {
+      "turn": 2,
+      "games": 250,
+      "requestedEnrollment": 645,
+      "actualEnrollment": 636,
+      "lostEnrollment": 9,
+      "gamesWithLoss": 5,
+      "meanRequested": 2.58,
+      "meanActual": 2.544,
+      "meanLoss": 0.036
+    },
+    {
+      "turn": 3,
+      "games": 250,
+      "requestedEnrollment": 877,
+      "actualEnrollment": 867,
+      "lostEnrollment": 10,
+      "gamesWithLoss": 7,
+      "meanRequested": 3.508,
+      "meanActual": 3.468,
+      "meanLoss": 0.04
+    },
+    {
+      "turn": 4,
+      "games": 250,
+      "requestedEnrollment": 1451,
+      "actualEnrollment": 1420,
+      "lostEnrollment": 31,
+      "gamesWithLoss": 12,
+      "meanRequested": 5.804,
+      "meanActual": 5.68,
+      "meanLoss": 0.124
+    },
+    {
+      "turn": 5,
+      "games": 250,
+      "requestedEnrollment": 1339,
+      "actualEnrollment": 1321,
+      "lostEnrollment": 18,
+      "gamesWithLoss": 12,
+      "meanRequested": 5.356,
+      "meanActual": 5.284,
+      "meanLoss": 0.072
+    },
+    {
+      "turn": 6,
+      "games": 250,
+      "requestedEnrollment": 1759,
+      "actualEnrollment": 1736,
+      "lostEnrollment": 23,
+      "gamesWithLoss": 10,
+      "meanRequested": 7.036,
+      "meanActual": 6.944,
+      "meanLoss": 0.092
+    },
+    {
+      "turn": 7,
+      "games": 250,
+      "requestedEnrollment": 1721,
+      "actualEnrollment": 1689,
+      "lostEnrollment": 32,
+      "gamesWithLoss": 17,
+      "meanRequested": 6.884,
+      "meanActual": 6.756,
+      "meanLoss": 0.128
+    }
+  ],
+  "byCard": [
+    {
+      "cardNo": "2",
+      "name": "問合対応の基本",
+      "applied": 462,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 220,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "3",
+      "name": "質問対応の基本",
+      "applied": 569,
+      "requestedEnrollment": 1274,
+      "actualEnrollment": 1267,
+      "lostEnrollment": 7,
+      "games": 221,
+      "gamesWithLoss": 7,
+      "minimum250": false
+    },
+    {
+      "cardNo": "5",
+      "name": "経理精算の基本",
+      "applied": 297,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 160,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "7",
+      "name": "元塾生に講習案内",
+      "applied": 223,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 67,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "16",
+      "name": "備品注文",
+      "applied": 397,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 128,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "35",
+      "name": "季節のデコレーション",
+      "applied": 142,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 45,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "43",
+      "name": "テレビCM放映",
+      "applied": 46,
+      "requestedEnrollment": 92,
+      "actualEnrollment": 92,
+      "lostEnrollment": 0,
+      "games": 17,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "15",
+      "name": "提出書類ファイリング",
+      "applied": 92,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 29,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "49",
+      "name": "卒業生からの手紙",
+      "applied": 257,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 88,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "24",
+      "name": "苦手発見！質問対応",
+      "applied": 58,
+      "requestedEnrollment": 192,
+      "actualEnrollment": 188,
+      "lostEnrollment": 4,
+      "games": 33,
+      "gamesWithLoss": 2,
+      "minimum250": false
+    },
+    {
+      "cardNo": "30",
+      "name": "最新入試情報リサーチ",
+      "applied": 133,
+      "requestedEnrollment": 440,
+      "actualEnrollment": 430,
+      "lostEnrollment": 10,
+      "games": 68,
+      "gamesWithLoss": 6,
+      "minimum250": false
+    },
+    {
+      "cardNo": "1",
+      "name": "問合対応の基本",
+      "applied": 317,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 190,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "6",
+      "name": "チラシ折り",
+      "applied": 372,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 95,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "31",
+      "name": "教室清掃",
+      "applied": 272,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 74,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "42",
+      "name": "努力の結晶 合格実績掲示",
+      "applied": 348,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 115,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "9",
+      "name": "宿題チェック",
+      "applied": 110,
+      "requestedEnrollment": 260,
+      "actualEnrollment": 257,
+      "lostEnrollment": 3,
+      "games": 35,
+      "gamesWithLoss": 2,
+      "minimum250": false
+    },
+    {
+      "cardNo": "50",
+      "name": "事務リーダー1日派遣",
+      "applied": 22,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 17,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "40",
+      "name": "ごほうび差し入れスイーツ",
+      "applied": 219,
+      "requestedEnrollment": 219,
+      "actualEnrollment": 219,
+      "lostEnrollment": 0,
+      "games": 64,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "25",
+      "name": "ここが出る！テスト対策",
+      "applied": 72,
+      "requestedEnrollment": 389,
+      "actualEnrollment": 383,
+      "lostEnrollment": 6,
+      "games": 45,
+      "gamesWithLoss": 2,
+      "minimum250": false
+    },
+    {
+      "cardNo": "8",
+      "name": "校門前ビラ配り",
+      "applied": 125,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 37,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "48",
+      "name": "赤字覚悟！？ 大抽選会",
+      "applied": 108,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 42,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "18",
+      "name": "心を掴む1日見学",
+      "applied": 134,
+      "requestedEnrollment": 326,
+      "actualEnrollment": 326,
+      "lostEnrollment": 0,
+      "games": 56,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "26",
+      "name": "できるまで居残り！",
+      "applied": 34,
+      "requestedEnrollment": 212,
+      "actualEnrollment": 212,
+      "lostEnrollment": 0,
+      "games": 27,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "17",
+      "name": "振込用紙印刷",
+      "applied": 473,
+      "requestedEnrollment": 946,
+      "actualEnrollment": 899,
+      "lostEnrollment": 47,
+      "games": 121,
+      "gamesWithLoss": 24,
+      "minimum250": false
+    },
+    {
+      "cardNo": "4",
+      "name": "生徒面談の基本",
+      "applied": 290,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 196,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "47",
+      "name": "プロジェクター授業",
+      "applied": 99,
+      "requestedEnrollment": 859,
+      "actualEnrollment": 818,
+      "lostEnrollment": 41,
+      "games": 40,
+      "gamesWithLoss": 12,
+      "minimum250": false
+    },
+    {
+      "cardNo": "21",
+      "name": "兄弟紹介",
+      "applied": 187,
+      "requestedEnrollment": 360,
+      "actualEnrollment": 360,
+      "lostEnrollment": 0,
+      "games": 82,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "20",
+      "name": "友人紹介",
+      "applied": 41,
+      "requestedEnrollment": 123,
+      "actualEnrollment": 123,
+      "lostEnrollment": 0,
+      "games": 28,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "10",
+      "name": "日々の授業",
+      "applied": 29,
+      "requestedEnrollment": 119,
+      "actualEnrollment": 118,
+      "lostEnrollment": 1,
+      "games": 12,
+      "gamesWithLoss": 1,
+      "minimum250": false
+    },
+    {
+      "cardNo": "36",
+      "name": "締切間近の書類リマインド",
+      "applied": 71,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 37,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "13",
+      "name": "休み時間トーク",
+      "applied": 529,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 123,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "37",
+      "name": "教材発注",
+      "applied": 56,
+      "requestedEnrollment": 56,
+      "actualEnrollment": 52,
+      "lostEnrollment": 4,
+      "games": 31,
+      "gamesWithLoss": 4,
+      "minimum250": false
+    },
+    {
+      "cardNo": "46",
+      "name": "入塾後の未来へ 進路説明会",
+      "applied": 58,
+      "requestedEnrollment": 374,
+      "actualEnrollment": 359,
+      "lostEnrollment": 15,
+      "games": 23,
+      "gamesWithLoss": 6,
+      "minimum250": false
+    },
+    {
+      "cardNo": "33",
+      "name": "私も載ったよ！成績UP掲示",
+      "applied": 74,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 44,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "28",
+      "name": "テスト予想問題的中！",
+      "applied": 78,
+      "requestedEnrollment": 183,
+      "actualEnrollment": 180,
+      "lostEnrollment": 3,
+      "games": 32,
+      "gamesWithLoss": 2,
+      "minimum250": false
+    },
+    {
+      "cardNo": "45",
+      "name": "学力確認＆向上 公開模試",
+      "applied": 139,
+      "requestedEnrollment": 1022,
+      "actualEnrollment": 1005,
+      "lostEnrollment": 17,
+      "games": 54,
+      "gamesWithLoss": 8,
+      "minimum250": false
+    },
+    {
+      "cardNo": "32",
+      "name": "スタンプ帳キャンペーン",
+      "applied": 57,
+      "requestedEnrollment": 171,
+      "actualEnrollment": 171,
+      "lostEnrollment": 0,
+      "games": 36,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "22",
+      "name": "進学相談フェア出展",
+      "applied": 21,
+      "requestedEnrollment": 30,
+      "actualEnrollment": 30,
+      "lostEnrollment": 0,
+      "games": 16,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "41",
+      "name": "入塾手続きのご案内",
+      "applied": 42,
+      "requestedEnrollment": 84,
+      "actualEnrollment": 84,
+      "lostEnrollment": 0,
+      "games": 28,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "29",
+      "name": "設問の急所は？教材研究",
+      "applied": 19,
+      "requestedEnrollment": 63,
+      "actualEnrollment": 63,
+      "lostEnrollment": 0,
+      "games": 13,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "14",
+      "name": "保護者面談",
+      "applied": 175,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 49,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "34",
+      "name": "笑顔伝わる教室通信",
+      "applied": 35,
+      "requestedEnrollment": 70,
+      "actualEnrollment": 67,
+      "lostEnrollment": 3,
+      "games": 20,
+      "gamesWithLoss": 2,
+      "minimum250": false
+    },
+    {
+      "cardNo": "38",
+      "name": "未入金家庭へ電話",
+      "applied": 24,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 17,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "27",
+      "name": "補習大会",
+      "applied": 4,
+      "requestedEnrollment": 18,
+      "actualEnrollment": 18,
+      "lostEnrollment": 0,
+      "games": 4,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "19",
+      "name": "保護者説明会",
+      "applied": 119,
+      "requestedEnrollment": 119,
+      "actualEnrollment": 119,
+      "lostEnrollment": 0,
+      "games": 48,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "44",
+      "name": "今だけ！体験生特典",
+      "applied": 121,
+      "requestedEnrollment": 363,
+      "actualEnrollment": 363,
+      "lostEnrollment": 0,
+      "games": 40,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "39",
+      "name": "機材故障は本部に相談",
+      "applied": 22,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 15,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "23",
+      "name": "人気の秘密は？他塾研究",
+      "applied": 8,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 6,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "51",
+      "name": "明るく広く！教室リフォーム",
+      "applied": 8,
+      "requestedEnrollment": 24,
+      "actualEnrollment": 24,
+      "lostEnrollment": 0,
+      "games": 5,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "12",
+      "name": "日々の出迎え",
+      "applied": 19,
+      "requestedEnrollment": 0,
+      "actualEnrollment": 0,
+      "lostEnrollment": 0,
+      "games": 7,
+      "gamesWithLoss": 0,
+      "minimum250": false
+    },
+    {
+      "cardNo": "11",
+      "name": "褒めて励ます授業",
+      "applied": 32,
+      "requestedEnrollment": 76,
+      "actualEnrollment": 74,
+      "lostEnrollment": 2,
+      "games": 11,
+      "gamesWithLoss": 1,
+      "minimum250": false
+    }
+  ],
+  "interpretation": "実際に解決した入塾の要求増分と増加量の差。体験上限による切り捨てを観測する。配置順や取得を変えれば全量回収できるという因果評価ではない。カード別の有効ゲーム数250未満は傾向の根拠にしない。",
+  "purpose": "retrospective growth clipping and official endpoint sensitivity; no new full games",
+  "actualNewFullGames": 0
+}

@@ -1,0 +1,78 @@
+{
+  "stage": "ahiru-stability-validation-v2-20261103",
+  "n": 1000,
+  "phase": "validation",
+  "seed": "ahiru-pro-ahiru-stability-validation-v2-20261103",
+  "fingerprints": {
+    "strategyVersion": "48105419afcd1a5bb22e41ae950719c9fdbfcdc93e5f415e625faa446b517d05",
+    "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  },
+  "actorFiles": [
+    "solver/autoplay-agent.mjs",
+    "solver/browser/pro-strategy-research.js",
+    "solver/browser/pro-risk-research.js",
+    "solver/browser/pro-value-model.js",
+    "solver/browser/pro-learned-research.js",
+    "solver/browser/pro-public-action-kernel.js",
+    "solver/pro-card-scene-input.mjs",
+    "solver/browser/pro-intrinsic-recovery.js",
+    "solver/browser/pro-action-candidates.js",
+    "solver/browser/pro-opening-table.js",
+    "solver/pro-opening-table-input.mjs"
+  ],
+  "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+  "configFile": "solver/research-scenarios/ahiru-pro-scene-value-configs.json",
+  "configSha256": "621a59a4830e86c9ae99f96eed0386751c9e9936bae0b97ea5298ed01adcd524",
+  "runs": [
+    {
+      "id": "scene-v3",
+      "config": {
+        "id": "scene-v3",
+        "acquisition": "learned",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine",
+        "uiTrainingStreams": true,
+        "cacheEffects": true,
+        "learned": {
+          "blend": 0.02,
+          "beam": 72,
+          "refreshCost": 0.12,
+          "reserveCost": 0.25
+        },
+        "valueModelPath": "solver/local-runs/pro-mean125/value-v3-scenes/depth4-model.json",
+        "refresh": "learned",
+        "signedGrowth": true,
+        "safetyBuffer": 2,
+        "targetScore": 13,
+        "deleteFloor": 4,
+        "fastPublicActions": true,
+        "placementRolloutTurns": 8,
+        "planning": {
+          "worlds": 8,
+          "valueHorizon": 2,
+          "leafBlend": 0.002,
+          "realBeam": 128,
+          "actionCandidates": 8,
+          "futurePolicy": "baseline",
+          "futureBeam": 64,
+          "futureAcquisition": "learned",
+          "futureRefresh": "learned",
+          "contextSalt": true,
+          "drawSampler": "keyed",
+          "shortfallWeight": 0
+        },
+        "lateAcquisitionRollout": 8,
+        "valueModelSha256": "4f8fb56edaa5dadd2e855d562e4d357d82e2944e4cba3329f6fbe554f175840d"
+      },
+      "files": [
+        "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch0.json",
+        "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch1.json",
+        "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch2.json",
+        "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v2-20261103/scene-v3-batch3.json"
+      ]
+    }
+  ]
+}

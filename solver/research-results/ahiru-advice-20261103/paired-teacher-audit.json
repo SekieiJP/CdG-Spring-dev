@@ -1,0 +1,110 @@
+{
+  "schema": "pro-paired-teachers-v1",
+  "versions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+    "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+    "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+  ],
+  "counts": {
+    "trainRoots": 500,
+    "validationRoots": 250,
+    "continuations": 1500
+  },
+  "sources": [
+    {
+      "arm": "reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/reference-batch0.json",
+      "sha256": "c2a1433da7d08e337f62432609dc2be2a71f2faf415ea08cc0cf3d4298cc70e9",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "arm": "reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/reference-batch1.json",
+      "sha256": "6850884f24e0b92ba26da17f39017da868febcaa4bbec4d35bfb989e56c92d4f",
+      "n": 250,
+      "offset": 250
+    },
+    {
+      "arm": "reference",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/reference-batch2.json",
+      "sha256": "c11ace5ed9f638500e3b716e632ce341363eea9b76cd64080642b6fb7598adda",
+      "n": 250,
+      "offset": 500
+    },
+    {
+      "arm": "target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/target-batch0.json",
+      "sha256": "47579439451df40ae928ab302370c51548333e00bf396731e693a2cecddec4c1",
+      "n": 250,
+      "offset": 0
+    },
+    {
+      "arm": "target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/target-batch1.json",
+      "sha256": "aab1ea6e50e4eeafdb04511438ff39de9e8d402521a21a0356e534d7454a1706",
+      "n": 250,
+      "offset": 250
+    },
+    {
+      "arm": "target",
+      "file": "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/paired-value-v1-teachers/target-batch2.json",
+      "sha256": "5c05cfea3d2a271f3f998002d06846ad204aa4874d494bc585af81296572bff5",
+      "n": 250,
+      "offset": 500
+    }
+  ],
+  "bankSha256": "651185d9e32ae4fad28a44b4e76cdcc02aba06a983757584d7d07dc2adb63657",
+  "continuationConfig": {
+    "id": "paired-value-continuation-v1",
+    "acquisition": "learned",
+    "placement": "engine",
+    "deletion": "aggressive",
+    "objective": "engine",
+    "uiTrainingStreams": true,
+    "cacheEffects": true,
+    "learned": {
+      "blend": 0.005,
+      "beam": 72,
+      "refreshCost": 0.12,
+      "reserveCost": 0.25
+    },
+    "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+    "refresh": "learned",
+    "signedGrowth": true,
+    "safetyBuffer": 2,
+    "targetScore": 13,
+    "deleteFloor": 4,
+    "fastPublicActions": true,
+    "placementRolloutTurns": 8,
+    "planning": {
+      "worlds": 8,
+      "valueHorizon": 2,
+      "leafBlend": 0.002,
+      "realBeam": 128,
+      "actionCandidates": 8,
+      "futurePolicy": "baseline",
+      "futureBeam": 64,
+      "futureAcquisition": "learned",
+      "futureRefresh": "learned",
+      "contextSalt": true,
+      "drawSampler": "keyed"
+    },
+    "lateAcquisitionRollout": 8,
+    "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+  },
+  "continuationActor": "eeb356928ca543bdd78d669ffd5ae21822d8e51540ed6c8e2e4ed3b713c90dc1",
+  "createdAt": "2026-11-02T16:19:47.950Z",
+  "provenance": {
+    "manifestFile": "solver/local-runs/pro-mean125/paired-value-v1-teachers/manifest.json",
+    "manifestSha256": "72ede4ea5462d2cdda537ef134380f97fdc3f86d4a58383b8b0fa5a0df41fc4a",
+    "sourceAuditSha256": "5f921f8d5e5ee1baf4794a4f0a487ca5d646c10eb0859cbaa37e7003ca09cf6c",
+    "generatorSha256": "5859c91c3fb79a0ef941406369dda86c1d83604007a7b1b7ff39cedf4647e7c0",
+    "allRootsAccepted": true,
+    "sourceSeedsDisjoint": true,
+    "rerolls": 0,
+    "choiceScope": "取得全体。初回は2枚を変える場合がある。各時期は250未満。"
+  },
+  "datasetSha256": "052de5c385f82692ad42dcf2277793458d97276cc452823167d603bb1650dca7",
+  "purpose": "公式得点のコピーと対応監査のみ。得点差・特徴・学習・検証計算はブラウザ内。独立1500開始の到達検証ではない。"
+}

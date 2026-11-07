@@ -1,0 +1,86 @@
+{
+  "purpose": "実行開始時に固定した計画の写し。結果や現在の稼働状態の証明ではない。",
+  "manifestFile": "solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/manifest.json",
+  "manifestSha256": "be3f91b98b6261fbdf5316cb1abf871217cc1ce509c3048474c9928c1843068c",
+  "manifest": {
+    "stage": "ahiru-stability-validation-v1-20261103",
+    "n": 2000,
+    "phase": "validation",
+    "seed": "ahiru-pro-ahiru-stability-validation-v1-20261103",
+    "fingerprints": {
+      "strategyVersion": "8196136e4d19da110d40ee9187a98e97dfe7b64adacf53a2a51c25bd1904ad59",
+      "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731"
+    },
+    "actorFiles": [
+      "solver/autoplay-agent.mjs",
+      "solver/browser/pro-strategy-research.js",
+      "solver/browser/pro-risk-research.js",
+      "solver/browser/pro-value-model.js",
+      "solver/browser/pro-learned-research.js",
+      "solver/browser/pro-public-action-kernel.js",
+      "solver/pro-card-scene-input.mjs",
+      "solver/browser/pro-intrinsic-recovery.js",
+      "solver/browser/pro-action-candidates.js",
+      "solver/browser/pro-opening-table.js",
+      "solver/pro-opening-table-input.mjs"
+    ],
+    "requirement": "all accepted starts; no rerolls; mean >=12; score <=8 strictly under 2%",
+    "configFile": "solver/research-scenarios/ahiru-pro-validation-v1.json",
+    "configSha256": "654d7f52b875525f3e941ab1d3e2d2061d45f00718bedd51a598d81d0fad7b59",
+    "runs": [
+      {
+        "id": "baseline",
+        "config": {
+          "id": "baseline",
+          "acquisition": "learned",
+          "placement": "engine",
+          "deletion": "aggressive",
+          "objective": "engine",
+          "uiTrainingStreams": true,
+          "cacheEffects": true,
+          "learned": {
+            "blend": 0.005,
+            "beam": 72,
+            "refreshCost": 0.12,
+            "reserveCost": 0.25
+          },
+          "valueModelPath": "solver/local-runs/pro-mean125/value-v1/depth3-model.json",
+          "refresh": "learned",
+          "signedGrowth": true,
+          "safetyBuffer": 2,
+          "targetScore": 13,
+          "deleteFloor": 4,
+          "fastPublicActions": true,
+          "placementRolloutTurns": 8,
+          "planning": {
+            "worlds": 8,
+            "valueHorizon": 2,
+            "leafBlend": 0.002,
+            "realBeam": 128,
+            "actionCandidates": 8,
+            "futurePolicy": "baseline",
+            "futureBeam": 64,
+            "futureAcquisition": "learned",
+            "futureRefresh": "learned",
+            "contextSalt": true,
+            "drawSampler": "keyed"
+          },
+          "lateAcquisitionRollout": 8,
+          "valueModelSha256": "c07e7fe747c66aeebb345a2f3100ae6b6fc4609605ea58680230e6ac94be9bba"
+        },
+        "files": [
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch0.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch1.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch2.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch3.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch4.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch5.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch6.json",
+          "/Users/sekiei/.codex/worktrees/pro-horizon-analysis/CdG-Spring-dev/solver/local-runs/pro-mean125/ahiru-stability-validation-v1-20261103/baseline-batch7.json"
+        ]
+      }
+    ]
+  }
+}

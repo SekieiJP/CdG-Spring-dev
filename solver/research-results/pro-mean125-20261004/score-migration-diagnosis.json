@@ -1,0 +1,481 @@
+{
+  "generatedAt": "2026-10-04T09:25:04.133Z",
+  "purpose": "全開始の対平均差の得点帯寄与を診断する。判断やゲーム実行なし。",
+  "newFullGames": 0,
+  "implementationFiles": [
+    "solver/pro-score-migration.mjs",
+    "solver/pro-score-distribution.mjs",
+    "solver/pro-strategy-metrics.mjs"
+  ],
+  "implementationSha256": "b807e75f6a017c716c17815b2a590486e1c576aa8e4601245818cea2f84d7a48",
+  "audit": [
+    {
+      "stage": "action-coverage-development",
+      "id": "champion-v1",
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/champion-v1-batch0.json",
+      "sha256": "70d2f500271edcb404f77e4cc26b195317a81301ea45f8a1095ac3bfd7709f8d"
+    },
+    {
+      "stage": "action-coverage-development",
+      "id": "both2",
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-batch0.json",
+      "sha256": "979d3b70fbeafe32f551bd34b7d6062b780e5c56de2074df062dc5a1a94be390"
+    },
+    {
+      "stage": "action-coverage-development",
+      "id": "both2-recovery",
+      "file": "solver/local-runs/pro-mean125/action-coverage-development/both2-recovery-batch0.json",
+      "sha256": "f4c0a3a0fc77b0b4f34adf4848a8ad07f9aa1de613a6bcafbc63e23417809fe9"
+    },
+    {
+      "stage": "short-policy-value-development",
+      "id": "both2",
+      "file": "solver/local-runs/pro-mean125/short-policy-value-development/both2-batch0.json",
+      "sha256": "a5fe442696b52c61b235c5bdf3457460f02483db83567f40ba8035a62c673f51"
+    },
+    {
+      "stage": "short-policy-value-development",
+      "id": "both2-v4",
+      "file": "solver/local-runs/pro-mean125/short-policy-value-development/both2-v4-batch0.json",
+      "sha256": "210965d09469c8cd196711ed6b334a6d7f37bf3f2dc40b902bbdce4f456253f8"
+    },
+    {
+      "stage": "opening-table-development",
+      "id": "baseline",
+      "file": "solver/local-runs/pro-mean125/opening-table-development/baseline-batch0.json",
+      "sha256": "1672a3f196f202eb2482d75bdbc8e5d39a36552cf73063db5c31ea3730ebfca4"
+    },
+    {
+      "stage": "opening-table-development",
+      "id": "opening0",
+      "file": "solver/local-runs/pro-mean125/opening-table-development/opening0-batch0.json",
+      "sha256": "87bb30527f86ca4af2596449f1655f772b876699f13ec2cbfa9deb1d7207cca8"
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "action-coverage-development:champion-v1-to-both2",
+      "manifest": "solver/local-runs/pro-mean125/action-coverage-development/manifest.json",
+      "before": "champion-v1",
+      "after": "both2",
+      "n": 250,
+      "comparison": {
+        "n": 250,
+        "meanDifference": 0.42,
+        "meanDifference95": [
+          0.16,
+          0.7
+        ],
+        "medianDifference": 0,
+        "medianDifference95": [
+          0,
+          1
+        ],
+        "score15RateDifference": 0.012,
+        "score15RateDifference95": [
+          -0.016,
+          0.04
+        ],
+        "newly15": 8,
+        "lost15": 5,
+        "firstOfferMismatches": 0
+      },
+      "byBefore": [
+        {
+          "id": "below8",
+          "count": 5,
+          "improvedCount": 5,
+          "declinedCount": 0,
+          "gainedPoints": 45,
+          "lostPoints": 0,
+          "netContributionPerStart": 0.18
+        },
+        {
+          "id": "8-9",
+          "count": 11,
+          "improvedCount": 10,
+          "declinedCount": 0,
+          "gainedPoints": 28,
+          "lostPoints": 0,
+          "netContributionPerStart": 0.112
+        },
+        {
+          "id": "10-11",
+          "count": 77,
+          "improvedCount": 53,
+          "declinedCount": 12,
+          "gainedPoints": 101,
+          "lostPoints": 23,
+          "netContributionPerStart": 0.312
+        },
+        {
+          "id": "12",
+          "count": 66,
+          "improvedCount": 30,
+          "declinedCount": 13,
+          "gainedPoints": 40,
+          "lostPoints": 17,
+          "netContributionPerStart": 0.092
+        },
+        {
+          "id": "13",
+          "count": 51,
+          "improvedCount": 14,
+          "declinedCount": 24,
+          "gainedPoints": 18,
+          "lostPoints": 39,
+          "netContributionPerStart": -0.084
+        },
+        {
+          "id": "14",
+          "count": 33,
+          "improvedCount": 2,
+          "declinedCount": 23,
+          "gainedPoints": 3,
+          "lostPoints": 40,
+          "netContributionPerStart": -0.148
+        },
+        {
+          "id": "15-16",
+          "count": 7,
+          "improvedCount": 0,
+          "declinedCount": 5,
+          "gainedPoints": 0,
+          "lostPoints": 11,
+          "netContributionPerStart": -0.044
+        }
+      ],
+      "score13": {
+        "before": 91,
+        "after": 112
+      },
+      "score14": {
+        "before": 40,
+        "after": 47
+      },
+      "score15": {
+        "before": 7,
+        "after": 10
+      },
+      "interpretation": "全開始の対応差を変更前の得点帯に分解した事後診断。帯の少数例での優位や、プレイ前に得点帯を識別できることを証明しない。各帯の寄与の和は全開始の対平均差に一致する。"
+    },
+    {
+      "id": "action-coverage-development:both2-to-both2-recovery",
+      "manifest": "solver/local-runs/pro-mean125/action-coverage-development/manifest.json",
+      "before": "both2",
+      "after": "both2-recovery",
+      "n": 250,
+      "comparison": {
+        "n": 250,
+        "meanDifference": 0.008,
+        "meanDifference95": [
+          -0.06,
+          0.084
+        ],
+        "medianDifference": 0,
+        "medianDifference95": [
+          -0.5,
+          0
+        ],
+        "score15RateDifference": 0.004,
+        "score15RateDifference95": [
+          0,
+          0.012
+        ],
+        "newly15": 1,
+        "lost15": 0,
+        "firstOfferMismatches": 0
+      },
+      "byBefore": [
+        {
+          "id": "below8",
+          "count": 2,
+          "improvedCount": 0,
+          "declinedCount": 0,
+          "gainedPoints": 0,
+          "lostPoints": 0,
+          "netContributionPerStart": 0
+        },
+        {
+          "id": "8-9",
+          "count": 8,
+          "improvedCount": 1,
+          "declinedCount": 0,
+          "gainedPoints": 3,
+          "lostPoints": 0,
+          "netContributionPerStart": 0.012
+        },
+        {
+          "id": "10-11",
+          "count": 53,
+          "improvedCount": 4,
+          "declinedCount": 2,
+          "gainedPoints": 11,
+          "lostPoints": 3,
+          "netContributionPerStart": 0.032
+        },
+        {
+          "id": "12",
+          "count": 75,
+          "improvedCount": 1,
+          "declinedCount": 1,
+          "gainedPoints": 1,
+          "lostPoints": 4,
+          "netContributionPerStart": -0.012
+        },
+        {
+          "id": "13",
+          "count": 65,
+          "improvedCount": 2,
+          "declinedCount": 5,
+          "gainedPoints": 2,
+          "lostPoints": 6,
+          "netContributionPerStart": -0.016
+        },
+        {
+          "id": "14",
+          "count": 37,
+          "improvedCount": 0,
+          "declinedCount": 1,
+          "gainedPoints": 0,
+          "lostPoints": 2,
+          "netContributionPerStart": -0.008
+        },
+        {
+          "id": "15-16",
+          "count": 10,
+          "improvedCount": 0,
+          "declinedCount": 0,
+          "gainedPoints": 0,
+          "lostPoints": 0,
+          "netContributionPerStart": 0
+        }
+      ],
+      "score13": {
+        "before": 112,
+        "after": 110
+      },
+      "score14": {
+        "before": 47,
+        "after": 49
+      },
+      "score15": {
+        "before": 10,
+        "after": 11
+      },
+      "interpretation": "全開始の対応差を変更前の得点帯に分解した事後診断。帯の少数例での優位や、プレイ前に得点帯を識別できることを証明しない。各帯の寄与の和は全開始の対平均差に一致する。"
+    },
+    {
+      "id": "short-policy-value-development:both2-to-both2-v4",
+      "manifest": "solver/local-runs/pro-mean125/short-policy-value-development/manifest.json",
+      "before": "both2",
+      "after": "both2-v4",
+      "n": 250,
+      "comparison": {
+        "n": 250,
+        "meanDifference": -0.196,
+        "meanDifference95": [
+          -0.484,
+          0.064
+        ],
+        "medianDifference": 0,
+        "medianDifference95": [
+          -0.5,
+          0
+        ],
+        "score15RateDifference": -0.004,
+        "score15RateDifference95": [
+          -0.032,
+          0.024
+        ],
+        "newly15": 6,
+        "lost15": 7,
+        "firstOfferMismatches": 0
+      },
+      "byBefore": [
+        {
+          "id": "below8",
+          "count": 2,
+          "improvedCount": 2,
+          "declinedCount": 0,
+          "gainedPoints": 11,
+          "lostPoints": 0,
+          "netContributionPerStart": 0.044
+        },
+        {
+          "id": "8-9",
+          "count": 13,
+          "improvedCount": 12,
+          "declinedCount": 1,
+          "gainedPoints": 38,
+          "lostPoints": 9,
+          "netContributionPerStart": 0.116
+        },
+        {
+          "id": "10-11",
+          "count": 64,
+          "improvedCount": 38,
+          "declinedCount": 11,
+          "gainedPoints": 74,
+          "lostPoints": 20,
+          "netContributionPerStart": 0.216
+        },
+        {
+          "id": "12",
+          "count": 61,
+          "improvedCount": 19,
+          "declinedCount": 21,
+          "gainedPoints": 31,
+          "lostPoints": 51,
+          "netContributionPerStart": -0.08
+        },
+        {
+          "id": "13",
+          "count": 73,
+          "improvedCount": 11,
+          "declinedCount": 37,
+          "gainedPoints": 12,
+          "lostPoints": 62,
+          "netContributionPerStart": -0.2
+        },
+        {
+          "id": "14",
+          "count": 29,
+          "improvedCount": 1,
+          "declinedCount": 24,
+          "gainedPoints": 2,
+          "lostPoints": 54,
+          "netContributionPerStart": -0.208
+        },
+        {
+          "id": "15-16",
+          "count": 8,
+          "improvedCount": 0,
+          "declinedCount": 7,
+          "gainedPoints": 0,
+          "lostPoints": 21,
+          "netContributionPerStart": -0.084
+        }
+      ],
+      "score13": {
+        "before": 110,
+        "after": 90
+      },
+      "score14": {
+        "before": 37,
+        "after": 35
+      },
+      "score15": {
+        "before": 8,
+        "after": 7
+      },
+      "interpretation": "全開始の対応差を変更前の得点帯に分解した事後診断。帯の少数例での優位や、プレイ前に得点帯を識別できることを証明しない。各帯の寄与の和は全開始の対平均差に一致する。"
+    },
+    {
+      "id": "opening-table-development:baseline-to-opening0",
+      "manifest": "solver/local-runs/pro-mean125/opening-table-development/manifest.json",
+      "before": "baseline",
+      "after": "opening0",
+      "n": 250,
+      "comparison": {
+        "n": 250,
+        "meanDifference": 0.056,
+        "meanDifference95": [
+          -0.112,
+          0.228
+        ],
+        "medianDifference": 0,
+        "medianDifference95": [
+          0,
+          0
+        ],
+        "score15RateDifference": 0.004,
+        "score15RateDifference95": [
+          -0.016,
+          0.024
+        ],
+        "newly15": 4,
+        "lost15": 3,
+        "firstOfferMismatches": 0
+      },
+      "byBefore": [
+        {
+          "id": "below8",
+          "count": 1,
+          "improvedCount": 0,
+          "declinedCount": 0,
+          "gainedPoints": 0,
+          "lostPoints": 0,
+          "netContributionPerStart": 0
+        },
+        {
+          "id": "8-9",
+          "count": 17,
+          "improvedCount": 9,
+          "declinedCount": 0,
+          "gainedPoints": 26,
+          "lostPoints": 0,
+          "netContributionPerStart": 0.104
+        },
+        {
+          "id": "10-11",
+          "count": 71,
+          "improvedCount": 25,
+          "declinedCount": 4,
+          "gainedPoints": 52,
+          "lostPoints": 4,
+          "netContributionPerStart": 0.192
+        },
+        {
+          "id": "12",
+          "count": 67,
+          "improvedCount": 11,
+          "declinedCount": 7,
+          "gainedPoints": 15,
+          "lostPoints": 13,
+          "netContributionPerStart": 0.008
+        },
+        {
+          "id": "13",
+          "count": 54,
+          "improvedCount": 2,
+          "declinedCount": 15,
+          "gainedPoints": 3,
+          "lostPoints": 34,
+          "netContributionPerStart": -0.124
+        },
+        {
+          "id": "14",
+          "count": 30,
+          "improvedCount": 0,
+          "declinedCount": 8,
+          "gainedPoints": 0,
+          "lostPoints": 20,
+          "netContributionPerStart": -0.08
+        },
+        {
+          "id": "15-16",
+          "count": 10,
+          "improvedCount": 0,
+          "declinedCount": 3,
+          "gainedPoints": 0,
+          "lostPoints": 11,
+          "netContributionPerStart": -0.044
+        }
+      ],
+      "score13": {
+        "before": 94,
+        "after": 98
+      },
+      "score14": {
+        "before": 40,
+        "after": 39
+      },
+      "score15": {
+        "before": 10,
+        "after": 11
+      },
+      "interpretation": "全開始の対応差を変更前の得点帯に分解した事後診断。帯の少数例での優位や、プレイ前に得点帯を識別できることを証明しない。各帯の寄与の和は全開始の対平均差に一致する。"
+    }
+  ]
+}

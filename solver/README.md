@@ -49,6 +49,35 @@ node solver/autoplay-agent.mjs --episodes 200 --difficulty fresh --policies fres
 - 画面クリック/ドラッグは使わず、`window.game` 内の `gameState` / `turnManager` / `cardManager` / `scoreManager` を直接操作します。
 - 既存のUIは初期ロードのみ利用し、評価ループは内部ロジック中心で実行するため、通常のE2E操作より高速です。
 
+## FRESH取得アシストの分析
+
+ゲーム本体の `freshAcquisitionAdvisor.js` と同じ数式を、取得判断だけに適用できます。配置・削除は `--policies` に指定した方略を維持します。実際のゲーム操作・得点計算はブラウザで実行し、Node側は起動と記録集計を担当します。推薦には公開済み情報だけを渡し、実プレイのseedや隠れた山札順を渡しません。ゲーム画面での推薦はこの数式のみで計算し、繰り返しシミュレーションを実行しません。
+
+```bash
+node solver/autoplay-agent.mjs --difficulty fresh --episodes 200 --policies fresh_stable --acquisition-model reach --seed fresh-assist-v1-dev --output solver/local-runs/fresh-assist/dev-reach.json --no-report
+node solver/fresh-assist-analysis.mjs solver/local-runs/fresh-assist/dev-baseline.json solver/local-runs/fresh-assist/dev-reach.json --output-dir solver/local-evaluation/fresh-assist/dev
+```
+
+- `--acquisition-model balanced|safety|reach|supply`：比較する重み。未指定なら従来の取得方略。
+- `--acquisition-ablation experience|enrollment|satisfaction|accounting|threshold|precision|risk`：指定した評価特徴の寄与だけをゼロにする比較。
+- `--episode-offset N`：分割実行時にseedの末尾番号をNから開始する。同じseedを重複して集計しない。
+- `--seed PREFIX`：各ゲームは `PREFIX:番号`。開発・検証・最終評価でPREFIXを変え、同じ比較内では揃える。
+
+分析ツールは `index.html`、`summary.json`、`contexts.csv` を出力します。HTMLでカード／ターン／不足状況を絞り、評価項目の寄与と実際の選択を確認できます。S率・中央値・p10と、対応するseedを使ったブートストラップ95%区間を表示します。カード／ランク／ルール版が異なる記録は比較せず、同条件で結果が競合する重複seedはエラーにします。生ログ・出力はGit除外対象です。
+
+### 公開された取得場面からの再試行
+
+HTMLの代表例をJSON保存するか、指定したゲームの取得判断を取り出します。判断番号は0始まりです。
+
+```bash
+node solver/fresh-assist-analysis.mjs --extract solver/local-runs/fresh-assist/dev-reach.json --seed fresh-assist-v1-dev:0 --decision 2 --output-dir solver/local-evaluation/fresh-assist/scene
+node solver/autoplay-agent.mjs --difficulty fresh --episodes 100 --policies fresh_stable --acquisition-model reach --decision-file solver/local-evaluation/fresh-assist/scene/decision.json --forced-choice 0 --seed fresh-assist-scene-0 --output solver/local-runs/fresh-assist/scene-choice0.json --no-report
+```
+
+同じ状況・同じ新しいseed群で `--forced-choice 1`、`2` などを比較します。初回なら `0,1` のように2枚指定し、発想の取得辞退は `skip` とします。既知の所有カード・状態・過去提示枚数を復元し、以後の未公開の並びを新たなseedで生成します。元ゲームの隠れた並びを復元するツールではありません。推薦の局所的な弱点を調べる条件付き実験として扱ってください。
+
+計画・表示仕様は [FRESH取得アシスト計画](../docs/CdG-FRESH-Assist-Plan.md)、重みの選定と結果は [分析記録](../docs/CdG-FRESH-Assist-Analysis.md) を参照してください。
+
 ## レポート再生成
 
 ```bash
@@ -70,3 +99,90 @@ node solver/autoplay-agent.mjs --episodes 300 --difficulty fresh --policies fres
 ```bash
 node solver/autoplay-agent.mjs --episodes 200 --difficulty pro --policies pro_foundation,pro_stable,pro_upside --output solver/pro-foundation-r1.json --report solver/pro-foundation-r1.md
 ```
+
+## PROのS+取得推薦
+
+[計画](../docs/CdG-PRO-Assist-Plan.md)に測定順序と制約を記載。S+以上にはSSを含み、FRESHのS以上と混ぜない。通常モードだけを比較する。公開ゲームの取得推薦は数式で計算し、分析用の配置探索は自動プレイ時だけに使う。
+
+```sh
+node solver/autoplay-agent.mjs --difficulty pro --episodes 200 --policies pro_goal --acquisition-model pro_splus --seed pro-assist-example --output solver/local-runs/pro-assist/example.json --no-report
+node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assist/example.json --output-dir solver/local-evaluation/pro-assist/example
+node solver/acquisition-benchmark.mjs solver/local-runs/pro-assist/example.json --output solver/local-evaluation/pro-assist/benchmark.json
+```
+
+- 取得式：`pro_balanced`（安定）、`pro_engine`（回転）、`pro_bridge`（高満足）、`pro_precision`（動員・入退差）、`pro_splus`（入退差と経理を補強）、`pro_lean`（希釈・コストへの慎重さ）。数値・既定の採用モデルは`game/js/proAcquisitionAdvisor.js`に集約する。
+- 新しい配置・削除方略：`pro_goal`、`pro_engine`、`pro_bridge`、`pro_precision`。`--acquisition-model`も指定する。ブラウザ内で既知の手札を比較し、本体と共通の効果解決を使う。配置は室長→講師→事務の順。探索は幅180、最大12枚まで。未知の未来の山札・抽選は読まない。
+- 数式を使うPROのリフレッシュは、公開カタログと提示・除外履歴の比較で判断する。発想の取得では希釈を避けるため辞退も評価する。旧方略の再現時は従来のリフレッシュ方略を使う。
+- `--acquisition-ablation goal|points|engine|accounting|...`で一つの寄与を除外できる。能力・条件の投影式は同じにして、意思決定への寄与を測る。
+- `acquisition-analysis.mjs --extract ... --seed ... --decision ...`と`autoplay-agent.mjs --decision-file ... --forced-choice 0|1|2|skip`で公開場面の候補別再試行を行う。新しい共通seedを使い、元の非公開の抽選順を復元しない。PROの使用済みプール・永久除外は記録された履歴だけから復元する。除外履歴のない旧記録は完全な同条件復元ではないため使わない。
+- HTMLでカード・ターン・不足・構築傾向を絞り、重み寄与、状態、トークン、デッキ枚数、取得時と提示時の同伴成績を確認できる。後者は相関・選択の偏りを含む。モデル変更は開発・検証群までで行い、凍結後の評価群を再調整に使わない。
+- `fresh-assist-analysis.mjs`は従来のFRESH用入口として維持する。人間のプレイは自動プレイと別にし、実際にアシストを表示したかも区別する。
+- `acquisition-benchmark.mjs`は同じMac上のChromiumで画面寸法を変える測定。iPhone 12 Safari／Android実機の処理時間とは区別する。
+
+生の記録・生成HTML/CSV・測定JSONは`solver/local-runs/`と`solver/local-evaluation/`に保存し、公開配信やGitコミットに含めない。
+
+### 取得以外を揃える比較と大規模実行
+
+`--refresh-policy auto|legacy|public|none`で分析用のリフレッシュ判断を指定する。`auto`は数式PROでpublic、それ以外でlegacy。取得のみを比べる場合は、両方に同じ`--refresh-policy public --refresh-model pro_splus`を指定する。集計は判断の違いを`acquisition-only`／`full-strategy`として区別する。
+
+PROの詳細記録は大きいので、1ファイル250ゲームを推奨する。次の例で同じ1,000seedを漏れなく実行できる。従来取得の対照では`--acquisition-model`を省略し、配置・削除・リフレッシュを同じにする。
+
+```sh
+for batch in 0 1 2 3; do
+  node solver/autoplay-agent.mjs --difficulty pro --episodes 250 --episode-offset "$((batch * 250))" --policies pro_compress --acquisition-model pro_splus --refresh-policy public --refresh-model pro_splus --seed pro-assist-new-study --port 4290 --output "solver/local-runs/pro-assist/study-batch$batch.json" --no-report || break
+done
+node solver/acquisition-analysis.mjs --difficulty pro solver/local-runs/pro-assist/study-batch*.json --output-dir solver/local-evaluation/pro-assist/study
+```
+
+集計はファイルを順に読み込み、詳細イベントを全ゲーム分保持しない。seedの重複・欠け、コード版、比較条件はレポートの測定条件で確認する。バッチ番号・seed群を変える前に、既存の入力ファイルを混ぜないようにする。
+
+## PROの人向け攻略分析（2026-10-03）
+
+現在の攻略研究は、[人向けレポート](../docs/CdG-PRO-Strategy-Guide.md)と[方法・実験結果](../docs/CdG-PRO-Strategy-Analysis.md)を参照してください。一発勝負は最初の候補からリセットなしの1ゲームで中央値を評価し、15点以上を狙う再挑戦だけ初期リセマラを利用できます。ゲーム内の研修リフレッシュは両カテゴリで利用できます。**新しい傾向比較は各方略・局面で最低250シード**。このREADMEの古い200回の例は今回の攻略判断の根拠に含めません。
+
+```bash
+node solver/pro-strategy-study.mjs development 250
+node solver/pro-strategy-study.mjs validation 1000 control,full-median,full-ceiling,full-engine,acq-ceiling,delete-basic
+node solver/pro-strategy-scenes.mjs
+node solver/pro-strategy-metrics.mjs solver/local-runs/pro-strategy/validation/manifest.json solver/local-evaluation/pro-strategy/validation
+```
+
+- `browser/pro-strategy-research.js`：公開情報だけで取得・配置・削除を独立に評価するブラウザ方略。ゲーム本体の推薦に接続しません。
+- `pro-strategy-study.mjs`：開発・別シード検証を250ゲームずつ起動。ステージ間は逐次実行し、巨大なイベントJSONを一括生成しません。
+- `pro-strategy-scenes.mjs`：同じ局面から候補を固定した再試行を各250シード実行。
+- `pro-strategy-metrics.mjs`：中央値、15点率、下振れ、95%区間、同一シードの対比較。重複や250未満、異なるルール等の混在を拒否します。
+- `research-results/pro-strategy-20261003/`：今回の開発・検証・局面の集計とバッチの監査情報。大量の個別ログは `local-runs/pro-strategy/` に置き、Gitから除外します。
+
+### 初期2枚とリセマラの検証
+
+`pro-reroll-study.mjs` は15点狙いのカテゴリの分析用です。受け入れ後の中央値は補助指標で、一発勝負の評価には使いません。初回4候補だけでリセットを判定し、受け入れたゲームを最後までプレイします。破棄した開始もシード・候補・回数を保存します。初回は異なるカード名4種のため、同名2枚の開始条件は拒否します。判断と操作はブラウザ、以下の起動・集計は記録管理だけです。
+
+```bash
+node solver/pro-reroll-study.mjs development 250
+node solver/pro-reroll-study.mjs validation 1000 public-engine,any-engine,pair-7-15,pair-13-17,relaxed-finance --configs solver/research-scenarios/pro-reroll-configs.json
+node solver/pro-reroll-metrics.mjs solver/local-runs/pro-reroll/validation/manifest.json solver/local-evaluation/pro-reroll/validation
+node solver/pro-reroll-study.mjs confirmation 250 pair-13-17,pair-13-17-acq-median,pair-13-17-place-myopic,pair-13-17-delete-off,pair-13-17-delete-basic,pair-13-17-delete-adaptive --configs solver/research-scenarios/pro-reroll-configs.json
+```
+
+リセマラの「1シード」は、最初の開始から受け入れるまでの1組です。実際に受け入れた乱数シードも別途保存し、完走数以上の開始・リセット数を報告します。各条件は最低250組で、完走したゲームの乱数シードも全て異なります。初期4候補以外の未来の情報を見てリセットすることはしません。
+
+`pro-reroll-metrics.mjs` は、通常の得点集計に加え、12種から異なる4種を提示する理論出現率、全開始・リセットの監査、完走／リセット回数、リセット時間と完走時間の比を変えた時間換算を出します。実際のスマートフォンで人が操作した時間は未測定です。`--resume` は設定・シード範囲・分析コード・本体・カード・ランクの版が一致した完了バッチだけを再利用します。
+
+初回リセマラの結果は[攻略レポート](../docs/CdG-PRO-Reroll-Guide.md)と[分析資料](../docs/CdG-PRO-Reroll-Analysis.md)。新規詳細ログは内容一致を検証して `.json.gz` に圧縮し、読み込み時は元の `.json` パスにも対応します。
+
+### リセマラなし平均12.5点の研究
+
+[到達条件と方法](../docs/CdG-PRO-Mean125-Research-Plan.md)、[検証記録](../docs/CdG-PRO-Mean125-Research-Log.md)。研究用の取得・配置・削除は本体推薦から独立してブラウザで実行する。現在は目標未達で、完成版のカードパワー表は確定していない。
+
+```sh
+node solver/pro-value-dataset.mjs
+node solver/pro-value-train.mjs solver/local-runs/pro-mean125/value-v1 depth3,depth4,monotone3
+node solver/pro-mean125-study.mjs value-development 250 baseline,learned-acq,learned-acq-zero,learned-acq-blend,learned-all,learned-place,learned-delete,monotone-all --configs solver/research-scenarios/pro-mean125-value-configs.json --port-base 18780
+node solver/pro-mean125-metrics.mjs solver/local-runs/pro-mean125/value-development/manifest.json solver/local-evaluation/pro-mean125/value-development
+```
+
+取得・配置・会議後の予測と最終得点を学習する。過去の教師ラベル・シードは、新規プレイの評価器に渡さない。モデル予測誤差は方略の成功率・得点の改善を示す指標とは分け、最低250シードの実プレイ比較で確認する。大量の状態、モデル、個別ゲーム記録は `local-runs/` に保存し、集計・仕様・再現手順を研究ブランチへ残す。
+
+## あひる先生の攻略研究を再試行する
+
+現在の固定平均モデルを、元の係数・来歴・SHAのまま`solver/models/`へ同梱した。対応する固定研究版、保存場所だけを変えた設定、同じ250開始を再試行する手順は[モデルの資料](models/README.md)を参照。進行中の比較条件は変更していない。目標の全1,000開始・平均12以上・8点以下19件以内の達成は、実験の全記録で別に確認する。

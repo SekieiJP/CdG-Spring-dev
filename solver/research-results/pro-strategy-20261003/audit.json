@@ -1,0 +1,1410 @@
+{
+  "generatedAt": "2026-10-03T09:54:38.629Z",
+  "scope": "normal PRO; browser engine; recommendations unchanged",
+  "files": [
+    {
+      "file": "solver/local-runs/pro-strategy/development/control-batch0.json",
+      "sha256": "056a136aa88c43f3ca9989e3a99954f57aff67d8382c191ed0c407ac5125fd70",
+      "bytes": 157599488,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "control",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/full-median-batch0.json",
+      "sha256": "81f6de6c00f6971f5952da56f4697b40dcc7e6f31f373615672cf4779f138c0e",
+      "bytes": 169995327,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-median",
+        "acquisition": "median",
+        "placement": "median",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/full-ceiling-batch0.json",
+      "sha256": "be7e10559663cadfd624526009056e7a21d1d42abf94e4eaf4b3e2402eb057fb",
+      "bytes": 171939184,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-ceiling",
+        "acquisition": "ceiling",
+        "placement": "ceiling",
+        "deletion": "adaptive",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/full-engine-batch0.json",
+      "sha256": "bc411c36aaafd1e0d3efd41e16dd237c50bb6143164aab5c2b04d4944b139eea",
+      "bytes": 181809523,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-engine",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/acq-median-batch0.json",
+      "sha256": "c1f59c2e36ddac703c2d0ba0aeda6fd2b7ea28b058fd07d2d682490a896055b4",
+      "bytes": 147703109,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-median",
+        "acquisition": "median",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/acq-ceiling-batch0.json",
+      "sha256": "87064a75c1dcff0a69e9dc31659554b50200ec3a595db57dea95f097f9c87789",
+      "bytes": 149148600,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-ceiling",
+        "acquisition": "ceiling",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/acq-engine-batch0.json",
+      "sha256": "295e290ad6f626cd6cff4adb3bee0647319e5a474efc349c645684b945394f14",
+      "bytes": 151956097,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-engine",
+        "acquisition": "engine",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/place-median-batch0.json",
+      "sha256": "e3a0a7369c4543c05d78ca65920abd2c3c7409445c18bb0be20219902979c0f8",
+      "bytes": 156541761,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "place-median",
+        "acquisition": "control",
+        "placement": "median",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/place-ceiling-batch0.json",
+      "sha256": "650b82d836f996401ab6d5f18ea170263799a1d0ce6420cb9bba41bcb545aadd",
+      "bytes": 157088235,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "place-ceiling",
+        "acquisition": "control",
+        "placement": "ceiling",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/place-engine-batch0.json",
+      "sha256": "5fec9cc0e98fc2b87c27e60d7b59641798ed96022b08cc245230c39f78ce0b82",
+      "bytes": 159329330,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "place-engine",
+        "acquisition": "control",
+        "placement": "engine",
+        "deletion": "control",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/place-myopic-batch0.json",
+      "sha256": "4835b47e90e1f853337030b764535be0c709b2c4db9d0eddd098dbafe32466b6",
+      "bytes": 158390394,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "place-myopic",
+        "acquisition": "control",
+        "placement": "myopic",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/delete-off-batch0.json",
+      "sha256": "0c2a3aa3413cc665f9b591ec527125e23dd632d2db14dbcc486231a3d6ec4a3b",
+      "bytes": 176497362,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-off",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "off",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/delete-basic-batch0.json",
+      "sha256": "76b4cdcebb298173c697527f1a5df1e2bf24102224fce9fd5eaaa36bfc2cfbf2",
+      "bytes": 180371362,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-basic",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "basic",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/delete-adaptive-batch0.json",
+      "sha256": "2a390abfa16a74959cc9e05f20d23e29e010d155e038843789e0b3c2e283deae",
+      "bytes": 179577659,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-adaptive",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/development/delete-aggressive-batch0.json",
+      "sha256": "4e6c9b7d82dfda2440c6cd32f5b1a91d0efce0806f6c8a4d32dd6e9985590f99",
+      "bytes": 179480458,
+      "records": 250,
+      "seed": "pro-strategy-v1-development",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-aggressive",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "aggressive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/control-batch0.json",
+      "sha256": "2138b6b4740ce5cdc5b31f7534e0b3c7b6847fc1db7608d542fdfcb6aa07527d",
+      "bytes": 156084825,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "control",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/control-batch1.json",
+      "sha256": "8a7bab11d7fbce19c769e76c38d4bce52da3f3d2284c93d49ad9876dfdc3857d",
+      "bytes": 157738845,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "control",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/control-batch2.json",
+      "sha256": "45b7b56b1a68de36365c6b3d752c8903b1bf2c81484d28611e2e0d0389a701af",
+      "bytes": 156489169,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "control",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/control-batch3.json",
+      "sha256": "0e10d6a20ec9583656a396154ec24866c12e89682219b5010ca8f664bcc66b3e",
+      "bytes": 156089258,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "control",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-median-batch0.json",
+      "sha256": "8d8bc60970a4fdae90919c9abde1da4c89f87ab218f46a7827007c1dc6a2247f",
+      "bytes": 168940698,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-median",
+        "acquisition": "median",
+        "placement": "median",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-median-batch1.json",
+      "sha256": "90f892ff279f0799a8764ba0ddfe084e94d78b94073bb36e1bdc5708bab0dbff",
+      "bytes": 169877044,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-median",
+        "acquisition": "median",
+        "placement": "median",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-median-batch2.json",
+      "sha256": "19cd695316d2661831f8d53f5e88ad9c27936691133ce2cf59eb94d9d87d5590",
+      "bytes": 166546058,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-median",
+        "acquisition": "median",
+        "placement": "median",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-median-batch3.json",
+      "sha256": "e2fce06aa72471dd17f3b58f44248532e24c6e933ec9aa0645e46f27cc5989b1",
+      "bytes": 167216965,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-median",
+        "acquisition": "median",
+        "placement": "median",
+        "deletion": "adaptive",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-ceiling-batch0.json",
+      "sha256": "b89f6ed097ef03873822b6fbb4052d50d5d3e492340df9d65dfab87a4d313ee2",
+      "bytes": 172709377,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-ceiling",
+        "acquisition": "ceiling",
+        "placement": "ceiling",
+        "deletion": "adaptive",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-ceiling-batch1.json",
+      "sha256": "0f68338fba0b047e758b17d850fa6082bb40d63d6604730c56df3b1545858e15",
+      "bytes": 172958285,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-ceiling",
+        "acquisition": "ceiling",
+        "placement": "ceiling",
+        "deletion": "adaptive",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-ceiling-batch2.json",
+      "sha256": "90dd91a9380a13900ca06700cdbf16b737d1bcfcdbdfbfafb3af1580707a428e",
+      "bytes": 170106778,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-ceiling",
+        "acquisition": "ceiling",
+        "placement": "ceiling",
+        "deletion": "adaptive",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-ceiling-batch3.json",
+      "sha256": "9f767b7de8c74569d3f196ec6517bb80e4dc2dcce53f2e0ae425c7ff31f2260d",
+      "bytes": 170961071,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-ceiling",
+        "acquisition": "ceiling",
+        "placement": "ceiling",
+        "deletion": "adaptive",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-engine-batch0.json",
+      "sha256": "fde5007a85199b40f20db281bf3a22fbf860d870902e0189a69d02cdc3be460a",
+      "bytes": 182631994,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-engine",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-engine-batch1.json",
+      "sha256": "38e13841edbeec5772b38e94f0bb6af68e963f102f2c48e453f52676c7e44bc9",
+      "bytes": 181787009,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-engine",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-engine-batch2.json",
+      "sha256": "dbb9ded3f55f817f69baebca540902d794d29f3a980c11b85a33965e0624bbbc",
+      "bytes": 180224528,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-engine",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/full-engine-batch3.json",
+      "sha256": "9432e98dbf7c0e827b4b9b7631efc9a81e5ce8c24fe96785145201a005279d14",
+      "bytes": 181571425,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "full-engine",
+        "acquisition": "engine",
+        "placement": "engine",
+        "deletion": "aggressive",
+        "objective": "engine"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/acq-ceiling-batch0.json",
+      "sha256": "8becd433b5fb53a6232c18c4529d1622ec971c60303fcdd9b2c46b2b4e23ce74",
+      "bytes": 147558064,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-ceiling",
+        "acquisition": "ceiling",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/acq-ceiling-batch1.json",
+      "sha256": "5da78d1c0457b188bfad27b3bfaba7f3e7a1e3ae7bac599d9312d4cacffdea61",
+      "bytes": 147259594,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-ceiling",
+        "acquisition": "ceiling",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/acq-ceiling-batch2.json",
+      "sha256": "2024da3de32ac95fbe96e7e73cffb2de7496ae4d6f4ab281341e38ef1ad2b8ee",
+      "bytes": 146498808,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-ceiling",
+        "acquisition": "ceiling",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/acq-ceiling-batch3.json",
+      "sha256": "a8c41c14b87283848d554b07314909e989d3e3cae959aa6fce3d3e21208be772",
+      "bytes": 146576054,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "acq-ceiling",
+        "acquisition": "ceiling",
+        "placement": "control",
+        "deletion": "control",
+        "objective": "ceiling"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/delete-basic-batch0.json",
+      "sha256": "777f428e3f3c60a09a5f4cbc39c0871cb20c59c7d7d563296906d79df235c3b0",
+      "bytes": 179952043,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-basic",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "basic",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/delete-basic-batch1.json",
+      "sha256": "a93923629ce3b1d4ffeef33541b430e278cd518fd203ffff59a653398527ba97",
+      "bytes": 181053978,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 250,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-basic",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "basic",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/delete-basic-batch2.json",
+      "sha256": "3934fd388dcb54099a0d8558b550ec558ba43068621e41c6d1a95f33ff81cd4d",
+      "bytes": 179120137,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 500,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-basic",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "basic",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/validation/delete-basic-batch3.json",
+      "sha256": "4d898cc95ee542ee8ec0e07b20862fcd54a9bf0b1e23e9b0b3f2e67394c35d24",
+      "bytes": 179273241,
+      "records": 250,
+      "seed": "pro-strategy-v1-validation",
+      "offset": 750,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": {
+        "id": "delete-basic",
+        "acquisition": "control",
+        "placement": "control",
+        "deletion": "basic",
+        "objective": "median"
+      },
+      "forcedChoice": null,
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/engine-ready-0.json",
+      "sha256": "93b6b0cc03862eb4f37d5b6b2452ff08efcd3700e4f35cef7f2e71b8456206b3",
+      "bytes": 75578124,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-engine-ready",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        0
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/engine-ready-1.json",
+      "sha256": "c3bb9c891b1facf481588c3243c0beb602fa60d0986e78146f9503229548d292",
+      "bytes": 58792700,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-engine-ready",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        1
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/engine-ready-2.json",
+      "sha256": "9fa48da7624b598dc6a26f736208fd70f3b96f2d4ab64cecf508d6fb68a26b96",
+      "bytes": 49539200,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-engine-ready",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        2
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/finance-short-0.json",
+      "sha256": "efc0d7474e2f55829e5894d4fbbb7ca5c0a615e3052ab28cd58c1df3796960ea",
+      "bytes": 69708665,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-finance-short",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        0
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/finance-short-1.json",
+      "sha256": "465e4ab990a2a84f8fbd57d0f54374c8c782b1a041276ffc76d27e637c285057",
+      "bytes": 48559294,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-finance-short",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        1
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    },
+    {
+      "file": "solver/local-runs/pro-strategy/scenes/finance-short-2.json",
+      "sha256": "a9253bd93cc30f9e2a4fd18e2d414952ef2bb884698b28e7fe87195d98c321dc",
+      "bytes": 48522404,
+      "records": 250,
+      "seed": "pro-strategy-v1-scene-finance-short",
+      "offset": 0,
+      "acquisitionModel": "pro_splus",
+      "continuation": [
+        "pro_goal"
+      ],
+      "refreshPolicy": "public",
+      "refreshModel": "pro_splus",
+      "research": null,
+      "forcedChoice": [
+        2
+      ],
+      "provenance": {
+        "codeHash": "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e",
+        "strategyVersion": "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+        "gitCommit": "05893672305214bf69bf5e4763e5e4e7fdbcee74",
+        "workingTreeDirty": true
+      },
+      "cardVersion": "sha256:15fbf3fdb5e2a5d0af4830afeb7c71fc8a03bf0517767c4e1e19ceee684a229f",
+      "rankVersion": "sha256:0648faf52193dd8e3f5173a18e45d10e6fa9f1e6c190a42792a5b02ffa5e9731",
+      "codeVersion": "v20260815-0055"
+    }
+  ],
+  "counts": {
+    "development": 3750,
+    "validation": 6000,
+    "scenes": 1500
+  },
+  "strategyVersions": [
+    "853828cc5850d66220c3914def4edb6a1ba2bc38f5c7f285104f89fff9f5efe1",
+    "2d4df51bfd91d062a33ea4e90ae7915a8a666c6bfe6efd87716578ba7f5df6a7"
+  ],
+  "gameVersions": [
+    "69ccd7dcc729c83823b50d311ac032e11865867e4a1fc9b10ed4816802b6aa2e"
+  ],
+  "algorithmNote": "Only Git provenance retry changed during development; card decisions were unchanged. Validation used one frozen strategy version.",
+  "totalGames": 11250,
+  "uniqueSeedsByStage": {
+    "development": 250,
+    "validation": 1000,
+    "scenes": 500
+  },
+  "uniqueRngSeedStrings": 1750,
+  "currentSources": {
+    "solver/autoplay-agent.mjs": "b3df56749ce1d8b0b2e6b3cf46cee9d8e1b8e4cd1dc5d1006a4a6f0da0198ab3",
+    "solver/browser/pro-strategy-research.js": "f3ffa74267e9b0a174f8b8391e1ff38632271a735b73e8e5244cd6d178d059c0",
+    "solver/pro-strategy-metrics.mjs": "b46fffe5ad4e18833af75f98417e00e39017759d37afcc296dc823b4126cdf8e",
+    "solver/pro-strategy-study.mjs": "7d3c7adbc1be898acaa570018c7b219abba87fc0d2dca5f1069b3910b266bf14",
+    "solver/pro-strategy-scenes.mjs": "6bb25bbcc53297635976d1c6078d4bb4403da3eeace8d3a049151565e048d154"
+  },
+  "verifiedAfterCollectorGuards": "2026-10-03T10:10:30.248Z",
+  "unitTests": {
+    "passed": 62,
+    "failed": 0
+  },
+  "gameUnchanged": true
+}
