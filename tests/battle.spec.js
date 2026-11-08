@@ -122,7 +122,10 @@ for (const difficulty of ['fresh', 'pro']) {
             await page.locator('.info-overlay:has(.battle-deck) .info-overlay-close').click();
             await drive(page);
             await expect(page.locator('#battle-outcome')).toBeVisible();
-            await expect(page.locator('#battle-opponent-status')).toBeVisible();
+            const comparison = page.locator('.battle-comparison-table');
+            await expect(comparison).toBeVisible();
+            const experienceRow = comparison.getByRole('rowheader', { name: '体験', exact: true }).locator('..');
+            await expect(experienceRow.locator('td').nth(1).locator('.battle-metric-value')).toHaveText(String(source.record.result.score.experience));
             const result = await page.evaluate(() => {
                 const { gameState: state, uiController: ui, scoreManager } = window.game;
                 const row = ui.resultController.repository.find(state.runId);

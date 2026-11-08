@@ -2431,10 +2431,12 @@ export class UIController {
 
         if (cards.length === 0) return;
 
-        const heading = document.createElement('h3');
-        heading.className = 'result-cards-heading';
-        heading.textContent = `所有カード一覧（${cards.length}枚）`;
-        container.appendChild(heading);
+        const details = document.createElement('details');
+        details.className = 'result-deck-details';
+        const heading = document.createElement('summary');
+        heading.innerHTML = `${this.gameState.battle ? '👤 あなたの' : ''}最終デッキ<span>${cards.length}枚</span>`;
+        details.appendChild(heading);
+        container.appendChild(details);
 
         const grid = document.createElement('div');
         grid.className = 'result-cards-grid';
@@ -2452,7 +2454,7 @@ export class UIController {
             grid.appendChild(cardElem);
         });
 
-        container.appendChild(grid);
+        details.appendChild(grid);
     }
 
     /** 結果画面に、入手済み塾アイテムと効果発動回数を表示する。 */

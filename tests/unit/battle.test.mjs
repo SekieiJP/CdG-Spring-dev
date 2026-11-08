@@ -9,7 +9,7 @@ import { GameState } from '../../game/js/gameState.js?v=20261107-0063';
 import { ScoreManager } from '../../game/js/scoreManager.js?v=20261107-0063';
 import { SaveManager } from '../../game/js/saveManager.js?v=20261107-0063';
 import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261107-0063';
-import { cpuTrainingAdvice } from '../../game/js/battleAdvice.js?v=20261107-0063';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from '../../game/js/battleAdvice.js?v=20261107-0063';
 import { validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames, interimScore,
     compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261107-0063';
 
@@ -90,6 +90,36 @@ test('CPUのセリフは取得予定の効果を伝え、未解決配置・未�
     record.turns[0].action = null; record.turns[0].actionStart = null;
     record.turns.splice(1); record.result = null;
     assert.deepEqual(cpuTrainingAdvice(record, 0), accounting);
+});
+
+test('会議のセリフは実際に削除する札と会議開始時点の見通しだけで説明する', async () => {
+    const record = structuredClone(freshRecord || await createCpuReplay({ difficulty: 'fresh', seed: 'battle-meeting-speech' }));
+    const turn = record.turns[2];
+    record.instances['meeting-accounting'] = { cardNo: '901', instanceId: 'meeting-accounting', cardName: '会議の経理確認札',
+        rarity: 'N', category: '庶務', effect: '経理+1。', acquiredTurn: 0 };
+    record.instances['meeting-experience'] = { cardNo: '902', instanceId: 'meeting-experience', cardName: '会議の体験確認札',
+        rarity: 'N', category: '動員', effect: '体験+1。', acquiredTurn: 0 };
+    turn.meetingStart.player = { experience: 80, enrollment: 40, satisfaction: 40, accounting: 40,
+        deck: ['meeting-experience', 'meeting-accounting'], hand: [], placed: {}, zones: {} };
+    turn.meeting.deleted = [{ type: 'delete', card: { instanceId: 'meeting-accounting' } }];
+    const accounting = cpuMeetingAdvice(record, 2);
+    assert.match(accounting.text, /経理は足りそう。庶務を1枚/);
+    turn.meeting.deleted[0].card.instanceId = 'meeting-experience';
+    const experience = cpuMeetingAdvice(record, 2);
+    assert.match(experience.text, /体験は足りそう。動員を1枚/);
+    for (const speech of [accounting, experience]) {
+        assert.ok(Array.from(speech.text).length <= 25);
+        assert.match(speech.text, /ね$|よ$/);
+        assert.doesNotMatch(speech.text, /確認札/);
+    }
+    const source = JSON.stringify(record);
+    cpuMeetingAdvice(record, 2);
+    assert.equal(JSON.stringify(record), source);
+    turn.meetingStart.player.deck.reverse();
+    Object.defineProperty(record, 'result', { get() { throw new Error('最終結果は参照できません'); } });
+    Object.defineProperty(turn.meeting, 'after', { get() { throw new Error('削除後の実状態は参照できません'); } });
+    record.turns.splice(3);
+    assert.deepEqual(cpuMeetingAdvice(record, 2), experience);
 });
 
 test('暫定退塾の基準は1から15へ増え、最終ターンの得点は本来の得点に一致する', async () => {
