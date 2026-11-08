@@ -1,5 +1,6 @@
 import { decodeReplay } from './replayCodec.js?v=20261107-0062';
 import { getCurrentEvent } from './eventManager.js?v=20261107-0062';
+import { cpuTrainingAdvice } from './battleAdvice.js?v=20261107-0062';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
     interimScore, battleSummary } from './battleReplay.js?v=20261107-0062';
 
@@ -25,6 +26,10 @@ export class BattleController {
         this.animationRow.id = 'battle-animation-opponent';
         this.animationRow.className = 'battle-opponent-row hidden';
         (animation || document.querySelector('.animation-stats'))?.before(this.animationRow);
+        this.compactRow = document.createElement('div');
+        this.compactRow.id = 'battle-compact-opponent';
+        this.compactRow.className = 'battle-opponent-row battle-opponent-row--compact hidden';
+        document.querySelector('#sticky-header .compact-stats')?.before(this.compactRow);
         for (const id of ['full-header', 'sticky-header']) {
             const score = document.createElement('div');
             score.className = 'battle-score hidden'; score.dataset.battleScore = '';
@@ -36,7 +41,8 @@ export class BattleController {
         this.render();
     }
     resetDisplay() {
-        this.statusRow?.classList.add('hidden'); this.animationRow?.classList.add('hidden');
+        this.cpuSpeech = null;
+        for (const row of [this.statusRow, this.animationRow, this.compactRow]) row?.classList.add('hidden');
         document.querySelectorAll('[data-battle-score]').forEach(node => node.classList.add('hidden'));
         document.body.classList.remove('battle-mode');
         document.querySelectorAll('[data-battle-comparison]').forEach(node => delete node.dataset.battleComparison);
@@ -117,8 +123,10 @@ export class BattleController {
             busy = true; update(); const request = ++this.request;
             try {
                 const difficulty = kind === 'cpu' ? content.querySelector('#battle-difficulty').value : loaded.metadata.difficulty;
+                const preparing = difficulty === 'pro' ? 'あひる先生が教材研究中…' : 'あひる先生が準備しています…';
+                if (kind === 'cpu') message.textContent = preparing;
                 const opponent = kind === 'cpu' ? await this.createCpu(difficulty, progress => {
-                    message.textContent = `あひる先生が準備しています… ${progress}/8ターン`;
+                    message.textContent = `${preparing} ${progress}/8ターン`;
                 }) : loaded;
                 if (request !== this.request || !overlay.isConnected) return;
                 const same = kind === 'replay' && content.querySelector('#battle-same-seed').checked;
@@ -164,15 +172,21 @@ export class BattleController {
         document.body.classList.add('battle-mode');
         const battle = this.state.battle, opponent = opponentStats || this.visibleStats();
         const escape = value => this.ui._escapeHTML(String(value));
-        const rows = BATTLE_STATS.map(key => {
-            const grade = this.ui.scoreManager.getStatusRank(key, opponent[key], this.state.difficulty)?.grade || '';
+        for (const key of BATTLE_STATS) {
             const comparison = playerStats[key] > opponent[key] ? 'ahead' : playerStats[key] < opponent[key] ? 'behind' : 'even';
-            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}`)) node.dataset.battleComparison = comparison;
-            return `<span class="battle-opponent-stat" data-stat="${key}" data-battle-comparison="${comparison}"><span>${LABELS[key]}</span> ${escape(grade)} <strong>${escape(opponent[key])}</strong></span>`;
-        }).join('');
-        for (const row of [this.statusRow, this.animationRow]) {
+            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}, .compact-stat.stat-${ANIMATION_STATS[key]}`)) node.dataset.battleComparison = comparison;
+        }
+        const delta = battle.animation?.turn === this.state.turn && !battle.animation.done ? battle.animation.visibleDelta : null;
+        for (const row of [this.statusRow, this.animationRow, this.compactRow]) {
             if (!row) continue;
-            row.classList.toggle('hidden', this.state.phase !== 'action');
+            const animated = row === this.animationRow;
+            const rows = BATTLE_STATS.map(key => {
+                const grade = animated ? '' : this.ui.scoreManager.getStatusRank(key, opponent[key], this.state.difficulty)?.grade || '';
+                const change = animated ? delta?.[key] || 0 : 0;
+                const difference = change ? `<span class="battle-opponent-delta ${change > 0 ? 'positive' : 'negative'}">${change > 0 ? '+' : ''}${escape(change)}</span>` : '';
+                return `<span class="battle-opponent-stat" data-stat="${key}"><span>${LABELS[key]}</span> ${grade ? `<span class="battle-opponent-rank">${escape(grade)}</span> ` : ''}<strong>${escape(opponent[key])}</strong>${difference}</span>`;
+            }).join('');
+            row.classList.remove('hidden');
             row.innerHTML = `<span class="battle-opponent-name">${escape(this.opponentName)}</span><div class="battle-opponent-stats">${rows}</div>`;
         }
         const ownScore = interimScore(this.ui.scoreManager, this.state, playerStats).displayScore;
@@ -196,11 +210,12 @@ export class BattleController {
     }
     cpuAdvice() {
         if (this.state.battle?.kind !== 'cpu') return null;
-        const stats = this.visibleStats();
         if (this.state.phase === 'meeting') return { tone: 'yellow', text: '次に使うカードを絞るね' };
-        if (stats.accounting < 15) return { tone: 'yellow', text: '経理も整えていくよ' };
-        if (stats.satisfaction < 15) return { tone: 'yellow', text: '満足を積み上げるね' };
-        return { tone: 'green', text: stats.enrollment < stats.experience ? '入塾を増やしていくよ' : '体験を増やしていくね' };
+        const opponent = this.state.battle.opponent;
+        if (this.cpuSpeech?.opponent !== opponent || this.cpuSpeech.turn !== this.state.turn) {
+            this.cpuSpeech = { opponent, turn: this.state.turn, advice: cpuTrainingAdvice(opponent, this.state.turn) };
+        }
+        return this.cpuSpeech.advice;
     }
     async playOpponentAction() {
         if (!this.active) return;
@@ -226,9 +241,9 @@ export class BattleController {
         };
         if (ownsClock) {
             clock.start();
-            this.ui.actionAnimation.updateAnimationStats(this.state.player, {});
             document.addEventListener('click', advance, true); document.addEventListener('keydown', advance, true);
         }
+        this.ui.actionAnimation.updateAnimationStats(this.state.player, {});
         overlay?.classList.remove('hidden');
         try {
             for (let index = animation.cursor; index < frames.length; index++) {
@@ -243,12 +258,15 @@ export class BattleController {
                         ${frame.type === 'card' ? this.ui.buildCardThumbnailHTML(frame.card, 'anim-card-thumbnail') : ''}</div>`;
                     this.ui.setupCardThumbnailFallback(cards);
                 }
-                animation.visibleStats = structuredClone(frame.after); animation.cursor = index + 1;
+                animation.visibleStats = structuredClone(frame.after);
+                animation.visibleDelta = Object.fromEntries(BATTLE_STATS.map(key => [key, frame.after[key] - frame.before[key]]));
+                animation.cursor = index + 1;
                 this.render(this.state.player, frame.after); this.ui.saveGameState();
                 await clock.wait(800);
             }
             animation.visibleStats = structuredClone(battle.opponent.turns[turn].action.after.player);
-            animation.done = true; this.render(); this.ui.saveGameState();
+            animation.done = true; delete animation.visibleDelta;
+            this.render(); this.ui.saveGameState();
         } finally {
             if (ownsClock) {
                 clock.finish(); overlay?.classList.add('hidden');

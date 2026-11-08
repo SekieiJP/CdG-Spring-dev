@@ -9,6 +9,7 @@ import { GameState } from '../../game/js/gameState.js?v=20261107-0062';
 import { ScoreManager } from '../../game/js/scoreManager.js?v=20261107-0062';
 import { SaveManager } from '../../game/js/saveManager.js?v=20261107-0062';
 import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261107-0062';
+import { cpuTrainingAdvice } from '../../game/js/battleAdvice.js?v=20261107-0062';
 import { validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames, interimScore,
     compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261107-0062';
 
@@ -63,6 +64,32 @@ test('FRESHの独立したCPUを完走でき、再生時は現在ターンのカ
     const source = JSON.stringify(freshRecord);
     const player = new GameState(); player.reset('pro'); player.updateStatus('experience', 100);
     assert.equal(JSON.stringify(freshRecord), source);
+});
+
+test('CPUのセリフは取得予定の効果を伝え、未解決配置・未来の結果を読まずに選ぶ', async () => {
+    const record = structuredClone(freshRecord || await createCpuReplay({ difficulty: 'fresh', seed: 'battle-speech' }));
+    record.definitions.cards.push(
+        { cardNo: '901', cardName: '体験を補う確認札', rarity: 'R', category: '動員', effect: '体験+4。' },
+        { cardNo: '902', cardName: '経理を補う確認札', rarity: 'R', category: '庶務', effect: '経理+4。' }
+    );
+    const choice = record.turns[0].training.find(boundary => boundary.kind === 'training-choice');
+    choice.selected = ['901'];
+    const experience = cpuTrainingAdvice(record, 0);
+    assert.match(experience.text, /体験/);
+    choice.selected = ['902'];
+    const accounting = cpuTrainingAdvice(record, 0);
+    assert.match(accounting.text, /経理/);
+    for (const speech of [experience, accounting]) {
+        assert.match(speech.text, /ね$|よ$/);
+        assert.doesNotMatch(speech.text, /よう|確認札/);
+        assert.ok(Array.from(speech.text).length <= 25);
+    }
+    const snapshot = JSON.stringify(record);
+    cpuTrainingAdvice(record, 0);
+    assert.equal(JSON.stringify(record), snapshot);
+    record.turns[0].action = null; record.turns[0].actionStart = null;
+    record.turns.splice(1); record.result = null;
+    assert.deepEqual(cpuTrainingAdvice(record, 0), accounting);
 });
 
 test('暫定退塾の基準は1から15へ増え、最終ターンの得点は本来の得点に一致する', async () => {
