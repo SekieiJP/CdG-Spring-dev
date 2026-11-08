@@ -2,18 +2,18 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20261107-0063';
-import { GameState } from './gameState.js?v=20261107-0063';
-import { CardManager } from './cardManager.js?v=20261107-0063';
-import { TurnManager } from './turnManager.js?v=20261107-0063';
-import { ScoreManager } from './scoreManager.js?v=20261107-0063';
-import { UIController } from './uiController.js?v=20261107-0063';
-import { SaveManager } from './saveManager.js?v=20261107-0063';
-import { getDifficultyConfig, registerDifficulty } from './difficultyConfig.js?v=20261107-0063';
-import { getEventDefinition } from './eventManager.js?v=20261107-0063';
-import './difficultyExtensions.js?v=20261107-0063';
+import { Logger } from './logger.js?v=20261107-0064';
+import { GameState } from './gameState.js?v=20261107-0064';
+import { CardManager } from './cardManager.js?v=20261107-0064';
+import { TurnManager } from './turnManager.js?v=20261107-0064';
+import { ScoreManager } from './scoreManager.js?v=20261107-0064';
+import { UIController } from './uiController.js?v=20261107-0064';
+import { SaveManager } from './saveManager.js?v=20261107-0064';
+import { getDifficultyConfig, registerDifficulty } from './difficultyConfig.js?v=20261107-0064';
+import { getEventDefinition } from './eventManager.js?v=20261107-0064';
+import './difficultyExtensions.js?v=20261107-0064';
 
-const CACHE_BUSTER = 'v20261107-0063';
+const CACHE_BUSTER = 'v20261107-0064';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;

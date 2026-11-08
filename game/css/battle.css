@@ -11,9 +11,15 @@
 .battle-opponent-name { display: block; font-size: 10px; line-height: 1.2; opacity: .85; }
 .battle-opponent-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .battle-opponent-stat { padding: 3px 2px; border-radius: 4px; text-align: center; font-size: 12px; white-space: nowrap; }
-.battle-opponent-stat > span { font-size: 10px; }
-.battle-mode :is(.status-item, .anim-stat, .compact-stat)[data-battle-comparison="ahead"] { box-shadow: inset 0 0 0 100px rgba(190,242,100,.22); }
-.battle-mode :is(.status-item, .anim-stat, .compact-stat)[data-battle-comparison="behind"] { box-shadow: inset 0 0 0 100px rgba(96,16,24,.5); }
+.battle-opponent-label { font-size: 10px; }
+.battle-stat-value { display: contents; }
+.battle-mode .battle-stat-value { display: inline-flex; align-items: center; justify-content: center; gap: 3px; vertical-align: baseline; }
+.battle-mode .status-item > .battle-stat-value { display: flex; margin-bottom: var(--spacing-xs); }
+.battle-mode .battle-stat-value > .status-value { margin-bottom: 0; }
+.battle-stat-crown { flex: none; font-size: 11px; line-height: 1; font-weight: 400; }
+.battle-stat-crown[hidden] { display: none; }
+.battle-mode [data-battle-comparison="ahead"] > .battle-stat-value > :first-child { color: #fde68a; font-weight: 800; }
+.battle-opponent-stat .battle-stat-crown { font-size: 10px; }
 .battle-opponent-delta { margin-left: 3px; font-size: 11px; font-weight: 700; }
 .battle-opponent-delta.positive { color: var(--color-success); }
 .battle-opponent-delta.negative { color: var(--color-danger); }
@@ -31,6 +37,9 @@
 .battle-mode .sticky-header .compact-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); flex-basis: 100%; width: 100%; gap: 4px; }
 .battle-mode .sticky-header .compact-stat { text-align: center; border-radius: 4px; background: var(--color-bg-light); }
 #battle-animation-opponent { margin: 6px 0; }
+#battle-animation-opponent .battle-opponent-stat { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px 4px; white-space: normal; }
+#battle-animation-opponent .battle-opponent-label { flex-basis: 100%; }
+#battle-animation-opponent .battle-opponent-delta { margin-left: 0; white-space: nowrap; }
 #animation-header + .battle-score { margin: 0 auto 8px; }
 .battle-mode .animation-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
 .battle-mode .anim-stat { padding: 10px 2px; }

@@ -1,4 +1,4 @@
-import { CardManager } from './cardManager.js?v=20261107-0063';
+import { CardManager } from './cardManager.js?v=20261107-0064';
 
 /** 公開情報だけを使う、乱数・未来試行を持たない取得評価。検証後に固定した重み。 */
 export const ADVISOR_VERSION = 'fresh-formula-v1';

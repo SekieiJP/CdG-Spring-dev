@@ -1,8 +1,8 @@
-import { decodeReplay } from './replayCodec.js?v=20261107-0063';
-import { getCurrentEvent } from './eventManager.js?v=20261107-0063';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261107-0063';
+import { decodeReplay } from './replayCodec.js?v=20261107-0064';
+import { getCurrentEvent } from './eventManager.js?v=20261107-0064';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261107-0064';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261107-0063';
+    interimScore, battleSummary } from './battleReplay.js?v=20261107-0064';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };
@@ -38,6 +38,18 @@ export class BattleController {
         const animationScore = document.createElement('div');
         animationScore.className = 'battle-score hidden'; animationScore.dataset.battleScore = '';
         document.getElementById('animation-header')?.after(animationScore);
+        for (const key of BATTLE_STATS) {
+            for (const id of [`status-${key}`, `compact-${key}`, `anim-${ANIMATION_STATS[key]}-value`]) {
+                const value = document.getElementById(id);
+                if (!value) continue;
+                const group = document.createElement(value.tagName === 'DIV' ? 'div' : 'span');
+                group.className = 'battle-stat-value';
+                value.before(group); group.appendChild(value);
+                const crown = document.createElement('span');
+                crown.className = 'battle-stat-crown'; crown.textContent = '👑'; crown.hidden = true;
+                crown.setAttribute('aria-hidden', 'true'); group.appendChild(crown);
+            }
+        }
         this.render();
     }
     resetDisplay() {
@@ -45,6 +57,7 @@ export class BattleController {
         for (const row of [this.statusRow, this.animationRow, this.compactRow]) row?.classList.add('hidden');
         document.querySelectorAll('[data-battle-score]').forEach(node => node.classList.add('hidden'));
         document.body.classList.remove('battle-mode', 'battle-results');
+        document.querySelectorAll('.battle-stat-crown').forEach(node => { node.hidden = true; });
         document.querySelectorAll('[data-battle-comparison]').forEach(node => delete node.dataset.battleComparison);
     }
     openLobby(preset = null) {
@@ -175,17 +188,21 @@ export class BattleController {
         const escape = value => this.ui._escapeHTML(String(value));
         for (const key of BATTLE_STATS) {
             const comparison = playerStats[key] > opponent[key] ? 'ahead' : playerStats[key] < opponent[key] ? 'behind' : 'even';
-            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}, .compact-stat.stat-${ANIMATION_STATS[key]}`)) node.dataset.battleComparison = comparison;
+            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}, .compact-stat.stat-${ANIMATION_STATS[key]}`)) {
+                node.dataset.battleComparison = comparison;
+                const crown = node.querySelector('.battle-stat-crown');
+                if (crown) crown.hidden = comparison !== 'ahead';
+            }
         }
         const delta = battle.animation?.turn === this.state.turn && !battle.animation.done ? battle.animation.visibleDelta : null;
         for (const row of [this.statusRow, this.animationRow, this.compactRow]) {
             if (!row) continue;
             const animated = row === this.animationRow;
             const rows = BATTLE_STATS.map(key => {
-                const grade = animated ? '' : this.ui.scoreManager.getStatusRank(key, opponent[key], this.state.difficulty)?.grade || '';
+                const comparison = opponent[key] > playerStats[key] ? 'ahead' : opponent[key] < playerStats[key] ? 'behind' : 'even';
                 const change = animated ? delta?.[key] || 0 : 0;
                 const difference = change ? `<span class="battle-opponent-delta ${change > 0 ? 'positive' : 'negative'}">${change > 0 ? '+' : ''}${escape(change)}</span>` : '';
-                return `<span class="battle-opponent-stat" data-stat="${key}"><span>${LABELS[key]}</span> ${grade ? `<span class="battle-opponent-rank">${escape(grade)}</span> ` : ''}<strong>${escape(opponent[key])}</strong>${difference}</span>`;
+                return `<span class="battle-opponent-stat" data-stat="${key}" data-battle-comparison="${comparison}"><span class="battle-opponent-label">${LABELS[key]}</span> <span class="battle-stat-value"><strong>${escape(opponent[key])}</strong>${comparison === 'ahead' ? '<span class="battle-stat-crown" aria-hidden="true">👑</span>' : ''}</span>${difference}</span>`;
             }).join('');
             row.classList.remove('hidden');
             row.innerHTML = `<span class="battle-opponent-name">${escape(this.opponentName)}</span><div class="battle-opponent-stats">${rows}</div>`;
