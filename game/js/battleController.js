@@ -1,8 +1,8 @@
-import { decodeReplay } from './replayCodec.js?v=20261107-0063';
-import { getCurrentEvent } from './eventManager.js?v=20261107-0063';
-import { cpuTrainingAdvice } from './battleAdvice.js?v=20261107-0063';
+import { decodeReplay } from './replayCodec.js?v=20261107-0064';
+import { getCurrentEvent } from './eventManager.js?v=20261107-0064';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261107-0064';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261107-0063';
+    interimScore, battleSummary } from './battleReplay.js?v=20261107-0064';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };
@@ -30,21 +30,34 @@ export class BattleController {
         this.compactRow.id = 'battle-compact-opponent';
         this.compactRow.className = 'battle-opponent-row battle-opponent-row--compact hidden';
         document.querySelector('#sticky-header .compact-stats')?.before(this.compactRow);
-        for (const id of ['full-header', 'sticky-header']) {
+        for (const selector of ['#full-header .turn-info', '#sticky-header .compact-info']) {
             const score = document.createElement('div');
             score.className = 'battle-score hidden'; score.dataset.battleScore = '';
-            document.getElementById(id)?.appendChild(score);
+            document.querySelector(selector)?.appendChild(score);
         }
         const animationScore = document.createElement('div');
         animationScore.className = 'battle-score hidden'; animationScore.dataset.battleScore = '';
         document.getElementById('animation-header')?.after(animationScore);
+        for (const key of BATTLE_STATS) {
+            for (const id of [`status-${key}`, `compact-${key}`, `anim-${ANIMATION_STATS[key]}-value`]) {
+                const value = document.getElementById(id);
+                if (!value) continue;
+                const group = document.createElement(value.tagName === 'DIV' ? 'div' : 'span');
+                group.className = 'battle-stat-value';
+                value.before(group); group.appendChild(value);
+                const crown = document.createElement('span');
+                crown.className = 'battle-stat-crown'; crown.textContent = '👑'; crown.hidden = true;
+                crown.setAttribute('aria-hidden', 'true'); group.appendChild(crown);
+            }
+        }
         this.render();
     }
     resetDisplay() {
         this.cpuSpeech = null;
         for (const row of [this.statusRow, this.animationRow, this.compactRow]) row?.classList.add('hidden');
         document.querySelectorAll('[data-battle-score]').forEach(node => node.classList.add('hidden'));
-        document.body.classList.remove('battle-mode');
+        document.body.classList.remove('battle-mode', 'battle-results');
+        document.querySelectorAll('.battle-stat-crown').forEach(node => { node.hidden = true; });
         document.querySelectorAll('[data-battle-comparison]').forEach(node => delete node.dataset.battleComparison);
     }
     openLobby(preset = null) {
@@ -170,21 +183,26 @@ export class BattleController {
     render(playerStats = this.state.player, opponentStats = null) {
         if (!this.active) { this.resetDisplay(); return; }
         document.body.classList.add('battle-mode');
+        document.body.classList.toggle('battle-results', this.state.phase === 'end');
         const battle = this.state.battle, opponent = opponentStats || this.visibleStats();
         const escape = value => this.ui._escapeHTML(String(value));
         for (const key of BATTLE_STATS) {
             const comparison = playerStats[key] > opponent[key] ? 'ahead' : playerStats[key] < opponent[key] ? 'behind' : 'even';
-            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}, .compact-stat.stat-${ANIMATION_STATS[key]}`)) node.dataset.battleComparison = comparison;
+            for (const node of document.querySelectorAll(`.status-${key}, .anim-${ANIMATION_STATS[key]}, .compact-stat.stat-${ANIMATION_STATS[key]}`)) {
+                node.dataset.battleComparison = comparison;
+                const crown = node.querySelector('.battle-stat-crown');
+                if (crown) crown.hidden = comparison !== 'ahead';
+            }
         }
         const delta = battle.animation?.turn === this.state.turn && !battle.animation.done ? battle.animation.visibleDelta : null;
         for (const row of [this.statusRow, this.animationRow, this.compactRow]) {
             if (!row) continue;
             const animated = row === this.animationRow;
             const rows = BATTLE_STATS.map(key => {
-                const grade = animated ? '' : this.ui.scoreManager.getStatusRank(key, opponent[key], this.state.difficulty)?.grade || '';
+                const comparison = opponent[key] > playerStats[key] ? 'ahead' : opponent[key] < playerStats[key] ? 'behind' : 'even';
                 const change = animated ? delta?.[key] || 0 : 0;
                 const difference = change ? `<span class="battle-opponent-delta ${change > 0 ? 'positive' : 'negative'}">${change > 0 ? '+' : ''}${escape(change)}</span>` : '';
-                return `<span class="battle-opponent-stat" data-stat="${key}"><span>${LABELS[key]}</span> ${grade ? `<span class="battle-opponent-rank">${escape(grade)}</span> ` : ''}<strong>${escape(opponent[key])}</strong>${difference}</span>`;
+                return `<span class="battle-opponent-stat" data-stat="${key}" data-battle-comparison="${comparison}"><span class="battle-opponent-label">${LABELS[key]}</span> <span class="battle-stat-value"><strong>${escape(opponent[key])}</strong>${comparison === 'ahead' ? '<span class="battle-stat-crown" aria-hidden="true">👑</span>' : ''}</span>${difference}</span>`;
             }).join('');
             row.classList.remove('hidden');
             row.innerHTML = `<span class="battle-opponent-name">${escape(this.opponentName)}</span><div class="battle-opponent-stats">${rows}</div>`;
@@ -194,8 +212,9 @@ export class BattleController {
         const otherScore = interimScore(this.ui.scoreManager, opponentState, opponent, this.state.turn).displayScore;
         for (const node of document.querySelectorAll('[data-battle-score]')) {
             node.classList.remove('hidden');
-            node.dataset.battleComparison = ownScore > otherScore ? 'ahead' : ownScore < otherScore ? 'behind' : 'even';
-            node.textContent = `${this.state.phase === 'end' ? '最終' : '暫定'}スコア　あなた ${ownScore} ／ ${this.opponentName} ${otherScore}`;
+            node.setAttribute('role', 'img');
+            node.setAttribute('aria-label', `${this.state.phase === 'end' ? '最終' : '暫定'}スコア：あなた ${ownScore}、${this.opponentName} ${otherScore}`);
+            node.innerHTML = `<span aria-hidden="true">👤 <span class="battle-score-value${ownScore > otherScore ? ' leading' : ''}">${escape(ownScore)}</span><span class="battle-score-divider"> / </span><span class="battle-score-value${otherScore > ownScore ? ' leading' : ''}">${escape(otherScore)}</span> ${battle.kind === 'cpu' ? '🐤' : '🎞️'}</span>`;
         }
     }
     appendOpponentDeck(content) {
@@ -210,10 +229,10 @@ export class BattleController {
     }
     cpuAdvice() {
         if (this.state.battle?.kind !== 'cpu') return null;
-        if (this.state.phase === 'meeting') return { tone: 'yellow', text: '次に使うカードを絞るね' };
         const opponent = this.state.battle.opponent;
-        if (this.cpuSpeech?.opponent !== opponent || this.cpuSpeech.turn !== this.state.turn) {
-            this.cpuSpeech = { opponent, turn: this.state.turn, advice: cpuTrainingAdvice(opponent, this.state.turn) };
+        if (this.cpuSpeech?.opponent !== opponent || this.cpuSpeech.turn !== this.state.turn || this.cpuSpeech.phase !== this.state.phase) {
+            const recommend = this.state.phase === 'meeting' ? cpuMeetingAdvice : cpuTrainingAdvice;
+            this.cpuSpeech = { opponent, turn: this.state.turn, phase: this.state.phase, advice: recommend(opponent, this.state.turn) };
         }
         return this.cpuSpeech.advice;
     }
@@ -276,34 +295,58 @@ export class BattleController {
     }
     renderResult(score) {
         document.getElementById('battle-result')?.remove();
+        document.getElementById('battle-opponent-deck')?.remove();
+        document.getElementById('battle-rematch')?.remove();
+        document.getElementById('restart-game').textContent = this.active ? 'タイトルへ' : 'もう一度プレイ';
         if (!this.active) return;
         const summary = battleSummary(this.state, score);
         const escape = value => this.ui._escapeHTML(String(value ?? ''));
-        const other = summary.opponentScore, breakdown = other.breakdown;
-        const rows = [ ['動員', other.mobilization, breakdown.mobilizationPoints], ['退塾', other.withdrawal, breakdown.withdrawalPoints],
-            ['入退差', other.enrollmentDiff, breakdown.enrollmentDiffPoints] ];
-        if (this.state.difficulty === 'pro') rows.push(['満足', other.satisfaction, breakdown.satisfactionPoints]);
-        if (other.splusBreakdown) rows.push(['体験の精度加点', other.experience, other.splusBreakdown.expBonus],
-            ['入退差の精度加点', other.enrollmentDiff, other.splusBreakdown.diffBonus]);
-        for (const [key, name] of [['experience', '体験の上限超過'], ['enrollmentDiff', '入退差の上限超過'], ['satisfaction', '満足の上限超過']]) {
-            if (other.overflow?.[key]) rows.push([name, other[key], other.overflow[key].toFixed(1)]);
-        }
+        const other = summary.opponentScore;
+        const pro = this.state.difficulty === 'pro';
+        const players = [
+            { name: 'あなた', icon: '👤', score, winner: summary.outcome === 'win' },
+            { name: summary.opponentName, icon: this.state.battle.kind === 'cpu' ? '🐤' : '🎞️', score: other, winner: summary.outcome === 'lose' }
+        ];
+        const rows = [
+            ['体験', 'experience', 'mobilizationPoints', 'experience'], ['入塾', 'enrollment'],
+            ['満足', 'satisfaction', pro ? 'satisfactionPoints' : null, 'satisfaction'], ['経理', 'accounting'],
+            ['退塾', 'withdrawal', 'withdrawalPoints'], ['入退差', 'enrollmentDiff', 'enrollmentDiffPoints', 'enrollmentDiff']
+        ];
+        const points = value => `${value > 0 ? '+' : ''}${escape(value)}点`;
+        const cell = (value, key, pointKey, overflowKey) => {
+            const extra = pro && value.overflow?.[overflowKey];
+            return `<td><span class="battle-metric-value">${escape(value[key])}</span>${pointKey
+                ? `<span class="battle-metric-points${value.breakdown[pointKey] < 0 ? ' negative' : ''}">${points(value.breakdown[pointKey])}${extra ? `<small>上限超過 +${escape(extra.toFixed(1))}点</small>` : ''}</span>` : ''}</td>`;
+        };
+        const precision = ['expBonus', 'diffBonus'].map((key, index) => {
+            if (!score.splusBreakdown && !other.splusBreakdown) return '';
+            return `<tr class="battle-precision-row"><th scope="row">${index ? '入退差' : '体験'}加点</th>${players.map(player =>
+                `<td>${player.score.splusBreakdown ? points(player.score.splusBreakdown[key]) : '—'}</td>`).join('')}</tr>`;
+        }).join('');
         const result = document.createElement('section'); result.id = 'battle-result';
-        result.innerHTML = `<div id="battle-outcome" class="battle-outcome ${summary.outcome}">${OUTCOMES[summary.outcome]}</div>
-            <p class="battle-final-score">あなた ${escape(score.displayScore)} 対 ${escape(other.displayScore)} ${escape(summary.opponentName)}</p>
-            ${summary.sameSeed ? '<p class="result-note">同一シードの対戦のため、ハイスコアは記録しません。履歴・スコア送信は記録します。</p>' : ''}
-            <button id="battle-rematch" class="btn-secondary" type="button">同じ相手と再戦</button>
-            <details id="battle-opponent-result" open><summary>${escape(summary.opponentName)}：${escape(other.rank.grade)} ／ ${escape(other.displayScore)}点</summary>
-            <p>${escape(other.rank.name)}</p><table class="breakdown-table"><thead><tr><th>目標</th><th>結果</th><th>ポイント</th></tr></thead>
-            <tbody>${rows.map(([name, value, points]) => `<tr><td>${name}</td><td>${escape(value)}</td><td>${escape(points)}</td></tr>`).join('')}
-            <tr><td colspan="2">最終スコア</td><td>${escape(other.displayScore)}</td></tr></tbody></table>
-            <p>体験 ${other.experience} ／ 入塾 ${other.enrollment} ／ 満足 ${other.satisfaction} ／ 経理 ${other.accounting}</p>
-            <details><summary>最終デッキ</summary><p>${summary.opponentFinalDeck.map(card => escape(card.cardName)).join('、')}</p></details></details>
-            <h3>あなたの教室：${escape(score.rank.grade)} ／ ${escape(score.displayScore)}点</h3>`;
+        result.innerHTML = `<p class="battle-result-context">${pro ? 'PRO' : 'FRESH'} · ${escape(summary.opponentName)}と対戦</p>
+            <div id="battle-outcome" class="battle-outcome ${summary.outcome}">${OUTCOMES[summary.outcome]}</div>
+            <div class="battle-final-score">${players.map(player => `<section class="battle-player-result${player.winner ? ' winner' : ''}">
+                <h3>${player.icon} ${escape(player.name)}${player.winner ? '<span class="battle-result-crown" aria-label="勝者">👑</span>' : ''}</h3>
+                <p class="battle-player-score">${escape(player.score.displayScore)}<small>点</small></p>
+                <div class="battle-player-rank"><span class="rank-${escape(player.score.rank.grade.replace('+', 'plus'))}">${escape(player.score.rank.grade)}</span><span>${escape(player.score.rank.name)}</span></div>
+            </section>`).join('')}</div>
+            <h3 class="battle-evaluation-heading">評価の比較</h3>
+            <table class="battle-comparison-table"><thead><tr><th scope="col">項目</th><th scope="col">👤 あなた</th><th scope="col">${players[1].icon} ${escape(summary.opponentName)}</th></tr></thead>
+            <tbody>${rows.map(([name, key, pointKey, overflowKey]) => `<tr><th scope="row">${name}</th>${cell(score, key, pointKey, overflowKey)}${cell(other, key, pointKey, overflowKey)}</tr>`).join('')}${precision}</tbody></table>
+            ${summary.sameSeed ? '<p class="result-note battle-same-seed-note">同一シードの対戦です。自己ベストの対象外です。</p>' : ''}`;
         document.getElementById('result-rank')?.before(result);
-        result.querySelector('#battle-rematch').onclick = () => {
+        const deckSection = document.createElement('div'); deckSection.id = 'battle-opponent-deck';
+        deckSection.innerHTML = `<details class="result-deck-details"><summary>${players[1].icon} ${escape(summary.opponentName)}の最終デッキ<span>${summary.opponentFinalDeck.length}枚</span></summary><div class="result-cards-grid"></div></details><details class="battle-result-build"><summary>バージョン・記録情報</summary><p class="result-build-info">${this.ui._buildInfoText()}</p></details>`;
+        const grid = deckSection.querySelector('.result-cards-grid');
+        for (const card of this.state.battle.opponent.result.finalDeck) grid.appendChild(this.ui.createCardElement(card, { compact: true }));
+        document.getElementById('result-cards')?.after(deckSection);
+        const rematch = document.createElement('button'); rematch.id = 'battle-rematch'; rematch.type = 'button';
+        rematch.className = 'btn-primary'; rematch.textContent = '同じ相手と再戦';
+        rematch.onclick = () => {
             const previous = this.state.battle;
             this.ui.onRestart(); this.openLobby({ kind: previous.kind, opponent: previous.opponent });
         };
+        document.querySelector('#result-area .result-actions')?.prepend(rematch);
     }
 }

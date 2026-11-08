@@ -1,12 +1,12 @@
 /**
  * GameState - ゲーム状態管理
  */
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0063';
-import { makeRunId } from './defaultRules.js?v=20261107-0063';
-import { RandomSource } from './randomSource.js?v=20261107-0063';
-import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20261107-0063';
-import { HISTORY_TYPES, toHistoryEvent } from './turnHistory.js?v=20261107-0063';
-import { recordReplayEvent } from './replayRecorder.js?v=20261107-0063';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0064';
+import { makeRunId } from './defaultRules.js?v=20261107-0064';
+import { RandomSource } from './randomSource.js?v=20261107-0064';
+import { createPlayRecord, recordPlayEvent, cardIdentity } from './playRecord.js?v=20261107-0064';
+import { HISTORY_TYPES, toHistoryEvent } from './turnHistory.js?v=20261107-0064';
+import { recordReplayEvent } from './replayRecorder.js?v=20261107-0064';
 
 export class GameState {
     get config() { return getDifficultyConfig(this.difficulty); }

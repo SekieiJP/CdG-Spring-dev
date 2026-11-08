@@ -1,17 +1,17 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0063';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0063';
-import { bindCardInteraction } from './cardInteraction.js?v=20261107-0063';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0063';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0063';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0063';
-import { ResultController } from './resultController.js?v=20261107-0063';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0063';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0063';
-import { getPlacementError } from './placementRules.js?v=20261107-0063';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0063';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0063';
-import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0063';
-import { BattleController } from './battleController.js?v=20261107-0063';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0064';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0064';
+import { bindCardInteraction } from './cardInteraction.js?v=20261107-0064';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0064';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0064';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0064';
+import { ResultController } from './resultController.js?v=20261107-0064';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0064';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0064';
+import { getPlacementError } from './placementRules.js?v=20261107-0064';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0064';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0064';
+import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0064';
+import { BattleController } from './battleController.js?v=20261107-0064';
 
 /**
  * UIController - UI操作・表示制御
@@ -2431,10 +2431,12 @@ export class UIController {
 
         if (cards.length === 0) return;
 
-        const heading = document.createElement('h3');
-        heading.className = 'result-cards-heading';
-        heading.textContent = `所有カード一覧（${cards.length}枚）`;
-        container.appendChild(heading);
+        const details = document.createElement('details');
+        details.className = 'result-deck-details';
+        const heading = document.createElement('summary');
+        heading.innerHTML = `${this.gameState.battle ? '👤 あなたの' : ''}最終デッキ<span>${cards.length}枚</span>`;
+        details.appendChild(heading);
+        container.appendChild(details);
 
         const grid = document.createElement('div');
         grid.className = 'result-cards-grid';
@@ -2452,7 +2454,7 @@ export class UIController {
             grid.appendChild(cardElem);
         });
 
-        container.appendChild(grid);
+        details.appendChild(grid);
     }
 
     /** 結果画面に、入手済み塾アイテムと効果発動回数を表示する。 */
