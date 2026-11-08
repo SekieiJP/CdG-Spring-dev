@@ -1,7 +1,7 @@
-import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261107-0062';
-import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261107-0062';
-import { recommendProStatus } from './ahiruProAdvice.js?v=20261107-0062';
-import { snapshotCards } from './battleReplay.js?v=20261107-0062';
+import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261107-0063';
+import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261107-0063';
+import { recommendProStatus } from './ahiruProAdvice.js?v=20261107-0063';
+import { snapshotCards } from './battleReplay.js?v=20261107-0063';
 
 export function cpuTrainingAdvice(record, turnIndex) {
     const fallback = { tone: 'yellow', text: '使えるカードを選んで進むね' };

@@ -4,14 +4,14 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import vm from 'node:vm';
-import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261107-0062';
-import { GameState } from '../../game/js/gameState.js?v=20261107-0062';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261107-0062';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261107-0062';
-import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261107-0062';
-import { cpuTrainingAdvice } from '../../game/js/battleAdvice.js?v=20261107-0062';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261107-0063';
+import { GameState } from '../../game/js/gameState.js?v=20261107-0063';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261107-0063';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261107-0063';
+import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261107-0063';
+import { cpuTrainingAdvice } from '../../game/js/battleAdvice.js?v=20261107-0063';
 import { validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames, interimScore,
-    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261107-0062';
+    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261107-0063';
 
 globalThis.window = { BUILD_VERSION: 'v20261107-0061' };
 globalThis.fetch = async url => new Response(await readFile(fileURLToPath(new URL(url))));

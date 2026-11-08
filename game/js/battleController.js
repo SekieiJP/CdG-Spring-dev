@@ -1,8 +1,8 @@
-import { decodeReplay } from './replayCodec.js?v=20261107-0062';
-import { getCurrentEvent } from './eventManager.js?v=20261107-0062';
-import { cpuTrainingAdvice } from './battleAdvice.js?v=20261107-0062';
+import { decodeReplay } from './replayCodec.js?v=20261107-0063';
+import { getCurrentEvent } from './eventManager.js?v=20261107-0063';
+import { cpuTrainingAdvice } from './battleAdvice.js?v=20261107-0063';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261107-0062';
+    interimScore, battleSummary } from './battleReplay.js?v=20261107-0063';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };

@@ -1,5 +1,5 @@
-import {CardManager} from './cardManager.js?v=20261107-0062';
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261107-0062';
+import {CardManager} from './cardManager.js?v=20261107-0063';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261107-0063';
 
 const parser=new CardManager(null);
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'};

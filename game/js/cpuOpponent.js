@@ -1,13 +1,13 @@
-import { GameState } from './gameState.js?v=20261107-0062';
-import { CardManager } from './cardManager.js?v=20261107-0062';
-import { TurnManager } from './turnManager.js?v=20261107-0062';
-import { ScoreManager } from './scoreManager.js?v=20261107-0062';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0062';
-import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261107-0062';
-import * as formula from './proAcquisitionAdvisor.js?v=20261107-0062';
-import * as researchModule from './cpu/pro-strategy-research.js?v=20261107-0062';
-import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261107-0062';
-import { startReplayRecording, captureReplayBoundary, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0062';
+import { GameState } from './gameState.js?v=20261107-0063';
+import { CardManager } from './cardManager.js?v=20261107-0063';
+import { TurnManager } from './turnManager.js?v=20261107-0063';
+import { ScoreManager } from './scoreManager.js?v=20261107-0063';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0063';
+import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261107-0063';
+import * as formula from './proAcquisitionAdvisor.js?v=20261107-0063';
+import * as researchModule from './cpu/pro-strategy-research.js?v=20261107-0063';
+import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261107-0063';
+import { startReplayRecording, captureReplayBoundary, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0063';
 
 async function readData(name) {
     const url = new URL(`../data/cpu/${name}`, import.meta.url);

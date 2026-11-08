@@ -1,5 +1,5 @@
-import { validateReplayRecord } from './replayCodec.js?v=20261107-0062';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0062';
+import { validateReplayRecord } from './replayCodec.js?v=20261107-0063';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261107-0063';
 
 export const BATTLE_STATS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 

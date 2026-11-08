@@ -1,5 +1,5 @@
-import {ScoreManager} from './scoreManager.js?v=20261107-0062';
-import {CURRENT_EVENT_ID} from './eventManager.js?v=20261107-0062';
+import {ScoreManager} from './scoreManager.js?v=20261107-0063';
+import {CURRENT_EVENT_ID} from './eventManager.js?v=20261107-0063';
 const AXES=['experience','enrollment','satisfaction','accounting'];
 // 評価専用。ハイスコア保存の移行や読み書きは実行しない。
 const scorer=new ScoreManager(null,{migrateHighScore:false}),cache=new Map();
