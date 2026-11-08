@@ -1,5 +1,5 @@
-import {projectProDeck,clamp} from './proAcquisitionAdvisor.js?v=20261107-0061';
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261107-0061';
+import {projectProDeck,clamp} from './proAcquisitionAdvisor.js?v=20261107-0062';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261107-0062';
 
 export const ACTION_MODEL_VERSION='public-opportunities-v1';
 const AXES=['experience','enrollment','satisfaction','accounting'];

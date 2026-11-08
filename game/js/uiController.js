@@ -1,16 +1,17 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0061';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0061';
-import { bindCardInteraction } from './cardInteraction.js?v=20261107-0061';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0061';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0061';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0061';
-import { ResultController } from './resultController.js?v=20261107-0061';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0061';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0061';
-import { getPlacementError } from './placementRules.js?v=20261107-0061';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0061';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0061';
-import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0061';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0062';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0062';
+import { bindCardInteraction } from './cardInteraction.js?v=20261107-0062';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0062';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0062';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0062';
+import { ResultController } from './resultController.js?v=20261107-0062';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0062';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0062';
+import { getPlacementError } from './placementRules.js?v=20261107-0062';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0062';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0062';
+import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0062';
+import { BattleController } from './battleController.js?v=20261107-0062';
 
 /**
  * UIController - UI操作・表示制御
@@ -84,6 +85,7 @@ export class UIController {
         this.cardDetails = new CardDetailVisibility();
         this.acquisitionAssist = new AcquisitionAssistController(this);
         this.ahiruAdvice = new AhiruAdviceController(this);
+        this.battleController = new BattleController(this);
     }
 
     /**
@@ -109,6 +111,11 @@ export class UIController {
         this.resultController.init();
         this.acquisitionAssist.init();
         this.ahiruAdvice.init();
+        this.battleController.init();
+        for (const id of ['start-game', 'start-battle']) {
+            const button = document.getElementById(id);
+            if (button) button.disabled = false;
+        }
     }
 
     /**
@@ -312,6 +319,7 @@ export class UIController {
         // ランク表示更新
         this.updateRankDisplay();
         this.ahiruAdvice?.scheduleRefresh();
+        this.battleController?.render();
     }
 
     /**
@@ -591,13 +599,13 @@ export class UIController {
     /**
      * ゲーム開始
      */
-    async onStartGame() {
+    async onStartGame(options = {}) {
         if (this.startingGame) return;
         this.startingGame = true;
         const startButton = document.getElementById('start-game');
         if (startButton) startButton.disabled = true;
         try {
-        const difficulty = this.selectedDifficulty || 'fresh';
+        const difficulty = options.difficulty || this.selectedDifficulty || 'fresh';
 
         // 難易度に応じたCSVを読み込み
         if (window.game) {
@@ -612,14 +620,15 @@ export class UIController {
         overlay?.classList.add('hidden');
 
         this.gameState.difficulty = difficulty;
-        this.turnManager.initializeGame();
-        this.gameState.calcMode = document.getElementById('calc-mode-toggle')?.checked || false;
+        this.turnManager.initializeGame(options.seed ? { seed: options.seed } : {});
+        this.gameState.battle = options.battle || null;
+        this.gameState.calcMode = options.battle ? false : document.getElementById('calc-mode-toggle')?.checked || false;
         const event = getCurrentEvent();
-        const eventEnabled = !!document.getElementById('event-mode-toggle')?.checked;
+        const eventEnabled = options.eventEnabled ?? !!document.getElementById('event-mode-toggle')?.checked;
         this.gameState.event = event && eventEnabled ? createEventState(event, difficulty) : null;
         // 入手演出中の再読み込みでも研修へ戻れるよう、先に復元対象フェーズを固定する。
         if (this.gameState.event) this.gameState.phase = 'training';
-        localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
+        if (!options.battle) localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
         this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
         startReplayRecording(this.gameState, {
             cardManager: this.cardManager, scoreManager: this.scoreManager,
@@ -1532,6 +1541,7 @@ export class UIController {
      */
     async finishActionPhase(options = {}) {
         if (!options.eventEffectsResolved) await this.resolveEventActionEffects();
+        await this.battleController.playOpponentAction();
         completeReplayAction(this.gameState);
         this.updateStatusDisplay();
         this.turnManager.advancePhase();
@@ -2399,6 +2409,7 @@ export class UIController {
 
         // 不変の結果を保存してから、ゲーム進行と独立したキューで送信する。
         this.resultController.record(score, finalDeck);
+        this.battleController.renderResult(score);
 
         // セーブデータクリア（ゲーム終了）
         this.saveManager?.clear();
@@ -2602,6 +2613,7 @@ export class UIController {
      * リスタート
      */
     onRestart() {
+        this.battleController.resetDisplay();
         this.resultController.currentId = null;
         this.logger.clear();
 
@@ -2669,6 +2681,7 @@ export class UIController {
             content.innerHTML = '<p style="text-align:center;color:var(--color-text-secondary);">デッキが空です</p>';
         }
 
+        this.battleController.appendOpponentDeck(content);
         document.body.appendChild(overlay);
     }
 

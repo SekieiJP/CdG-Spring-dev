@@ -1,9 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20261107-0061';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20261107-0061';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn } from './replayRecorder.js?v=20261107-0061';
+import { resolveCardAction } from './actionResolver.js?v=20261107-0062';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261107-0062';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn } from './replayRecorder.js?v=20261107-0062';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -267,8 +267,8 @@ export class TurnManager {
     /**
      * ゲーム初期化
      */
-    initializeGame() {
-        this.gameState.reset(this.gameState.difficulty);
+    initializeGame(options = {}) {
+        this.gameState.reset(this.gameState.difficulty, options);
 
         // 研修候補プールを初期化（各カード2枚ずつ）
         this.cardManager.initTrainingPool();

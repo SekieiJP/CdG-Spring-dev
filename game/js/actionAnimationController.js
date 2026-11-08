@@ -1,4 +1,4 @@
-import { AnimationClock } from './animationClock.js?v=20261107-0061';
+import { AnimationClock } from './animationClock.js?v=20261107-0062';
 /** 確定した解決結果を表示する。通常のカード効果はここでは再適用しない。 */
 export class ActionAnimationController {
     constructor(ui) {
@@ -131,6 +131,7 @@ export class ActionAnimationController {
             // カード効果に続けて、同じ画面・同じ体裁で塾アイテム効果を表示する。
             await this.ui.resolveEventActionEffects({ overlay, header, cards, currentStats });
             eventEffectsResolved = true;
+            await this.ui.battleController?.playOpponentAction();
 
             // 演出終了（📊行動結果ステップを除去）
             await this._sleep(500);
@@ -267,6 +268,7 @@ export class ActionAnimationController {
      * アニメーションステータス更新
      */
     updateAnimationStats(stats, delta, options = {}) {
+        this.ui.battleController?.render(stats);
         const statMap = {
             experience: 'exp',
             enrollment: 'enr',

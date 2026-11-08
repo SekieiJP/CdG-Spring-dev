@@ -1,9 +1,9 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20261107-0061';
-import { makeRunId } from './defaultRules.js?v=20261107-0061';
-import { snapshotTurnHistory } from './turnHistory.js?v=20261107-0061';
+import { getEventItem } from './eventManager.js?v=20261107-0062';
+import { makeRunId } from './defaultRules.js?v=20261107-0062';
+import { snapshotTurnHistory } from './turnHistory.js?v=20261107-0062';
 
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;
@@ -87,6 +87,7 @@ export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
         rankVersion: record.rankVersion || metadata.rankVersion || 'unknown',
         userUUID: getOrCreateUserUUID(),
         difficulty: gameState.difficulty || 'fresh',
+        ...(gameState.battle ? { battleKind: gameState.battle.kind, sameSeed: gameState.battle.sameSeed } : {}),
         mode: gameState.event?.enabled
             ? `イベント:(${gameState.event.eventName})${gameState.calcMode ? '/計算機' : ''}`
             : (gameState.calcMode ? '計算機' : '通常'),

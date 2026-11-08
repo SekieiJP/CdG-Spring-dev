@@ -1,5 +1,5 @@
-import { supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261107-0061';
-import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261107-0061';
+import { supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261107-0062';
+import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261107-0062';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -13,7 +13,7 @@ export class AcquisitionAssistController {
     }
     eligible() {
         const state = this.ui.gameState;
-        return supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && state.phase === 'training';
+        return state.battle?.kind !== 'cpu' && supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && state.phase === 'training';
     }
     clear() {
         clearTimeout(this.timer);
