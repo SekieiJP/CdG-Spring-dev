@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {initialPairIndices,validateInitialRule} from '../../solver/browser/pro-strategy-research.js?v=20261107-0062';
+import {initialPairIndices,validateInitialRule} from '../../solver/browser/pro-strategy-research.js?v=20261107-0063';
 const cards=nos=>nos.map(cardNo=>({cardNo:String(cardNo)}));
 test('見えている2枚組だけで開始を判定し、同名2枚を要求する',()=>{
  assert.deepEqual(initialPairIndices(cards([13,15,7,13]),[[13,13]]),[[0,3]]);

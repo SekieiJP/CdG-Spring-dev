@@ -1,17 +1,17 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0062';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0062';
-import { bindCardInteraction } from './cardInteraction.js?v=20261107-0062';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0062';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0062';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0062';
-import { ResultController } from './resultController.js?v=20261107-0062';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0062';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0062';
-import { getPlacementError } from './placementRules.js?v=20261107-0062';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0062';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0062';
-import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0062';
-import { BattleController } from './battleController.js?v=20261107-0062';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261107-0063';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261107-0063';
+import { bindCardInteraction } from './cardInteraction.js?v=20261107-0063';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261107-0063';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261107-0063';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261107-0063';
+import { ResultController } from './resultController.js?v=20261107-0063';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261107-0063';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261107-0063';
+import { getPlacementError } from './placementRules.js?v=20261107-0063';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261107-0063';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261107-0063';
+import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261107-0063';
+import { BattleController } from './battleController.js?v=20261107-0063';
 
 /**
  * UIController - UI操作・表示制御

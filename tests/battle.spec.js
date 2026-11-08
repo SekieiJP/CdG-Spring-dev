@@ -47,7 +47,10 @@ async function drive(page, stopAtAction = false) {
             if (current.calc) await page.locator('#calc-action-leader').fill('01');
             else if (await page.locator('#hand-cards .card').count()) await page.locator('#hand-cards .card').first().click();
             await page.locator('#confirm-action').click();
-        } else if (current.phase === 'meeting') await page.locator('#confirm-meeting').click();
+        } else if (current.phase === 'meeting') {
+            if (await page.evaluate(() => !!window.game.gameState.battle)) await expect(page.locator('#battle-opponent-status')).toBeVisible();
+            await page.locator('#confirm-meeting').click();
+        }
     }
     throw new Error('対戦を完走できませんでした');
 }
@@ -93,6 +96,7 @@ for (const difficulty of ['fresh', 'pro']) {
             if (mode.name === '通常') await page.locator('#battle-same-seed').check();
             await page.locator('#battle-start').click();
             await expect(page.locator('#training-area')).toBeVisible();
+            await expect(page.locator('#battle-opponent-status')).toBeVisible();
             await speedUp(page);
             expect(await page.evaluate(() => window.game.gameState.calcMode)).toBe(false);
             expect(await page.evaluate(() => !!window.game.gameState.event)).toBe(false);
@@ -118,6 +122,7 @@ for (const difficulty of ['fresh', 'pro']) {
             await page.locator('.info-overlay:has(.battle-deck) .info-overlay-close').click();
             await drive(page);
             await expect(page.locator('#battle-outcome')).toBeVisible();
+            await expect(page.locator('#battle-opponent-status')).toBeVisible();
             const result = await page.evaluate(() => {
                 const { gameState: state, uiController: ui, scoreManager } = window.game;
                 const row = ui.resultController.repository.find(state.runId);
@@ -153,6 +158,7 @@ for (const difficulty of ['fresh', 'pro']) {
         await page.locator('#battle-kind-cpu').click(); await page.locator('#battle-difficulty').selectOption(difficulty);
         await expect(page.locator('#battle-replay-controls')).toBeHidden();
         await page.locator('#battle-start').click();
+        if (difficulty === 'pro') await expect(page.locator('#battle-lobby-message')).toContainText('あひる先生が教材研究中…');
         await expect(page.locator('#training-area')).toBeVisible({ timeout: 120000 });
         const opponent = await page.evaluate(() => window.game.gameState.battle.opponent);
         await page.reload();
@@ -240,6 +246,11 @@ test('相手のカードを1件ずつスキップし、演出中の再読み込�
     expect(Object.values(source.record.turns[0].action.placed).flat().length).toBeGreaterThan(2);
     await loadReplay(page, source.text); await page.locator('#battle-start').click();
     await expect(page.locator('#training-area')).toBeVisible(); await speedUp(page); await drive(page, true);
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+    await expect(page.locator('#sticky-header')).not.toHaveClass(/hidden/);
+    await expect(page.locator('#battle-compact-opponent')).toBeVisible();
+    expect(await page.evaluate(() => document.getElementById('battle-compact-opponent').getBoundingClientRect().bottom <=
+        document.querySelector('#sticky-header .compact-stats').getBoundingClientRect().top)).toBe(true);
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.screenshot({ path: testInfo.outputPath('battle-action.png'), animations: 'disabled' });
     await page.evaluate(() => {
@@ -253,6 +264,17 @@ test('相手のカードを1件ずつスキップし、演出中の再読み込�
     await page.waitForFunction(() => window.game.gameState.battle.animation?.cursor === 1);
     await page.locator('.battle-animation-card').click();
     await page.waitForFunction(() => window.game.gameState.battle.animation?.cursor === 2);
+    await expect(page.locator('#battle-animation-opponent .battle-opponent-rank')).toHaveCount(0);
+    const second = Object.values(source.record.turns[0].action.cardEffects).flatMap(info => info.cards)[1];
+    for (const key of ['experience', 'enrollment', 'satisfaction', 'accounting']) {
+        const stat = page.locator(`#battle-animation-opponent [data-stat="${key}"]`);
+        const delta = second.afterStats[key] - second.beforeStats[key];
+        if (delta) {
+            await expect(stat.locator('.battle-opponent-delta')).toHaveText(`${delta > 0 ? '+' : ''}${delta}`);
+            await expect(stat.locator('.battle-opponent-delta')).toHaveCSS('color', delta > 0 ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)');
+        } else await expect(stat.locator('.battle-opponent-delta')).toHaveCount(0);
+        await expect(stat).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
+    }
     expect(await page.evaluate(() => ({ waiters: window.game.uiController.actionAnimation.clock.waiters.size,
         skipped: window.game.uiController.actionAnimation.clock.skipCurrent }))).toEqual({ waiters: 1, skipped: false });
     const before = await page.evaluate(() => {

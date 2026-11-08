@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0062';
-import {getProSGoals} from '../../game/js/ahiruProGoals.js?v=20261107-0062';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0063';
+import {getProSGoals} from '../../game/js/ahiruProGoals.js?v=20261107-0063';
 const scorer=new ScoreManager(null),savedFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});
 await scorer.loadRankData('test');globalThis.fetch=savedFetch;
