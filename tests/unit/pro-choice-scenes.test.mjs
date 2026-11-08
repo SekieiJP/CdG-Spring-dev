@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {prepareSceneBatch} from '../../solver/pro-card-scene-input.mjs';
-import {encodePairedFeatures,reversePairedFeatures,predictPairedGain,PAIRED_FEATURES,PAIRED_SCHEMA} from '../../solver/browser/pro-paired-value.js?v=20261107-0061';
-import {VALUE_FEATURES} from '../../solver/browser/pro-value-model.js?v=20261107-0061';
+import {encodePairedFeatures,reversePairedFeatures,predictPairedGain,PAIRED_FEATURES,PAIRED_SCHEMA} from '../../solver/browser/pro-paired-value.js?v=20261107-0062';
+import {VALUE_FEATURES} from '../../solver/browser/pro-value-model.js?v=20261107-0062';
 const versions=['game','cards','ranks'];
 function observation(turn=0){const card=n=>({cardNo:String(n),cardName:'Card'+n,rarity:'R',category:'動員',effect:'体験+2'});
  return {difficulty:'pro',mode:'normal',turn,totalTurns:8,stats:{experience:8,enrollment:2,satisfaction:10,accounting:9},tokens:{passion:1,fatigue:0,inspiration:1,organize:0},owned:[card(1)],candidates:[card(6),card(7),card(8),card(9)],pickCount:turn===0?2:1,allowSkip:false,turns:Array(8).fill({}),offerHistory:[],refreshRemaining:2,seed:'実シード',futureScore:16,rankTable:[]};}

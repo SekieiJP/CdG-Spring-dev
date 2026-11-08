@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20261107-0061';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0061';
-import {getDifficultyConfig} from '../../game/js/difficultyConfig.js?v=20261107-0061';
-import {getPlacementError} from '../../game/js/placementRules.js?v=20261107-0061';
-import {createPublicActionKernel} from '../../solver/browser/pro-public-action-kernel.js?v=20261107-0061';
-import {createTerminalExact} from '../../solver/browser/pro-terminal-exact.js?v=20261107-0061';
+import {CardManager} from '../../game/js/cardManager.js?v=20261107-0062';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0062';
+import {getDifficultyConfig} from '../../game/js/difficultyConfig.js?v=20261107-0062';
+import {getPlacementError} from '../../game/js/placementRules.js?v=20261107-0062';
+import {createPublicActionKernel} from '../../solver/browser/pro-public-action-kernel.js?v=20261107-0062';
+import {createTerminalExact} from '../../solver/browser/pro-terminal-exact.js?v=20261107-0062';
 const cm=new CardManager(null);cm.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const sm=new ScoreManager(null),original=globalThis.fetch;globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});await sm.loadRankData('test');globalThis.fetch=original;
 const rules=getDifficultyConfig('pro'),card=n=>cm.allCards.find(c=>Number(c.cardNo)===n),resolve=createPublicActionKernel(rules.turns,cm);

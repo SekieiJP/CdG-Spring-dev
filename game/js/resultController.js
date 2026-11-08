@@ -1,8 +1,9 @@
-import { ResultRepository } from './resultRepository.js?v=20261107-0061';
-import { SubmissionQueue } from './submissionQueue.js?v=20261107-0061';
-import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261107-0061';
-import { getCompletedReplay } from './replayRecorder.js?v=20261107-0061';
-import { encodeReplay } from './replayCodec.js?v=20261107-0061';
+import { ResultRepository } from './resultRepository.js?v=20261107-0062';
+import { SubmissionQueue } from './submissionQueue.js?v=20261107-0062';
+import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261107-0062';
+import { getCompletedReplay } from './replayRecorder.js?v=20261107-0062';
+import { encodeReplay } from './replayCodec.js?v=20261107-0062';
+import { battleSummary } from './battleReplay.js?v=20261107-0062';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {
@@ -49,10 +50,12 @@ export class ResultController {
         const replayPending = existing ? null : getCompletedReplay(state);
         const summary = this.repository.commit({
             resultId: payload.resultId, startedAt: payload.startedAt, completedAt: payload.completedAt,
-            difficulty: payload.difficulty, difficultyName: state.config.name, mode: payload.mode,
+            difficulty: payload.difficulty, difficultyName: state.config.name,
+            mode: state.battle ? `対戦:${state.battle.kind === 'cpu' ? 'あひる先生' : 'リプレイ'}${state.battle.sameSeed ? '/同一シード' : ''}/${payload.mode}` : payload.mode,
             buildVersion: payload.buildVersion, rulesVersion: payload.rulesVersion,
             cardVersion: payload.cardVersion, rankVersion: payload.rankVersion,
             score: structuredClone(score),
+            ...(state.battle ? { battle: battleSummary(state, score) } : {}),
             finalDeck: finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })),
             ...(replayPending ? { replayPending } : { replayUnavailableReason: 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
         }, payload);
@@ -244,6 +247,17 @@ export class ResultController {
                 <p>最終デッキ（${row.finalDeck.length}枚）: ${row.finalDeck.map(card => escape(`${card.cardNo || ''} ${card.cardName}`.trim())).join('、')}</p>
                 <p class="history-versions">コード: ${escape(row.buildVersion)}<br>ルール: ${escape(row.rulesVersion)}<br>カード: ${escape(row.cardVersion)}<br>ランク: ${escape(row.rankVersion)}</p>`;
             const actions = document.createElement('div');
+            if (row.battle) {
+                const opponent = row.battle.opponentScore;
+                const result = document.createElement('section'); result.className = 'battle-history-result';
+                const outcome = { win: '勝利', lose: '敗北', draw: '引き分け' }[row.battle.outcome];
+                result.innerHTML = `<h4>${escape(outcome)} ／ ${escape(row.battle.opponentName)}との対戦</h4>
+                    <p>相手 ${escape(opponent.displayScore)}点 ／ ${escape(opponent.rank.grade)}</p>
+                    <p>体験 ${escape(opponent.experience)} ／ 入塾 ${escape(opponent.enrollment)} ／ 満足 ${escape(opponent.satisfaction)} ／ 経理 ${escape(opponent.accounting)}</p>
+                    <p>退塾 ${escape(opponent.withdrawal)} ／ 入退差 ${escape(opponent.enrollmentDiff)}</p>
+                    <details><summary>相手の最終デッキ</summary><p>${row.battle.opponentFinalDeck.map(card => escape(card.cardName)).join('、')}</p></details>`;
+                details.appendChild(result);
+            }
             actions.className = 'history-actions';
             const favorite = document.createElement('button');
             favorite.type = 'button';

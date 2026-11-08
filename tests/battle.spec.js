@@ -1,0 +1,277 @@
+import { test, expect } from './fixtures.js';
+
+async function speedUp(page) {
+    await page.evaluate(() => {
+        const ui = window.game.uiController;
+        ui.actionAnimation.clock.wait = async () => {};
+        ui.showTurnOverlay = () => {};
+    });
+}
+
+async function drive(page, stopAtAction = false) {
+    for (let step = 0; step < 120; step++) {
+        if (await page.locator('.event-presentation button').isVisible()) {
+            await page.locator('.event-presentation button').click(); continue;
+        }
+        const current = await page.evaluate(() => {
+            const { gameState: state, uiController: ui } = window.game;
+            return { phase: state.phase, busy: !!ui.actionBusy, calc: state.calcMode,
+                preparing: !!state.event?.preparing,
+                initial: state.turn === 0 && !state.event?.eventTraining && state.trainingSelectionMode !== 'inspiration' };
+        });
+        if (current.phase === 'end') { await expect(page.locator('#result-area')).toBeVisible(); return; }
+        if (current.preparing) {
+            await page.waitForFunction(() => !window.game.gameState.event?.preparing || !!document.querySelector('.event-presentation'));
+            continue;
+        }
+        if (current.busy) {
+            await page.waitForFunction(() => !window.game.uiController.actionBusy || !!document.querySelector('.event-presentation'));
+            continue;
+        }
+        if (current.phase === 'training') {
+            if (current.calc) {
+                const input = await page.evaluate(() => {
+                    const { cardManager, uiController: ui } = window.game;
+                    const rule = ui.calcTrainingRequirement;
+                    const card = cardManager.allCards.find(card => card.rarity === rule.rarity);
+                    return String(card.cardNo).padStart(2, '0').repeat(rule.minCount);
+                });
+                await page.locator('#calc-training-input').fill(input);
+            } else {
+                await page.locator('#training-cards .card').nth(0).click();
+                if (current.initial) await page.locator('#training-cards .card').nth(1).click();
+            }
+            await page.locator('#confirm-training').click();
+        } else if (current.phase === 'action') {
+            if (stopAtAction) return;
+            if (current.calc) await page.locator('#calc-action-leader').fill('01');
+            else if (await page.locator('#hand-cards .card').count()) await page.locator('#hand-cards .card').first().click();
+            await page.locator('#confirm-action').click();
+        } else if (current.phase === 'meeting') await page.locator('#confirm-meeting').click();
+    }
+    throw new Error('対戦を完走できませんでした');
+}
+
+async function sourceReplay(page, { difficulty = 'fresh', calc = false, event = false } = {}) {
+    page.on('dialog', dialog => dialog.accept());
+    await page.goto('/'); await page.waitForFunction(() => !!window.game?.uiController); await speedUp(page);
+    await page.locator(`#btn-difficulty-${difficulty}`).click();
+    if (calc) {
+        await page.locator('#start-overlay h1').click();
+        await page.locator('#calc-mode-toggle + .toggle-slider').click();
+    }
+    if (event) await page.locator('#event-mode-toggle + .toggle-slider').click();
+    await page.locator('#start-game').click(); await drive(page);
+    await expect(page.locator('#result-replay-copy')).toBeEnabled();
+    const source = await page.evaluate(async () => {
+        const row = window.game.uiController.resultController.repository.history().at(-1);
+        const { decodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+        return { text: row.replayText, record: await decodeReplay(row.replayText) };
+    });
+    await page.locator('#restart-game').click();
+    return source;
+}
+
+async function loadReplay(page, text) {
+    await page.locator('#start-battle').click();
+    await page.locator('#battle-replay-input').fill(text);
+    await page.locator('#battle-load-replay').click();
+    await expect(page.locator('#battle-lobby-message')).toHaveText('対戦できます。');
+}
+
+for (const difficulty of ['fresh', 'pro']) {
+    for (const mode of [
+        { name: '通常', calc: false, event: false }, { name: '計算機', calc: true, event: false },
+        { name: 'イベント', calc: false, event: true }, { name: 'イベント・計算機', calc: true, event: true }
+    ]) {
+        test(`${difficulty.toUpperCase()} ${mode.name}のリプレイと対戦し、相手の結果を忠実に残す`, async ({ page, scoreSubmissions }) => {
+            test.setTimeout(120000);
+            const source = await sourceReplay(page, { difficulty, ...mode });
+            await loadReplay(page, source.text);
+            await expect(page.locator('#battle-same-seed')).not.toBeChecked();
+            await expect(page.locator('#battle-lobby')).not.toContainText('最終デッキ');
+            if (mode.name === '通常') await page.locator('#battle-same-seed').check();
+            await page.locator('#battle-start').click();
+            await expect(page.locator('#training-area')).toBeVisible();
+            await speedUp(page);
+            expect(await page.evaluate(() => window.game.gameState.calcMode)).toBe(false);
+            expect(await page.evaluate(() => !!window.game.gameState.event)).toBe(false);
+            if (mode.name === '通常') {
+                await page.evaluate(() => {
+                    const { gameState, scoreManager } = window.game;
+                    localStorage.removeItem(scoreManager.getHighScoreStorageKey(gameState.difficulty, gameState));
+                });
+            }
+            await drive(page, true);
+            await expect(page.locator('#battle-opponent-status')).toBeVisible();
+            await expect(page.locator('#battle-opponent-status .battle-opponent-stat')).toHaveCount(4);
+            await expect(page.locator('#battle-opponent-status .rank-progress')).toHaveCount(0);
+            await page.locator('#btn-deck-full').click();
+            const deck = page.locator('.battle-deck');
+            await expect(deck.locator('h3')).toContainText('山札');
+            await expect(deck.locator('.staff-slot')).toHaveCount(0);
+            const knownIds = [...source.record.turns[0].actionStart.player.deck, ...source.record.turns[0].actionStart.player.hand];
+            const knownNames = knownIds.map(id => source.record.instances[id].cardName);
+            await expect(deck.locator('.card')).toHaveCount(knownIds.length);
+            const future = source.record.result.finalDeck.find(card => !knownNames.includes(card.cardName));
+            if (future) await expect(deck).not.toContainText(future.cardName);
+            await page.locator('.info-overlay:has(.battle-deck) .info-overlay-close').click();
+            await drive(page);
+            await expect(page.locator('#battle-outcome')).toBeVisible();
+            const result = await page.evaluate(() => {
+                const { gameState: state, uiController: ui, scoreManager } = window.game;
+                const row = ui.resultController.repository.find(state.runId);
+                return { battle: row.battle, mode: row.mode, highScore: scoreManager.getHighScore(state.difficulty, state) };
+            });
+            expect(result.battle.opponentScore).toEqual(source.record.result.score);
+            expect(result.battle.opponentFinalDeck).toEqual(source.record.result.finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })));
+            expect(result.mode).toContain('対戦:リプレイ');
+            if (mode.name === '通常') { expect(result.battle.outcome).toBe('draw'); expect(result.highScore).toBeNull(); }
+            await expect.poll(() => scoreSubmissions.length).toBe(2);
+            expect(scoreSubmissions[1].mode).toBe('通常');
+            expect(scoreSubmissions[1].battleKind).toBe('replay');
+            expect(scoreSubmissions[1]).not.toHaveProperty('opponentScore');
+            await expect(page.locator('#result-replay-copy')).toBeEnabled();
+            const self = await page.evaluate(async () => {
+                const row = window.game.uiController.resultController.repository.history().at(-1);
+                const { decodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+                return decodeReplay(row.replayText);
+            });
+            expect(self.metadata.battleKind).toBe('replay'); expect(self).not.toHaveProperty('opponent');
+            await page.locator('#view-result-history').click();
+            await expect(page.locator('.battle-history-result')).toHaveCount(1);
+            await page.locator('.result-history-entry').first().locator('summary').first().click();
+            await expect(page.locator('.battle-history-result')).toContainText(String(source.record.result.score.displayScore));
+        });
+    }
+}
+
+for (const difficulty of ['fresh', 'pro']) {
+    test(`あひる先生 ${difficulty.toUpperCase()}との対戦を完走し、プレイヤー向けアシストを無効にする`, async ({ page, scoreSubmissions }) => {
+        test.setTimeout(180000); page.on('dialog', dialog => dialog.accept());
+        await page.goto('/'); await page.locator('#start-battle').click();
+        await page.locator('#battle-kind-cpu').click(); await page.locator('#battle-difficulty').selectOption(difficulty);
+        await expect(page.locator('#battle-replay-controls')).toBeHidden();
+        await page.locator('#battle-start').click();
+        await expect(page.locator('#training-area')).toBeVisible({ timeout: 120000 });
+        const opponent = await page.evaluate(() => window.game.gameState.battle.opponent);
+        await page.reload();
+        await expect(page.locator('#training-area')).toBeVisible();
+        expect(await page.evaluate(() => window.game.gameState.battle.opponent)).toEqual(opponent);
+        await speedUp(page);
+        expect(await page.evaluate(() => window.game.gameState.battle.opponent.metadata.cpuPolicy)).toBe(difficulty === 'pro' ? 'fixed-pro-v1' : 'reach@fresh_stable');
+        expect(await page.evaluate(() => window.game.uiController.acquisitionAssist.eligible())).toBe(false);
+        expect(await page.evaluate(() => window.game.uiController.ahiruAdvice.getSceneDecision())).toBeNull();
+        await expect.poll(() => page.evaluate(() => window.game.uiController.ahiruAdvice.lastAdvice?.text)).toMatch(/ね|よ/);
+        await drive(page); await expect(page.locator('#battle-outcome')).toBeVisible();
+        expect(await page.evaluate(() => window.game.uiController.resultController.repository.history()[0].battle.kind)).toBe('cpu');
+        await expect.poll(() => scoreSubmissions.length).toBe(1);
+        expect(scoreSubmissions[0].battleKind).toBe('cpu'); expect(scoreSubmissions[0].mode).toBe('通常');
+        await page.locator('#battle-rematch').click();
+        await expect(page.locator('#battle-kind-cpu')).toHaveAttribute('aria-pressed', 'true');
+        await expect(page.locator('#battle-difficulty')).toHaveValue(difficulty);
+    });
+}
+
+test('互換性のないデータや不正なリプレイで現在のゲームと履歴を壊さない', async ({ page }) => {
+    const source = await sourceReplay(page);
+    await page.locator('#start-battle').click();
+    await page.locator('#battle-replay-input').fill('CDGR1:broken');
+    await page.locator('#battle-load-replay').click(); await expect(page.locator('#battle-start')).toBeDisabled();
+    await expect(page.locator('#battle-lobby-message')).not.toHaveText('対戦できます。');
+    const incompatible = await page.evaluate(async record => {
+        record.metadata.buildVersion = 'v20000101-0001';
+        const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+        return encodeReplay(record);
+    }, source.record);
+    await page.locator('#battle-replay-input').fill(incompatible); await page.locator('#battle-load-replay').click();
+    await expect(page.locator('#battle-lobby-message')).toContainText('互換性');
+    for (const defect of ['finalDeck', 'overflow', 'reference']) {
+        const text = await page.evaluate(async ({ record, defect }) => {
+            if (defect === 'finalDeck') record.result.finalDeck[0] = null;
+            if (defect === 'overflow') record.result.score.overflow = { experience: '不正', enrollmentDiff: 0, satisfaction: 0 };
+            if (defect === 'reference') delete record.instances[record.turns[0].actionStart.player.hand[0]];
+            const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+            return encodeReplay(record);
+        }, { record: source.record, defect });
+        await page.locator('#battle-replay-input').fill(text); await page.locator('#battle-load-replay').click();
+        await expect(page.locator('#battle-lobby-message')).not.toHaveText('リプレイを確認しています。');
+        await expect(page.locator('#battle-start')).toBeDisabled();
+    }
+    const compatible = await page.evaluate(async record => {
+        record.metadata.buildVersion = 'v20261107-0061';
+        const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+        return encodeReplay(record);
+    }, source.record);
+    await page.locator('#battle-replay-input').fill(compatible); await page.locator('#battle-load-replay').click();
+    await expect(page.locator('#battle-lobby-message')).toHaveText('対戦できます。');
+    expect(await page.evaluate(() => window.game.uiController.resultController.repository.history().length)).toBe(1);
+});
+
+for (const expired of [false, true]) {
+    test(`特殊リプレイのイベント選択：${expired ? '期間外は相手だけ再現' : '開催中は自分にも適用'}`, async ({ page, scoreSubmissions }) => {
+        test.setTimeout(120000);
+        const source = await sourceReplay(page, { event: true });
+        if (expired) await page.clock.setSystemTime(new Date('2026-11-08T00:00:00Z'));
+        await loadReplay(page, source.text);
+        if (expired) await expect(page.locator('#battle-event-label')).toBeHidden();
+        else { await expect(page.locator('#battle-event-label')).toBeVisible(); await page.locator('#battle-event').check(); }
+        await page.locator('#battle-start').click();
+        await expect.poll(() => page.evaluate(() => window.game.gameState.battle?.kind)).toBe('replay');
+        await speedUp(page); await drive(page);
+        const result = await page.evaluate(() => window.game.uiController.resultController.repository.history().at(-1));
+        expect(result.battle.opponentScore).toEqual(source.record.result.score);
+        expect(await page.evaluate(() => !!window.game.gameState.event?.enabled)).toBe(!expired);
+        await expect.poll(() => scoreSubmissions.length).toBe(2);
+        expect(scoreSubmissions[1].mode).toMatch(expired ? /^通常$/ : /^イベント:/);
+    });
+}
+
+test('相手のカードを1件ずつスキップし、演出中の再読み込みでも重複適用しない', async ({ page, scoreSubmissions }, testInfo) => {
+    test.setTimeout(120000); page.on('dialog', dialog => dialog.accept());
+    await page.goto('/');
+    const source = await page.evaluate(async () => {
+        const suffix = `?v=${window.BUILD_VERSION.slice(1)}`;
+        const { createCpuReplay } = await import(`/js/cpuOpponent.js${suffix}`);
+        const { encodeReplay } = await import(`/js/replayCodec.js${suffix}`);
+        const record = await createCpuReplay({ difficulty: 'fresh', seed: 'battle-animation-resume' });
+        return { record, text: await encodeReplay(record) };
+    });
+    expect(Object.values(source.record.turns[0].action.placed).flat().length).toBeGreaterThan(2);
+    await loadReplay(page, source.text); await page.locator('#battle-start').click();
+    await expect(page.locator('#training-area')).toBeVisible(); await speedUp(page); await drive(page, true);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.screenshot({ path: testInfo.outputPath('battle-action.png'), animations: 'disabled' });
+    await page.evaluate(() => {
+        const { uiController: ui, gameState: state } = window.game;
+        const clock = ui.actionAnimation.clock, originalWait = Object.getPrototypeOf(clock).wait;
+        clock.wait = function (ms) {
+            return state.battle.animation?.turn === state.turn && !state.battle.animation.done ? originalWait.call(this, 60000) : Promise.resolve();
+        };
+    });
+    await page.locator('#hand-cards .card').first().click(); await page.locator('#confirm-action').click();
+    await page.waitForFunction(() => window.game.gameState.battle.animation?.cursor === 1);
+    await page.locator('.battle-animation-card').click();
+    await page.waitForFunction(() => window.game.gameState.battle.animation?.cursor === 2);
+    expect(await page.evaluate(() => ({ waiters: window.game.uiController.actionAnimation.clock.waiters.size,
+        skipped: window.game.uiController.actionAnimation.clock.skipCurrent }))).toEqual({ waiters: 1, skipped: false });
+    const before = await page.evaluate(() => {
+        const state = window.game.gameState;
+        return { player: Object.fromEntries(['experience', 'enrollment', 'satisfaction', 'accounting'].map(key => [key, state.player[key]])),
+            resolves: state.playRecord.events.filter(event => event.type === 'resolve').length };
+    });
+    await page.screenshot({ path: testInfo.outputPath('battle-opponent-animation.png'), animations: 'disabled' });
+    await page.reload();
+    await page.waitForFunction(() => window.game?.gameState.battle?.animation?.done && !window.game.uiController.actionBusy);
+    expect(await page.evaluate(() => {
+        const state = window.game.gameState;
+        return { player: Object.fromEntries(['experience', 'enrollment', 'satisfaction', 'accounting'].map(key => [key, state.player[key]])),
+            resolves: state.playRecord.events.filter(event => event.type === 'resolve').length };
+    })).toEqual(before);
+    expect(await page.evaluate(() => window.game.gameState.battle.opponent)).toEqual(source.record);
+    await speedUp(page); await drive(page);
+    await expect(page.locator('#battle-outcome')).toBeVisible();
+    await page.screenshot({ path: testInfo.outputPath('battle-result.png'), fullPage: true, animations: 'disabled' });
+    await expect.poll(() => scoreSubmissions.length).toBe(1);
+    await expect(page.locator('#result-replay-copy')).toBeEnabled();
+});

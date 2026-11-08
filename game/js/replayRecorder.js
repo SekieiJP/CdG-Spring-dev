@@ -69,6 +69,7 @@ export function startReplayRecording(state, { cardManager, scoreManager, eventDe
             cardVersion: cardManager?.dataVersion || null,
             rankVersion: scoreManager?.dataVersion || null,
             difficulty: state.difficulty, calcMode: !!state.calcMode,
+            ...(state.battle ? { battleKind: state.battle.kind, sameSeed: state.battle.sameSeed } : {}),
             eventId: state.event?.enabled ? state.event.eventId : null,
             seed: String(state.rng.seed), totalTurns: state.totalTurns, runId: state.runId,
             startedAt: state.startedAt || null

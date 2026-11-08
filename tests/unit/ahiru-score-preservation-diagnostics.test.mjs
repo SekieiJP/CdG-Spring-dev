@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0061';
-import {diagnoseScorePreservation} from '../../solver/browser/ahiru-score-preservation-diagnostics.js?v=20261107-0061';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0062';
+import {diagnoseScorePreservation} from '../../solver/browser/ahiru-score-preservation-diagnostics.js?v=20261107-0062';
 const scorer=new ScoreManager(null,{migrateHighScore:false}),oldFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});await scorer.loadRankData('test');globalThis.fetch=oldFetch;
 const states={low:{experience:30,enrollment:20,satisfaction:15,accounting:15},nine:{experience:40,enrollment:20,satisfaction:15,accounting:15},s:{experience:50,enrollment:32,satisfaction:15,accounting:15},start:{experience:0,enrollment:0,satisfaction:3,accounting:5}};

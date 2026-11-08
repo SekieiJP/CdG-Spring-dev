@@ -1,9 +1,9 @@
-import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261107-0061';
-import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261107-0061';
-import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261107-0061';
-import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261107-0061';
-import {recommendProStatus} from './ahiruProAdvice.js?v=20261107-0061';
-import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261107-0061';
+import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261107-0062';
+import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261107-0062';
+import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261107-0062';
+import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261107-0062';
+import {recommendProStatus} from './ahiruProAdvice.js?v=20261107-0062';
+import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261107-0062';
 export const ADVICE_SCENE_VERSION=1;
 const validStatus=status=>status&&['red','yellow','green'].includes(status.tone)&&typeof status.text==='string'&&status.text.trim()&&Array.from(status.text).length<=25;
 /** 確定状態と提示候補のスナップショットを、助言・取得アシストで共有する。 */
@@ -34,6 +34,7 @@ export class AhiruAdviceController {
         });
     }
     getSceneDecision(){
+        if(this.ui.gameState.battle?.kind==='cpu')return null;
         if(this.disposed||!this.eligible())return null;
         const ui=this.ui,state=ui.gameState,phase=(this.phase||state.phase)==='meeting'?'deletion':'acquisition';
         if(state.playRecord!==this.runRecord){this.view?.reset();this.runRecord=state.playRecord;}
@@ -62,6 +63,10 @@ export class AhiruAdviceController {
     }
     refresh(){
         if(!this.view||this.disposed)return;
+        if(this.ui.gameState.battle?.kind==='cpu'){
+            this.lastAdvice=this.eligible()?this.ui.battleController.cpuAdvice():null;
+            if(this.lastAdvice)this.view.show(this.lastAdvice);else this.view.hide();return;
+        }
         try{
             const scene=this.getSceneDecision();this.lastAdvice=scene?.status||null;
             if(this.lastAdvice)this.view.show(this.lastAdvice);else this.view.hide();

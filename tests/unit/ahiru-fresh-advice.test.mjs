@@ -1,11 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0061';
-import {CardManager} from '../../game/js/cardManager.js?v=20261107-0061';
-import {getFreshSGoals,scoreFreshStats} from '../../game/js/ahiruFreshGoals.js?v=20261107-0061';
-import {projectFreshAdviceState} from '../../game/js/ahiruFreshForecast.js?v=20261107-0061';
-import {recommendFreshStatus} from '../../game/js/ahiruFreshAdvice.js?v=20261107-0061';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20261107-0062';
+import {CardManager} from '../../game/js/cardManager.js?v=20261107-0062';
+import {getFreshSGoals,scoreFreshStats} from '../../game/js/ahiruFreshGoals.js?v=20261107-0062';
+import {projectFreshAdviceState} from '../../game/js/ahiruFreshForecast.js?v=20261107-0062';
+import {recommendFreshStatus} from '../../game/js/ahiruFreshAdvice.js?v=20261107-0062';
 const scorer=new ScoreManager(null,{migrateHighScore:false}),savedFetch=globalThis.fetch;
 globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankFresh.csv',import.meta.url),'utf8')});await scorer.loadRankData('test');globalThis.fetch=savedFetch;
 const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../../game/data/cards_fresh.csv',import.meta.url),'utf8'));

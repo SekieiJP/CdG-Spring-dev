@@ -1,4 +1,4 @@
-import {projectProDeck} from './proAcquisitionAdvisor.js?v=20261107-0061';
+import {projectProDeck} from './proAcquisitionAdvisor.js?v=20261107-0062';
 /** 公開デッキの固定式投影。時期の補正は開発データ由来で、検証を終えるまでは暫定。 */
 export const AHIRU_AXES=Object.freeze(['experience','enrollment','satisfaction','accounting']);
 const TOKENS=['passion','fatigue','inspiration','organize'];

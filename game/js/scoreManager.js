@@ -1,9 +1,9 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261107-0061';
-import { isEventActive } from './eventManager.js?v=20261107-0061';
-import { fingerprint } from './playRecord.js?v=20261107-0061';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261107-0062';
+import { isEventActive } from './eventManager.js?v=20261107-0062';
+import { fingerprint } from './playRecord.js?v=20261107-0062';
 
 export class ScoreManager {
     constructor(logger, { migrateHighScore = true } = {}) {
@@ -639,6 +639,7 @@ export class ScoreManager {
      * @param {string} [difficulty='fresh'] - 難易度ID
      */
     saveHighScore(score, difficulty = 'fresh', gameState = null) {
+        if (gameState?.battle?.sameSeed) return false;
         try {
             const current = this.getHighScore(difficulty, gameState);
 
