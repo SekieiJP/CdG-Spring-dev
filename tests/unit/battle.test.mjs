@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import vm from 'node:vm';
+import { gzipSync, gunzipSync } from 'node:zlib';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from '../../game/js/replayCodec.js?v=20261107-0064';
 import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261107-0064';
 import { GameState } from '../../game/js/gameState.js?v=20261107-0064';
 import { ScoreManager } from '../../game/js/scoreManager.js?v=20261107-0064';
@@ -27,6 +29,48 @@ function canonical(event) {
     return result;
 }
 let freshRecord;
+test('短縮リプレイは全ターンの公開状態・演出・得点を保ち、元の記録を変更しない', async () => {
+    const record = freshRecord || await createCpuReplay({ difficulty: 'fresh', seed: 'sekiei-compact-replay' });
+    const before = JSON.stringify(record), text = await encodeReplay(record);
+    assert.ok(text.startsWith(COMPACT_REPLAY_PREFIX));
+    assert.ok(text.length < REPLAY_PREFIX.length + gzipSync(before).toString('base64url').length);
+    assert.throws(() => new URL(text), TypeError);
+    const restored = validateBattleReplay(await decodeReplay(text, { currentBuildVersion: 'v20261107-0064' }));
+    assert.equal(JSON.stringify(record), before);
+    assert.deepEqual(restored.metadata, record.metadata);
+    assert.deepEqual(restored.result.score, record.result.score);
+    assert.deepEqual(restored.result.finalDeck, record.result.finalDeck);
+    const originalBattle = { opponent: record }, restoredBattle = { opponent: restored };
+    for (let turn = 0; turn < record.turns.length; turn++) {
+        for (const phase of ['training', 'action', 'meeting']) {
+            assert.deepEqual(opponentSnapshot(restoredBattle, turn, phase).player, opponentSnapshot(originalBattle, turn, phase).player);
+            assert.deepEqual(opponentDeck(restoredBattle, turn, phase), opponentDeck(originalBattle, turn, phase));
+        }
+        assert.deepEqual(opponentFrames(restored, turn), opponentFrames(record, turn));
+    }
+});
+
+test('URLとして小文字化された旧形式の先頭を受け付け、本文の大小文字は変更しない', async () => {
+    const record = freshRecord || await createCpuReplay({ difficulty: 'fresh', seed: 'sekiei-url-replay' });
+    const original = REPLAY_PREFIX + gzipSync(JSON.stringify(record)).toString('base64url');
+    const normalizedAsURL = new URL(original).href;
+    assert.ok(normalizedAsURL.startsWith('cdgr1:'));
+    assert.deepEqual(await decodeReplay(normalizedAsURL), JSON.parse(JSON.stringify(record)));
+    await assert.rejects(decodeReplay(original.toLowerCase()), /壊れて|形式/);
+    const compact = await encodeReplay(record);
+    assert.deepEqual(await decodeReplay(compact.replace(/^CDGR1\./, 'cdgr1.')), await decodeReplay(compact));
+});
+
+test('短縮形式の参照切れと、参照展開によるサイズ超過を拒否する', async () => {
+    const record = freshRecord || await createCpuReplay({ difficulty: 'fresh', seed: 'sekiei-bounded-replay' });
+    const text = await encodeReplay(record);
+    const unpacked = gunzipSync(Buffer.from(text.slice(COMPACT_REPLAY_PREFIX.length), 'base64url'));
+    await assert.rejects(decodeReplay(text, { maxDecodedBytes: unpacked.length + 1 }), /大きすぎ/);
+    const packet = JSON.parse(unpacked);
+    packet[5] = packet[4].length;
+    await assert.rejects(decodeReplay(COMPACT_REPLAY_PREFIX + gzipSync(JSON.stringify(packet)).toString('base64url')), /壊れて/);
+});
+
 test('PROの固定V1は基準3プレイの取得・抽選・配置解決・削除・最終得点を再現する', { timeout: 120000 }, async () => {
     const fixture = JSON.parse(await readFile(new URL('../fixtures/cpu-pro-v1-golden.json', import.meta.url)));
     assert.ok(fixture.games.some(game => game.inspiration));

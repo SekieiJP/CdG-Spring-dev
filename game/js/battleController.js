@@ -73,7 +73,7 @@ export class BattleController {
             <button type="button" id="battle-kind-replay" class="btn-primary" aria-pressed="true">リプレイと対戦</button>
             <button type="button" id="battle-kind-cpu" class="btn-secondary" aria-pressed="false">あひる先生と対戦</button></div>
             <div id="battle-replay-controls"><label for="battle-replay-input">リプレイデータ</label>
-            <textarea id="battle-replay-input" rows="5" spellcheck="false" placeholder="コピーしたリプレイデータを貼り付けてください"></textarea>
+            <textarea id="battle-replay-input" rows="5" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off" placeholder="コピーしたリプレイデータを貼り付けてください"></textarea>
             <button type="button" id="battle-load-replay" class="btn-secondary">リプレイを読み込む</button>
             <p id="battle-replay-summary"></p>
             <label class="battle-check"><input id="battle-same-seed" type="checkbox">リプレイデータと同一シード</label>
@@ -87,6 +87,13 @@ export class BattleController {
         document.body.appendChild(overlay);
         let kind = 'replay'; let loaded = preset?.opponent || null; let busy = false;
         const input = content.querySelector('#battle-replay-input');
+        input.addEventListener('paste', event => {
+            const text = event.clipboardData?.getData('text/plain');
+            if (!text) return;
+            event.preventDefault();
+            input.setRangeText(text, input.selectionStart, input.selectionEnd, 'end');
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        });
         const start = content.querySelector('#battle-start');
         const message = content.querySelector('#battle-lobby-message');
         const summary = content.querySelector('#battle-replay-summary');

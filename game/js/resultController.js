@@ -2,7 +2,7 @@ import { ResultRepository } from './resultRepository.js?v=20261107-0064';
 import { SubmissionQueue } from './submissionQueue.js?v=20261107-0064';
 import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261107-0064';
 import { getCompletedReplay } from './replayRecorder.js?v=20261107-0064';
-import { encodeReplay } from './replayCodec.js?v=20261107-0064';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261107-0064';
 import { battleSummary } from './battleReplay.js?v=20261107-0064';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
@@ -63,7 +63,7 @@ export class ResultController {
         this.renderComparison(summary);
         this.renderStatus();
         this.renderReplayControls();
-        this.prepareReplay(summary);
+        this.prepareReplay(summary, true);
         this.queue.start();
         return summary;
     }
@@ -105,15 +105,19 @@ export class ResultController {
         for (const row of this.repository.history()) this.prepareReplay(row);
     }
 
-    prepareReplay(row) {
-        if (!row?.replayPending || row.replayText || this.replayJobs.has(row.resultId)) return;
+    prepareReplay(row, upgradeLegacy = false) {
+        if (!row || this.replayJobs.has(row.resultId)) return;
+        const previousText = row.replayText;
+        const legacy = upgradeLegacy && typeof previousText === 'string' && previousText.slice(0, REPLAY_PREFIX.length).toUpperCase() === REPLAY_PREFIX && previousText.slice(REPLAY_PREFIX.length, REPLAY_PREFIX.length + 4) === 'H4sI';
+        if (!legacy && (!row.replayPending || previousText)) return;
         const resultId = row.resultId;
-        const replay = structuredClone(row.replayPending);
         this.replayMessages.delete(resultId);
-        const job = encodeReplay(replay).then(text => {
+        const source = legacy ? decodeReplay(previousText) : Promise.resolve(structuredClone(row.replayPending));
+        const job = source.then(encodeReplay).then(text => {
+            if (legacy && (this.repository.find(resultId)?.replayText !== previousText || !text.startsWith(COMPACT_REPLAY_PREFIX) || text.length >= previousText.length)) return;
             this.repository.setReplay(resultId, text);
         }).catch(error => {
-            this.replayMessages.set(resultId, 'リプレイデータを準備できませんでした。履歴を開き直すと再試行します。');
+            if (!legacy) this.replayMessages.set(resultId, 'リプレイデータを準備できませんでした。履歴を開き直すと再試行します。');
             this.ui.logger?.log(`リプレイデータの準備に失敗: ${error.message}`, 'warning');
         }).finally(() => {
             this.replayJobs.delete(resultId);
@@ -126,6 +130,7 @@ export class ResultController {
 
     replayStatusText(row) {
         if (!row) return '履歴はこの端末に残っていません。';
+        if (this.replayJobs.has(row.resultId)) return 'リプレイデータを準備しています。';
         if (this.replayMessages.has(row.resultId)) return this.replayMessages.get(row.resultId);
         if (row.replayText) return 'リプレイデータをコピーできます。';
         if (row.replayPending) return 'リプレイデータを準備しています。';
@@ -147,7 +152,7 @@ export class ResultController {
             button.disabled = !row || (!row.favorite && atLimit);
         }
         for (const button of document.querySelectorAll('[data-replay-id]')) {
-            button.disabled = !rows.get(button.dataset.replayId)?.replayText;
+            button.disabled = !rows.get(button.dataset.replayId)?.replayText || this.replayJobs.has(button.dataset.replayId);
         }
         const resultStatus = document.getElementById('result-replay-status');
         if (resultStatus) resultStatus.textContent = this.currentId ? this.replayStatusText(rows.get(this.currentId)) : '';
@@ -176,7 +181,7 @@ export class ResultController {
 
     async copyReplay(resultId) {
         const row = this.repository.find(resultId);
-        if (!row?.replayText) return;
+        if (!row?.replayText || this.replayJobs.has(resultId)) return;
         try {
             if (!navigator.clipboard?.writeText) throw new Error('クリップボードにアクセスできません');
             await navigator.clipboard.writeText(row.replayText);
@@ -240,6 +245,9 @@ export class ResultController {
             const details = document.createElement('details');
             details.className = 'result-history-entry';
             details.dataset.resultId = row.resultId;
+            details.addEventListener('toggle', () => {
+                if (details.open) this.prepareReplay(this.repository.find(row.resultId), true);
+            });
             details.innerHTML = `<summary><span data-history-label="${escape(row.resultId)}"></span><br><small>${escape(new Date(row.completedAt).toLocaleString('ja-JP'))}</small></summary>
                 <p data-history-status="${escape(row.resultId)}">${escape(this.statusText(row))}</p>
                 <p>${escape(this.comparisonText(row))}</p>

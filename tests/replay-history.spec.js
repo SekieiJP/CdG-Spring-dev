@@ -94,6 +94,51 @@ async function decodeHistory(page, resultId) {
     }, resultId);
 }
 
+async function playbackView(page, record = null) {
+    return page.evaluate(async record => {
+        const source = record || window.game.gameState.replayRecord;
+        const { opponentSnapshot, opponentDeck, opponentFrames, interimScore } = await import(`/js/battleReplay.js?v=${window.BUILD_VERSION.slice(1)}`);
+        const battle = { opponent: source };
+        return JSON.parse(JSON.stringify(source.turns.map((_, turn) => ({
+            frames: opponentFrames(source, turn),
+            phases: ['training', 'action', 'meeting'].map(phase => {
+                const snapshot = opponentSnapshot(battle, turn, phase);
+                return { player: snapshot.player, deck: opponentDeck(battle, turn, phase),
+                    score: interimScore(window.game.scoreManager, { difficulty: source.metadata.difficulty, event: source.result.state.event }, snapshot.player, turn) };
+            })
+        }))));
+    }, record);
+}
+
+test('旧形式の短縮中に再読み込みしても元のコードとお気に入りを保ち、開き直すと短縮できる', async ({ page }) => {
+    await installClipboard(page); await startGame(page); await finishGame(page);
+    await expect(page.locator('#result-replay-copy')).toBeEnabled();
+    const original = await page.evaluate(async () => {
+        const controller = window.game.uiController.resultController, row = controller.repository.history().at(-1);
+        const { decodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+        const record = await decodeReplay(row.replayText);
+        const bytes = new Uint8Array(await new Response(new Blob([JSON.stringify(record)]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
+        let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte);
+        const legacy = 'CDGR1:' + btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+        controller.repository.setReplay(row.resultId, legacy); controller.repository.setFavorite(row.resultId, true);
+        localStorage.setItem('cdg_test_hold_compression', 'true');
+        return { id: row.resultId, legacy, score: row.score, finalDeck: row.finalDeck };
+    });
+    await page.locator('#view-result-history').click(); await page.locator('.result-history-entry summary').click();
+    await expect(page.locator('#result-history-overlay [data-replay-id]')).toBeDisabled();
+    expect(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText, original.id)).toBe(original.legacy);
+    await page.evaluate(() => localStorage.removeItem('cdg_test_hold_compression')); await page.reload();
+    await page.locator('#start-result-history').click(); await page.locator('.result-history-entry summary').click();
+    const copy = page.locator('#result-history-overlay [data-replay-id]');
+    await expect(copy).toBeEnabled();
+    await expect.poll(() => page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText.startsWith('CDGR1.'), original.id)).toBe(true);
+    await copy.click();
+    const restored = await page.evaluate(id => window.game.uiController.resultController.repository.find(id), original.id);
+    expect(restored.favorite).toBe(true); expect(restored.score).toEqual(original.score); expect(restored.finalDeck).toEqual(original.finalDeck);
+    expect(restored.replayText.length).toBeLessThan(original.legacy.length);
+    expect(await page.evaluate(() => window.__copiedReplays[0])).toBe(restored.replayText);
+});
+
 for (const difficulty of ['fresh', 'pro']) {
     for (const mode of [
         { name: '通常', calcMode: false, eventMode: false },
@@ -112,6 +157,7 @@ for (const difficulty of ['fresh', 'pro']) {
                 const row = game.uiController.resultController.repository.history().at(-1);
                 return { id: row.resultId, score: row.score, finalDeck: row.finalDeck };
             });
+            const originalPlayback = await playbackView(page);
             await expect.poll(() => scoreSubmissions.length).toBe(1);
             expect(scoreSubmissions[0]).not.toHaveProperty('replayPending');
             expect(scoreSubmissions[0]).not.toHaveProperty('replayText');
@@ -139,13 +185,14 @@ for (const difficulty of ['fresh', 'pro']) {
             await copy.click();
             await expect(page.locator('[data-replay-status]')).toHaveText('リプレイデータをコピーしました。');
             const replay = await decodeHistory(page, original.id);
+            expect(await playbackView(page, replay)).toEqual(originalPlayback);
             expect(replay.metadata.difficulty).toBe(difficulty);
             expect(replay.metadata.calcMode).toBe(mode.calcMode);
             expect(!!replay.metadata.eventId).toBe(mode.eventMode);
             expect(replay.turns).toHaveLength(8);
             expect(replay.result.score).toEqual(original.score);
             expect(replay.result.finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category }))).toEqual(original.finalDeck);
-            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR1:/);
+            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR1\./);
             if (resumeEncoding) {
                 await expect(page.locator('#result-history-overlay [data-favorite-id]')).toHaveAttribute('aria-pressed', 'true');
                 expect(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayPending, original.id)).toBeUndefined();
