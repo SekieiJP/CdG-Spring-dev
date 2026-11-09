@@ -108,7 +108,7 @@ export function expandReplay(packet, maxBytes) {
             meeting: { after: readSnapshot(turn[7]), skipped: turn[6] === null,
                 deleted: array(turn[8]).map(index => ({ type: 'delete', card: { instanceId: readId(index) } })) } };
     });
-    const decoded = { schema: 1, complete: true, profile: 'battle-timeline-v2', metadata,
+    const decoded = { schema: 1, complete: true, profile: 'battle-timeline', metadata,
         definitions: { cards, ranks: [], eventItems }, instances, initial: readSnapshot(initialIndex), turns: decodedTurns,
         result: { score: result[0], finalDeck: array(result[1]).map(encoded => { array(encoded, 3); return applyDifference(reference(decodedInstances, encoded[0]), encoded); }), state: readSnapshot(result[2]) } };
     if (size(decoded) > maxBytes) throw new RangeError('リプレイデータが大きすぎます');

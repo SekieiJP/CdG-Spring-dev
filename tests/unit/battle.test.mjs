@@ -58,7 +58,7 @@ test('URLとして小文字化された旧形式の先頭を受け付け、本�
     assert.deepEqual(await decodeReplay(normalizedAsURL), JSON.parse(JSON.stringify(record)));
     await assert.rejects(decodeReplay(original.toLowerCase()), /壊れて|形式/);
     const compact = await encodeReplay(record);
-    assert.deepEqual(await decodeReplay(compact.replace(/^CDGR2\./, 'cdgr2.')), await decodeReplay(compact));
+    assert.deepEqual(await decodeReplay(compact.replace(/^CDGR1\./, 'cdgr1.')), await decodeReplay(compact));
 });
 
 test('短縮形式の参照切れと、参照展開によるサイズ超過を拒否する', async () => {

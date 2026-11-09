@@ -1,7 +1,7 @@
 import { compactReplay, expandReplay } from './replayCompact.js?v=20261107-0064';
 
 export const REPLAY_PREFIX = 'CDGR1:';
-export const COMPACT_REPLAY_PREFIX = 'CDGR2.';
+export const COMPACT_REPLAY_PREFIX = 'CDGR1.';
 export const MAX_REPLAY_BYTES = 8 * 1024 * 1024;
 const MAX_COMPRESSED_BYTES = MAX_REPLAY_BYTES + 65536;
 const MAX_REPLAY_TEXT_LENGTH = Math.ceil(MAX_COMPRESSED_BYTES * 4 / 3) + REPLAY_PREFIX.length;

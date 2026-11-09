@@ -131,7 +131,7 @@ test('旧形式の短縮中に再読み込みしても元のコードとお気�
     await page.locator('#start-result-history').click(); await page.locator('.result-history-entry summary').click();
     const copy = page.locator('#result-history-overlay [data-replay-id]');
     await expect(copy).toBeEnabled();
-    await expect.poll(() => page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText.startsWith('CDGR2.'), original.id)).toBe(true);
+    await expect.poll(() => page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText.startsWith('CDGR1.'), original.id)).toBe(true);
     await copy.click();
     const restored = await page.evaluate(id => window.game.uiController.resultController.repository.find(id), original.id);
     expect(restored.favorite).toBe(true); expect(restored.score).toEqual(original.score); expect(restored.finalDeck).toEqual(original.finalDeck);
@@ -192,7 +192,7 @@ for (const difficulty of ['fresh', 'pro']) {
             expect(replay.turns).toHaveLength(8);
             expect(replay.result.score).toEqual(original.score);
             expect(replay.result.finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category }))).toEqual(original.finalDeck);
-            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR2\./);
+            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR1\./);
             if (resumeEncoding) {
                 await expect(page.locator('#result-history-overlay [data-favorite-id]')).toHaveAttribute('aria-pressed', 'true');
                 expect(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayPending, original.id)).toBeUndefined();
