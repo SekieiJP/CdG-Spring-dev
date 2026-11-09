@@ -1,4 +1,4 @@
-import {recommendProStatus} from './ahiruProAdvice.js?v=20261107-0064';
+import {recommendProStatus} from './ahiruProAdvice.js?v=20261110-0065';
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'};
 
 /** 文面と同じ、提示時に確定した判断を強調表示にも使う。 */

@@ -1,6 +1,6 @@
-import {createAhiruStatusPolicy} from './ahiruStatusPolicy.js?v=20261107-0064';
-import {getFreshSGoals,freshAdviceScore} from './ahiruFreshGoals.js?v=20261107-0064';
-import {projectFreshAdviceState} from './ahiruFreshForecast.js?v=20261107-0064';
+import {createAhiruStatusPolicy} from './ahiruStatusPolicy.js?v=20261110-0065';
+import {getFreshSGoals,freshAdviceScore} from './ahiruFreshGoals.js?v=20261110-0065';
+import {projectFreshAdviceState} from './ahiruFreshForecast.js?v=20261110-0065';
 const weights={experience:2.8,enrollment:3.5,satisfaction:1.9,accounting:2.1};
 export const recommendFreshStatus=createAhiruStatusPolicy({
     difficulty:'fresh',weights,getGoals:getFreshSGoals,projectState:projectFreshAdviceState,scoreState:freshAdviceScore,

@@ -1,9 +1,9 @@
-import { ResultRepository } from './resultRepository.js?v=20261107-0064';
-import { SubmissionQueue } from './submissionQueue.js?v=20261107-0064';
-import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261107-0064';
-import { getCompletedReplay } from './replayRecorder.js?v=20261107-0064';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261107-0064';
-import { battleSummary } from './battleReplay.js?v=20261107-0064';
+import { ResultRepository } from './resultRepository.js?v=20261110-0065';
+import { SubmissionQueue } from './submissionQueue.js?v=20261110-0065';
+import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261110-0065';
+import { getCompletedReplay } from './replayRecorder.js?v=20261110-0065';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261110-0065';
+import { battleSummary } from './battleReplay.js?v=20261110-0065';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {

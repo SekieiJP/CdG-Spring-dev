@@ -1,8 +1,8 @@
-import { decodeReplay } from './replayCodec.js?v=20261107-0064';
-import { getCurrentEvent } from './eventManager.js?v=20261107-0064';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261107-0064';
+import { decodeReplay } from './replayCodec.js?v=20261110-0065';
+import { getCurrentEvent } from './eventManager.js?v=20261110-0065';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261110-0065';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261107-0064';
+    interimScore, battleSummary } from './battleReplay.js?v=20261110-0065';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };
@@ -77,10 +77,12 @@ export class BattleController {
             <button type="button" id="battle-load-replay" class="btn-secondary">リプレイを読み込む</button>
             <p id="battle-replay-summary"></p>
             <label class="battle-check"><input id="battle-same-seed" type="checkbox">リプレイデータと同一シード</label>
-            <p class="result-note">同一シードではハイスコアを記録しません。選ぶカードによって、候補や手札は変わります。</p>
+            <p class="result-note">同一シードではハイスコアを記録しません。リフレッシュや発想研修で候補を引くと、次の候補が先へ進みます。</p>
             <label id="battle-event-label" class="battle-check hidden"><input id="battle-event" type="checkbox">開催中のイベントを自分に適用する</label></div>
             <div id="battle-cpu-controls" class="hidden"><label for="battle-difficulty">ゲーム難易度</label>
             <select id="battle-difficulty"><option value="fresh">FRESH</option><option value="pro">PRO</option></select>
+            <label class="battle-check"><input id="battle-cpu-same-seed" type="checkbox" checked>あひる先生と同じシードで対戦する</label>
+            <p class="result-note">シードは対戦のたびに変わります。同じシードでも自己ベストを記録し、スコアを送信します。</p>
             <p>あひる先生は自分の教室を独立して運営します。あなたへの取得アシストとアドバイスはお休みです。</p></div>
             <p id="battle-lobby-message" role="status" aria-live="polite"></p>
             <button type="button" id="battle-start" class="btn-primary" disabled>対戦開始</button>`;
@@ -99,6 +101,7 @@ export class BattleController {
         const summary = content.querySelector('#battle-replay-summary');
         const eventLabel = content.querySelector('#battle-event-label');
         content.querySelector('#battle-difficulty').value = preset?.opponent?.metadata.difficulty || this.ui.selectedDifficulty || 'fresh';
+        if (preset?.kind === 'cpu') content.querySelector('#battle-cpu-same-seed').checked = preset.sameSeed;
         const update = () => { start.disabled = busy || kind === 'replay' && !loaded; };
         const select = selected => {
             if (busy) return;
@@ -149,7 +152,7 @@ export class BattleController {
                     message.textContent = `${preparing} ${progress}/8ターン`;
                 }) : loaded;
                 if (request !== this.request || !overlay.isConnected) return;
-                const same = kind === 'replay' && content.querySelector('#battle-same-seed').checked;
+                const same = content.querySelector(kind === 'cpu' ? '#battle-cpu-same-seed' : '#battle-same-seed').checked;
                 const seed = same ? opponent.metadata.seed : `battle:${crypto.randomUUID()}`;
                 const battle = { schema: 1, kind, opponent, sameSeed: seed === opponent.metadata.seed, animation: null };
                 const eventEnabled = kind === 'replay' && !eventLabel.classList.contains('hidden') && content.querySelector('#battle-event').checked;
@@ -341,7 +344,7 @@ export class BattleController {
             <h3 class="battle-evaluation-heading">評価の比較</h3>
             <table class="battle-comparison-table"><thead><tr><th scope="col">項目</th><th scope="col">👤 あなた</th><th scope="col">${players[1].icon} ${escape(summary.opponentName)}</th></tr></thead>
             <tbody>${rows.map(([name, key, pointKey, overflowKey]) => `<tr><th scope="row">${name}</th>${cell(score, key, pointKey, overflowKey)}${cell(other, key, pointKey, overflowKey)}</tr>`).join('')}${precision}</tbody></table>
-            ${summary.sameSeed ? '<p class="result-note battle-same-seed-note">同一シードの対戦です。自己ベストの対象外です。</p>' : ''}`;
+            ${summary.sameSeed && summary.kind === 'replay' ? '<p class="result-note battle-same-seed-note">同一シードの対戦です。自己ベストの対象外です。</p>' : ''}`;
         document.getElementById('result-rank')?.before(result);
         const deckSection = document.createElement('div'); deckSection.id = 'battle-opponent-deck';
         deckSection.innerHTML = `<details class="result-deck-details"><summary>${players[1].icon} ${escape(summary.opponentName)}の最終デッキ<span>${summary.opponentFinalDeck.length}枚</span></summary><div class="result-cards-grid"></div></details><details class="battle-result-build"><summary>バージョン・記録情報</summary><p class="result-build-info">${this.ui._buildInfoText()}</p></details>`;
@@ -352,7 +355,7 @@ export class BattleController {
         rematch.className = 'btn-primary'; rematch.textContent = '同じ相手と再戦';
         rematch.onclick = () => {
             const previous = this.state.battle;
-            this.ui.onRestart(); this.openLobby({ kind: previous.kind, opponent: previous.opponent });
+            this.ui.onRestart(); this.openLobby({ kind: previous.kind, opponent: previous.opponent, sameSeed: previous.sameSeed });
         };
         document.querySelector('#result-area .result-actions')?.prepend(rematch);
     }

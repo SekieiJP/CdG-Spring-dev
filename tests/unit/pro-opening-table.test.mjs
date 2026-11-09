@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {OPENING_TABLE_SCHEMA,openingPairJobs,validateOpeningTable,createOpeningTablePolicy} from '../../solver/browser/pro-opening-table.js?v=20261107-0064';
+import {OPENING_TABLE_SCHEMA,openingPairJobs,validateOpeningTable,createOpeningTablePolicy} from '../../solver/browser/pro-opening-table.js?v=20261110-0065';
 const catalog=Array.from({length:6},(_,i)=>({cardNo:i+6,rarity:'R'}));
 const initial={totalTurns:8,stats:{experience:0,enrollment:0,satisfaction:3,accounting:5},basicNos:[1,2,3,4,5]};
 const table=()=>({schema:OPENING_TABLE_SCHEMA,estimated:true,initial,cardNos:catalog.map(c=>c.cardNo),rows:openingPairJobs(catalog.map(c=>c.cardNo)).map(j=>({...j,score:j.pair.reduce((s,n)=>s+n,0)+j.remaining*.1}))});
