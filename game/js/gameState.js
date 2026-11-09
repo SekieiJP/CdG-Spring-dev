@@ -42,7 +42,7 @@ export class GameState {
             zones: Object.fromEntries(config.cardZones.map(id => [id, []]))
         };
 
-        this.runId = makeRunId();
+        this.runId = typeof options.runId === 'string' ? options.runId : makeRunId();
         this.nextInstanceId = 1;
         this.ruleState = {};
         this.pendingAction = null;

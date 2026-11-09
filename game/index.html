@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="css/style.css?v=20261110-0065">
     <link rel="stylesheet" href="css/ahiru-advice.css?v=20261110-0065">
     <link rel="stylesheet" href="css/battle.css?v=20261110-0065">
+    <link rel="stylesheet" href="css/replay-viewing.css?v=20261110-0065">
 </head>
 
 <body>
@@ -195,6 +196,7 @@
                 <div class="result-replay-actions">
                     <button id="result-favorite" class="btn-secondary" type="button" disabled>☆ お気に入りに追加</button>
                     <button id="result-replay-copy" class="btn-secondary" type="button" disabled>リプレイデータをコピー</button>
+                    <button id="result-replay-view" class="btn-secondary" type="button" disabled>📹 教室防犯カメラで見る</button>
                 </div>
                 <p id="result-favorite-status" class="result-note" data-favorite-count aria-live="polite"></p>
                 <p id="result-replay-status" class="result-note" role="status" aria-live="polite"></p>
@@ -245,6 +247,10 @@
 
                 <button id="start-game" class="btn-primary btn-large" disabled>ゲーム開始</button>
                 <button id="start-battle" class="btn-secondary btn-large" type="button" disabled>対戦モード</button>
+                <div class="replay-title-actions">
+                    <button id="start-replay-view" class="btn-secondary" type="button" disabled>📹 教室防犯カメラ</button>
+                    <button id="start-replay-example" class="btn-secondary" type="button" disabled>🐤 お手本プレイ</button>
+                </div>
                 <div id="calc-mode-row" class="calc-mode-row hidden">
                     <label class="calc-mode-label">
                         <span>🧮 計算機モード</span>

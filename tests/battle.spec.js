@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { encodeRawReplay } from './helpers/replay-game.js';
 
 async function speedUp(page) {
     await page.evaluate(() => {
@@ -236,27 +237,23 @@ test('互換性のないデータや不正なリプレイで現在のゲーム�
     await page.locator('#battle-replay-input').fill('CDGR1:broken');
     await page.locator('#battle-load-replay').click(); await expect(page.locator('#battle-start')).toBeDisabled();
     await expect(page.locator('#battle-lobby-message')).not.toHaveText('対戦できます。');
-    const incompatible = await page.evaluate(async record => {
-        record.metadata.buildVersion = 'v20000101-0001';
-        const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
-        return encodeReplay(record);
-    }, source.record);
+    const incompatibleRecord = structuredClone(source.record);
+    incompatibleRecord.metadata.buildVersion = 'v20000101-0001';
+    const incompatible = await encodeRawReplay(page, incompatibleRecord);
     await page.locator('#battle-replay-input').fill(incompatible); await page.locator('#battle-load-replay').click();
     await expect(page.locator('#battle-lobby-message')).toContainText('互換性');
     for (const defect of ['finalDeck', 'overflow', 'reference']) {
-        const text = await page.evaluate(async ({ record, defect }) => {
-            if (defect === 'finalDeck') record.result.finalDeck[0] = null;
-            if (defect === 'overflow') record.result.score.overflow = { experience: '不正', enrollmentDiff: 0, satisfaction: 0 };
-            if (defect === 'reference') delete record.instances[record.turns[0].actionStart.player.hand[0]];
-            const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
-            return encodeReplay(record);
-        }, { record: source.record, defect });
+        const record = structuredClone(source.record);
+        if (defect === 'finalDeck') record.result.finalDeck[0] = null;
+        if (defect === 'overflow') record.result.score.overflow = { experience: '不正', enrollmentDiff: 0, satisfaction: 0 };
+        if (defect === 'reference') delete record.instances[record.turns[0].actionStart.player.hand[0]];
+        const text = await encodeRawReplay(page, record);
         await page.locator('#battle-replay-input').fill(text); await page.locator('#battle-load-replay').click();
         await expect(page.locator('#battle-lobby-message')).not.toHaveText('リプレイを確認しています。');
         await expect(page.locator('#battle-start')).toBeDisabled();
     }
     const compatible = await page.evaluate(async record => {
-        record.metadata.buildVersion = 'v20261107-0061';
+        record.metadata.buildVersion = window.BUILD_VERSION.replace(/-\d{4}$/, '-0001');
         const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
         return encodeReplay(record);
     }, source.record);

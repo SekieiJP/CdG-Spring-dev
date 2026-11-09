@@ -35,6 +35,7 @@ export class ResultController {
         });
         document.getElementById('result-favorite')?.addEventListener('click', () => this.toggleFavorite(this.currentId));
         document.getElementById('result-replay-copy')?.addEventListener('click', () => this.copyReplay(this.currentId));
+        document.getElementById('result-replay-view')?.addEventListener('click', () => this.viewReplay(this.currentId));
         this.queue.start();
         this.preparePendingReplays();
     }
@@ -143,8 +144,10 @@ export class ResultController {
         const atLimit = favoriteCount >= ResultRepository.FAVORITE_LIMIT;
         const resultFavorite = document.getElementById('result-favorite');
         const resultReplay = document.getElementById('result-replay-copy');
+        const resultView = document.getElementById('result-replay-view');
         if (resultFavorite) resultFavorite.dataset.favoriteId = this.currentId || '';
         if (resultReplay) resultReplay.dataset.replayId = this.currentId || '';
+        if (resultView) resultView.dataset.replayViewId = this.currentId || '';
         for (const button of document.querySelectorAll('[data-favorite-id]')) {
             const row = rows.get(button.dataset.favoriteId);
             button.textContent = row?.favorite ? '★ お気に入りから外す' : '☆ お気に入りに追加';
@@ -153,6 +156,9 @@ export class ResultController {
         }
         for (const button of document.querySelectorAll('[data-replay-id]')) {
             button.disabled = !rows.get(button.dataset.replayId)?.replayText || this.replayJobs.has(button.dataset.replayId);
+        }
+        for (const button of document.querySelectorAll('[data-replay-view-id]')) {
+            button.disabled = !rows.get(button.dataset.replayViewId)?.replayText || this.replayJobs.has(button.dataset.replayViewId);
         }
         const resultStatus = document.getElementById('result-replay-status');
         if (resultStatus) resultStatus.textContent = this.currentId ? this.replayStatusText(rows.get(this.currentId)) : '';
@@ -177,6 +183,11 @@ export class ResultController {
         if (!result.ok) this.ui.showFloatNotification(result.error, 'warning');
         this.renderReplayControls();
         this.renderStatus();
+    }
+
+    viewReplay(resultId) {
+        const text = this.repository.find(resultId)?.replayText;
+        if (text && !this.replayJobs.has(resultId)) this.ui.replayViewing.open({ text });
     }
 
     async copyReplay(resultId) {
@@ -280,6 +291,13 @@ export class ResultController {
             copy.textContent = 'リプレイデータをコピー';
             copy.addEventListener('click', () => this.copyReplay(row.resultId));
             actions.appendChild(copy);
+            const view = document.createElement('button');
+            view.type = 'button';
+            view.className = 'btn-secondary';
+            view.dataset.replayViewId = row.resultId;
+            view.textContent = '📹 教室防犯カメラで見る';
+            view.addEventListener('click', () => this.viewReplay(row.resultId));
+            actions.appendChild(view);
             details.appendChild(actions);
             const replayStatus = document.createElement('p');
             replayStatus.dataset.replayStatus = row.resultId;

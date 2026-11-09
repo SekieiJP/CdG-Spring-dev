@@ -3,7 +3,7 @@
  */
 import { resolveCardAction } from './actionResolver.js?v=20261110-0065';
 import { DEFAULT_TURNS } from './defaultRules.js?v=20261110-0065';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn } from './replayRecorder.js?v=20261110-0065';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261110-0065';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -12,6 +12,7 @@ export class TurnManager {
         this.gameState = gameState;
         this.cardManager = cardManager;
         this.cardManager.gameState = gameState;
+        bindReplayCardManager(gameState, cardManager);
         this.logger = logger;
     }
 

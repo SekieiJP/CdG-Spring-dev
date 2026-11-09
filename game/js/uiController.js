@@ -10,8 +10,9 @@ import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=2
 import { getPlacementError } from './placementRules.js?v=20261110-0065';
 import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261110-0065';
 import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0065';
-import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261110-0065';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261110-0065';
 import { BattleController } from './battleController.js?v=20261110-0065';
+import { ReplayViewingController } from './replayViewingController.js?v=20261110-0065';
 
 /**
  * UIController - UI操作・表示制御
@@ -86,6 +87,7 @@ export class UIController {
         this.acquisitionAssist = new AcquisitionAssistController(this);
         this.ahiruAdvice = new AhiruAdviceController(this);
         this.battleController = new BattleController(this);
+        this.replayViewing = new ReplayViewingController(this);
     }
 
     /**
@@ -112,7 +114,8 @@ export class UIController {
         this.acquisitionAssist.init();
         this.ahiruAdvice.init();
         this.battleController.init();
-        for (const id of ['start-game', 'start-battle']) {
+        this.replayViewing.init();
+        for (const id of ['start-game', 'start-battle', 'start-replay-view', 'start-replay-example']) {
             const button = document.getElementById(id);
             if (button) button.disabled = false;
         }
@@ -830,6 +833,7 @@ export class UIController {
 
         if (this.gameState.event?.eventTraining?.itemId === 'idea-chemistry') {
             if (!this.selectedTrainingCard) return;
+            captureReplayTrainingChoice(this.gameState, [this.selectedTrainingCard]);
             this.gameState.addToDeck(this.selectedTrainingCard);
             const state = this.gameState.event.items['idea-chemistry'];
             state.usageTotal += 1; state.usageThisTurn += 1;
@@ -849,12 +853,14 @@ export class UIController {
 
         if (this.gameState.turn === 0 && this.selectedInitialCards) {
             // 初回研修
+            captureReplayTrainingChoice(this.gameState, this.selectedInitialCards);
             this.selectedInitialCards.forEach(card => {
                 this.gameState.addToDeck(card);
             });
         } else {
             // 通常研修
             if (this.selectedTrainingCard) {
+                captureReplayTrainingChoice(this.gameState, [this.selectedTrainingCard]);
                 this.gameState.addToDeck(this.selectedTrainingCard);
                 this.selectedTrainingCard = null;
             }
@@ -2258,6 +2264,7 @@ export class UIController {
      */
     confirmInspirationTraining() {
         if (!this.selectedTrainingCard) return;
+        captureReplayTrainingChoice(this.gameState, [this.selectedTrainingCard]);
 
         if (this.selectedTrainingCard.__skip !== true) {
             this.gameState.addToDeck({ ...this.selectedTrainingCard });
@@ -2280,6 +2287,7 @@ export class UIController {
      * 発想追加習得のスキップ
      */
     skipInspirationTraining() {
+        captureReplayTrainingChoice(this.gameState, []);
         this.acquisitionAssist.recordChoice([{ __skip: true }]);
         this.inspirationRemaining -= 1;
         const skipBtn = document.getElementById('btn-training-skip');
@@ -3421,6 +3429,8 @@ export class UIController {
             return;
         }
 
+        captureReplayTrainingChoice(this.gameState, cards, { rarity: requirement.rarity,
+            pickCount: requirement.maxCount, allowSkip: requirement.minCount === 0 });
         cards.forEach(card => this.gameState.addToDeck({ ...card }));
         this.gameState.currentTrainingCards = null;
 
