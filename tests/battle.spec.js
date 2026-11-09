@@ -82,6 +82,32 @@ async function loadReplay(page, text) {
     await expect(page.locator('#battle-lobby-message')).toHaveText('対戦できます。');
 }
 
+test('貼り付けではプレーンテキストを使い、小文字の旧形式も再編集せず読み込める', async ({ page }) => {
+    const source = await sourceReplay(page);
+    const legacy = await page.evaluate(async record => {
+        const stream = new Blob([JSON.stringify(record)]).stream().pipeThrough(new CompressionStream('gzip'));
+        const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+        let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte);
+        return 'CDGR1:' + btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+    }, source.record);
+    await page.locator('#start-battle').click();
+    const input = page.locator('#battle-replay-input');
+    for (const text of [legacy, legacy.replace(/^CDGR1:/, 'cdgr1:')]) {
+        const pasted = await input.evaluate((node, text) => {
+            node.select();
+            const data = new DataTransfer(); data.setData('text/plain', text); data.setData('text/uri-list', text.toLowerCase());
+            node.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }));
+            return node.value;
+        }, text);
+        expect(pasted).toBe(text);
+        await expect(page.locator('#battle-start')).toBeDisabled();
+        await page.locator('#battle-load-replay').click();
+        await expect(page.locator('#battle-lobby-message')).toHaveText('対戦できます。');
+    }
+    await page.locator('#battle-start').click();
+    await expect(page.locator('#training-area')).toBeVisible();
+});
+
 for (const difficulty of ['fresh', 'pro']) {
     for (const mode of [
         { name: '通常', calc: false, event: false }, { name: '計算機', calc: true, event: false },
@@ -242,13 +268,15 @@ test('相手のカードを1件ずつスキップし、演出中の再読み込�
     const source = await page.evaluate(async () => {
         const suffix = `?v=${window.BUILD_VERSION.slice(1)}`;
         const { createCpuReplay } = await import(`/js/cpuOpponent.js${suffix}`);
-        const { encodeReplay } = await import(`/js/replayCodec.js${suffix}`);
+        const { encodeReplay, decodeReplay } = await import(`/js/replayCodec.js${suffix}`);
         const record = await createCpuReplay({ difficulty: 'fresh', seed: 'battle-animation-resume' });
-        return { record, text: await encodeReplay(record) };
+        const text = await encodeReplay(record);
+        return { record: await decodeReplay(text), text };
     });
     expect(Object.values(source.record.turns[0].action.placed).flat().length).toBeGreaterThan(2);
     await loadReplay(page, source.text); await page.locator('#battle-start').click();
     await expect(page.locator('#training-area')).toBeVisible(); await speedUp(page); await drive(page, true);
+    await page.waitForFunction(() => !window.game.uiController.mobileLayout.resetScroll);
     await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
     await expect(page.locator('#sticky-header')).not.toHaveClass(/hidden/);
     await expect(page.locator('#battle-compact-opponent')).toBeVisible();

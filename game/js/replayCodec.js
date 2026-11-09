@@ -1,4 +1,7 @@
+import { compactReplay, expandReplay } from './replayCompact.js?v=20261107-0064';
+
 export const REPLAY_PREFIX = 'CDGR1:';
+export const COMPACT_REPLAY_PREFIX = 'CDGR2.';
 export const MAX_REPLAY_BYTES = 8 * 1024 * 1024;
 const MAX_COMPRESSED_BYTES = MAX_REPLAY_BYTES + 65536;
 const MAX_REPLAY_TEXT_LENGTH = Math.ceil(MAX_COMPRESSED_BYTES * 4 / 3) + REPLAY_PREFIX.length;
@@ -72,16 +75,19 @@ function decodeBase64(text) {
 export async function encodeReplay(record) {
     validateReplayRecord(record);
     if (typeof CompressionStream !== 'function') throw new ReplayDataError('この環境ではリプレイデータを出力できません');
-    const bytes = new TextEncoder().encode(JSON.stringify(record));
-    if (bytes.byteLength > MAX_REPLAY_BYTES) throw new ReplayDataError('リプレイデータが大きすぎます');
+    const json = JSON.stringify(record);
+    if (new TextEncoder().encode(json).byteLength > MAX_REPLAY_BYTES) throw new ReplayDataError('リプレイデータが大きすぎます');
+    const compact = compactReplay(JSON.parse(json));
+    const bytes = new TextEncoder().encode(compact ? JSON.stringify(compact) : json);
     const compressed = await readBytes(new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip')), MAX_COMPRESSED_BYTES);
-    return REPLAY_PREFIX + encodeBase64(compressed);
+    return (compact ? COMPACT_REPLAY_PREFIX : REPLAY_PREFIX) + encodeBase64(compressed);
 }
 
 export async function decodeReplay(text, { currentBuildVersion, maxDecodedBytes = MAX_REPLAY_BYTES } = {}) {
     if (typeof text !== 'string' || text.length > MAX_REPLAY_TEXT_LENGTH) throw new ReplayDataError('リプレイデータのテキスト形式が正しくありません');
     const normalized = text.trim();
-    if (!normalized.startsWith(REPLAY_PREFIX)) throw new ReplayDataError('対応していないリプレイデータの形式です');
+    const prefix = normalized.slice(0, REPLAY_PREFIX.length).toUpperCase();
+    if (prefix !== REPLAY_PREFIX && prefix !== COMPACT_REPLAY_PREFIX) throw new ReplayDataError('対応していないリプレイデータの形式です');
     if (typeof DecompressionStream !== 'function') throw new ReplayDataError('この環境ではリプレイデータを読み込めません');
     if (!Number.isInteger(maxDecodedBytes) || maxDecodedBytes < 1 || maxDecodedBytes > MAX_REPLAY_BYTES) throw new ReplayDataError('展開後サイズの上限が正しくありません');
     let record;
@@ -89,8 +95,10 @@ export async function decodeReplay(text, { currentBuildVersion, maxDecodedBytes 
         const compressed = decodeBase64(normalized.slice(REPLAY_PREFIX.length));
         const bytes = await readBytes(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip')), maxDecodedBytes);
         record = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+        if (prefix === COMPACT_REPLAY_PREFIX) record = expandReplay(record, maxDecodedBytes);
     } catch (error) {
         if (error instanceof ReplayDataError) throw error;
+        if (error instanceof RangeError && /大きすぎ/.test(error.message)) throw new ReplayDataError(error.message);
         throw new ReplayDataError('リプレイデータが壊れています');
     }
     validateReplayRecord(record);
