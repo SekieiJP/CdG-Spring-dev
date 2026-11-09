@@ -18,9 +18,14 @@ async function fingerprint(page) {
 }
 
 async function selectScene(page, turn, kind) {
-    const index = await page.evaluate(({ turn, kind }) => window.game.uiController.replayViewing.scenes.findIndex(scene => scene.turn === turn && scene.kind === kind), { turn, kind });
+    const { index, cursor, total } = await page.evaluate(({ turn, kind }) => {
+        const viewer = window.game.uiController.replayViewing;
+        return { index: viewer.scenes.findIndex(scene => scene.turn === turn && scene.kind === kind), cursor: viewer.cursor, total: viewer.scenes.length };
+    }, { turn, kind });
     expect(index).toBeGreaterThanOrEqual(0);
-    await page.locator('#replay-scene-select').selectOption(String(index));
+    const direction = index > cursor ? 'next' : 'previous';
+    for (let step = 0; step < Math.abs(index - cursor); step++) await page.locator(`#replay-${direction}`).click();
+    await expect(page.locator('#replay-page-position')).toHaveText(`${index + 1} / ${total}`);
     await expect(page.locator('#replay-ai-reason')).toBeEnabled({ timeout: 90000 });
 }
 
@@ -48,7 +53,7 @@ test('防犯カメラで時間移動・解決後の値・選択理由を確認�
         await page.setViewportSize({ width: 390, height: 844 });
         await page.clock.runFor(4000);
         await page.locator('#replay-scene-title').scrollIntoViewIfNeeded();
-        expect(await page.locator('.replay-transport select').evaluate(node => node.getBoundingClientRect().width)).toBeGreaterThan(100);
+        await expect(page.locator('.replay-transport button')).toHaveCount(2);
         expect(await page.locator('#replay-workshop').evaluate(node => node.scrollWidth <= window.innerWidth)).toBe(true);
         await page.screenshot({ path: '/tmp/cdg-0065-replay-camera-mobile.png' });
     }

@@ -40,9 +40,9 @@ export class ReplayViewingController {
                 <div id="replay-scene-stats" class="replay-scene-stats"></div>
                 <p id="replay-stats-timing" class="result-note"></p>
                 <nav class="replay-transport" aria-label="時間を移動">
-                    <button id="replay-previous" type="button" class="btn-secondary" aria-label="前の場面">⏪</button>
-                    <label>場面<select id="replay-scene-select"></select></label>
-                    <button id="replay-next" type="button" class="btn-secondary" aria-label="次の場面">⏩</button>
+                    <button id="replay-previous" type="button" class="btn-secondary" aria-label="前のページ">⏪</button>
+                    <span id="replay-page-position" aria-label="視聴ページ" aria-live="polite"></span>
+                    <button id="replay-next" type="button" class="btn-secondary" aria-label="次のページ">⏩</button>
                 </nav>
                 <h2 id="replay-scene-title"></h2><p id="replay-actual-choice"></p>
                 <div id="replay-original-placements"></div><div id="replay-scene-cards" class="replay-cards-grid"></div>
@@ -77,7 +77,6 @@ export class ReplayViewingController {
         this.node('replay-view-load').onclick = () => this.loadInput();
         this.node('replay-previous').onclick = () => this.go(this.cursor - 1);
         this.node('replay-next').onclick = () => this.go(this.cursor + 1);
-        this.node('replay-scene-select').onchange = event => this.go(Number(event.target.value));
         this.node('replay-ai-reason').onclick = () => {
             this.reasonOpen = !this.reasonOpen; this.showDecision(this.cache.get(this.scenes[this.cursor].key));
         };
@@ -118,18 +117,20 @@ export class ReplayViewingController {
         this.stopAnalysis(); this.record = record; this.scenes = scenes; this.cursor = 0; this.cache.clear(); this.analysisError = null;
         this.node('replay-camera').classList.remove('hidden'); this.node('replay-input-panel').open = false;
         this.overlay.querySelector('.info-overlay-title').textContent = '教室防犯カメラ';
+        this.overlay.setAttribute('aria-label', '教室防犯カメラ');
         const description = `${record.metadata.cpuPolicy ? 'あひる先生' : 'プレイ記録'} / ${record.metadata.difficulty.toUpperCase()}${record.metadata.eventId ? ' / イベント' : ''}`;
         this.node('replay-source-description').textContent = description;
-        this.node('replay-scene-select').replaceChildren(...scenes.map((scene, i) => new Option(`${scene.turn + 1}ターン目：${scene.label}`, String(i))));
         this.renderScene();
+        this.overlay.querySelector('.info-overlay-content').scrollTop = 0;
     }
     go(index) {
         if (index < 0 || index >= this.scenes.length) return;
         this.cursor = index; this.analysisError = null; this.renderScene();
+        this.overlay.querySelector('.info-overlay-content').scrollTop = 0;
     }
     renderScene() {
         const scene = this.scenes[this.cursor], escape = value => this.ui._escapeHTML(String(value));
-        this.node('replay-scene-select').value = String(this.cursor);
+        this.node('replay-page-position').textContent = `${this.cursor + 1} / ${this.scenes.length}`;
         this.node('replay-previous').disabled = this.cursor === 0; this.node('replay-next').disabled = this.cursor === this.scenes.length - 1;
         const config = getDifficultyConfig(this.record.metadata.difficulty);
         this.node('replay-scene-title').textContent = `${scene.turn + 1}/${this.record.metadata.totalTurns}ターン ${config.turns[scene.turn].name}：${scene.label}`;
