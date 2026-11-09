@@ -1,5 +1,5 @@
-import * as fresh from './freshAcquisitionAdvisor.js?v=20261107-0064';
-import * as pro from './proAcquisitionAdvisor.js?v=20261107-0064';
+import * as fresh from './freshAcquisitionAdvisor.js?v=20261110-0065';
+import * as pro from './proAcquisitionAdvisor.js?v=20261110-0065';
 export const supportsAcquisitionAdvice=difficulty=>['fresh','pro'].includes(difficulty);
 export const PROFILES = Object.freeze({...fresh.PROFILES,...pro.PROFILES});
 export function createAdvisorObservation(state,candidates,options={}){

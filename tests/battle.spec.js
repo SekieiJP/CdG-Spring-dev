@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { encodeRawReplay } from './helpers/replay-game.js';
 
 async function speedUp(page) {
     await page.evaluate(() => {
@@ -185,11 +186,16 @@ for (const difficulty of ['fresh', 'pro']) {
         test.setTimeout(180000); page.on('dialog', dialog => dialog.accept());
         await page.goto('/'); await page.locator('#start-battle').click();
         await page.locator('#battle-kind-cpu').click(); await page.locator('#battle-difficulty').selectOption(difficulty);
+        await expect(page.locator('#battle-cpu-same-seed')).toBeChecked();
         await expect(page.locator('#battle-replay-controls')).toBeHidden();
         await page.locator('#battle-start').click();
         if (difficulty === 'pro') await expect(page.locator('#battle-lobby-message')).toContainText('あひる先生が教材研究中…');
         await expect(page.locator('#training-area')).toBeVisible({ timeout: 120000 });
         const opponent = await page.evaluate(() => window.game.gameState.battle.opponent);
+        expect(await page.evaluate(() => window.game.gameState.rng.seed)).toBe(opponent.metadata.seed);
+        const originalOffer = opponent.turns[0].training.find(boundary => boundary.kind === 'training-offer').state.currentTrainingCards
+            .map(card => String(opponent.definitions.cards.find(definition => definition.definitionId === card.definitionId).cardNo));
+        expect(await page.evaluate(() => window.game.gameState.currentTrainingCards.map(card => String(card.cardNo)))).toEqual(originalOffer);
         await page.reload();
         await expect(page.locator('#training-area')).toBeVisible();
         expect(await page.evaluate(() => window.game.gameState.battle.opponent)).toEqual(opponent);
@@ -202,11 +208,28 @@ for (const difficulty of ['fresh', 'pro']) {
         expect(await page.evaluate(() => window.game.uiController.resultController.repository.history()[0].battle.kind)).toBe('cpu');
         await expect.poll(() => scoreSubmissions.length).toBe(1);
         expect(scoreSubmissions[0].battleKind).toBe('cpu'); expect(scoreSubmissions[0].mode).toBe('通常');
+        expect(scoreSubmissions[0].sameSeed).toBe(true);
+        await expect(page.locator('.battle-same-seed-note')).toHaveCount(0);
         await page.locator('#battle-rematch').click();
         await expect(page.locator('#battle-kind-cpu')).toHaveAttribute('aria-pressed', 'true');
         await expect(page.locator('#battle-difficulty')).toHaveValue(difficulty);
+        if (difficulty === 'fresh') {
+            await page.locator('#battle-start').click();
+            await expect(page.locator('#training-area')).toBeVisible();
+            const rematch = await page.evaluate(() => ({ seed: window.game.gameState.rng.seed, opponentSeed: window.game.gameState.battle.opponent.metadata.seed }));
+            expect(rematch.seed).toBe(rematch.opponentSeed); expect(rematch.seed).not.toBe(opponent.metadata.seed);
+        }
     });
 }
+
+test('CPU対戦で同一シードをオフにすると相手と別のシードで開始する', async ({ page }) => {
+    await page.goto('/'); await page.locator('#start-battle').click();
+    await page.locator('#battle-kind-cpu').click(); await page.locator('#battle-cpu-same-seed').uncheck();
+    await page.locator('#battle-start').click(); await expect(page.locator('#training-area')).toBeVisible();
+    const state = await page.evaluate(() => ({ same: window.game.gameState.battle.sameSeed,
+        seed: window.game.gameState.rng.seed, opponentSeed: window.game.gameState.battle.opponent.metadata.seed }));
+    expect(state.same).toBe(false); expect(state.seed).not.toBe(state.opponentSeed);
+});
 
 test('互換性のないデータや不正なリプレイで現在のゲームと履歴を壊さない', async ({ page }) => {
     const source = await sourceReplay(page);
@@ -214,27 +237,23 @@ test('互換性のないデータや不正なリプレイで現在のゲーム�
     await page.locator('#battle-replay-input').fill('CDGR1:broken');
     await page.locator('#battle-load-replay').click(); await expect(page.locator('#battle-start')).toBeDisabled();
     await expect(page.locator('#battle-lobby-message')).not.toHaveText('対戦できます。');
-    const incompatible = await page.evaluate(async record => {
-        record.metadata.buildVersion = 'v20000101-0001';
-        const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
-        return encodeReplay(record);
-    }, source.record);
+    const incompatibleRecord = structuredClone(source.record);
+    incompatibleRecord.metadata.buildVersion = 'v20000101-0001';
+    const incompatible = await encodeRawReplay(page, incompatibleRecord);
     await page.locator('#battle-replay-input').fill(incompatible); await page.locator('#battle-load-replay').click();
     await expect(page.locator('#battle-lobby-message')).toContainText('互換性');
     for (const defect of ['finalDeck', 'overflow', 'reference']) {
-        const text = await page.evaluate(async ({ record, defect }) => {
-            if (defect === 'finalDeck') record.result.finalDeck[0] = null;
-            if (defect === 'overflow') record.result.score.overflow = { experience: '不正', enrollmentDiff: 0, satisfaction: 0 };
-            if (defect === 'reference') delete record.instances[record.turns[0].actionStart.player.hand[0]];
-            const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
-            return encodeReplay(record);
-        }, { record: source.record, defect });
+        const record = structuredClone(source.record);
+        if (defect === 'finalDeck') record.result.finalDeck[0] = null;
+        if (defect === 'overflow') record.result.score.overflow = { experience: '不正', enrollmentDiff: 0, satisfaction: 0 };
+        if (defect === 'reference') delete record.instances[record.turns[0].actionStart.player.hand[0]];
+        const text = await encodeRawReplay(page, record);
         await page.locator('#battle-replay-input').fill(text); await page.locator('#battle-load-replay').click();
         await expect(page.locator('#battle-lobby-message')).not.toHaveText('リプレイを確認しています。');
         await expect(page.locator('#battle-start')).toBeDisabled();
     }
     const compatible = await page.evaluate(async record => {
-        record.metadata.buildVersion = 'v20261107-0061';
+        record.metadata.buildVersion = window.BUILD_VERSION.replace(/-\d{4}$/, '-0001');
         const { encodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
         return encodeReplay(record);
     }, source.record);

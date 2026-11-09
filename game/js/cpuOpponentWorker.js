@@ -1,4 +1,4 @@
-import { createCpuReplay } from './cpuOpponent.js?v=20261107-0064';
+import { createCpuReplay } from './cpuOpponent.js?v=20261110-0065';
 
 self.onmessage = async event => {
     const { difficulty, seed, buildVersion } = event.data;

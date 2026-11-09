@@ -1,4 +1,4 @@
-import { DEFAULT_SLOTS, DEFAULT_TURNS } from './defaultRules.js?v=20261107-0064';
+import { DEFAULT_SLOTS, DEFAULT_TURNS } from './defaultRules.js?v=20261110-0065';
 /**
  * DifficultyConfig - 難易度設定の一元管理
  */

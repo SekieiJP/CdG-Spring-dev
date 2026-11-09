@@ -1,4 +1,4 @@
-import { fingerprint, cardIdentity } from './playRecord.js?v=20261107-0064';
+import { fingerprint, cardIdentity } from './playRecord.js?v=20261110-0065';
 /**
  * CardManager - カード管理と効果処理
  */
@@ -273,46 +273,25 @@ export class CardManager {
             }
         }
 
-        // 残りの枚数をプールから異なるカード名で引く
-        // プール内のユニークなカード名を収集してシャッフル
-        let availableNames = [...new Set(deck.map(c => c.cardName))]
-            .filter(name => !usedNames.has(name));
-
-        // シャッフル（Fisher-Yates）
-        const shuffleNames = () => {
-            for (let i = availableNames.length - 1; i > 0; i--) {
-                const j = Math.floor(this.random(`offers:${this.gameState?.turn || 0}:${this.gameState?.trainingSelectionMode || 'normal'}:${rarity}`) * (i + 1));
-                [availableNames[i], availableNames[j]] = [availableNames[j], availableNames[i]];
-            }
-        };
-        shuffleNames();
-
-        for (let i = drawn.length; i < count; i++) {
-            if (availableNames.length === 0) {
-                if (deck.length === 0 && this.trainingDiscards[rarity].length > 0) {
-                    this.trainingDecks[rarity] = [...this.trainingDiscards[rarity]];
-                    this.trainingDiscards[rarity] = [];
-                    this.shuffleTrainingDeck(rarity);
-                    this.logger?.log(`${rarity}研修デッキを再構成しました`, 'info');
-                    deck = this.trainingDecks[rarity];
-                    availableNames = [...new Set(deck.map(c => c.cardName))]
-                        .filter(name => !usedNames.has(name));
-                    shuffleNames();
-                }
+        while (drawn.length < count) {
+            if (deck.length === 0 && this.trainingDiscards[rarity].length > 0) {
+                this.trainingDecks[rarity] = [...this.trainingDiscards[rarity]];
+                this.trainingDiscards[rarity] = [];
+                this.shuffleTrainingDeck(rarity);
+                this.logger?.log(`${rarity}研修デッキを再構成しました`, 'info');
+                deck = this.trainingDecks[rarity];
             }
 
-            if (availableNames.length === 0) {
+            // 同じ提示内の重複は飛ばし、該当する個体を次回の候補用に残す
+            const idx = deck.findIndex(card => !usedNames.has(card.cardName));
+            if (idx === -1) {
                 this.logger?.log(`研修候補プールの${rarity}カードが不足しています`, 'info');
                 break;
             }
-
-            const name = availableNames.shift();
-            const idx = deck.findIndex(c => c.cardName === name);
-            if (idx !== -1) {
-                const card = deck.splice(idx, 1)[0];
-                this.trainingDiscards[rarity].push(card);
-                drawn.push({ ...card });
-            }
+            const card = deck.splice(idx, 1)[0];
+            this.trainingDiscards[rarity].push(card);
+            drawn.push({ ...card });
+            usedNames.add(card.cardName);
         }
 
         this.logger?.log(`研修カード提示: ${drawn.map(c => c.cardName).join(', ')} (${rarity}プール残: ${deck.length}枚)`, 'info');

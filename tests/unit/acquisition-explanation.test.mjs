@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20261107-0064';
-import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20261107-0064';
-import {explainAcquisitionCandidates} from '../../game/js/acquisitionExplanation.js?v=20261107-0064';
+import {CardManager} from '../../game/js/cardManager.js?v=20261110-0065';
+import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20261110-0065';
+import {explainAcquisitionCandidates} from '../../game/js/acquisitionExplanation.js?v=20261110-0065';
 const managers=Object.fromEntries(['fresh','pro'].map(difficulty=>{const m=new CardManager(null);m.parseCSV(readFileSync(new URL(`../../game/data/cards_${difficulty}.csv`,import.meta.url),'utf8'));return[difficulty,m];}));
 function scene({difficulty='pro',turn=1,owned=[1,2,3,4,5],candidates=[14,31,32],recommended=[0],stats={experience:5,enrollment:0,satisfaction:6,accounting:7},status={},features={points:1},forecast=stats}={}){
     const card=no=>({...managers[difficulty].allCards.find(c=>Number(c.cardNo)===no),acquiredTurn:0});

@@ -9,8 +9,8 @@ jobs:
   test:
     # Playwrightの固定版が対応するOSを使い、latestの切替で検査を止めない。
     runs-on: ubuntu-24.04
-    # 全モードの対戦完走・固定CPU・WebKitの回帰検証時間を確保する
-    timeout-minutes: 40
+    # 全モードの対戦完走・固定CPU・リプレイ視聴とWebKitの回帰検証時間を確保する
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
