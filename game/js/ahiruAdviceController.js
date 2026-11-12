@@ -1,9 +1,9 @@
-import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261110-0065';
-import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261110-0065';
-import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261110-0065';
-import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261110-0065';
-import {recommendProStatus} from './ahiruProAdvice.js?v=20261110-0065';
-import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261110-0065';
+import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261110-0066';
+import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261110-0066';
+import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261110-0066';
+import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261110-0066';
+import {recommendProStatus} from './ahiruProAdvice.js?v=20261110-0066';
+import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261110-0066';
 export const ADVICE_SCENE_VERSION=1;
 const validStatus=status=>status&&['red','yellow','green'].includes(status.tone)&&typeof status.text==='string'&&status.text.trim()&&Array.from(status.text).length<=25;
 /** 確定状態と提示候補のスナップショットを、助言・取得アシストで共有する。 */

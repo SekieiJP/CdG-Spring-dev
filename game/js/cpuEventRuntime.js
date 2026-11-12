@@ -1,5 +1,5 @@
-import { getEventItem, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0065';
-import { captureReplayEventEffect } from './replayRecorder.js?v=20261110-0065';
+import { getEventItem, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0066';
+import { captureReplayEventEffect } from './replayRecorder.js?v=20261110-0066';
 
 export function prepareCpuEventTurn({ gameState: state, cardManager }) {
     const event = state.event;

@@ -5,15 +5,15 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import vm from 'node:vm';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from '../../game/js/replayCodec.js?v=20261110-0065';
-import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261110-0065';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0065';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0065';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0065';
-import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261110-0065';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from '../../game/js/battleAdvice.js?v=20261110-0065';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from '../../game/js/replayCodec.js?v=20261110-0066';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261110-0066';
+import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0066';
+import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261110-0066';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from '../../game/js/battleAdvice.js?v=20261110-0066';
 import { validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames, interimScore,
-    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261110-0065';
+    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261110-0066';
 
 globalThis.window = { BUILD_VERSION: 'v20261107-0061' };
 globalThis.fetch = async url => new Response(await readFile(fileURLToPath(new URL(url))));

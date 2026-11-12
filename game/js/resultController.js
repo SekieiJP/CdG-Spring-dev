@@ -1,9 +1,10 @@
-import { ResultRepository } from './resultRepository.js?v=20261110-0065';
-import { SubmissionQueue } from './submissionQueue.js?v=20261110-0065';
-import { buildScorePayload, submitPayload } from './scoreSubmitter.js?v=20261110-0065';
-import { getCompletedReplay } from './replayRecorder.js?v=20261110-0065';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261110-0065';
-import { battleSummary } from './battleReplay.js?v=20261110-0065';
+import { ResultRepository } from './resultRepository.js?v=20261110-0066';
+import { SubmissionQueue } from './submissionQueue.js?v=20261110-0066';
+import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261110-0066';
+import { getCompletedReplay } from './replayRecorder.js?v=20261110-0066';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261110-0066';
+import { battleSummary } from './battleReplay.js?v=20261110-0066';
+import { createResultImage, downloadResultImage } from './resultImage.js?v=20261110-0066';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {
@@ -33,6 +34,7 @@ export class ResultController {
                 this.preparePendingReplays();
             }
         });
+        document.getElementById('result-image-save')?.addEventListener('click', () => this.saveImage());
         document.getElementById('result-favorite')?.addEventListener('click', () => this.toggleFavorite(this.currentId));
         document.getElementById('result-replay-copy')?.addEventListener('click', () => this.copyReplay(this.currentId));
         document.getElementById('result-replay-view')?.addEventListener('click', () => this.viewReplay(this.currentId));
@@ -50,16 +52,21 @@ export class ResultController {
         const existing = this.repository.find(payload.resultId);
         const replayPending = existing ? null : getCompletedReplay(state);
         const summary = this.repository.commit({
-            resultId: payload.resultId, startedAt: payload.startedAt, completedAt: payload.completedAt,
+            resultId: payload.resultId, startedAt: payload.startedAt, completedAt: payload.completedAt, userUUID: payload.userUUID,
             difficulty: payload.difficulty, difficultyName: state.config.name,
-            mode: state.battle ? `対戦:${state.battle.kind === 'cpu' ? 'あひる先生' : 'リプレイ'}${state.battle.sameSeed ? '/同一シード' : ''}/${payload.mode}` : payload.mode,
+            mode: state.room ? `同僚と対戦/${payload.mode}`
+                : state.battle ? `対戦:${state.battle.kind === 'cpu' ? 'あひる先生' : 'リプレイ'}${state.battle.sameSeed ? '/同一シード' : ''}/${payload.mode}` : payload.mode,
             buildVersion: payload.buildVersion, rulesVersion: payload.rulesVersion,
             cardVersion: payload.cardVersion, rankVersion: payload.rankVersion,
             score: structuredClone(score),
+            ...(state.room ? { room: { code: String(state.room.code), revenge: Boolean(state.room.revenge) } } : {}),
             ...(state.battle ? { battle: battleSummary(state, score) } : {}),
             finalDeck: finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })),
             ...(replayPending ? { replayPending } : { replayUnavailableReason: 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
         }, payload);
+        const imageButton = document.getElementById('result-image-save');
+        if (imageButton && this.currentId !== summary.resultId) imageButton.disabled = false;
+        imageButton?.classList.remove('hidden');
         this.currentId = summary.resultId;
         this.renderComparison(summary);
         this.renderStatus();
@@ -67,6 +74,27 @@ export class ResultController {
         this.prepareReplay(summary, true);
         this.queue.start();
         return summary;
+    }
+
+    async saveImage() {
+        const resultId = this.currentId;
+        const summary = this.repository.find(resultId);
+        const button = document.getElementById('result-image-save');
+        if (!summary || !button || button.disabled) return;
+
+        button.disabled = true;
+        try {
+            const report = { ...summary, userUUID: summary.userUUID || getOrCreateUserUUID() };
+            const blob = await createResultImage(report, card => this.ui.getCardIconPath(card));
+            downloadResultImage(blob, report.completedAt);
+        } catch (error) {
+            this.ui.logger?.log(`結果画像の保存に失敗: ${error.message}`, 'warning');
+            if (this.currentId === resultId) {
+                this.ui.showFloatNotification('結果画像を保存できませんでした。もう一度お試しください。', 'warning');
+            }
+        } finally {
+            if (this.currentId === resultId) button.disabled = false;
+        }
     }
 
     onQueueChange(update) {
@@ -172,7 +200,12 @@ export class ResultController {
         for (const status of document.querySelectorAll('[data-favorite-count]')) status.textContent = countText;
         for (const label of document.querySelectorAll('[data-history-label]')) {
             const row = rows.get(label.dataset.historyLabel);
-            if (row) label.textContent = `${row.favorite ? '★ ' : ''}${row.difficultyName || row.difficulty} · ${row.mode} · ${row.score.displayScore}pt / ${row.score.rank.grade}`;
+            if (row) {
+                const modeLabel = row.room
+                    ? `同僚と対戦 · ${row.room.code}${row.room.revenge ? ' · リベンジ' : ''}`
+                    : row.mode;
+                label.textContent = `${row.favorite ? '★ ' : ''}${row.difficultyName || row.difficulty} · ${modeLabel} · ${row.score.displayScore}pt / ${row.score.rank.grade}`;
+            }
         }
     }
 
@@ -263,6 +296,7 @@ export class ResultController {
                 <p data-history-status="${escape(row.resultId)}">${escape(this.statusText(row))}</p>
                 <p>${escape(this.comparisonText(row))}</p>
                 <p>体験 ${escape(row.score.experience)} / 入塾 ${escape(row.score.enrollment)} / 満足 ${escape(row.score.satisfaction)} / 経理 ${escape(row.score.accounting)}</p>
+                ${row.room ? `<p>部屋コード: ${escape(row.room.code)}${row.room.revenge ? '（リベンジ）' : ''}</p>` : ''}
                 <p>最終デッキ（${row.finalDeck.length}枚）: ${row.finalDeck.map(card => escape(`${card.cardNo || ''} ${card.cardName}`.trim())).join('、')}</p>
                 <p class="history-versions">コード: ${escape(row.buildVersion)}<br>ルール: ${escape(row.rulesVersion)}<br>カード: ${escape(row.cardVersion)}<br>ランク: ${escape(row.rankVersion)}</p>`;
             const actions = document.createElement('div');

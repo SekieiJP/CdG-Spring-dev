@@ -1,9 +1,9 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20261110-0065';
-import { makeRunId } from './defaultRules.js?v=20261110-0065';
-import { snapshotTurnHistory } from './turnHistory.js?v=20261110-0065';
+import { getEventItem } from './eventManager.js?v=20261110-0066';
+import { makeRunId } from './defaultRules.js?v=20261110-0066';
+import { snapshotTurnHistory } from './turnHistory.js?v=20261110-0066';
 
 const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
 let userUUIDMemory = null;

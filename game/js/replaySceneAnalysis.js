@@ -1,8 +1,8 @@
-import { createCpuEngine } from './cpuOpponent.js?v=20261110-0065';
-import { RandomSource } from './randomSource.js?v=20261110-0065';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261110-0065';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261110-0065';
-import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261110-0065';
+import { createCpuEngine } from './cpuOpponent.js?v=20261110-0066';
+import { RandomSource } from './randomSource.js?v=20261110-0066';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261110-0066';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261110-0066';
+import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261110-0066';
 
 const STATS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };

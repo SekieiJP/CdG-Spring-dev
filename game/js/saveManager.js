@@ -1,4 +1,4 @@
-import { RandomSource } from './randomSource.js?v=20261110-0065';
+import { RandomSource } from './randomSource.js?v=20261110-0066';
 /**
  * SaveManager - ゲーム状態の保存・復元管理
  * v20260208-1200: 中断・再開機能実装
@@ -189,6 +189,7 @@ export class SaveManager {
             playRecord: gameState.exportPlayRecord(),
             replayRecord: structuredClone(gameState.replayRecord || null),
             battle: structuredClone(gameState.battle || null),
+            room: structuredClone(gameState.room || null),
             adviceScenes: structuredClone(gameState.adviceScenes || {}),
             meetingContext: structuredClone(gameState.meetingContext || null),
             turnHistory: structuredClone(gameState.turnHistory),
@@ -264,6 +265,8 @@ export class SaveManager {
         gameState.playRecord = structuredClone(savedState.playRecord || null);
         gameState.replayRecord = structuredClone(savedState.replayRecord || null);
         gameState.battle = structuredClone(savedState.battle || null);
+        gameState.room = savedState.room && typeof savedState.room.code === 'string' && /^\d{8}$/.test(savedState.room.code)
+            ? { code: savedState.room.code, revenge: !!savedState.room.revenge } : null;
         gameState.adviceScenes = structuredClone(savedState.adviceScenes || {});
         gameState.meetingContext = structuredClone(savedState.meetingContext || null);
         gameState.turnHistory = structuredClone(savedState.turnHistory ??

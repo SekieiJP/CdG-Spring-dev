@@ -17,16 +17,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="カードで学習塾">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="manifest.webmanifest?v=20261110-0065">
-    <link rel="apple-touch-icon" sizes="180x180" href="pwa/icon-180.png?v=20261110-0065">
-    <link rel="icon" type="image/png" sizes="32x32" href="pwa/icon-32.png?v=20261110-0065">
-    <link rel="icon" type="image/png" sizes="16x16" href="pwa/icon-16.png?v=20261110-0065">
+    <link rel="manifest" href="manifest.webmanifest?v=20261110-0066">
+    <link rel="apple-touch-icon" sizes="180x180" href="pwa/icon-180.png?v=20261110-0066">
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa/icon-32.png?v=20261110-0066">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa/icon-16.png?v=20261110-0066">
     <meta name="description" content="カードで学習塾 春期講習編 - 学習塾経営シミュレーションゲーム">
     <title>カードで学習塾 春期講習編</title>
-    <link rel="stylesheet" href="css/style.css?v=20261110-0065">
-    <link rel="stylesheet" href="css/ahiru-advice.css?v=20261110-0065">
-    <link rel="stylesheet" href="css/battle.css?v=20261110-0065">
-    <link rel="stylesheet" href="css/replay-viewing.css?v=20261110-0065">
+    <link rel="stylesheet" href="css/style.css?v=20261110-0066">
+    <link rel="stylesheet" href="css/ahiru-advice.css?v=20261110-0066">
+    <link rel="stylesheet" href="css/battle.css?v=20261110-0066">
+    <link rel="stylesheet" href="css/replay-viewing.css?v=20261110-0066">
+    <link rel="stylesheet" href="css/colleague-result.css?v=20261110-0066">
 </head>
 
 <body>
@@ -183,6 +184,45 @@
 
             <!-- ゲーム終了画面 -->
             <section id="result-area" class="phase-area hidden">
+                <section id="colleague-result" class="hidden" aria-label="同僚と対戦の結果">
+                    <div class="colleague-result-content">
+                        <header class="colleague-result-summary">
+                            <div class="colleague-result-room-info">
+                                <p>部屋 <strong id="colleague-result-room-code"></strong> <span id="colleague-result-difficulty"></span></p>
+                                <p>ルール <span id="colleague-result-rules"></span> <span id="colleague-result-revenge" class="hidden">リベンジ</span></p>
+                            </div>
+                            <div class="colleague-result-score-block">
+                                <strong id="colleague-result-score"></strong>
+                                <span id="colleague-result-rank"></span>
+                            </div>
+                        </header>
+                        <div class="colleague-result-evaluation">
+                            <table id="colleague-result-table" aria-label="評価表">
+                                <thead><tr><th scope="col">項目</th><th scope="col">値</th><th scope="col">評価点</th></tr></thead>
+                                <tbody>
+                                    <tr data-result-metric="enrollmentDiff"><th scope="row">入退差</th><td></td><td></td></tr>
+                                    <tr data-result-metric="withdrawal"><th scope="row">退塾 <span title="少ないほど高評価">↓</span></th><td></td><td></td></tr>
+                                    <tr data-result-metric="experience"><th scope="row">体験</th><td></td><td></td></tr>
+                                    <tr data-result-metric="satisfaction"><th scope="row">満足</th><td></td><td></td></tr>
+                                    <tr data-result-metric="accounting"><th scope="row">経理</th><td></td><td></td></tr>
+                                    <tr data-result-metric="enrollment"><th scope="row">入塾</th><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                            <p id="colleague-result-precision" hidden></p>
+                        </div>
+                        <section class="colleague-result-deck-section" aria-label="最終デッキ">
+                            <h2>最終デッキ <span id="colleague-result-deck-count"></span></h2>
+                            <div id="colleague-result-deck" aria-label="カード一覧"></div>
+                        </section>
+                    </div>
+                    <div class="colleague-result-actions">
+                        <button id="colleague-result-lobby" class="btn-primary" type="button">対戦ロビー</button>
+                        <button id="colleague-result-menu-toggle" class="btn-secondary" type="button" aria-controls="colleague-result-menu" aria-expanded="false">メニュー</button>
+                    </div>
+                    <section id="colleague-result-menu" class="hidden" aria-label="結果メニュー">
+                        <div id="colleague-result-menu-items"></div>
+                    </section>
+                </section>
                 <h2>ゲーム終了</h2>
                 <div id="result-rank" class="result-rank"></div>
                 <div id="result-breakdown" class="result-breakdown"></div>
@@ -194,6 +234,7 @@
                 <p id="result-comparison" class="result-note"></p>
                 <p id="result-submission-status" class="result-note" role="status" aria-live="polite"></p>
                 <div class="result-replay-actions">
+                    <button id="result-image-save" class="btn-secondary hidden" type="button">結果を画像で保存</button>
                     <button id="result-favorite" class="btn-secondary" type="button" disabled>☆ お気に入りに追加</button>
                     <button id="result-replay-copy" class="btn-secondary" type="button" disabled>リプレイデータをコピー</button>
                     <button id="result-replay-view" class="btn-secondary" type="button" disabled>📹 教室防犯カメラで見る</button>
@@ -326,7 +367,7 @@
     </div>
 
     <!-- JavaScriptモジュール（配信資産キャッシュバスター付き v20260815-0050） -->
-    <script type="module" src="js/main.js?v=20261110-0065"></script>
+    <script type="module" src="js/main.js?v=20261110-0066"></script>
 </body>
 
 </html>

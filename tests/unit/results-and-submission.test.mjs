@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20261110-0065';
-import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20261110-0065';
-import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20261110-0065';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0065';
-import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20261110-0065';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20261110-0066';
+import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20261110-0066';
+import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20261110-0066';
+import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
+import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20261110-0066';
 
 function memoryStorage() {
     const items = new Map();

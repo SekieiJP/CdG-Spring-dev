@@ -1,7 +1,7 @@
-import { analyzeReplayScene } from './replaySceneAnalysis.js?v=20261110-0065';
-import { createCpuReplay } from './cpuOpponent.js?v=20261110-0065';
-import { validateBattleReplay } from './battleReplay.js?v=20261110-0065';
-import { encodeReplay, decodeReplay } from './replayCodec.js?v=20261110-0065';
+import { analyzeReplayScene } from './replaySceneAnalysis.js?v=20261110-0066';
+import { createCpuReplay } from './cpuOpponent.js?v=20261110-0066';
+import { validateBattleReplay } from './battleReplay.js?v=20261110-0066';
+import { encodeReplay, decodeReplay } from './replayCodec.js?v=20261110-0066';
 
 self.onmessage = async event => {
     const { type, id, buildVersion } = event.data;
