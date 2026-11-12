@@ -1,7 +1,7 @@
-import { decodeReplay } from './replayCodec.js?v=20261110-0065';
-import { validateBattleReplay } from './battleReplay.js?v=20261110-0065';
-import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from './replayViewing.js?v=20261110-0065';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261110-0065';
+import { decodeReplay } from './replayCodec.js?v=20261110-0066';
+import { validateBattleReplay } from './battleReplay.js?v=20261110-0066';
+import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from './replayViewing.js?v=20261110-0066';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261110-0066';
 
 const STATS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 

@@ -1,8 +1,27 @@
 #start-battle { margin-top: 8px; }
 .battle-opponent-row.hidden, .battle-score.hidden, #battle-replay-controls.hidden, #battle-cpu-controls.hidden, #battle-event-label.hidden { display: none; }
 .battle-lobby-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 18px; }
-#battle-lobby textarea, #battle-lobby select { display: block; width: 100%; box-sizing: border-box; margin: 8px 0 12px; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font: inherit; font-size: 16px; }
+#battle-lobby :is(textarea, select, #battle-room-code-input), #room-code-display { display: block; width: 100%; box-sizing: border-box; margin: 8px 0 12px; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font: inherit; font-size: 16px; }
 #battle-lobby textarea { resize: vertical; overflow-wrap: anywhere; }
+#battle-lobby > .info-overlay-content > .battle-lobby-tabs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#battle-room-controls :is(#battle-room-create-start, #battle-room-join-start) { width: 100%; }
+#battle-room-detected { min-height: 1.4em; margin-bottom: 8px; }
+#battle-room-code-input, #room-code-display { font-variant-numeric: tabular-nums; letter-spacing: .12em; }
+#room-code-display { width: min(100%, 14rem); font-size: 24px; }
+#room-revenge-overlay {
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-items: center;
+    padding: max(12px, var(--app-safe-top)) max(12px, var(--app-safe-right)) max(12px, var(--app-safe-bottom)) max(12px, var(--app-safe-left));
+}
+#room-revenge-overlay > * { width: min(100%, 420px); }
+#room-revenge-overlay .info-overlay-header { padding: 4px 12px; border-radius: 12px 12px 0 0; }
+#room-revenge-overlay .info-overlay-content { padding: 12px; background: var(--color-bg); border-radius: 0 0 12px 12px; }
+#room-revenge-overlay p { margin-bottom: 12px; }
+@media (max-width: 560px) {
+    #battle-lobby > .info-overlay-content > .battle-lobby-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #battle-kind-room { grid-column: 1 / -1; }
+}
 .battle-check { display: flex; gap: 8px; align-items: center; padding: 8px 0; }
 .battle-check input { width: 20px; height: 20px; flex-shrink: 0; }
 #battle-lobby-message { min-height: 1.5em; overflow-wrap: anywhere; }

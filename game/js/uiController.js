@@ -1,18 +1,20 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261110-0065';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261110-0065';
-import { bindCardInteraction } from './cardInteraction.js?v=20261110-0065';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261110-0065';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261110-0065';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261110-0065';
-import { ResultController } from './resultController.js?v=20261110-0065';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261110-0065';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261110-0065';
-import { getPlacementError } from './placementRules.js?v=20261110-0065';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261110-0065';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0065';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261110-0065';
-import { BattleController } from './battleController.js?v=20261110-0065';
-import { ReplayViewingController } from './replayViewingController.js?v=20261110-0065';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261110-0066';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261110-0066';
+import { bindCardInteraction } from './cardInteraction.js?v=20261110-0066';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261110-0066';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261110-0066';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261110-0066';
+import { ResultController } from './resultController.js?v=20261110-0066';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261110-0066';
+import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261110-0066';
+import { getPlacementError } from './placementRules.js?v=20261110-0066';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261110-0066';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0066';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261110-0066';
+import { BattleController } from './battleController.js?v=20261110-0066';
+import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261110-0066';
+import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261110-0066';
+import { ReplayViewingController } from './replayViewingController.js?v=20261110-0066';
 
 /**
  * UIController - UI操作・表示制御
@@ -603,61 +605,100 @@ export class UIController {
      * ゲーム開始
      */
     async onStartGame(options = {}) {
-        if (this.startingGame) return;
+        if (this.startingGame) return false;
         this.startingGame = true;
         const startButton = document.getElementById('start-game');
         if (startButton) startButton.disabled = true;
         try {
-        const difficulty = options.difficulty || this.selectedDifficulty || 'fresh';
+            const difficulty = options.difficulty || this.selectedDifficulty || 'fresh';
+            const room = options.room || null;
+            if (room) this.checkRoomStart(room);
 
-        // 難易度に応じたCSVを読み込み
-        if (window.game) {
-            const success = await window.game.setDifficulty(difficulty);
-            if (!success) {
+            const loaded = window.game ? await window.game.setDifficulty(difficulty) : true;
+            if (options.canStart && !options.canStart()) return false;
+            if (!loaded) {
                 alert(`${difficulty.toUpperCase()}のデータを読み込めませんでした。\n通信を確認して、もう一度「ゲーム開始」を押してください。`);
-                return;
+                return false;
             }
+            if (room) this.checkRoomStart(room);
+
+            const previousState = room ? { ...this.gameState } : null;
+            this.gameState.difficulty = difficulty;
+            this.turnManager.initializeGame(options.seed ? { seed: options.seed } : {});
+            this.gameState.battle = options.battle || null;
+            this.gameState.room = room ? { ...room } : null;
+            this.gameState.calcMode = !options.battle && !room && !!document.getElementById('calc-mode-toggle')?.checked;
+            const event = getCurrentEvent();
+            const eventEnabled = !room && (options.eventEnabled ?? !!document.getElementById('event-mode-toggle')?.checked);
+            this.gameState.event = event && eventEnabled ? createEventState(event, difficulty) : null;
+            // 入手演出中の再読み込みでも研修へ戻れるよう、先に復元対象フェーズを固定する。
+            if (this.gameState.event) this.gameState.phase = 'training';
+            if (!options.battle && !room) localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
+            this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
+            startReplayRecording(this.gameState, {
+                cardManager: this.cardManager, scoreManager: this.scoreManager,
+                eventDefinition: this.gameState.event ? getEventDefinition(this.gameState.event.eventId) : null,
+                eventItems: Object.keys(this.gameState.event?.items || {}).map(getEventItem).filter(Boolean)
+            });
+            let initialRoomCards;
+            if (room) {
+                try {
+                    initialRoomCards = this.prepareInitialTraining();
+                    this.commitRoomStart(room.code);
+                } catch (error) {
+                    Object.assign(this.gameState, previousState);
+                    throw error;
+                }
+            }
+
+            clearColleagueResult();
+            document.getElementById('start-overlay')?.classList.add('hidden');
+            this.slotSelectionMode = false;
+            this.selectedCardForPlacement = null;
+            const btnSlotManual = document.getElementById('btn-slot-manual');
+            if (btnSlotManual) {
+                btnSlotManual.classList.remove('active');
+                btnSlotManual.title = 'スロット手動指定: OFF（タップで自動配置）';
+            }
+
+            // Bug2修正: リスタート時もステータス表示をリセット
+            this.updateStatusDisplay();
+            this.updateTurnDisplay();
+
+            if (isEventActive(this.gameState)) {
+                this.logger?.log(`イベント開始: ${this.gameState.event.eventId} / ${this.gameState.event.eventName} / ${difficulty} / 計算機=${this.gameState.calcMode}`, 'info');
+                await this.prepareEventTurn();
+            }
+            // 初回研修（Rカード4枚から2枚選択）
+            if (room) this.renderTrainingCards(initialRoomCards);
+            else if (this.gameState.event?.eventTraining) this.showEventTraining();
+            else this.showInitialTraining();
+            return true;
+        } finally {
+            this.startingGame = false;
+            if (startButton) startButton.disabled = false;
         }
+    }
 
-        const overlay = document.getElementById('start-overlay');
-        overlay?.classList.add('hidden');
-
-        this.gameState.difficulty = difficulty;
-        this.turnManager.initializeGame(options.seed ? { seed: options.seed } : {});
-        this.gameState.battle = options.battle || null;
-        this.gameState.calcMode = options.battle ? false : document.getElementById('calc-mode-toggle')?.checked || false;
-        const event = getCurrentEvent();
-        const eventEnabled = options.eventEnabled ?? !!document.getElementById('event-mode-toggle')?.checked;
-        this.gameState.event = event && eventEnabled ? createEventState(event, difficulty) : null;
-        // 入手演出中の再読み込みでも研修へ戻れるよう、先に復元対象フェーズを固定する。
-        if (this.gameState.event) this.gameState.phase = 'training';
-        if (!options.battle) localStorage.setItem('cdg_calc_mode', this.gameState.calcMode ? 'true' : 'false');
-        this.gameState.recordStartTime(); // initializeGame()のreset()より後に記録
-        startReplayRecording(this.gameState, {
-            cardManager: this.cardManager, scoreManager: this.scoreManager,
-            eventDefinition: this.gameState.event ? getEventDefinition(this.gameState.event.eventId) : null,
-            eventItems: Object.keys(this.gameState.event?.items || {}).map(getEventItem).filter(Boolean)
-        });
-        this.slotSelectionMode = false;
-        this.selectedCardForPlacement = null;
-        const btnSlotManual = document.getElementById('btn-slot-manual');
-        if (btnSlotManual) {
-            btnSlotManual.classList.remove('active');
-            btnSlotManual.title = 'スロット手動指定: OFF（タップで自動配置）';
+    checkRoomStart(room) {
+        const { startedAt, phase } = this.gameState;
+        if ((startedAt && !['start', 'end'].includes(phase)) || this.saveManager?.hasSaveData()) {
+            throw new Error('中断データがあります。再開するか、リタイアしてから部屋で遊んでください。');
         }
-
-        // Bug2修正: リスタート時もステータス表示をリセット
-        this.updateStatusDisplay();
-        this.updateTurnDisplay();
-
-        if (isEventActive(this.gameState)) {
-            this.logger?.log(`イベント開始: ${this.gameState.event.eventId} / ${this.gameState.event.eventName} / ${difficulty} / 計算機=${this.gameState.calcMode}`, 'info');
-            await this.prepareEventTurn();
+        if (!room.revenge && hasStartedRoom(room.code)) {
+            throw new Error('この部屋コードのプレイ記録が更新されました。もう一度操作してください。');
         }
-        // 初回研修（Rカード4枚から2枚選択）
-        if (this.gameState.event?.eventTraining) this.showEventTraining();
-        else this.showInitialTraining();
-        } finally { this.startingGame = false; if (startButton) startButton.disabled = false; }
+    }
+
+    commitRoomStart(code) {
+        if (!this.saveGameState()) throw new Error('中断データを保存できませんでした。');
+        try {
+            recordRoomStart(code);
+        } catch {
+            const saved = this.saveManager.load();
+            if (saved?.gameState?.runId === this.gameState.runId) this.saveManager.clear();
+            throw new Error('部屋コードのプレイ記録を保存できませんでした。');
+        }
     }
 
     renderEventStartControls() {
@@ -707,29 +748,22 @@ export class UIController {
      * 初回研修表示
      */
     showInitialTraining() {
-        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showInitialTraining: 開始');
+        const trainingCards = this.prepareInitialTraining();
+        this.saveGameState();
+        if (this.gameState.calcMode) this.showCalcTrainingUI('R', 2, 2);
+        else this.renderTrainingCards(trainingCards);
+    }
 
-        // フェーズを設定（保存前に必要）
+    prepareInitialTraining() {
         this.gameState.phase = 'training';
         this.markTrainingRefreshPhaseStart();
-
         if (this.gameState.calcMode) {
             this.gameState.currentTrainingCards = null;
-            this.saveGameState();
-            this.showCalcTrainingUI('R', 2, 2);
-            return;
+            return null;
         }
-
-        const trainingCards = this.cardManager.drawTrainingCards('R', 4);
-        window.CDG_DEBUG && console.log('[SAVE-DEBUG] showInitialTraining: 抽選カード:', trainingCards.map(c => c.cardName));
-
-        // 抽選したカードをgameStateに保存（復元時に使用）
-        this.gameState.currentTrainingCards = trainingCards.map(c => ({ ...c }));
-
-        // 抽選完了直後に保存（再抽選防止）
-        this.saveGameState();
-
-        this.renderTrainingCards(trainingCards);
+        const cards = this.cardManager.drawTrainingCards('R', 4);
+        this.gameState.currentTrainingCards = cards.map(card => ({ ...card }));
+        return cards;
     }
 
     /**
@@ -2331,6 +2365,13 @@ export class UIController {
         }
 
         this.showPhaseArea('result');
+        if (this.gameState.room) {
+            this.battleController.renderResult(score);
+            const summary = this.resultController.record(score, finalDeck);
+            renderColleagueResult(this, summary);
+            this.saveManager?.clear();
+            return;
+        }
         this.updateStatusDisplay();
         this.renderTokenDisplay();
 
@@ -2623,6 +2664,7 @@ export class UIController {
      * リスタート
      */
     onRestart() {
+        clearColleagueResult();
         this.battleController.resetDisplay();
         this.resultController.currentId = null;
         this.logger.clear();
@@ -3166,7 +3208,7 @@ export class UIController {
             return;
         }
         const calcToggle = document.getElementById('calc-mode-toggle');
-        if (calcToggle) {
+        if (calcToggle && !this.gameState.room) {
             calcToggle.checked = !!this.gameState.calcMode;
         }
 
@@ -3955,6 +3997,7 @@ export class UIController {
         const content = overlay.querySelector('.info-overlay-content');
 
         const buildVersion = window.BUILD_VERSION || 'unknown';
+        const room = this.gameState.phase === 'end' ? null : this.gameState.room;
         const currentFontMode = localStorage.getItem('cdg_font_mode') || 'normal';
         const currentCardDesc = localStorage.getItem('cdg_card_desc') || 'full';
         const currentCardIcon = localStorage.getItem('cdg_card_icon') || 'show';
@@ -4012,10 +4055,14 @@ export class UIController {
                     <h3>ビルド情報</h3>
                     <p class="build-version">バージョン: ${buildVersion}</p>
                 </div>
+                ${room ? `<div class="settings-section">
+                    <h3>同僚と対戦</h3>
+                    <button type="button" id="settings-room-code" class="btn-secondary">部屋コードを表示</button>
+                </div>` : ''}
                 <div class="settings-section">
-                    <h3>ゲームリセット</h3>
+                    <h3>${room ? '部屋でのプレイ' : 'ゲームリセット'}</h3>
                     <p class="settings-warning">⚠️ 進行中のゲームデータがすべて削除されます</p>
-                    <button id="reset-game-btn" class="btn-danger">はじめからやり直す</button>
+                    <button id="reset-game-btn" class="btn-danger">${room ? 'リタイア' : 'はじめからやり直す'}</button>
                 </div>
             </div>
         `;
@@ -4046,10 +4093,13 @@ export class UIController {
             });
         }
 
+        content.querySelector('#settings-room-code')?.addEventListener('click', () => {
+            overlay.remove();
+            this.battleController.showRoomCode(room.code);
+        });
         content.querySelector('#reset-game-btn').addEventListener('click', () => {
-            if (confirm('本当にはじめからやり直しますか？\n\n現在の進行状況はすべて失われます。')) {
-                this.resetGame();
-            }
+            const action = room ? 'この部屋のプレイをリタイアしますか？' : '本当にはじめからやり直しますか？';
+            if (confirm(action + '\n\n現在の進行状況はすべて失われます。')) this.resetGame();
         });
 
         // 設定トグルのイベント
@@ -4100,8 +4150,12 @@ export class UIController {
      * ゲームをリセット（中断データ削除＋リロード）
      */
     resetGame() {
+        const cleared = this.saveManager?.clear();
+        if (this.gameState.room && cleared === false) {
+            this.showFloatNotification('中断データを削除できませんでした。', 'error');
+            return;
+        }
         this.ahiruAdvice?.reset();
-        this.saveManager?.clear();
         this.logger?.log('ゲームをリセットします', 'info');
         location.reload();
     }
@@ -4111,11 +4165,8 @@ export class UIController {
      */
     saveGameState() {
         // 復元中は保存しない
-        if (this.isRestoring) return;
-
-        if (this.saveManager) {
-            captureReplayBoundary(this.gameState, 'checkpoint');
-            this.saveManager.save(this.gameState, this.cardManager);
-        }
+        if (this.isRestoring || !this.saveManager) return false;
+        captureReplayBoundary(this.gameState, 'checkpoint');
+        return this.saveManager.save(this.gameState, this.cardManager);
     }
 }

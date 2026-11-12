@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { CardManager } from '../../game/js/cardManager.js?v=20261110-0065';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0065';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0065';
-import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261110-0065';
+import { CardManager } from '../../game/js/cardManager.js?v=20261110-0066';
+import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
+import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261110-0066';
 
 async function game(difficulty = 'pro') {
     const state = new GameState(); state.reset(difficulty, { seed: 'sekiei-training-sequence' });

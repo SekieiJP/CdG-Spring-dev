@@ -1,4 +1,4 @@
-import { AnimationClock } from './animationClock.js?v=20261110-0065';
+import { AnimationClock } from './animationClock.js?v=20261110-0066';
 /** 確定した解決結果を表示する。通常のカード効果はここでは再適用しない。 */
 export class ActionAnimationController {
     constructor(ui) {

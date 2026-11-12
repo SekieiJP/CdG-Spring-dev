@@ -1,12 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0065';
-import { CardManager } from '../../game/js/cardManager.js?v=20261110-0065';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261110-0065';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0065';
-import { createEventState, getEventDefinition, getEventItem } from '../../game/js/eventManager.js?v=20261110-0065';
+import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
+import { CardManager } from '../../game/js/cardManager.js?v=20261110-0066';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261110-0066';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0066';
+import { createEventState, getEventDefinition, getEventItem } from '../../game/js/eventManager.js?v=20261110-0066';
 import { startReplayRecording, captureReplayBoundary, captureReplayEventEffect, completeReplayAction,
-    finalizeReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261110-0065';
+    finalizeReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261110-0066';
 
 function createGame({ difficulty = 'fresh', calcMode = false, event = false } = {}) {
     globalThis.window = { BUILD_VERSION: 'v20260815-0059' };

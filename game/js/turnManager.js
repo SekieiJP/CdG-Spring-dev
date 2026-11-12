@@ -1,9 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20261110-0065';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20261110-0065';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261110-0065';
+import { resolveCardAction } from './actionResolver.js?v=20261110-0066';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261110-0066';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261110-0066';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;

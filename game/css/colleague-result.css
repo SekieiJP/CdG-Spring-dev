@@ -1,0 +1,302 @@
+body.colleague-results {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+}
+
+body.colleague-results :is(#sticky-header, #full-header, #full-status-panel, #token-status-display, .log-area) {
+    display: none !important;
+}
+
+body.colleague-results #app {
+    width: 100%;
+    max-width: none;
+    height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom));
+    min-height: 0;
+    overflow: hidden;
+}
+
+body.colleague-results .game-main {
+    display: flex;
+    min-height: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body.colleague-results #result-area {
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    height: 100%;
+    padding: 4px 6px;
+    overflow: hidden;
+}
+
+#result-area.colleague-result-active > :not(#colleague-result) {
+    display: none !important;
+}
+
+#colleague-result {
+    --colleague-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 64px);
+    --colleague-width: calc(100vw - var(--app-safe-left) - var(--app-safe-right) - 12px);
+    --colleague-px: clamp(.2px, min(calc(var(--colleague-height) / 376), calc(var(--colleague-width) / 308)), 1px);
+    --colleague-thumb-size: calc(28 * var(--colleague-px));
+    position: relative;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) 44px;
+    align-content: stretch;
+    gap: 5px;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    color: var(--color-text);
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+#colleague-result.hidden {
+    display: none;
+}
+
+.colleague-result-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(2 * var(--colleague-px));
+    min-width: 0;
+    padding: calc(3 * var(--colleague-px)) 6px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    background: var(--color-bg-light);
+}
+
+.colleague-result-content {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 5px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.colleague-result-room-info {
+    min-width: 0;
+    text-align: center;
+    font-size: calc(16 * var(--colleague-px));
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+#colleague-result-room-code { letter-spacing: .08em; }
+#colleague-result-difficulty {
+    margin-left: 4px;
+    font-size: calc(15 * var(--colleague-px));
+    font-weight: 700;
+}
+#colleague-result-rules { font-size: calc(15 * var(--colleague-px)); }
+#colleague-result-revenge {
+    color: #fca5a5;
+    font-size: calc(14 * var(--colleague-px));
+    font-weight: 700;
+}
+
+.colleague-result-score-block {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+#colleague-result-score {
+    font-size: calc(46 * var(--colleague-px));
+    font-weight: 800;
+    line-height: 1.04;
+    font-variant-numeric: tabular-nums;
+}
+
+#colleague-result-rank {
+    min-width: 2.1em;
+    color: #fde68a;
+    font-size: calc(22 * var(--colleague-px));
+    font-weight: 800;
+    text-align: center;
+}
+
+.colleague-result-evaluation {
+    min-width: 0;
+}
+
+#colleague-result-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-variant-numeric: tabular-nums;
+}
+
+#colleague-result-table th,
+#colleague-result-table td {
+    height: calc(25 * var(--colleague-px));
+    padding: 0 4px;
+    border-bottom: 1px solid var(--color-border);
+    text-align: right;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+#colleague-result-table thead th {
+    height: calc(18 * var(--colleague-px));
+    color: var(--color-text-secondary);
+    font-size: calc(14 * var(--colleague-px));
+    font-weight: 500;
+}
+
+#colleague-result-table th:first-child {
+    width: 38%;
+    text-align: left;
+}
+
+#colleague-result-table tbody th { font-size: calc(18 * var(--colleague-px)); font-weight: 600; }
+#colleague-result-table tbody td { font-size: calc(22 * var(--colleague-px)); }
+#colleague-result-table tbody td:last-child { color: #bfdbfe; }
+#colleague-result-table tbody td:last-child.negative { color: #fca5a5; }
+
+#colleague-result-precision {
+    padding: 1px 4px 0;
+    color: #c4b5fd;
+    font-size: calc(14 * var(--colleague-px));
+    line-height: 1.15;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.colleague-result-deck-section {
+    min-width: 0;
+    min-height: 0;
+}
+
+.colleague-result-deck-section h2 {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin: 0 0 2px;
+    font-size: calc(16 * var(--colleague-px));
+    line-height: 1.1;
+}
+
+#colleague-result-deck-count {
+    color: var(--color-text-secondary);
+    font-size: calc(13 * var(--colleague-px));
+    font-weight: 400;
+}
+
+#colleague-result-deck {
+    display: grid;
+    grid-template-columns: repeat(var(--colleague-columns, 10), minmax(0, var(--colleague-thumb-size)));
+    align-content: start;
+    gap: calc(2 * var(--colleague-px));
+}
+
+.colleague-result-thumb {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 1;
+    min-width: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-bg-light);
+}
+
+.colleague-result-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.colleague-result-thumb img[hidden],
+.colleague-result-thumb-fallback[hidden] { display: none; }
+
+.colleague-result-thumb-fallback { font-size: calc(15 * var(--colleague-px)); }
+
+.colleague-result-thumb-count {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    max-width: 100%;
+    padding: 0 2px;
+    border: 1px solid var(--color-bg);
+    border-radius: 8px;
+    background: #111827;
+    color: #fff;
+    font-size: calc(10 * var(--colleague-px));
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+.colleague-result-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.colleague-result-actions button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 6px 8px;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+#colleague-result-menu {
+    position: absolute;
+    z-index: 30;
+    inset: 6px 6px 58px;
+    overflow: auto;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+}
+
+#colleague-result-menu.hidden { display: none; }
+#colleague-result-menu-items { display: grid; gap: 5px; }
+#colleague-result-menu-items .result-note { margin: 3px 0; font-size: 13px; }
+#colleague-result-menu-items .result-replay-actions,
+#colleague-result-menu-items .result-actions { gap: 6px; margin: 3px 0; }
+#colleague-result-menu-items button { min-height: 44px; padding: 6px; font-size: 14px; }
+#colleague-result-table [data-result-metric="withdrawal"] th span {
+    color: var(--color-text-secondary);
+    font-size: calc(14 * var(--colleague-px));
+}
+
+@media (max-height: 350px) and (min-width: 500px) {
+    #colleague-result {
+        --colleague-px: clamp(.2px, min(calc(var(--colleague-height) / 192), calc(var(--colleague-width) / 556)), 1px);
+        --colleague-thumb-size: calc(22 * var(--colleague-px));
+    }
+
+    .colleague-result-content {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto minmax(0, 1fr);
+        grid-template-areas: "summary evaluation" "deck evaluation";
+        gap: 5px 8px;
+    }
+
+    .colleague-result-summary { grid-area: summary; }
+    .colleague-result-evaluation { grid-area: evaluation; align-self: center; }
+    .colleague-result-deck-section { grid-area: deck; }
+}
+
+@media (min-width: 700px) and (min-height: 351px) {
+    .colleague-result-content {
+        grid-template-columns: minmax(320px, .8fr) minmax(0, 1.2fr);
+        grid-template-rows: auto minmax(0, 1fr);
+    }
+    .colleague-result-summary { flex-direction: row; justify-content: space-between; grid-column: 1 / -1; }
+    .colleague-result-evaluation { grid-column: 1; grid-row: 2; align-self: start; }
+    .colleague-result-deck-section { grid-column: 2; grid-row: 2; align-self: start; }
+}
