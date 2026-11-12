@@ -1,3 +1,5 @@
+import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch, sortResultDeck } from './resultPresentation.js?v=20261110-0066';
+
 const MOVED_RESULT_CONTROLS = [
     '#result-submission-status',
     '#result-comparison',
@@ -29,106 +31,60 @@ function moveResultControls(menu) {
     for (const entry of entries) menu.appendChild(entry.node);
 }
 
-function formatNumber(value) {
-    return value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? String(value) : '—';
-}
-
-function formatPoints(value) {
-    if (value === null || value === undefined || value === '' || !Number.isFinite(Number(value))) return '—';
-    const points = Number(value);
-    return `${points > 0 ? '+' : ''}${points}点`;
-}
-
 function renderDeck(ui, finalDeck) {
     const deck = document.getElementById('colleague-result-deck');
     const count = document.getElementById('colleague-result-deck-count');
     if (!deck || !count) return;
 
     deck.replaceChildren();
-    const rarityOrder = { SSR: 0, SR: 1, R: 2, N: 3 };
-    const grouped = new Map();
-    for (const card of Array.isArray(finalDeck) ? finalDeck : []) {
-        const cardNo = card.cardNo == null ? '' : String(card.cardNo);
-        const key = cardNo || `${card.cardName || ''}|${card.rarity || ''}`;
-        const entry = grouped.get(key);
-        if (entry) entry.count += 1;
-        else grouped.set(key, { ...card, cardNo, count: 1 });
-    }
-
-    const cards = [...grouped.values()].sort((a, b) => {
-        const rarity = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
-        return rarity || String(a.category || '').localeCompare(String(b.category || ''), 'ja');
-    });
-    count.textContent = `${Array.isArray(finalDeck) ? finalDeck.length : 0}枚`;
+    const cards = sortResultDeck(finalDeck);
+    count.textContent = `${cards.length}枚`;
     const columns = Math.max(10, Math.ceil(cards.length / 2));
     deck.style.setProperty('--colleague-columns', String(columns));
 
     for (const card of cards) {
         const name = String(card.cardName || 'カード');
-        const label = `${name}、${card.count}枚`;
         const thumb = document.createElement('div');
         thumb.className = 'colleague-result-thumb';
         thumb.setAttribute('role', 'img');
-        thumb.setAttribute('aria-label', label);
-        thumb.title = label;
+        thumb.setAttribute('aria-label', name);
+        thumb.title = name;
         if (card.cardNo) thumb.dataset.cardNo = card.cardNo;
 
-        const image = document.createElement('img');
-        image.alt = '';
-        image.loading = 'eager';
-        image.decoding = 'async';
-        image.src = ui.getCardIconPath?.(card) || '';
         const fallback = document.createElement('span');
         fallback.className = 'colleague-result-thumb-fallback';
         fallback.textContent = '🃏';
-        fallback.hidden = true;
-        image.addEventListener('error', () => {
-            image.hidden = true;
-            fallback.hidden = false;
-        }, { once: true });
-        thumb.append(image, fallback);
-
-        if (card.count > 1) {
-            const badge = document.createElement('span');
-            badge.className = 'colleague-result-thumb-count';
-            badge.textContent = `×${card.count}`;
-            thumb.appendChild(badge);
+        const src = ui.getCardIconPath?.(card);
+        if (src) {
+            const image = document.createElement('img');
+            image.alt = '';
+            image.decoding = 'async';
+            fallback.hidden = true;
+            image.addEventListener('error', () => {
+                image.remove();
+                fallback.hidden = false;
+            }, { once: true });
+            image.src = src;
+            thumb.appendChild(image);
         }
+        thumb.appendChild(fallback);
         deck.appendChild(thumb);
     }
 }
 
-function renderEvaluation(summary) {
-    const score = summary.score || {};
-    const breakdown = score.breakdown || {};
-    const isPro = String(summary.difficulty || '').toLowerCase() === 'pro';
-    const metrics = [
-        ['enrollmentDiff', score.enrollmentDiff, breakdown.enrollmentDiffPoints],
-        ['withdrawal', score.withdrawal, breakdown.withdrawalPoints],
-        ['experience', score.experience ?? score.mobilization, breakdown.mobilizationPoints],
-        ['satisfaction', score.satisfaction, isPro ? breakdown.satisfactionPoints : null],
-        ['accounting', score.accounting, null],
-        ['enrollment', score.enrollment, null]
-    ];
-    for (const [key, value, points] of metrics) {
+function renderEvaluation(score) {
+    for (const { key, value, points } of resultMetrics(score)) {
         const row = document.querySelector(`#colleague-result-table [data-result-metric="${key}"]`);
         if (!row) continue;
-        row.cells[1].textContent = formatNumber(value);
-        row.cells[2].textContent = formatPoints(points);
+        row.cells[1].textContent = formatResultNumber(value);
+        row.cells[2].textContent = formatResultPoints(points);
         row.cells[2].classList.toggle('negative', Number(points) < 0);
     }
 
     const precision = document.getElementById('colleague-result-precision');
-    const detail = score.splusBreakdown;
     if (precision) {
-        if (detail) {
-            const total = Number(score.displayScore) - Number(score.points);
-            precision.textContent = `精度加点 +${total.toFixed(1)}点`;
-            precision.hidden = false;
-        } else {
-            precision.textContent = '';
-            precision.hidden = true;
-        }
+        precision.textContent = resultPrecisionText(score);
+        precision.hidden = !precision.textContent;
     }
 }
 
@@ -167,14 +123,12 @@ export function renderColleagueResult(ui, summary) {
     };
     text('colleague-result-room-code', summary.room.code);
     text('colleague-result-difficulty', (summary.difficultyName || summary.difficulty || '').toUpperCase());
-    const epoch = String(summary.buildVersion || '').match(/\d{8}/)?.[0]
-        || String(summary.rulesVersion || '').match(/\d{8}/)?.[0] || '—';
-    text('colleague-result-rules', epoch);
+    text('colleague-result-rules', resultRulesEpoch(summary));
     const revenge = document.getElementById('colleague-result-revenge');
     revenge?.classList.toggle('hidden', !summary.room.revenge);
-    text('colleague-result-score', `${formatNumber(summary.score?.displayScore)}点`);
+    text('colleague-result-score', `${formatResultNumber(summary.score.displayScore)}点`);
     text('colleague-result-rank', summary.score?.rank?.grade || '—');
-    renderEvaluation(summary);
+    renderEvaluation(summary.score);
     renderDeck(ui, summary.finalDeck);
 
     const menu = document.getElementById('colleague-result-menu-items');

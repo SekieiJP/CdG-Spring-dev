@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { expectResultImageDownload } from './helpers/result-image.js';
 
 const TEST_DATE = new Date('2026-08-20T03:00:00Z');
 const TEST_SEED = 'browser-test-20261002';
@@ -114,10 +115,10 @@ async function expectRoomResultFits(page, width, height) {
             })),
             boxes,
             actionsTop: document.querySelector('.colleague-result-actions').getBoundingClientRect().top,
-            contentBoxes: [...panel.querySelectorAll('tr, #colleague-result-precision:not([hidden]), .colleague-result-thumb, .colleague-result-thumb-count')]
+            contentBoxes: [...panel.querySelectorAll('tr, #colleague-result-precision:not([hidden]), .colleague-result-thumb')]
                 .map(node => {
                     const rect = node.getBoundingClientRect();
-                    return { isDeckItem: node.matches('.colleague-result-thumb, .colleague-result-thumb-count'), top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left };
+                    return { isDeckItem: node.matches('.colleague-result-thumb'), top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left };
                 })
         };
     });
@@ -139,10 +140,10 @@ async function expectRoomResultFits(page, width, height) {
         expect(box.top, 'result row/card top edge').toBeGreaterThanOrEqual(0);
         expect(box.bottom, 'result row/card does not overlap actions').toBeLessThanOrEqual(layout.actionsTop);
         if (box.isDeckItem) {
-            expect(box.left, 'thumbnail/count left edge inside deck').toBeGreaterThanOrEqual(layout.deckBox.left);
-            expect(box.right, 'thumbnail/count right edge inside deck').toBeLessThanOrEqual(layout.deckBox.right);
-            expect(box.top, 'thumbnail/count top edge inside deck').toBeGreaterThanOrEqual(layout.deckBox.top);
-            expect(box.bottom, 'thumbnail/count bottom edge inside deck').toBeLessThanOrEqual(layout.deckBox.bottom);
+            expect(box.left, 'thumbnail left edge inside deck').toBeGreaterThanOrEqual(layout.deckBox.left);
+            expect(box.right, 'thumbnail right edge inside deck').toBeLessThanOrEqual(layout.deckBox.right);
+            expect(box.top, 'thumbnail top edge inside deck').toBeGreaterThanOrEqual(layout.deckBox.top);
+            expect(box.bottom, 'thumbnail bottom edge inside deck').toBeLessThanOrEqual(layout.deckBox.bottom);
         }
     }
 }
@@ -241,7 +242,7 @@ test.describe('同僚と対戦', () => {
                     satisfaction: score.satisfaction, accounting: score.accounting, enrollment: score.enrollment
                 },
                 buildVersion: row.buildVersion,
-                deckCount: new Set(row.finalDeck.map(card => String(card.cardNo))).size
+                deckCount: row.finalDeck.length
             };
         });
         expect(expected.room).toEqual({ code, revenge: true });
@@ -269,6 +270,7 @@ test.describe('同僚と対戦', () => {
         expect(scoreSubmissions[0]).not.toHaveProperty('room');
         expect(scoreSubmissions[0]).not.toHaveProperty('revenge');
         await page.locator('#colleague-result-menu-toggle').click();
+        await expectResultImageDownload(page);
         await expect(page.locator('#result-replay-copy')).toBeEnabled();
         const replay = await page.evaluate(async () => {
             const row = window.game.uiController.resultController.repository.history().at(-1);
@@ -304,12 +306,12 @@ test.describe('同僚と対戦', () => {
                 renderColleagueResult(uiController, {
                     room: { code: '01563828', revenge: true },
                     difficulty: 'fresh', score, buildVersion: window.BUILD_VERSION,
-                    finalDeck: [...cardManager.allCards.slice(0, count), cardManager.allCards[0]]
+                    finalDeck: [...cardManager.allCards.slice(0, count - 1), cardManager.allCards[0]]
                 });
             }, count);
             await expect(page.locator('#colleague-result-precision')).toHaveText('精度加点 +1.1点');
             await expect(page.locator('.colleague-result-thumb')).toHaveCount(count);
-            await expect(page.locator('.colleague-result-thumb-count')).toHaveText('×2');
+            await expect(page.locator('.colleague-result-thumb[data-card-no="1"]')).toHaveCount(2);
             await expectRoomResultFits(page, 320, 440);
             await expectRoomResultFits(page, 568, 256);
         }

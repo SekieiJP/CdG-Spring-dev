@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { expectResultImageDownload } from './helpers/result-image.js';
 import { encodeRawReplay } from './helpers/replay-game.js';
 
 async function speedUp(page) {
@@ -173,6 +174,7 @@ for (const difficulty of ['fresh', 'pro']) {
                 return decodeReplay(row.replayText);
             });
             expect(self.metadata.battleKind).toBe('replay'); expect(self).not.toHaveProperty('opponent');
+            if (difficulty === 'fresh' && mode.name === '通常') await expectResultImageDownload(page);
             await page.locator('#view-result-history').click();
             await expect(page.locator('.battle-history-result')).toHaveCount(1);
             await page.locator('.result-history-entry').first().locator('summary').first().click();
@@ -210,6 +212,7 @@ for (const difficulty of ['fresh', 'pro']) {
         expect(scoreSubmissions[0].battleKind).toBe('cpu'); expect(scoreSubmissions[0].mode).toBe('通常');
         expect(scoreSubmissions[0].sameSeed).toBe(true);
         await expect(page.locator('.battle-same-seed-note')).toHaveCount(0);
+        await expect(page.locator('#result-image-save')).toBeEnabled();
         await page.locator('#battle-rematch').click();
         await expect(page.locator('#battle-kind-cpu')).toHaveAttribute('aria-pressed', 'true');
         await expect(page.locator('#battle-difficulty')).toHaveValue(difficulty);
