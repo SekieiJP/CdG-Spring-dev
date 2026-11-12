@@ -310,6 +310,9 @@ test.describe('同僚と対戦', () => {
                 });
             }, count);
             await expect(page.locator('#colleague-result-precision')).toHaveText('精度加点 +1.1点');
+            const rowColors = await page.locator('#colleague-result-table tbody tr').evaluateAll(rows =>
+                rows.map(row => getComputedStyle(row).backgroundColor));
+            expect(new Set(rowColors.filter(color => color !== 'transparent' && color !== 'rgba(0, 0, 0, 0)')).size).toBe(6);
             await expect(page.locator('.colleague-result-thumb')).toHaveCount(count);
             await expect(page.locator('.colleague-result-thumb[data-card-no="1"]')).toHaveCount(2);
             await expectRoomResultFits(page, 320, 440);

@@ -92,6 +92,7 @@ export async function createResultImage(summary, cardIconPath) {
 
     const styles = getComputedStyle(document.documentElement);
     const color = variable => styles.getPropertyValue(variable).trim();
+    const rowOpacity = Number.parseFloat(color('--result-row-tint')) / 100;
     const theme = {
         background: color('--color-bg'), panel: color('--color-bg-light'),
         text: color('--color-text'), secondary: color('--color-text-secondary'), border: color('--color-border')
@@ -141,6 +142,12 @@ export async function createResultImage(summary, cardIconPath) {
         const top = TABLE_TOP + TABLE_HEADING + index * ROW_HEIGHT;
         const y = top + ROW_HEIGHT / 2;
         const colors = metric.colors.map(color);
+        ctx.save();
+        ctx.globalAlpha = rowOpacity;
+        ctx.fillStyle = colors[0];
+        ctx.fillRect(MARGIN, top + 1, WIDTH - MARGIN * 2, ROW_HEIGHT - 1);
+        ctx.restore();
+
         if (colors.length > 1) {
             const gradient = ctx.createLinearGradient(0, top + 3, 0, top + ROW_HEIGHT - 3);
             gradient.addColorStop(0, colors[0]);

@@ -3,6 +3,7 @@
     --result-gold-bottom: #c88b21;
     --result-red-top: #ef4444;
     --result-red-bottom: #000;
+    --result-row-tint: 12%;
 }
 
 body.colleague-results {
@@ -171,21 +172,31 @@ body.colleague-results #result-area {
     font-weight: 600;
 }
 
+#colleague-result-table [data-result-metric] {
+    background-color: color-mix(in srgb, var(--result-metric-color) var(--result-row-tint), transparent);
+}
+
 #colleague-result-table tbody th::before {
     content: '';
     position: absolute;
     inset: calc(2 * var(--colleague-px)) auto calc(2 * var(--colleague-px)) 0;
     width: calc(4 * var(--colleague-px));
     border-radius: calc(2 * var(--colleague-px));
-    background: var(--result-metric-bar);
+    background: var(--result-metric-bar, var(--result-metric-color));
 }
 
-#colleague-result-table [data-result-metric="enrollmentDiff"] { --result-metric-bar: linear-gradient(var(--result-gold-top), var(--result-gold-bottom)); }
-#colleague-result-table [data-result-metric="withdrawal"] { --result-metric-bar: linear-gradient(var(--result-red-top), var(--result-red-bottom)); }
-#colleague-result-table [data-result-metric="experience"] { --result-metric-bar: var(--color-mobilization); }
-#colleague-result-table [data-result-metric="satisfaction"] { --result-metric-bar: var(--color-response); }
-#colleague-result-table [data-result-metric="accounting"] { --result-metric-bar: var(--color-affairs); }
-#colleague-result-table [data-result-metric="enrollment"] { --result-metric-bar: var(--color-teaching); }
+#colleague-result-table [data-result-metric="enrollmentDiff"] {
+    --result-metric-color: var(--result-gold-top);
+    --result-metric-bar: linear-gradient(var(--result-metric-color), var(--result-gold-bottom));
+}
+#colleague-result-table [data-result-metric="withdrawal"] {
+    --result-metric-color: var(--result-red-top);
+    --result-metric-bar: linear-gradient(var(--result-metric-color), var(--result-red-bottom));
+}
+#colleague-result-table [data-result-metric="experience"] { --result-metric-color: var(--color-mobilization); }
+#colleague-result-table [data-result-metric="satisfaction"] { --result-metric-color: var(--color-response); }
+#colleague-result-table [data-result-metric="accounting"] { --result-metric-color: var(--color-affairs); }
+#colleague-result-table [data-result-metric="enrollment"] { --result-metric-color: var(--color-teaching); }
 #colleague-result-table tbody td { font-size: calc(22 * var(--colleague-px)); }
 #colleague-result-table tbody td:last-child { color: #bfdbfe; }
 #colleague-result-table tbody td:last-child.negative { color: #fca5a5; }
