@@ -296,7 +296,7 @@ test.describe('同僚と対戦', () => {
 
     test('精度加点と20枚以上の画像が操作ボタンに重ならない', async ({ page }) => {
         await page.goto('/');
-        await page.waitForFunction(() => !!window.game?.uiController);
+        await expect(page.locator('#start-game')).toBeEnabled();
         for (const count of [20, 24]) {
             await page.evaluate(async count => {
                 const { renderColleagueResult } = await import(`/js/colleagueResult.js?v=${window.BUILD_VERSION.slice(1)}`);
