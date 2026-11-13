@@ -1,98 +1,51 @@
 import { test, expect } from './fixtures.js';
 
-async function installClipboard(page) {
-    await page.addInitScript(() => {
-        window.__copiedReplays = [];
-        Object.defineProperty(navigator, 'clipboard', { configurable: true, value: {
-            writeText: async text => {
-                if (window.__rejectClipboard) throw new Error('denied');
-                window.__copiedReplays.push(text);
-            }
-        } });
-        const NativeCompressionStream = window.CompressionStream;
-        window.CompressionStream = function (format) {
-            if (localStorage.getItem('cdg_test_hold_compression') === 'true') {
-                return new TransformStream({ transform(chunk, controller) { controller.enqueue(chunk); }, flush() { return new Promise(() => {}); } });
-            }
-            return new NativeCompressionStream(format);
-        };
-    });
+import { installClipboard, startGame, finishGame, decodeHistory } from './helpers/replay-game.js';
+
+async function playbackView(page, record = null) {
+    return page.evaluate(async record => {
+        const source = record || window.game.gameState.replayRecord;
+        const { opponentSnapshot, opponentDeck, opponentFrames, interimScore } = await import(`/js/battleReplay.js?v=${window.BUILD_VERSION.slice(1)}`);
+        const battle = { opponent: source };
+        return JSON.parse(JSON.stringify(source.turns.map((_, turn) => ({
+            frames: opponentFrames(source, turn),
+            phases: ['training', 'action', 'meeting'].map(phase => {
+                const snapshot = opponentSnapshot(battle, turn, phase);
+                return { player: snapshot.player, deck: opponentDeck(battle, turn, phase),
+                    score: interimScore(window.game.scoreManager, { difficulty: source.metadata.difficulty, event: source.result.state.event }, snapshot.player, turn) };
+            })
+        }))));
+    }, record);
 }
 
-async function startGame(page, { difficulty = 'fresh', calcMode = false, eventMode = false, holdCompression = false } = {}) {
-    page.on('dialog', dialog => dialog.accept());
-    await page.goto('/');
-    await expect.poll(() => page.evaluate(() => !!window.game?.uiController)).toBe(true);
-    await page.evaluate(hold => {
-        const ui = window.game.uiController;
-        ui.actionAnimation.clock.wait = async () => {};
-        ui.showTurnOverlay = () => {};
-        if (hold) localStorage.setItem('cdg_test_hold_compression', 'true');
-    }, holdCompression);
-    await page.locator(`#btn-difficulty-${difficulty}`).click();
-    if (calcMode) {
-        await page.locator('#start-overlay h1').click();
-        await page.locator('#calc-mode-toggle + .toggle-slider').click();
-    }
-    if (eventMode) await page.locator('#event-mode-toggle + .toggle-slider').click();
-    await page.locator('#start-game').click();
-    await page.waitForFunction(() => window.game.gameState.phase === 'training');
-}
-
-async function finishGame(page) {
-    for (let step = 0; step < 100; step++) {
-        if (await page.locator('.event-presentation button').isVisible()) {
-            await page.locator('.event-presentation button').click();
-            continue;
-        }
-        const state = await page.evaluate(() => ({
-            phase: window.game.gameState.phase,
-            busy: !!window.game.uiController.actionBusy,
-            calc: window.game.gameState.calcMode,
-            initial: window.game.gameState.turn === 0 && !window.game.gameState.event?.eventTraining && window.game.gameState.trainingSelectionMode !== 'inspiration'
-        }));
-        if (state.phase === 'end') {
-            await expect(page.locator('#result-area')).toBeVisible();
-            return;
-        }
-        if (state.busy) {
-            await page.waitForFunction(() => !window.game.uiController.actionBusy || !!document.querySelector('.event-presentation'));
-            continue;
-        }
-        if (state.phase === 'training') {
-            await expect(page.locator('#training-area')).toBeVisible();
-            if (state.calc) {
-                const input = await page.evaluate(() => {
-                    const game = window.game;
-                    const requirement = game.uiController.calcTrainingRequirement;
-                    const card = game.cardManager.allCards.find(candidate => candidate.rarity === requirement.rarity);
-                    return String(card.cardNo).padStart(2, '0').repeat(requirement.minCount);
-                });
-                await page.locator('#calc-training-input').fill(input);
-            } else {
-                await page.locator('#training-cards .card').nth(0).click();
-                if (state.initial) await page.locator('#training-cards .card').nth(1).click();
-            }
-            await page.locator('#confirm-training').click();
-        } else if (state.phase === 'action') {
-            await expect(page.locator('#action-area')).toBeVisible();
-            if (state.calc) await page.locator('#calc-action-leader').fill('01');
-            else if (await page.locator('#hand-cards .card').count()) await page.locator('#hand-cards .card').first().click();
-            await page.locator('#confirm-action').click();
-        } else if (state.phase === 'meeting') {
-            await page.locator('#confirm-meeting').click();
-        }
-    }
-    throw new Error('8ターンを完走できませんでした');
-}
-
-async function decodeHistory(page, resultId) {
-    return page.evaluate(async id => {
-        const row = window.game.uiController.resultController.repository.find(id);
+test('旧形式の短縮中に再読み込みしても元のコードとお気に入りを保ち、開き直すと短縮できる', async ({ page }) => {
+    await installClipboard(page); await startGame(page); await finishGame(page);
+    await expect(page.locator('#result-replay-copy')).toBeEnabled();
+    const original = await page.evaluate(async () => {
+        const controller = window.game.uiController.resultController, row = controller.repository.history().at(-1);
         const { decodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
-        return decodeReplay(row.replayText, { currentBuildVersion: window.BUILD_VERSION });
-    }, resultId);
-}
+        const record = await decodeReplay(row.replayText);
+        const bytes = new Uint8Array(await new Response(new Blob([JSON.stringify(record)]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer());
+        let binary = ''; for (const byte of bytes) binary += String.fromCharCode(byte);
+        const legacy = 'CDGR1:' + btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+        controller.repository.setReplay(row.resultId, legacy); controller.repository.setFavorite(row.resultId, true);
+        localStorage.setItem('cdg_test_hold_compression', 'true');
+        return { id: row.resultId, legacy, score: row.score, finalDeck: row.finalDeck };
+    });
+    await page.locator('#view-result-history').click(); await page.locator('.result-history-entry summary').click();
+    await expect(page.locator('#result-history-overlay [data-replay-id]')).toBeDisabled();
+    expect(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText, original.id)).toBe(original.legacy);
+    await page.evaluate(() => localStorage.removeItem('cdg_test_hold_compression')); await page.reload();
+    await page.locator('#start-result-history').click(); await page.locator('.result-history-entry summary').click();
+    const copy = page.locator('#result-history-overlay [data-replay-id]');
+    await expect(copy).toBeEnabled();
+    await expect.poll(() => page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText.startsWith('CDGR1.'), original.id)).toBe(true);
+    await copy.click();
+    const restored = await page.evaluate(id => window.game.uiController.resultController.repository.find(id), original.id);
+    expect(restored.favorite).toBe(true); expect(restored.score).toEqual(original.score); expect(restored.finalDeck).toEqual(original.finalDeck);
+    expect(restored.replayText.length).toBeLessThan(original.legacy.length);
+    expect(await page.evaluate(() => window.__copiedReplays[0])).toBe(restored.replayText);
+});
 
 for (const difficulty of ['fresh', 'pro']) {
     for (const mode of [
@@ -112,6 +65,7 @@ for (const difficulty of ['fresh', 'pro']) {
                 const row = game.uiController.resultController.repository.history().at(-1);
                 return { id: row.resultId, score: row.score, finalDeck: row.finalDeck };
             });
+            const originalPlayback = await playbackView(page);
             await expect.poll(() => scoreSubmissions.length).toBe(1);
             expect(scoreSubmissions[0]).not.toHaveProperty('replayPending');
             expect(scoreSubmissions[0]).not.toHaveProperty('replayText');
@@ -139,13 +93,14 @@ for (const difficulty of ['fresh', 'pro']) {
             await copy.click();
             await expect(page.locator('[data-replay-status]')).toHaveText('リプレイデータをコピーしました。');
             const replay = await decodeHistory(page, original.id);
+            expect(await playbackView(page, replay)).toEqual(originalPlayback);
             expect(replay.metadata.difficulty).toBe(difficulty);
             expect(replay.metadata.calcMode).toBe(mode.calcMode);
             expect(!!replay.metadata.eventId).toBe(mode.eventMode);
             expect(replay.turns).toHaveLength(8);
             expect(replay.result.score).toEqual(original.score);
             expect(replay.result.finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category }))).toEqual(original.finalDeck);
-            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR1:/);
+            expect(await page.evaluate(() => window.__copiedReplays[0])).toMatch(/^CDGR1\./);
             if (resumeEncoding) {
                 await expect(page.locator('#result-history-overlay [data-favorite-id]')).toHaveAttribute('aria-pressed', 'true');
                 expect(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayPending, original.id)).toBeUndefined();

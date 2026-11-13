@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';
-import {countDeletionRoles} from '../../solver/browser/ahiru-deletion-role-diagnostics.js?v=20261107-0061';
+import {countDeletionRoles} from '../../solver/browser/ahiru-deletion-role-diagnostics.js?v=20261110-0066';
 const card=(n,category='庶務')=>({cardNo:n,category});
 function input(rows){return {publicInput:{rows},teachers:{outcomes:Array.from({length:250},(_,i)=>({gameId:String(i),score:i===0?8:12,stats:{accounting:10,satisfaction:15}})),labels:rows.map(r=>({rowId:r.rowId,gameId:r.gameId,action:{cardNos:r.removed}}))},rankTable:[]};}
 const row=(id,owned,removed,turn=2)=>({rowId:id,gameId:'0',phase:'deletion',observation:{difficulty:'pro',mode:'normal',turn,owned,stats:{accounting:17,satisfaction:15},tokens:{organize:2,inspiration:1}},removed});

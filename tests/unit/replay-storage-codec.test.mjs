@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { gzipSync } from 'node:zlib';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20261107-0061';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, MAX_REPLAY_BYTES } from '../../game/js/replayCodec.js?v=20261107-0061';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20261110-0066';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, MAX_REPLAY_BYTES } from '../../game/js/replayCodec.js?v=20261110-0066';
 
 function storage() {
     const items = new Map();

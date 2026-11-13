@@ -60,20 +60,24 @@ export class ResultRepository {
         return structuredClone(row);
     }
 
-    commit(summary, payload) {
+    commit(summary, payload, { submit = true } = {}) {
         const data = this.read();
         const existing = data.history.find(item => item.resultId === summary.resultId);
         if (existing) return existing;
-        if (data.recentResultIds.includes(summary.resultId)) {
+        if (submit && data.recentResultIds.includes(summary.resultId)) {
             return { ...structuredClone(summary), favorite: false,
                 submission: data.pending.some(item => item.resultId === summary.resultId) ? 'pending' : 'sent' };
         }
-        const row = { ...structuredClone(summary), favorite: false, submission: 'pending' };
+        const row = { ...structuredClone(summary), favorite: false, submission: submit ? 'pending' : 'local' };
         data.history.push(row);
         while (data.history.length > ResultRepository.HISTORY_LIMIT) {
             const index = data.history.findIndex(item => item.favorite !== true);
             if (index === -1) break;
             data.history.splice(index, 1);
+        }
+        if (!submit) {
+            this.write(data);
+            return structuredClone(row);
         }
         data.pending.push({ resultId: summary.resultId, payload: structuredClone(payload), attempts: 0, lastError: null });
         // お気に入り保護で保持履歴と実際の直近ゲームがずれるため、送信期限を別に保持する

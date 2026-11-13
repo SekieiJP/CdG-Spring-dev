@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { AnimationClock } from '../../game/js/animationClock.js?v=20261107-0061';
+import { AnimationClock } from '../../game/js/animationClock.js?v=20261110-0066';
 test('現在のカードだけ省略し、次のカードの待機を維持する', async () => {
     const clock = new AnimationClock(); clock.start(); clock.beginCard();
     const pending = clock.wait(10000); clock.skipCard(); await pending;

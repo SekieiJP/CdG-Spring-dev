@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { expectResultImageDownload } from './helpers/result-image.js';
 
 async function start(page) {
     page.on('dialog', dialog => dialog.accept());
@@ -63,6 +64,9 @@ test('終了状態からの復帰・結果の再描画でも同じゲームを�
     await page.evaluate(() => window.game.uiController.showResultPhase());
     const rows = await page.evaluate(() => window.game.uiController.resultController.repository.history());
     expect(rows).toHaveLength(1); expect(rows[0].resultId).toBe(resultId); expect(scoreSubmissions).toHaveLength(1);
+    expect(rows[0].completedAt).toBe(scoreSubmissions[0].completedAt);
+    expect(rows[0].userUUID).toBe(scoreSubmissions[0].userUUID);
+    await expectResultImageDownload(page);
 });
 
 test('古い送信の完了が新しい結果の送信状態を上書きしない', async ({ page }) => {

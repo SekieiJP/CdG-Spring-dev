@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20261107-0061';
-import {createIntrinsicRecoveryCheck} from '../../solver/browser/pro-intrinsic-recovery.js?v=20261107-0061';
+import {CardManager} from '../../game/js/cardManager.js?v=20261110-0066';
+import {createIntrinsicRecoveryCheck} from '../../solver/browser/pro-intrinsic-recovery.js?v=20261110-0066';
 const parser=new CardManager(null);parser.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const card=n=>parser.allCards.find(c=>Number(c.cardNo)===n),check=createIntrinsicRecoveryCheck(parser);
 const ob=(turn=2,satisfaction=12,accounting=10)=>({turn,totalTurns:8,stats:{experience:25,enrollment:10,satisfaction,accounting}});

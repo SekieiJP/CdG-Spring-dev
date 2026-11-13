@@ -1102,6 +1102,34 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     width: 34px;
 }
 
+.result-deck-details { margin: 10px 0; border: 1px solid var(--color-border); border-radius: 10px; overflow: hidden; }
+.result-deck-details > summary { min-height: 48px; padding: 12px; cursor: pointer; font-size: .7rem; font-weight: 600; }
+.result-deck-details > summary > span { float: right; color: var(--color-text-secondary); font-size: .65rem; font-weight: 400; }
+.result-deck-details .result-cards-grid { padding: 10px; margin: 0; }
+#result-area .high-score { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px 12px; margin-bottom: 16px; padding: 10px; border-radius: 8px; background: var(--color-bg); font-size: .7rem; }
+#result-area .high-score p { margin: 0; }
+#result-area .high-score .best-update-badge { font-size: .65rem; }
+#result-area .result-note:empty { display: none; }
+#result-area :is(.result-actions, .result-replay-actions) button { min-height: 46px; padding: 10px; font-size: .7rem; line-height: 1.5; }
+#result-area .result-replay-actions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#result-area #result-submission-status { margin-top: 16px; color: var(--color-text-secondary); font-size: .6rem; text-align: center; }
+#result-area :is(#result-favorite-status, #result-replay-status, #result-comparison) { font-size: .65rem; }
+
+@media (max-width: 480px) {
+    .result-cards-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .result-cards-grid .card { padding: 8px; }
+    .result-cards-grid .card-name { font-size: .7rem; overflow-wrap: anywhere; }
+    .result-cards-grid .card-thumbnail { width: 44px; }
+    #result-area .breakdown-table { table-layout: fixed; font-size: .65rem; }
+    #result-area .breakdown-table :is(th, td) { padding: 8px 4px; overflow-wrap: anywhere; }
+    #result-area .breakdown-table th:first-child { width: 25%; }
+    #result-area .breakdown-table .splus-breakdown-row td { font-size: .55rem; line-height: 1.7; }
+}
+@media (max-width: 350px) {
+    #result-area .result-replay-actions button { padding: 10px 6px; font-size: 12px; }
+    #result-area .result-actions button { padding: 10px 6px; font-size: 13px; }
+}
+
 .result-actions {
     display: grid;
     gap: var(--spacing-md);
@@ -1905,6 +1933,28 @@ html.font-normal .compact-stats {
     display: block;
     font-size: 0.75rem;
     color: var(--color-text-secondary);
+}
+
+#outing-area { width: 100%; }
+.outing-content { display: flex; flex-direction: column; gap: var(--spacing-md); }
+.outing-choice-grid, .outing-staff-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: var(--spacing-sm); }
+.outing-choice, .outing-staff-choice { min-height: 52px; padding: 12px; border: 1px solid var(--color-border); border-radius: 10px; background: var(--color-bg-card); color: var(--color-text); font: inherit; cursor: pointer; }
+.outing-choice strong, .outing-choice span { display: block; }
+.outing-choice span { margin-top: 4px; color: var(--color-text-secondary); font-size: .82rem; }
+.outing-section-title { margin: 8px 0 0; font-size: 1rem; }
+.outing-card-grid, .outing-delete-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: var(--spacing-sm); }
+.outing-card-grid .card, .outing-delete-grid .card { cursor: pointer; }
+.outing-refresh { align-self: flex-start; min-height: 44px; }
+.outing-status { min-height: 1.4em; color: var(--color-text-secondary); }
+.int-meeting-required { color: var(--color-text-secondary); margin: 4px 0 12px; }
+.int-meeting-target { color: var(--color-primary); font-weight: 700; }
+#start-overlay #start-battle.hidden,
+#start-overlay .replay-title-actions.hidden,
+#result-area #result-battle-lobby.hidden { display: none !important; }
+
+@media (max-width: 480px) {
+    .difficulty-buttons { flex-wrap: wrap; }
+    .difficulty-btn { min-width: 92px; }
 }
 
 /* 初訪問者向け吹き出し */

@@ -1,9 +1,9 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261107-0061';
-import { isEventActive } from './eventManager.js?v=20261107-0061';
-import { fingerprint } from './playRecord.js?v=20261107-0061';
+import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261110-0066';
+import { isEventActive } from './eventManager.js?v=20261110-0066';
+import { fingerprint } from './playRecord.js?v=20261110-0066';
 
 export class ScoreManager {
     constructor(logger, { migrateHighScore = true } = {}) {
@@ -480,8 +480,9 @@ export class ScoreManager {
         const accounting = gameState.player.accounting;
         const satisfaction = gameState.player.satisfaction;
 
-        const accountingShortage = Math.max(15 - accounting, 0);
-        const satisfactionShortage = Math.max(15 - satisfaction, 0);
+        const withdrawalBase = getDifficultyConfig(gameState.difficulty || 'fresh').withdrawalBase ?? 15;
+        const accountingShortage = Math.max(withdrawalBase - accounting, 0);
+        const satisfactionShortage = Math.max(withdrawalBase - satisfaction, 0);
 
         return accountingShortage + satisfactionShortage;
     }
@@ -639,6 +640,8 @@ export class ScoreManager {
      * @param {string} [difficulty='fresh'] - 難易度ID
      */
     saveHighScore(score, difficulty = 'fresh', gameState = null) {
+        if (gameState?.room) return false;
+        if (gameState?.battle?.kind === 'replay' && gameState.battle.sameSeed) return false;
         try {
             const current = this.getHighScore(difficulty, gameState);
 
