@@ -5,6 +5,7 @@ import { MobileLayoutController } from './mobileLayoutController.js?v=20261110-0
 import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261110-0066';
 import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261110-0066';
 import { ResultController } from './resultController.js?v=20261110-0066';
+import { sortResultDeck } from './resultPresentation.js?v=20261110-0066';
 import { ActionAnimationController } from './actionAnimationController.js?v=20261110-0066';
 import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261110-0066';
 import { getPlacementError } from './placementRules.js?v=20261110-0066';
@@ -81,7 +82,8 @@ export class UIController {
         this.intTrainingConfig = null;
         this.intTrainingMode = 'normal';
         this.intMeetingCandidates = [];
-        this.intMeetingDeleteCount = 0;
+        this.intMeetingDeleteMin = 0;
+        this.intMeetingDeleteMax = 0;
         this.slotSelectionMode = false;       // スロット手動指定モード
         this.selectedCardForPlacement = null; // 手動指定時に選択中のカード
         this.tapMode = true; // タップ順配置モード
@@ -194,6 +196,7 @@ export class UIController {
         const confirmMeetingBtn = document.getElementById('confirm-meeting');
         confirmMeetingBtn?.addEventListener('click', () => this.onConfirmMeeting());
 
+        document.getElementById('confirm-outing')?.addEventListener('click', () => this.confirmIntOutingSelection());
         document.getElementById('outing-content')?.addEventListener('click', event => {
             const button = event.target.closest('[data-outing-place], [data-outing-staff], [data-outing-refresh]');
             if (!button) return;
@@ -1022,7 +1025,7 @@ export class UIController {
 
         const instruction = document.querySelector('#action-area .instruction');
         if (instruction && this.isIntMode()) {
-            const isSpring = this.gameState.turn >= 6 && this.gameState.turn <= 10;
+            const isSpring = this.turnManager.getCurrentTurnConfig().spring;
             instruction.textContent = isSpring
                 ? '手札からスタッフにカードを配置してください。室長・講師の両方が埋まる場合は、配置のどこかに教務カードが必要です。'
                 : '手札からスタッフにカードを配置してください。';
@@ -1052,7 +1055,10 @@ export class UIController {
         if (notif.passion > 0) parts.push(`✊情熱 +${notif.passion}`);
         if (notif.fatigue > 0) parts.push(`💤疲労 -${notif.fatigue}`);
 
-        const html = `<span class="draw-notif-text">${parts.join(' / ')} → ${notif.drawCount}枚ドロー</span>`;
+        const tokenText = parts.length ? `${parts.join(' / ')} → ` : '';
+        const drawText = notif.requested > notif.drawCount
+            ? `山札不足のため${notif.drawCount}枚ドロー` : `${notif.drawCount}枚ドロー`;
+        const html = `<span class="draw-notif-text">${tokenText}${drawText}</span>`;
         containers.forEach((container) => {
             container.innerHTML = html;
             container.classList.remove('hidden');
@@ -1387,7 +1393,16 @@ export class UIController {
         const cards = this.gameState.player.placed[staff];
         slot.innerHTML = '';
         if (cards.length === 0) {
-            slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
+            const automatic = this.gameState.config.rules.getSpringTeachingCard?.(this.gameState, this.cardManager, staff);
+            if (automatic) {
+                const preview = this.createCardElement(automatic, { compact: true, shortDescription: true });
+                preview.classList.add('spring-teaching-preview');
+                preview.tabIndex = -1;
+                preview.setAttribute('aria-label', `自動配置予定: ${automatic.cardName}`);
+                slot.appendChild(preview);
+            } else {
+                slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
+            }
             slot.classList.remove('filled');
         } else {
             cards.forEach(card => {
@@ -1419,17 +1434,7 @@ export class UIController {
             this.gameState.addToHand(card);
         }
 
-        const slot = document.getElementById(`slot-${staff}`);
-        if (slot) {
-            if (this.gameState.player.placed[staff].length === 0) {
-                slot.innerHTML = '<span class="slot-placeholder">タップまたはドラッグ</span>';
-                slot.classList.remove('filled');
-            } else {
-                // まだカードが残っている場合はスロットを再描画
-                this.renderStaffSlot(staff);
-            }
-        }
-
+        this.renderStaffSlot(staff);
         this.renderHand();
         this.updateActionButtonState();
     }
@@ -1779,6 +1784,8 @@ export class UIController {
 
     showIntMeetingPhase() {
         this.showPhaseArea('meeting');
+        document.getElementById('int-meeting-instruction').hidden = !this.isIntMode();
+        document.getElementById('meeting-instruction').hidden = this.isIntMode();
         this.updateTurnDisplay();
         this.updateStatusDisplay();
         this.renderTokenDisplay();
@@ -1795,20 +1802,21 @@ export class UIController {
         }
 
         this.intMeetingCandidates = this.turnManager.getMeetingDeleteCandidates();
-        this.intMeetingDeleteCount = Math.min(deleteMax, this.intMeetingCandidates.length);
+        const scheduled = this.turnManager.getCurrentTurnConfig().delete;
+        this.intMeetingDeleteMin = Math.min(scheduled, this.intMeetingCandidates.length);
+        this.intMeetingDeleteMax = Math.min(deleteMax, this.intMeetingCandidates.length);
         this.selectedCardsForDeletion = [];
-        this.ahiruAdvice?.setDeleteMax(this.intMeetingDeleteCount);
-        const instruction = document.querySelector('#meeting-area .instruction');
+        const min = this.intMeetingDeleteMin;
+        const max = this.intMeetingDeleteMax;
+        const instruction = document.getElementById('int-meeting-instruction');
         if (instruction) {
-            instruction.innerHTML = this.intMeetingDeleteCount < deleteMax
-                ? `所持カードが${this.intMeetingDeleteCount}枚のため、すべて削除してください。`
-                : `<span class="int-meeting-target">${this.intMeetingDeleteCount}枚を削除してください。</span>`;
+            instruction.textContent = min === max ? `${min}枚を削除してください。`
+                : min > 0 ? `${min}枚以上、最大${max}枚を削除してください。`
+                : `最大${max}枚を削除できます。`;
         }
-        const deleteCount = document.getElementById('delete-count');
         const maxDelete = document.getElementById('max-delete');
         const selectedCount = document.getElementById('selected-count');
-        if (deleteCount) deleteCount.textContent = this.intMeetingDeleteCount;
-        if (maxDelete) maxDelete.textContent = this.intMeetingDeleteCount;
+        if (maxDelete) maxDelete.textContent = max;
         if (selectedCount) selectedCount.textContent = '0';
         document.getElementById('calc-meeting-inputs')?.classList.add('hidden');
         document.getElementById('deck-cards')?.classList.remove('hidden');
@@ -1828,11 +1836,11 @@ export class UIController {
         }
         const confirm = document.getElementById('confirm-meeting');
         if (confirm) {
-            confirm.textContent = this.intMeetingDeleteCount > 0 ? '削除して次のターンへ' : '次のターンへ';
-            confirm.disabled = this.intMeetingDeleteCount > 0;
+            confirm.textContent = '次のターンへ';
+            confirm.disabled = min > 0;
         }
         this.saveGameState();
-        if (this.intMeetingDeleteCount === 0) this.confirmIntMeeting();
+        if (max === 0) this.confirmIntMeeting();
     }
 
     onIntMeetingCardSelect(card, elem) {
@@ -1840,19 +1848,22 @@ export class UIController {
         if (index >= 0) {
             this.selectedCardsForDeletion.splice(index, 1);
             elem.classList.remove('selected');
-        } else if (this.selectedCardsForDeletion.length < this.intMeetingDeleteCount) {
+        } else if (this.selectedCardsForDeletion.length < this.intMeetingDeleteMax) {
             this.selectedCardsForDeletion.push(card);
             elem.classList.add('selected');
         }
         const selectedCount = document.getElementById('selected-count');
         if (selectedCount) selectedCount.textContent = this.selectedCardsForDeletion.length;
         const confirm = document.getElementById('confirm-meeting');
-        if (confirm) confirm.disabled = this.selectedCardsForDeletion.length !== this.intMeetingDeleteCount;
+        if (confirm) confirm.disabled = this.selectedCardsForDeletion.length < this.intMeetingDeleteMin;
         this.ahiruAdvice?.scheduleRefresh();
     }
 
     confirmIntMeeting() {
-        if (this.selectedCardsForDeletion.length !== this.intMeetingDeleteCount) return;
+        if (this.gameState.phase !== 'meeting') return;
+        const count = this.selectedCardsForDeletion.length;
+        if (count < this.intMeetingDeleteMin) return;
+        if (count < this.intMeetingDeleteMax && !confirm('まだ削除できる枚数が残っています。次のターンに進んでよろしいですか？')) return;
         this.selectedCardsForDeletion.forEach(card => this.turnManager.deleteMeetingCard(card));
         this.selectedCardsForDeletion = [];
         this.gameState.tokens.organize = 0;
@@ -1868,6 +1879,8 @@ export class UIController {
     showMeetingPhase() {
         if (this.isIntMode()) { this.showIntMeetingPhase(); return; }
         this.showPhaseArea('meeting');
+        document.getElementById('int-meeting-instruction').hidden = !this.isIntMode();
+        document.getElementById('meeting-instruction').hidden = this.isIntMode();
         this.updateTurnDisplay();
         this.updateStatusDisplay();
         this.renderTokenDisplay();
@@ -2019,7 +2032,7 @@ export class UIController {
             </div>
         `;
 
-        const instruction = document.querySelector('#meeting-area .instruction');
+        const instruction = document.getElementById('meeting-instruction');
         if (instruction) {
             instruction.textContent = `計算機モード: 削除するカードNoを入力してください（最大${maxDelete}枚）`;
         }
@@ -2063,6 +2076,9 @@ export class UIController {
     }
 
     showIntTrainingPhase(mode = null) {
+        if (mode === null && !this.isRestoring && !this.gameState.currentTrainingCards) {
+            this.showTurnOverlay(this.turnManager.getCurrentTurnConfig());
+        }
         const selectedMode = mode || (this.gameState.trainingSelectionMode === 'inspiration' ? 'inspiration' : 'normal');
         this.intTrainingMode = selectedMode;
         this.trainingSelectionMode = selectedMode;
@@ -2080,9 +2096,6 @@ export class UIController {
             return;
         }
 
-        if (selectedMode === 'normal' && !this.gameState.currentTrainingCards?.length) {
-            this.showTurnOverlay(this.turnManager.getCurrentTurnConfig());
-        }
         let cards = this.gameState.currentTrainingCards;
         if (!Array.isArray(cards) || cards.length === 0) {
             cards = this.cardManager.drawTrainingCards(config.rarity, config.offerCount);
@@ -2182,9 +2195,14 @@ export class UIController {
         const config = this.turnManager.getOutingConfig();
         const instruction = document.getElementById('outing-instruction');
         if (instruction) instruction.textContent = '行き先を1か所選んでください。';
-        content.innerHTML = `<div class="outing-choice-grid">${(config.outingOptions || []).map(option =>
-            `<button type="button" class="outing-choice" data-outing-place="${this._escapeHTML(option.id)}"><strong>${this._escapeHTML(option.name)}</strong><span>${this._escapeHTML(option.rarity)}カード ${option.offerCount}枚から${option.pickCount}枚</span></button>`
-        ).join('')}</div>`;
+        content.innerHTML = `<div class="outing-choice-grid">${config.outingOptions.map(option => {
+            const operation = option.id === 'headquarters' ? '使用して廃棄'
+                : option.id === 'bookstore' ? '獲得 1枚削除' : '獲得';
+            return `<button type="button" class="outing-choice" data-outing-place="${option.id}">
+                <strong>${this._escapeHTML(option.name)}</strong>
+                <span>${option.rarity}カード ${option.offerCount}枚から${option.pickCount}枚${operation}</span>
+            </button>`;
+        }).join('')}</div>`;
     }
 
     showIntOutingPhase() {
@@ -2195,7 +2213,9 @@ export class UIController {
         const outing = this.gameState.ruleState?.int?.outing;
         const content = document.getElementById('outing-content');
         const instruction = document.getElementById('outing-instruction');
-        if (!content) return;
+        const confirm = document.getElementById('confirm-outing');
+        if (!content || !confirm) return;
+        confirm.hidden = true;
         if (!outing?.place) {
             this.renderIntOutingChoices();
             this.saveGameState();
@@ -2206,9 +2226,6 @@ export class UIController {
         const option = (schedule.outingOptions || []).find(item => item.id === outing.place);
         content.innerHTML = '';
         if (outing.stage === 'card') {
-            const selectedCards = outing.selectedCards || (outing.selectedCard ? [outing.selectedCard] : []);
-            const required = Math.min(option?.pickCount || 1, outing.candidates?.length || 0);
-            if (instruction) instruction.textContent = `${option?.name || '行き先'}: ${required}枚選んでください（${selectedCards.length}/${required}）。`;
             const grid = document.createElement('div');
             grid.className = 'outing-card-grid';
             (outing.candidates || []).forEach((card, index) => {
@@ -2219,12 +2236,11 @@ export class UIController {
                 });
                 cardElem.classList.add('int-outing-card');
                 cardElem.dataset.outingCardIndex = String(index);
-                if (selectedCards.some(selected => this.sameCardReference(selected, card))) cardElem.classList.add('selected');
                 grid.appendChild(cardElem);
             });
             content.appendChild(grid);
             const remaining = this.gameState.trainingRefreshRemaining ?? 0;
-            if (remaining > 0) {
+            if (remaining > 0 && outing.candidates.length > 0) {
                 const refresh = document.createElement('button');
                 refresh.type = 'button';
                 refresh.className = 'btn-secondary outing-refresh';
@@ -2232,6 +2248,7 @@ export class UIController {
                 refresh.textContent = `🔄 リフレッシュ（残り${remaining}回）`;
                 content.appendChild(refresh);
             }
+            this.updateIntOutingSelection(outing, option);
         } else if (outing.stage === 'staff') {
             if (instruction) instruction.textContent = 'このカードを実行するスタッフを選んでください。配置制限やコストにかかわらず、選んだ後に消費します。';
             if (outing.selectedCard) {
@@ -2264,13 +2281,14 @@ export class UIController {
                 const cardElem = this.createCardElement(card, {
                     clickable: true,
                     compact: true,
-                    onClick: selected => this.deleteIntOutingCard(selected)
+                    onClick: selected => this.selectIntOutingDeletion(selected)
                 });
                 cardElem.classList.add('int-outing-delete-card');
                 cardElem.dataset.outingDeleteIndex = String(index);
                 grid.appendChild(cardElem);
             });
             content.appendChild(grid);
+            this.updateIntOutingSelection(outing, option);
         } else {
             this.renderIntOutingChoices();
         }
@@ -2284,11 +2302,35 @@ export class UIController {
     }
 
     selectIntOutingCard(card) {
-        const result = this.turnManager.selectOutingCard(card);
-        this.updateStatusDisplay();
+        if (!this.turnManager.selectOutingCard(card)) return;
+        const outing = this.gameState.ruleState.int.outing;
+        const option = this.turnManager.getOutingConfig().outingOptions.find(item => item.id === outing.place);
+        this.updateIntOutingSelection(outing, option);
         this.saveGameState();
-        if (this.gameState.phase !== 'outing' || result?.stage === 'complete') this.routeIntPhase();
-        else this.showIntOutingPhase();
+    }
+
+    updateIntOutingSelection(outing, option) {
+        const confirm = document.getElementById('confirm-outing');
+        confirm.hidden = false;
+        if (outing.stage === 'delete') {
+            const cards = this.turnManager.getOutingDeleteCandidates();
+            document.querySelectorAll('.int-outing-delete-card').forEach((element, index) => {
+                element.classList.toggle('selected', cards[index].instanceId === outing.deleteCardId);
+            });
+            confirm.textContent = '削除を確定';
+            confirm.disabled = !cards.some(card => card.instanceId === outing.deleteCardId);
+            return;
+        }
+        const selected = outing.selectedCards || [];
+        const required = Math.min(option.pickCount, outing.candidates.length);
+        document.getElementById('outing-instruction').textContent = required > 0
+            ? `${option.name}で${required}枚選んでください（${selected.length}/${required}）。`
+            : '候補カードがありません。';
+        document.querySelectorAll('.int-outing-card').forEach((element, index) => {
+            element.classList.toggle('selected', selected.some(card => this.sameCardReference(card, outing.candidates[index])));
+        });
+        confirm.textContent = required === 0 ? '次へ' : option.id === 'headquarters' ? '使用するカードを確定' : '獲得を確定';
+        confirm.disabled = selected.length !== required;
     }
 
     sameCardReference(first, second) {
@@ -2305,9 +2347,24 @@ export class UIController {
         this.routeIntPhase();
     }
 
-    deleteIntOutingCard(card) {
-        this.turnManager.deleteOutingCard(card);
-        this.updateStatusDisplay();
+    selectIntOutingDeletion(card) {
+        const outing = this.gameState.ruleState.int.outing;
+        outing.deleteCardId = outing.deleteCardId === card.instanceId ? null : card.instanceId;
+        this.updateIntOutingSelection(outing);
+        this.saveGameState();
+    }
+
+    confirmIntOutingSelection() {
+        const outing = this.gameState.ruleState.int?.outing;
+        if (this.gameState.phase !== 'outing' || !outing) return;
+        if (outing.stage === 'card') {
+            if (!this.turnManager.confirmOutingCards()) return;
+        } else if (outing.stage === 'delete') {
+            const card = this.turnManager.getOutingDeleteCandidates().find(candidate => candidate.instanceId === outing.deleteCardId);
+            if (!card || !this.turnManager.deleteOutingCard(card)) return;
+        } else {
+            return;
+        }
         this.saveGameState();
         this.routeIntPhase();
     }
@@ -2813,7 +2870,7 @@ export class UIController {
         if (this.gameState.room) {
             this.battleController.renderResult(score);
             const summary = this.resultController.record(score, finalDeck);
-            renderColleagueResult(this, summary);
+            renderColleagueResult(this, summary, finalDeck);
             this.saveManager?.clear();
             return;
         }
@@ -2927,6 +2984,7 @@ export class UIController {
 
         const details = document.createElement('details');
         details.className = 'result-deck-details';
+        details.open = true;
         const heading = document.createElement('summary');
         heading.innerHTML = `${this.gameState.battle ? '👤 あなたの' : ''}最終デッキ<span>${cards.length}枚</span>`;
         details.appendChild(heading);
@@ -2935,20 +2993,44 @@ export class UIController {
         const grid = document.createElement('div');
         grid.className = 'result-cards-grid';
 
-        // レアリティ順→カテゴリ順にソート
-        const rarityOrder = { SSR: 0, SR: 1, R: 2, N: 3 };
-        cards.sort((a, b) => {
-            const rDiff = (rarityOrder[a.rarity] ?? 9) - (rarityOrder[b.rarity] ?? 9);
-            if (rDiff !== 0) return rDiff;
-            return a.category.localeCompare(b.category);
-        });
-
-        cards.forEach(card => {
-            const cardElem = this.createCardElement(card, { compact: true });
-            grid.appendChild(cardElem);
-        });
-
+        this.renderResultDeckThumbnails(grid, cards);
         details.appendChild(grid);
+    }
+
+    renderResultDeckThumbnails(grid, cards, extraClass = '') {
+        grid.replaceChildren();
+        for (const card of sortResultDeck(cards)) {
+            const thumb = document.createElement('button');
+            thumb.type = 'button';
+            thumb.className = 'result-card-thumb';
+            if (extraClass) thumb.classList.add(extraClass);
+            if (card.cardNo) thumb.dataset.cardNo = card.cardNo;
+            const name = card.cardName || 'カード';
+            thumb.setAttribute('aria-label', name);
+            const fallback = document.createElement('span');
+            fallback.className = 'result-card-thumb-fallback';
+            fallback.textContent = '🃏';
+            fallback.setAttribute('aria-hidden', 'true');
+            const src = this.getCardIconPath(card);
+            if (src) {
+                const image = document.createElement('img');
+                image.alt = '';
+                image.decoding = 'async';
+                fallback.hidden = true;
+                image.addEventListener('error', () => {
+                    image.remove();
+                    fallback.hidden = false;
+                }, { once: true });
+                image.src = src;
+                thumb.appendChild(image);
+            }
+            thumb.appendChild(fallback);
+            thumb.addEventListener('click', () => {
+                const definition = card.effect ? card : this.cardManager.getCardByNo(card.cardNo) || card;
+                this.showEffectTooltip(definition);
+            });
+            grid.appendChild(thumb);
+        }
     }
 
     /** 結果画面に、入手済み塾アイテムと効果発動回数を表示する。 */
@@ -3185,7 +3267,7 @@ export class UIController {
             discardSection.appendChild(discardCards);
             const note = document.createElement('p');
             note.className = 'font-toggle-note';
-            note.textContent = '講習終了まで再使用されず、講習中の削除対象になります。';
+            note.textContent = '講習終了まで再使用できません。';
             discardSection.appendChild(note);
             content.appendChild(discardSection);
         }
@@ -3824,16 +3906,7 @@ export class UIController {
 
         this.setNormalActionUIVisibility();
 
-        // スタッフスロットをクリア
-        this.clearStaffSlots();
-
-        // 配置済みカードを復元
-        const placed = this.gameState.player.placed;
-        for (const staff of this.gameState.slotIds) {
-            for (const card of placed[staff]) {
-                this.placeCardToSlot(card, staff);
-            }
-        }
+        this.gameState.slotIds.forEach(staff => this.renderStaffSlot(staff));
 
         this.selectedCardForPlacement = null;
 

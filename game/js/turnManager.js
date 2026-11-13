@@ -110,11 +110,21 @@ export class TurnManager {
             (candidate.poolId && candidate.poolId === selected.poolId));
         if (selectedIndex > -1) outing.selectedCards.splice(selectedIndex, 1);
         else if (outing.selectedCards.length < place.pickCount) outing.selectedCards.push(selected);
-        const required = Math.min(place.pickCount, candidates.length);
-        if (outing.selectedCards.length < required) {
-            return { stage: 'card', selectedCards: outing.selectedCards, pickCount: required };
+        return outing.selectedCards;
+    }
+
+    confirmOutingCards() {
+        const outing = this.gameState.ruleState.int?.outing;
+        if (this.gameState.phase !== 'outing' || outing?.stage !== 'card') return;
+        const place = this.getOutingConfig()?.outingOptions?.find(option => option.id === outing.place);
+        if (!place) return;
+        const selectedCards = outing.selectedCards || [];
+        const required = Math.min(place.pickCount, outing.candidates.length);
+        if (selectedCards.length !== required) return;
+        if (required === 0 && place.id !== 'bookstore') {
+            this.completeOuting();
+            return { stage: 'complete' };
         }
-        const selectedCards = [...outing.selectedCards];
         outing.selectedCard = selectedCards[0] || null;
         this.gameState.currentTrainingCards = null;
         if (place.id === 'headquarters') {

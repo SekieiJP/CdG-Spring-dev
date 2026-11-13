@@ -259,7 +259,11 @@ test.describe('同僚と対戦', () => {
         for (const [metric, value] of Object.entries(expected.scoreRows)) {
             await expect(page.locator(`#colleague-result-table [data-result-metric="${metric}"]`)).toContainText(String(value));
         }
-        await expect(page.locator('#colleague-result-deck .colleague-result-thumb')).toHaveCount(expected.deckCount);
+        const deckCards = page.locator('#colleague-result-deck .colleague-result-thumb');
+        await expect(deckCards).toHaveCount(expected.deckCount);
+        await deckCards.first().click();
+        await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
+        await page.locator('.effect-tooltip').click();
 
         await expectRoomResultFits(page, 320, 440);
         await expectRoomResultFits(page, 568, 256);

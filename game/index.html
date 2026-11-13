@@ -172,7 +172,8 @@
             <!-- 教室会議フェーズ用 -->
             <section id="meeting-area" class="phase-area hidden">
                 <h2>教室会議: カード削除</h2>
-                <p class="instruction">デッキから最大<span id="delete-count">0</span>枚削除できます</p>
+                <p id="meeting-instruction" class="instruction">デッキから最大<span id="delete-count">0</span>枚削除できます</p>
+                <p id="int-meeting-instruction" class="instruction" hidden></p>
                 <div id="organize-bonus-info" class="organize-bonus-info hidden"></div>
                 <div id="calc-meeting-inputs"></div>
                 <div id="deck-cards" class="card-list"></div>
@@ -184,9 +185,10 @@
 
             <!-- INT中旬の行き先選択 -->
             <section id="outing-area" class="phase-area hidden">
-                <h2>中旬の行き先</h2>
+                <h2>外出: 行き先を選択</h2>
                 <p id="outing-instruction" class="instruction"></p>
                 <div id="outing-content" class="outing-content"></div>
+                <button id="confirm-outing" class="btn-primary" type="button" hidden>確定</button>
             </section>
 
             <!-- ゲーム終了画面 -->
