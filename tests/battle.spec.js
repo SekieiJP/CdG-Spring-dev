@@ -174,7 +174,14 @@ for (const difficulty of ['fresh', 'pro']) {
                 return decodeReplay(row.replayText);
             });
             expect(self.metadata.battleKind).toBe('replay'); expect(self).not.toHaveProperty('opponent');
-            if (difficulty === 'fresh' && mode.name === '通常') await expectResultImageDownload(page);
+            if (difficulty === 'fresh' && mode.name === '通常') {
+                const opponentCards = page.locator('#battle-opponent-deck .result-card-thumb');
+                await expect(opponentCards).toHaveCount(source.record.result.finalDeck.length);
+                await opponentCards.first().click();
+                await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
+                await page.locator('.effect-tooltip').click();
+                await expectResultImageDownload(page);
+            }
             await page.locator('#view-result-history').click();
             await expect(page.locator('.battle-history-result')).toHaveCount(1);
             await page.locator('.result-history-entry').first().locator('summary').first().click();
