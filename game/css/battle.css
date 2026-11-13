@@ -1,5 +1,5 @@
 #start-battle { margin-top: 8px; }
-.battle-opponent-row.hidden, .battle-score.hidden, #battle-replay-controls.hidden, #battle-cpu-controls.hidden, #battle-event-label.hidden { display: none; }
+.battle-opponent-row.hidden, .battle-score.hidden, #battle-lobby .hidden { display: none; }
 .battle-lobby-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 18px; }
 #battle-lobby :is(textarea, select, #battle-room-code-input), #room-code-display { display: block; width: 100%; box-sizing: border-box; margin: 8px 0 12px; padding: 10px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-bg); color: var(--color-text); font: inherit; font-size: 16px; }
 #battle-lobby textarea { resize: vertical; overflow-wrap: anywhere; }
