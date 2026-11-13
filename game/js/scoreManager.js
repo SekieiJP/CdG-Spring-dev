@@ -480,8 +480,9 @@ export class ScoreManager {
         const accounting = gameState.player.accounting;
         const satisfaction = gameState.player.satisfaction;
 
-        const accountingShortage = Math.max(15 - accounting, 0);
-        const satisfactionShortage = Math.max(15 - satisfaction, 0);
+        const withdrawalBase = getDifficultyConfig(gameState.difficulty || 'fresh').withdrawalBase ?? 15;
+        const accountingShortage = Math.max(withdrawalBase - accounting, 0);
+        const satisfactionShortage = Math.max(withdrawalBase - satisfaction, 0);
 
         return accountingShortage + satisfactionShortage;
     }

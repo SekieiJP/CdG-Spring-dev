@@ -299,6 +299,12 @@ export class CardManager {
         return drawn;
     }
 
+    /** 日程や外出先の提示設定を受け取り、候補を抽選する。 */
+    drawTrainingOffer(offer) {
+        if (!offer?.rarity || !Number.isInteger(offer.offerCount) || offer.offerCount < 0) return [];
+        return this.drawTrainingCards(offer.rarity, offer.offerCount);
+    }
+
     /**
      * 研修リフレッシュ: 現在の候補カードをゲームから除外し、新しい候補を抽選
      * @param {string} rarity - レアリティ ('R', 'SR', 'SSR')
