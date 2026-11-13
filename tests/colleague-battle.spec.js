@@ -149,6 +149,37 @@ async function expectRoomResultFits(page, width, height) {
 }
 
 test.describe('同僚と対戦', () => {
+    test('対戦ロビーには選んだ対戦方法と部屋操作の入力欄だけが表示される', async ({ page }) => {
+        await page.goto('/');
+        await page.locator('#start-battle').click();
+
+        const panels = {
+            replay: page.locator('#battle-replay-controls'),
+            cpu: page.locator('#battle-cpu-controls'),
+            create: page.locator('#battle-room-create-controls'),
+            join: page.locator('#battle-room-join-controls')
+        };
+        async function expectOnlyPanel(selected) {
+            for (const [kind, panel] of Object.entries(panels)) {
+                if (kind === selected) await expect(panel).toBeVisible();
+                else await expect(panel).toBeHidden();
+            }
+        }
+
+        await expectOnlyPanel('replay');
+        await page.locator('#battle-kind-cpu').click();
+        await expectOnlyPanel('cpu');
+        await page.locator('#battle-kind-room').click();
+        await expectOnlyPanel('create');
+        await expect(page.locator('#battle-start')).toBeHidden();
+        await page.locator('#battle-room-mode-join').click();
+        await expectOnlyPanel('join');
+        await expect(page.locator('#battle-start')).toBeHidden();
+        await page.locator('#battle-kind-replay').click();
+        await expectOnlyPanel('replay');
+        await expect(page.locator('#battle-start')).toBeVisible();
+    });
+
     test('作成者と参加者は同じ部屋コードで同じ初回候補を引く', async ({ page, browser, baseURL }) => {
         await page.goto('/');
         await page.locator('#start-battle').click();
@@ -315,7 +346,23 @@ test.describe('同僚と対戦', () => {
             expect(new Set(rowColors.filter(color => color !== 'transparent' && color !== 'rgba(0, 0, 0, 0)')).size).toBe(6);
             await expect(page.locator('.colleague-result-thumb')).toHaveCount(count);
             await expect(page.locator('.colleague-result-thumb[data-card-no="1"]')).toHaveCount(2);
+            const value = page.locator('[data-result-metric="enrollmentDiff"] td').first();
             await expectRoomResultFits(page, 320, 440);
+            const compactFontSize = await value.evaluate(node => parseFloat(getComputedStyle(node).fontSize));
+            await expectRoomResultFits(page, 390, 780);
+            const tall = await value.evaluate(node => {
+                const range = document.createRange();
+                range.selectNodeContents(node.previousElementSibling);
+                const labelEnd = range.getBoundingClientRect().right;
+                range.selectNodeContents(node);
+                return {
+                    fontSize: parseFloat(getComputedStyle(node).fontSize),
+                    labelGap: range.getBoundingClientRect().left - labelEnd
+                };
+            });
+            expect(tall.fontSize).toBeGreaterThan(compactFontSize * 1.3);
+            expect(tall.labelGap).toBeGreaterThanOrEqual(0);
+            expect(tall.labelGap).toBeLessThan(tall.fontSize * 2);
             await expectRoomResultFits(page, 568, 256);
         }
     });

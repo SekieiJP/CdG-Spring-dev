@@ -39,7 +39,7 @@ function renderDeck(ui, finalDeck) {
     deck.replaceChildren();
     const cards = sortResultDeck(finalDeck);
     count.textContent = `${cards.length}枚`;
-    const columns = Math.max(10, Math.ceil(cards.length / 2));
+    const columns = Math.max(5, Math.ceil(cards.length / 2));
     deck.style.setProperty('--colleague-columns', String(columns));
 
     for (const card of cards) {
