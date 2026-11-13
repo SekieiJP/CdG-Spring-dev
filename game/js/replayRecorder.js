@@ -74,6 +74,10 @@ export function snapshotReplayState(state, { decision = false } = {}) {
 
 export function startReplayRecording(state, { cardManager, scoreManager, eventDefinition = null, eventItems = [], captureViewing = false } = {}) {
     if (state.turn !== 0 || !['start', 'training'].includes(state.phase)) return false;
+    if (state.difficulty === 'int') {
+        state.replayRecord = null;
+        return false;
+    }
     if (cardManager) bindReplayCardManager(state, cardManager);
     const config = state.config;
     state.replayRecord = {
@@ -231,7 +235,8 @@ export function finalizeReplayRecording(state, score, finalDeck) {
 
 export function getCompletedReplay(state) {
     const record = state?.replayRecord;
-    if (!record?.complete || record.metadata?.runId !== state.runId || !hasCompleteTurns(record) ||
+    if (!record?.complete || !['fresh', 'pro'].includes(record.metadata?.difficulty) ||
+        record.metadata?.runId !== state.runId || !hasCompleteTurns(record) ||
         !record.result?.score || !Array.isArray(record.result.finalDeck) || record.result.state?.phase !== 'end') return null;
     return structuredClone(record);
 }

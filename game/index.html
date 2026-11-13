@@ -182,6 +182,13 @@
                 <button id="confirm-meeting" class="btn-primary">次のターンへ</button>
             </section>
 
+            <!-- INT中旬の行き先選択 -->
+            <section id="outing-area" class="phase-area hidden">
+                <h2>中旬の行き先</h2>
+                <p id="outing-instruction" class="instruction"></p>
+                <div id="outing-content" class="outing-content"></div>
+            </section>
+
             <!-- ゲーム終了画面 -->
             <section id="result-area" class="phase-area hidden">
                 <section id="colleague-result" class="hidden" aria-label="同僚と対戦の結果">
@@ -266,7 +273,7 @@
                 <p class="celebration-text">祝1000プレイ！</p>
                 <h1>カードで学習塾</h1>
                 <h2>春期講習編</h2>
-                <p>学習塾の室長となり、8ターンで最高の成果を目指そう！</p>
+                <p>学習塾の室長となり、スケジュールに沿って最高の成果を目指そう！</p>
 
                 <!-- 難易度選択 -->
                 <div class="difficulty-selector">
@@ -280,6 +287,10 @@
                         <button id="btn-difficulty-pro" class="difficulty-btn" data-difficulty="pro">
                             <span class="difficulty-name">PRO</span>
                             <span class="difficulty-desc">上級難易度</span>
+                        </button>
+                        <button id="btn-difficulty-int" class="difficulty-btn" data-difficulty="int">
+                            <span class="difficulty-name">INT</span>
+                            <span class="difficulty-desc">春期講習・13ターン</span>
                         </button>
                     </div>
                 </div>

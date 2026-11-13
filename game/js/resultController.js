@@ -49,6 +49,7 @@ export class ResultController {
             cardVersion: this.ui.cardManager.dataVersion,
             rankVersion: this.ui.scoreManager.dataVersion
         });
+        const submissionSupported = state.difficulty !== 'int';
         const existing = this.repository.find(payload.resultId);
         const replayPending = existing ? null : getCompletedReplay(state);
         const summary = this.repository.commit({
@@ -62,8 +63,10 @@ export class ResultController {
             ...(state.room ? { room: { code: String(state.room.code), revenge: Boolean(state.room.revenge) } } : {}),
             ...(state.battle ? { battle: battleSummary(state, score) } : {}),
             finalDeck: finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })),
-            ...(replayPending ? { replayPending } : { replayUnavailableReason: 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
-        }, payload);
+            ...(replayPending ? { replayPending } : { replayUnavailableReason: state.difficulty === 'int'
+                ? 'INTの進行形式はリプレイ再生に未対応です。'
+                : 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
+        }, payload, { submit: submissionSupported });
         const imageButton = document.getElementById('result-image-save');
         if (imageButton && this.currentId !== summary.resultId) imageButton.disabled = false;
         imageButton?.classList.remove('hidden');
@@ -72,7 +75,7 @@ export class ResultController {
         this.renderStatus();
         this.renderReplayControls();
         this.prepareReplay(summary, true);
-        this.queue.start();
+        if (submissionSupported) this.queue.start();
         return summary;
     }
 
@@ -116,6 +119,7 @@ export class ResultController {
     statusText(row) {
         if (this.repository.storageError) return '履歴をこの画面で保持しています。再読み込みすると失われる可能性があります。';
         if (!row) return '履歴はこの端末に残っていません';
+        if (row.submission === 'local') return 'この端末に保存済み（INTは送信対象外）';
         if (row?.submission === 'sent') return 'スコア送信済み';
         if (row.submission === 'history-pending') return 'スコア送信済み。ターン履歴は送信先の更新待ち';
         if (row.submission === 'history-outside-queue') return 'スコア送信済み（ターン履歴は送信待ちの上限から除外）';
