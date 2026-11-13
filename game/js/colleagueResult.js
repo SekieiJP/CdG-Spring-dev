@@ -1,4 +1,4 @@
-import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch, sortResultDeck } from './resultPresentation.js?v=20261110-0066';
+import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch } from './resultPresentation.js?v=20261110-0066';
 
 const MOVED_RESULT_CONTROLS = [
     '#result-submission-status',
@@ -36,40 +36,10 @@ function renderDeck(ui, finalDeck) {
     const count = document.getElementById('colleague-result-deck-count');
     if (!deck || !count) return;
 
-    deck.replaceChildren();
-    const cards = sortResultDeck(finalDeck);
-    count.textContent = `${cards.length}枚`;
-    const columns = Math.max(10, Math.ceil(cards.length / 2));
+    count.textContent = `${finalDeck.length}枚`;
+    const columns = Math.max(10, Math.ceil(finalDeck.length / 2));
     deck.style.setProperty('--colleague-columns', String(columns));
-
-    for (const card of cards) {
-        const name = String(card.cardName || 'カード');
-        const thumb = document.createElement('div');
-        thumb.className = 'colleague-result-thumb';
-        thumb.setAttribute('role', 'img');
-        thumb.setAttribute('aria-label', name);
-        thumb.title = name;
-        if (card.cardNo) thumb.dataset.cardNo = card.cardNo;
-
-        const fallback = document.createElement('span');
-        fallback.className = 'colleague-result-thumb-fallback';
-        fallback.textContent = '🃏';
-        const src = ui.getCardIconPath?.(card);
-        if (src) {
-            const image = document.createElement('img');
-            image.alt = '';
-            image.decoding = 'async';
-            fallback.hidden = true;
-            image.addEventListener('error', () => {
-                image.remove();
-                fallback.hidden = false;
-            }, { once: true });
-            image.src = src;
-            thumb.appendChild(image);
-        }
-        thumb.appendChild(fallback);
-        deck.appendChild(thumb);
-    }
+    ui.renderResultDeckThumbnails(deck, finalDeck, 'colleague-result-thumb');
 }
 
 function renderEvaluation(score) {
@@ -105,7 +75,7 @@ function bindActions(ui) {
 }
 
 /** 同僚と対戦の完了結果を、進行中の画面要素を隠した専用パネルへ描画する。 */
-export function renderColleagueResult(ui, summary) {
+export function renderColleagueResult(ui, summary, finalDeck = summary?.finalDeck) {
     const panel = document.getElementById('colleague-result');
     if (!panel || !summary?.room) {
         clearColleagueResult();
@@ -129,7 +99,7 @@ export function renderColleagueResult(ui, summary) {
     text('colleague-result-score', `${formatResultNumber(summary.score.displayScore)}点`);
     text('colleague-result-rank', summary.score?.rank?.grade || '—');
     renderEvaluation(summary.score);
-    renderDeck(ui, summary.finalDeck);
+    renderDeck(ui, finalDeck);
 
     const menu = document.getElementById('colleague-result-menu-items');
     if (menu) moveResultControls(menu);

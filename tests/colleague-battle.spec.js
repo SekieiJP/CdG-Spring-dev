@@ -259,7 +259,11 @@ test.describe('同僚と対戦', () => {
         for (const [metric, value] of Object.entries(expected.scoreRows)) {
             await expect(page.locator(`#colleague-result-table [data-result-metric="${metric}"]`)).toContainText(String(value));
         }
-        await expect(page.locator('#colleague-result-deck .colleague-result-thumb')).toHaveCount(expected.deckCount);
+        const deckCards = page.locator('#colleague-result-deck .colleague-result-thumb');
+        await expect(deckCards).toHaveCount(expected.deckCount);
+        await deckCards.first().click();
+        await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
+        await page.locator('.effect-tooltip').click();
 
         await expectRoomResultFits(page, 320, 440);
         await expectRoomResultFits(page, 568, 256);
@@ -292,7 +296,7 @@ test.describe('同僚と対戦', () => {
 
     test('精度加点と20枚以上の画像が操作ボタンに重ならない', async ({ page }) => {
         await page.goto('/');
-        await page.waitForFunction(() => !!window.game?.uiController);
+        await expect(page.locator('#start-game')).toBeEnabled();
         for (const count of [20, 24]) {
             await page.evaluate(async count => {
                 const { renderColleagueResult } = await import(`/js/colleagueResult.js?v=${window.BUILD_VERSION.slice(1)}`);

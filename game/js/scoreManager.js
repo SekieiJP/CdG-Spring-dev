@@ -141,6 +141,29 @@ export class ScoreManager {
 
         const currentRow = this.rankTable[currentIndex];
         const currentThreshold = currentRow?.thresholds?.[statKey] ?? 0;
+        const config = getDifficultyConfig(difficulty);
+        if (config.id === 'int' && statKey === 'satisfaction') {
+            const milestones = [{ threshold: config.withdrawalBase, grade: '退塾基準' }];
+            let points = 0;
+            for (const row of this.rankTable) {
+                const threshold = row.thresholds.satisfaction;
+                if (threshold > config.withdrawalBase && row.scores.satisfaction > points) {
+                    milestones.push({ threshold, grade: row.grade });
+                    points = row.scores.satisfaction;
+                }
+            }
+            const targetIndex = milestones.findIndex(milestone => value < milestone.threshold);
+            const target = milestones[targetIndex];
+            const start = targetIndex < 0 ? milestones.at(-1) : milestones[targetIndex - 1];
+            return {
+                grade: currentRow.grade,
+                currentThreshold,
+                startThreshold: start?.threshold ?? 0,
+                nextThreshold: target?.threshold ?? milestones.at(-1).threshold,
+                deficit: target ? target.threshold - value : 0,
+                targetGrade: target?.grade ?? currentRow.grade
+            };
+        }
         const findGradeIndex = (grade) => this.rankTable.findIndex((row) => row?.grade === grade);
         const getScoreGroupStartThreshold = (scoreKey, thresholdGetter, currentScore) => {
             for (let i = 0; i < this.rankTable.length; i += 1) {
@@ -208,7 +231,7 @@ export class ScoreManager {
         let currentEnrollmentDiffScore = 0;
         let currentFreshDiffScore = 0;
 
-        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
+        if (config.scoringModel === 'pro') {
             if (statKey === 'experience') {
                 for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
                     const row = this.rankTable[i];
@@ -309,7 +332,7 @@ export class ScoreManager {
         // --- startThreshold の計算 ---
         let startThreshold = currentThreshold; // デフォルト（逐次の場合）
 
-        if (getDifficultyConfig(difficulty).scoringModel === 'pro') {
+        if (config.scoringModel === 'pro') {
             if (statKey === 'experience') {
                 startThreshold = getScoreGroupStartThreshold(
                     'mobilization',

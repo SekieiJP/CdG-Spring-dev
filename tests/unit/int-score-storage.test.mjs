@@ -4,6 +4,8 @@ import { readFile } from 'node:fs/promises';
 import '../../game/js/difficultyExtensions.js?v=20261110-0066';
 import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
 import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261110-0066';
+import { CardManager } from '../../game/js/cardManager.js?v=20261110-0066';
 import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0066';
 import { ResultRepository } from '../../game/js/resultRepository.js?v=20261110-0066';
 import { startReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261110-0066';
@@ -34,7 +36,10 @@ test('INTは1.5倍切り上げのランク境界とPRO得点帯を使う', async
     assert.equal(manager.getStatusRank('experience', 74, 'int').deficit, 1);
     assert.equal(manager.getStatusRank('experience', 75, 'int').grade, 'SS');
     assert.equal(manager.getStatusRank('enrollment', 11, 'int').deficit, 1);
-    assert.equal(manager.getStatusRank('satisfaction', 37, 'int').targetGrade, 'S+');
+    for (const [value, start, next] of [[19, 0, 20], [20, 20, 38], [23, 20, 38], [38, 38, 53], [53, 53, 53]]) {
+        const rank = manager.getStatusRank('satisfaction', value, 'int');
+        assert.deepEqual([rank.startThreshold, rank.nextThreshold], [start, next]);
+    }
 
     const pointThresholds = manager.calculateScore({ difficulty: 'int', player: {
         experience: 23, enrollment: 12, satisfaction: 38, accounting: 20
@@ -74,6 +79,26 @@ test('INTの退塾基準は20で、FRESHとPROの15基準は維持する', () =>
     assert.equal(manager.calculateWithdrawal(state('int', 19, 17)), 4);
     assert.equal(manager.calculateWithdrawal(state('pro', 14, 13)), 3);
     assert.equal(manager.calculateWithdrawal(state('fresh', 14, 13)), 3);
+});
+
+test('講習で要求枚数に足りない山札から残りを引き、手札と捨て札を保持する', () => {
+    const state = new GameState();
+    state.reset('int');
+    state.turn = 6;
+    state.phase = 'training';
+    const available = { cardNo: '1', cardName: '問合対応の基本' };
+    const held = { cardNo: '3', cardName: '質問対応の基本' };
+    const used = { cardNo: '4', cardName: '生徒面談の基本' };
+    state.addToDeck(available);
+    state.addToHand(held);
+    state.ruleState.int.springDiscard.push(used);
+    state.tokens.passion = 1;
+    const manager = new TurnManager(state, new CardManager());
+    manager.advancePhase();
+    assert.deepEqual(state.player.hand, [held, available]);
+    assert.equal(state.player.deck.length, 0);
+    assert.deepEqual(state.ruleState.int.springDiscard, [used]);
+    assert.deepEqual(state.lastDrawNotification, { passion: 1, fatigue: 0, drawCount: 1, requested: 4 });
 });
 
 test('INTハイスコアは専用キーに保存され、他難易度の記録を共有しない', () => {

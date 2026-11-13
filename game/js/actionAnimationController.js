@@ -225,19 +225,13 @@ export class ActionAnimationController {
 
             await this._sleep(50); // transition: none を確定させる
 
-            // 最終値がこのランクに収まるかチェック
-            const afterNextRank = this.scoreManager.getStatusRank(statKey, toValue, difficulty);
-            if (!afterNextRank || afterNextRank.grade === nextRank?.grade) {
-                // 最後のランク → 最終値に対応するバー位置まで伸ばす
-                if (afterNextRank && labelElem) {
-                    labelElem.textContent = afterNextRank.grade;
-                }
-                updateProgress(afterNextRank, toValue, true);
+            if (!nextRank || nextRank.nextThreshold <= currentValue || toValue < nextRank.nextThreshold) {
+                if (labelElem) labelElem.textContent = finalRank.grade;
+                updateProgress(finalRank, toValue, true);
                 await this._sleep(400);
-                updateDeficit(afterNextRank);
+                updateDeficit(finalRank);
                 break;
             }
-            // まだランクアップが残っている → ループ継続
         }
     }
 

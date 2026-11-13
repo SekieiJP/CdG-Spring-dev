@@ -543,9 +543,9 @@ export class BattleController {
             ${summary.sameSeed && summary.kind === 'replay' ? '<p class="result-note battle-same-seed-note">同一シードの対戦です。自己ベストの対象外です。</p>' : ''}`;
         document.getElementById('result-rank')?.before(result);
         const deckSection = document.createElement('div'); deckSection.id = 'battle-opponent-deck';
-        deckSection.innerHTML = `<details class="result-deck-details"><summary>${players[1].icon} ${escape(summary.opponentName)}の最終デッキ<span>${summary.opponentFinalDeck.length}枚</span></summary><div class="result-cards-grid"></div></details><details class="battle-result-build"><summary>バージョン・記録情報</summary><p class="result-build-info">${this.ui._buildInfoText()}</p></details>`;
+        deckSection.innerHTML = `<details class="result-deck-details" open><summary>${players[1].icon} ${escape(summary.opponentName)}の最終デッキ<span>${summary.opponentFinalDeck.length}枚</span></summary><div class="result-cards-grid"></div></details><details class="battle-result-build"><summary>バージョン・記録情報</summary><p class="result-build-info">${this.ui._buildInfoText()}</p></details>`;
         const grid = deckSection.querySelector('.result-cards-grid');
-        for (const card of this.state.battle.opponent.result.finalDeck) grid.appendChild(this.ui.createCardElement(card, { compact: true }));
+        this.ui.renderResultDeckThumbnails(grid, this.state.battle.opponent.result.finalDeck);
         document.getElementById('result-cards')?.after(deckSection);
         const rematch = document.createElement('button'); rematch.id = 'battle-rematch'; rematch.type = 'button';
         rematch.className = 'btn-primary'; rematch.textContent = '同じ相手と再戦';

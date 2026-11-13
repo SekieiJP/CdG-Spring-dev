@@ -77,21 +77,28 @@ function prepareActionPhase(state, turnManager) {
     const passion = state.tokens?.passion || 0;
     const fatigue = state.tokens?.fatigue || 0;
     const baseCount = spring ? 3 : 4;
-    const drawCount = Math.max(0, baseCount + passion - fatigue);
+    const requested = Math.max(0, baseCount + passion - fatigue);
     state.tokens.passion = 0;
     state.tokens.fatigue = 0;
-    state.lastDrawNotification = passion || fatigue ? { passion, fatigue, drawCount } : null;
     state.shuffleDeck();
-    if (!spring || state.player.deck.length >= drawCount) state.drawCards(drawCount);
-    turnManager.logger?.log(`${spring ? '講習' : '通常'}ドロー: ${drawCount}枚を要求しました`, 'action');
+    const drawn = state.drawCards(spring ? Math.min(requested, state.player.deck.length) : requested);
+    state.lastDrawNotification = passion || fatigue || (spring && drawn.length < requested)
+        ? { passion, fatigue, drawCount: drawn.length, requested } : null;
     return true;
+}
+
+const springTeachingStaff = ['leader', 'teacher'];
+
+function getSpringTeachingCard(state, cardManager, staff) {
+    if (!isSpringTurn(state) || !springTeachingStaff.includes(staff)) return null;
+    return cardManager.getCardByNo(3);
 }
 
 function beforeAction(state, cardManager) {
     if (!isSpringTurn(state)) return;
-    const basicCourseCard = cardManager.allCards.find(card => card.cardName === '質問対応の基本');
-    if (!basicCourseCard) return;
-    for (const slotId of ['leader', 'teacher']) {
+    for (const slotId of springTeachingStaff) {
+        const basicCourseCard = getSpringTeachingCard(state, cardManager, slotId);
+        if (!basicCourseCard) continue;
         const slot = state.slots.find(slot => slot.id === slotId);
         if (!slot) continue;
         const placed = state.player.placed[slotId] || [];
@@ -172,6 +179,7 @@ export const INT_DIFFICULTY = {
         getOutingConfig: state => state.config.turns[state.turn],
         prepareActionPhase,
         beforeAction,
+        getSpringTeachingCard,
         getActionValidationError,
         finishAction,
         skipReturnAllToDeck,
