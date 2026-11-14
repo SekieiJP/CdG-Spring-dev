@@ -1,6 +1,6 @@
 # あひる先生とPRO取得アシストの統合・公開
 
-2026-11-04。`codex/ahiru-release`で公開準備を行う。ユーザーはGitHub Pagesへの統合・公開まで指示済み。MASTERの作業内容は取り込まない。
+2026-11-04。`codex/ahiru-release`で公開準備を行う。ユーザーはGitHub Pagesへの統合・公開まで指示済み。LEGENDの作業内容は取り込まない。
 
 ## 方略の達成と人向け説明
 

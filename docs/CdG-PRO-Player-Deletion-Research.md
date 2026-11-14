@@ -1,6 +1,6 @@
 # PRO・プレイヤー報告の基本札優先削除
 
-作業は `codex/ahiru-pro-player-deletion`（`/private/tmp/cdg-pro-player-deletion`）へ分離する。MASTER、公開版、助言画面の作業場所を変更しない。取得と配置の判断は、従来のV1固定平均モデルc07e7fe7…と同じ先読み/重みを使う。ゲーム本体、カード、得点表は変更しない。
+作業は `codex/ahiru-pro-player-deletion`（`/private/tmp/cdg-pro-player-deletion`）へ分離する。LEGEND、公開版、助言画面の作業場所を変更しない。取得と配置の判断は、従来のV1固定平均モデルc07e7fe7…と同じ先読み/重みを使う。ゲーム本体、カード、得点表は変更しない。
 
 ## 報告と今回の解釈
 
