@@ -1,6 +1,6 @@
 # あひる先生・PRO版の実装と検証
 
-PROを先に `codex/ahiru-advice-ui` で実装し、その後FRESHを加えた現在の画面開発は `codex/ahiru-fresh-advice`。PRO/FRESHとも本体へ接続済み。攻略方略の研究、MASTER、公開ブランチとは分けている。FRESHの詳細は[実装資料](CdG-Ahiru-FRESH-Implementation.md)を参照。全体目標の1,000開始での方略達成と15指針は未完了で、まだ公開していない。
+PROを先に `codex/ahiru-advice-ui` で実装し、その後FRESHを加えた現在の画面開発は `codex/ahiru-fresh-advice`。PRO/FRESHとも本体へ接続済み。攻略方略の研究、LEGEND、公開ブランチとは分けている。FRESHの詳細は[実装資料](CdG-Ahiru-FRESH-Implementation.md)を参照。全体目標の1,000開始での方略達成と15指針は未完了で、まだ公開していない。
 
 ## 表示と入力
 

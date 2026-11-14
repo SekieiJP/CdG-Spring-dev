@@ -20,7 +20,7 @@
 | 操作や画面表示が便利に | 手札と配置済みカードの圧縮、ⓘと長押し、画面タップで1枚ずつ演出送り、安全な余白 | `uiController.js`、`cardDetailVisibility.js`、`actionAnimationController.js`、`css/style.css` |
 | その他の改善・修正 | 直近50件の履歴、同条件の前回比較、送信を待たない再プレイ、中断再開の引き継ぎ修正 | `resultController.js`、`resultRepository.js`、`saveManager.js`、`tests/unit/save-recovery.test.mjs` |
 
-内部の分割・評価用データ・送信処理の詳細・セキュリティ対策は掲載しない。履歴と再プレイは画面から使える改善として紹介する。未公開のMASTERや、未測定の勝率・到達率向上は記載しない。
+内部の分割・評価用データ・送信処理の詳細・セキュリティ対策は掲載しない。履歴と再プレイは画面から使える改善として紹介する。未公開のLEGENDや、未測定の勝率・到達率向上は記載しない。
 
 ホーム画面への追加手順は[Appleの案内](https://support.apple.com/ja-jp/guide/iphone/iphea86e5236/ios)と[Chromeの案内](https://support.google.com/chrome/answer/9658361?co=GENIE.Platform%3DAndroid&hl=ja)を参照。オフライン対応や端末間同期を追加したという記述はしない。
 
@@ -55,6 +55,6 @@
 | `codex/pro-acquisition-assist`、`codex/shared-improvements`、`codex/event-mode` | mainの祖先として統合済み |
 | `codex/shared-mobile-feedback-20261103` | 履歴上は2コミット分岐しているが、スマホ改修は`5fd679c`で統合済み。CIのUbuntu固定も現行へ反映済み。再マージは不要 |
 
-ローカルに残る研究枝の多くもmainの祖先だった。別に残る研究結果・カード評価資料・MASTERのカード案は、今回公開するゲーム画面の更新ではないため追加しない。MASTERは従来どおり別スレッドで扱う。
+ローカルに残る研究枝の多くもmainの祖先だった。別に残る研究結果・カード評価資料・LEGENDのカード案は、今回公開するゲーム画面の更新ではないため追加しない。LEGENDは従来どおり別スレッドで扱う。
 
 公開時は通常のfast-forwardでmainへ取り込み、既存のPagesワークフローを使用する。配信完了後に、配信コミットとGitHub mainのSHAを照合し、`game/`の全129ファイルを公開URLから読み取ってmainのバイト列と比較する。さらに実サイトで1000プレイ表示・5ページの文章と画像・前後移動を確認する。今回の実行コードとビルド番号は0059のまま。

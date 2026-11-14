@@ -1,4 +1,5 @@
 import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch, sortResultDeck } from './resultPresentation.js?v=20261110-0066';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261110-0066';
 
 const WIDTH = 640;
 const MARGIN = 20;
@@ -26,7 +27,7 @@ function loadImage(src) {
 }
 
 function imageTitle(summary) {
-    const difficulty = (summary.difficultyName || summary.difficulty).toUpperCase();
+    const difficulty = getDifficultyDisplayName(summary.difficulty, summary.difficultyName).toUpperCase();
     if (summary.room) return `部屋 ${summary.room.code}　${difficulty}`;
     const mode = (summary.mode || '通常')
         .replace(/^対戦:[^/]+\/(?:同一シード\/)?/, '')

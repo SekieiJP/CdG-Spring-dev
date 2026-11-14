@@ -1,7 +1,7 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig } from './difficultyConfig.js?v=20261110-0066';
+import { getHighScoreKey, getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261110-0066';
 import { isEventActive } from './eventManager.js?v=20261110-0066';
 import { fingerprint } from './playRecord.js?v=20261110-0066';
 
@@ -679,7 +679,7 @@ export class ScoreManager {
                     ...score
                 }));
 
-                this.logger?.log(`新ハイスコア記録: ${score.points}ポイント (${difficulty.toUpperCase()})`, 'action');
+                this.logger?.log(`新ハイスコア記録: ${score.points}ポイント (${getDifficultyDisplayName(difficulty)})`, 'action');
                 return true;
             }
         } catch (error) {

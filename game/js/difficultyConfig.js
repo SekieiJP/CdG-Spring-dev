@@ -47,6 +47,11 @@ export function getDifficultyConfig(difficultyId = 'fresh') {
     return config;
 }
 
+export function getDifficultyDisplayName(difficultyId, savedName) {
+    const id = String(difficultyId ?? '').toUpperCase();
+    return DIFFICULTY_CONFIG[id]?.name || savedName || id;
+}
+
 /** 固有ルールは別モジュールから登録する。FRESHへの暗黙変換はしない。 */
 export function registerDifficulty(config) {
     if (!/^[a-z][a-z0-9-]{0,31}$/.test(config?.id || '') || !config.name || !config.csvPath || !config.rankCsvPath) {

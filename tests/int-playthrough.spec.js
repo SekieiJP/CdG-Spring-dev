@@ -1,4 +1,5 @@
 import { test, expect } from './fixtures.js';
+import { expectResultImageDownload } from './helpers/result-image.js';
 
 const choices = '#training-cards .card';
 
@@ -27,7 +28,7 @@ async function finishMeeting(page) {
     await page.locator('#confirm-meeting').click();
 }
 
-test('INTを完走し、外出の途中から再開して講習のカードと結果を保持する', async ({ page, scoreSubmissions }) => {
+test('MASTERを完走し、外出の途中から再開して旧INTの記録を引き継ぐ', async ({ page, scoreSubmissions }) => {
     test.setTimeout(90_000);
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
@@ -39,6 +40,10 @@ test('INTを完走し、外出の途中から再開して講習のカードと�
 
     await page.goto('/');
     await expect(page.locator('#start-game')).toBeEnabled();
+    await expect(page.locator('#btn-difficulty-int')).toContainText('MASTER');
+    await page.evaluate(() => {
+        localStorage.setItem('bdrinkai_highscore_int', JSON.stringify({ points: 100, displayScore: 100 }));
+    });
     await page.locator('#btn-difficulty-int').click();
     await expect(page.locator('#start-battle')).toBeHidden();
     await page.locator('#start-game').click();
@@ -173,7 +178,28 @@ test('INTを完走し、外出の途中から再開して講習のカードと�
     await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
     const history = await page.evaluate(() => window.game.uiController.resultController.repository.history());
     expect(history).toHaveLength(1);
-    expect(history[0]).toMatchObject({ difficulty: 'int', submission: 'local' });
+    expect(history[0]).toMatchObject({ difficulty: 'int', difficultyName: 'MASTER', submission: 'local' });
+    expect(await page.evaluate(() => window.game.scoreManager.getHighScore('int')?.displayScore)).toBe(100);
+
+    await page.evaluate(() => {
+        const stored = JSON.parse(localStorage.getItem('cdg_results_v1'));
+        stored.history[0].difficultyName = 'INT';
+        stored.history[0].replayUnavailableReason = 'INTの進行形式はリプレイ再生に未対応です。';
+        localStorage.setItem('cdg_results_v1', JSON.stringify(stored));
+        const fillText = CanvasRenderingContext2D.prototype.fillText;
+        window.resultImageText = [];
+        CanvasRenderingContext2D.prototype.fillText = function (text, ...args) {
+            window.resultImageText.push(text);
+            fillText.call(this, text, ...args);
+        };
+    });
+    await expectResultImageDownload(page);
+    expect(await page.evaluate(() => window.resultImageText[0])).toContain('MASTER');
+    await page.locator('#view-result-history').click();
+    await page.locator('.result-history-entry summary').click();
+    await expect(page.locator('[data-history-label]')).toContainText('MASTER');
+    await expect(page.locator('[data-history-status]')).toContainText('MASTERは送信対象外');
+    await expect(page.locator('[data-replay-status]')).toHaveText('MASTERの進行形式はリプレイ再生に未対応です。');
     expect(scoreSubmissions).toEqual([]);
     expect(errors).toEqual([]);
 });
