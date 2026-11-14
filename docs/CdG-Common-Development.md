@@ -61,4 +61,4 @@ Node単体35件、デスクトップChromium・iPhone寸法のChromium・Android
 
 Safari実機・PWA登録、実機での通信復帰・性能、実GASのスコア書き込み・再送は未確認である。GASのローカル検証は代替シート・ロック・Cacheを使い、公開環境での動作確認とは分けている。
 
-カード評価の条件と450ゲームの基準は[カード評価手順](CdG-Card-Evaluation.md)、送信仕様と公開反映の順序は[結果・送信仕様](CdG-Results-Submission.md)、MASTER側へ取り込むコミットと残る確認は[共通改修の引き継ぎ](CdG-Shared-Handoff.md)を参照する。
+カード評価の条件と450ゲームの基準は[カード評価手順](CdG-Card-Evaluation.md)、送信仕様と公開反映の順序は[結果・送信仕様](CdG-Results-Submission.md)、LEGEND側へ取り込むコミットと残る確認は[共通改修の引き継ぎ](CdG-Shared-Handoff.md)を参照する。

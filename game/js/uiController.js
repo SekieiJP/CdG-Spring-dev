@@ -7,7 +7,7 @@ import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261110-0066'
 import { ResultController } from './resultController.js?v=20261110-0066';
 import { sortResultDeck } from './resultPresentation.js?v=20261110-0066';
 import { ActionAnimationController } from './actionAnimationController.js?v=20261110-0066';
-import { getDifficultyConfig, listDifficulties } from './difficultyConfig.js?v=20261110-0066';
+import { getDifficultyConfig, getDifficultyDisplayName, listDifficulties } from './difficultyConfig.js?v=20261110-0066';
 import { getPlacementError } from './placementRules.js?v=20261110-0066';
 import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261110-0066';
 import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261110-0066';
@@ -654,7 +654,7 @@ export class UIController {
             const room = options.room || null;
             const intMode = difficulty === 'int';
             if (intMode && (room || options.battle)) {
-                this.showFloatNotification('INTは通常のひとりプレイ専用です。', 'warning');
+                this.showFloatNotification(`${getDifficultyDisplayName(difficulty)}は通常のひとりプレイ専用です。`, 'warning');
                 return false;
             }
             if (room) this.checkRoomStart(room);
@@ -662,7 +662,7 @@ export class UIController {
             const loaded = window.game ? await window.game.setDifficulty(difficulty) : true;
             if (options.canStart && !options.canStart()) return false;
             if (!loaded) {
-                alert(`${difficulty.toUpperCase()}のデータを読み込めませんでした。\n通信を確認して、もう一度「ゲーム開始」を押してください。`);
+                alert(`${getDifficultyDisplayName(difficulty)}のデータを読み込めませんでした。\n通信を確認して、もう一度「ゲーム開始」を押してください。`);
                 return false;
             }
             if (room) this.checkRoomStart(room);

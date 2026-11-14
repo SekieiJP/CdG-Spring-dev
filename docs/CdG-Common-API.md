@@ -1,6 +1,6 @@
 # 共通基盤と難易度モジュールの接続
 
-MASTERのカード・契約条件・核の取得方法を定める文書ではない。既存FRESH・PROのルールを共有するための実装入口を記録する。
+LEGENDのカード・契約条件・核の取得方法を定める文書ではない。既存FRESH・PROのルールを共有するための実装入口を記録する。
 
 ## 難易度の登録
 
@@ -46,7 +46,7 @@ registerDifficulty({
 
 ## ブランチでの受け渡し
 
-共通コードは`codex/shared-foundation`、計測は`codex/shared-card-evaluation`、画面・通信は`codex/shared-mobile-ui`に置く。基盤のコミットをmergeしてから各作業に進む。MASTER側は別チェックアウトで必要な共通コミットを取り込み、`difficultyExtensions.js`と固有モジュール・データを中心に追加する。
+共通コードは`codex/shared-foundation`、計測は`codex/shared-card-evaluation`、画面・通信は`codex/shared-mobile-ui`に置く。基盤のコミットをmergeしてから各作業に進む。LEGEND側は別チェックアウトで必要な共通コミットを取り込み、`difficultyExtensions.js`と固有モジュール・データを中心に追加する。
 
 版を更新する際は`node scripts/set-build-version.mjs vYYYYMMDD-NNNN`を使用する。互換な更新は上8桁を維持する。ゲーム内の相対importを同じ版に統一し、別URLで設定レジストリが二重に生成されることを防ぐ。新しいimportを追加した場合もこのスクリプトで参照を揃える。
 

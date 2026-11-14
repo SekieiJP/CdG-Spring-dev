@@ -1,6 +1,6 @@
 # PRO攻略分析計画
 
-2026-10-03。取得推薦の改善に先立ち、人がプレイするときに使える攻略方針を探す。推薦本体の重み・UI・カード・ルールはこの分析で変更しない。作業ブランチは `codex/pro-strategy-research`、起点は `codex/pro-acquisition-assist` の `0589367`。MASTER開発と独立して進める。
+2026-10-03。取得推薦の改善に先立ち、人がプレイするときに使える攻略方針を探す。推薦本体の重み・UI・カード・ルールはこの分析で変更しない。作業ブランチは `codex/pro-strategy-research`、起点は `codex/pro-acquisition-assist` の `0589367`。LEGEND開発と独立して進める。
 
 ## 評価する目的
 

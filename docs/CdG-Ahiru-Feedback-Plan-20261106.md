@@ -1,6 +1,6 @@
 # あひる先生・取得候補・セーフエリアの改修
 
-2026-11-06。ユーザー提供の写真1〜8と公開main `5fd679c7092951830c4a24ab4bf51e1a073b65ae`（0057）を起点にした改修。文書用ブランチ `codex/ahiru-feedback-plan` から、実装用の **`codex/ahiru-feedback`** を分けた。MASTER開発・公開mainとは独立している。
+2026-11-06。ユーザー提供の写真1〜8と公開main `5fd679c7092951830c4a24ab4bf51e1a073b65ae`（0057）を起点にした改修。文書用ブランチ `codex/ahiru-feedback-plan` から、実装用の **`codex/ahiru-feedback`** を分けた。LEGEND開発・公開mainとは独立している。
 
 状態：**公開・配信確認済み**。公開ビルドは `v20260815-0058`。上8桁を維持する互換更新。2026-11-06、WebKitを含むPR CIを通過後、mainへマージしてPagesの実URLで確認した。
 

@@ -1,4 +1,4 @@
-/** INT専用の日程・進行ルール。 */
+/** MASTER専用の日程・進行ルール。 */
 const outing = (name, outingOptions) => ({
     name,
     week: name,
@@ -163,7 +163,7 @@ function returnSpringCardsToDeck(state) {
 
 export const INT_DIFFICULTY = {
     id: 'int',
-    name: 'INT',
+    name: 'MASTER',
     csvPath: 'data/cards_pro.csv',
     rankCsvPath: 'data/rankInt.csv',
     withdrawalBase: 20,

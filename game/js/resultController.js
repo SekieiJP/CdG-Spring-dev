@@ -5,6 +5,11 @@ import { getCompletedReplay } from './replayRecorder.js?v=20261110-0066';
 import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261110-0066';
 import { battleSummary } from './battleReplay.js?v=20261110-0066';
 import { createResultImage, downloadResultImage } from './resultImage.js?v=20261110-0066';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261110-0066';
+
+function unsupportedReplayReason(difficulty) {
+    return `${getDifficultyDisplayName(difficulty)}の進行形式はリプレイ再生に未対応です。`;
+}
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {
@@ -64,7 +69,7 @@ export class ResultController {
             ...(state.battle ? { battle: battleSummary(state, score) } : {}),
             finalDeck: finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })),
             ...(replayPending ? { replayPending } : { replayUnavailableReason: state.difficulty === 'int'
-                ? 'INTの進行形式はリプレイ再生に未対応です。'
+                ? unsupportedReplayReason(state.difficulty)
                 : 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
         }, payload, { submit: submissionSupported });
         const imageButton = document.getElementById('result-image-save');
@@ -119,7 +124,9 @@ export class ResultController {
     statusText(row) {
         if (this.repository.storageError) return '履歴をこの画面で保持しています。再読み込みすると失われる可能性があります。';
         if (!row) return '履歴はこの端末に残っていません';
-        if (row.submission === 'local') return 'この端末に保存済み（INTは送信対象外）';
+        if (row.submission === 'local') {
+            return `この端末に保存済み（${getDifficultyDisplayName(row.difficulty, row.difficultyName)}は送信対象外）`;
+        }
         if (row?.submission === 'sent') return 'スコア送信済み';
         if (row.submission === 'history-pending') return 'スコア送信済み。ターン履歴は送信先の更新待ち';
         if (row.submission === 'history-outside-queue') return 'スコア送信済み（ターン履歴は送信待ちの上限から除外）';
@@ -167,6 +174,7 @@ export class ResultController {
         if (this.replayMessages.has(row.resultId)) return this.replayMessages.get(row.resultId);
         if (row.replayText) return 'リプレイデータをコピーできます。';
         if (row.replayPending) return 'リプレイデータを準備しています。';
+        if (row.difficulty === 'int') return unsupportedReplayReason(row.difficulty);
         return row.replayUnavailableReason || 'この履歴には完全なリプレイデータがないため、リプレイ出力できません。';
     }
 
@@ -208,7 +216,8 @@ export class ResultController {
                 const modeLabel = row.room
                     ? `同僚と対戦 · ${row.room.code}${row.room.revenge ? ' · リベンジ' : ''}`
                     : row.mode;
-                label.textContent = `${row.favorite ? '★ ' : ''}${row.difficultyName || row.difficulty} · ${modeLabel} · ${row.score.displayScore}pt / ${row.score.rank.grade}`;
+                const difficultyName = getDifficultyDisplayName(row.difficulty, row.difficultyName);
+                label.textContent = `${row.favorite ? '★ ' : ''}${difficultyName} · ${modeLabel} · ${row.score.displayScore}pt / ${row.score.rank.grade}`;
             }
         }
     }
