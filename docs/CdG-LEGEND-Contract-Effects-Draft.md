@@ -1,4 +1,4 @@
-# MASTER：既存R・SR全札の契約効果案
+# LEGEND：既存R・SR全札の契約効果案
 
 | 項目 | 内容 |
 |---|---|
@@ -6,12 +6,12 @@
 | 作成・更新日 | 2026-10-07 |
 | 作業ブランチ | codex/master-development |
 | 状態 | 契約効果の候補。未採用・未実測、カードCSVは未変更 |
-| 上位仕様 | [MASTER仕様案](CdG-MASTER-Design-Draft.md) |
-| 統合提案 | [カード総合一覧（Excel）](../outputs/01a0fb7b-a927-74c3-8ab7-9cb3a3ddd50a/CdG-MASTER-Card-Proposals-20261007.xlsx)。新カードの契約効果も含む |
+| 上位仕様 | [LEGEND仕様案](CdG-LEGEND-Design-Draft.md) |
+| 統合提案 | [カード総合一覧（Excel）](../outputs/01a0fb7b-a927-74c3-8ab7-9cb3a3ddd50a/CdG-LEGEND-Card-Proposals-20261007.xlsx)。新カードの契約効果も含む |
 
 ## 1. 既存札を残す方針への更新
 
-旧MR3種類への入れ替えを撤回し、既存PROのR12＋SR24＝36札をすべて残す。通常効果はPRO原文を基準にする案で、下表はMASTER用の契約効果だけを提案している。
+旧MR3種類への入れ替えを撤回し、既存PROのR12＋SR24＝36札をすべて残す。通常効果はPRO原文を基準にする案で、下表はLEGEND用の契約効果だけを提案している。
 
 新規25案にはR6・SR12の計18札を含め、こちらも契約効果を持たせる。既存36＋新規18＝54札の通常・契約効果を統合Excelで比較できる。
 
