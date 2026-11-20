@@ -1,11 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { registerDifficulty, getDifficultyConfig } from '../../game/js/difficultyConfig.js?v=20261122-0067';
-import { GameState } from '../../game/js/gameState.js?v=20261122-0067';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0067';
-import { CardManager } from '../../game/js/cardManager.js?v=20261122-0067';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0067';
-import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0067';
+import { registerDifficulty, getDifficultyConfig } from '../../game/js/difficultyConfig.js?v=20261122-0068';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0068';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0068';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0068';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0068';
+import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0068';
 
 const base = getDifficultyConfig('pro');
 registerDifficulty({ ...base, id: 'test-mode', name: '検証', turns: base.turns.slice(0, 6),

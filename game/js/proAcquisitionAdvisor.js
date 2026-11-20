@@ -1,4 +1,4 @@
-import { CardManager } from './cardManager.js?v=20261122-0067';
+import { CardManager } from './cardManager.js?v=20261122-0068';
 
 /** 公開情報の固定回数の算術投影。抽選・ゲームの将来試行は行わない。 */
 export const ADVISOR_VERSION = 'pro-formula-v1';
@@ -16,6 +16,7 @@ const TOKENS = ['passion','fatigue','inspiration','organize'];
 const SLOTS = ['leader','teacher','staff'];
 const NAMES = { experience:'動員の不足', enrollment:'入退差の不足', satisfaction:'高満足の加点', accounting:'退塾・経理コスト', goal:'S+への補完', points:'公式得点への寄与', engine:'ドロー・並行配置・圧縮', risk:'発動・配置の難しさ' };
 const parser = new CardManager(null), cache = new Map(), tableCache = new Map();
+const complementaryBlocks = new WeakMap();
 export const clamp = (v, a=0, b=1) => Math.max(a,Math.min(b,v));
 const parsed = card => { if(!cache.has(card.effect||''))cache.set(card.effect||'',parser.parseEffect(card.effect||''));return cache.get(card.effect||''); };
 export const withdrawal = stats => Math.max(0,15-stats.satisfaction)+Math.max(0,15-stats.accounting);
@@ -74,9 +75,33 @@ function conditionChance(condition,slot,observation,forecast,future){
     }
     return (1-future)*now+future*Number(parser.evaluateCondition(condition,slot,{...context,player:forecast}));
 }
+
+function complementaryStatusBlocks(effect) {
+    if (!complementaryBlocks.has(effect)) {
+        const blocks = effect.conditionalBlocks;
+        const lower = blocks.find(block => block.condition.type === 'status' && block.condition.comparison === 'lte');
+        const upper = lower && blocks.find(block => block.condition.type === 'status' &&
+            block.condition.status === lower.condition.status && block.condition.comparison === 'gte' &&
+            block.condition.value === lower.condition.value + 1);
+        complementaryBlocks.set(effect, upper ? { lower, upper } : null);
+    }
+    return complementaryBlocks.get(effect);
+}
+
+function lowerBranchShare(condition, observation, forecast, future) {
+    const start = observation.stats[condition.status];
+    const end = Math.floor(forecast[condition.status]);
+    const min = Math.min(start, end), max = Math.max(start, end);
+    const share = clamp((condition.value - min + 1) / (max - min + 1));
+    return (1 - future) * Number(start <= condition.value) + future * share;
+}
+
 function cardOutput(card,observation,forecast,weights){
     const effect=parsed(card),slots=effect.staffRestrictions.length?effect.staffRestrictions:SLOTS;
     const remaining=observation.totalTurns-observation.turn;
+    const future = remaining <= 1 ? 0 : weights.future;
+    const pair = observation.difficulty === 'pro' ? complementaryStatusBlocks(effect) : null;
+    const lowerShare = pair ? lowerBranchShare(pair.lower.condition, observation, forecast, future) : 0;
     const outputs=slots.map(slot=>{
         const delta=Object.fromEntries(KEYS.map(k=>[k,0])),tokens=Object.fromEntries(TOKENS.map(k=>[k,0]));
         const sets=[];let risk=0;
@@ -86,7 +111,15 @@ function cardOutput(card,observation,forecast,weights){
             if(item.type==='token')tokens[item.token]+=chance;
         }};
         add(effect.baseEffects,1);
-        for(const block of effect.conditionalBlocks){const chance=conditionChance(block.condition,slot,observation,forecast,remaining<=1?0:weights.future);add(block.effects,chance);risk+=1-chance;}
+        for (const block of effect.conditionalBlocks) {
+            if (pair && (block === pair.lower || block === pair.upper)) {
+                add(block.effects, block === pair.lower ? lowerShare : 1 - lowerShare);
+                continue;
+            }
+            const chance = conditionChance(block.condition, slot, observation, forecast, future);
+            add(block.effects, chance);
+            risk += 1 - chance;
+        }
         const hasCost=[...effect.baseEffects,...effect.conditionalBlocks.flatMap(b=>b.effects)].some(i=>i.type==='change'&&i.value<0);
         if(hasCost){
             const now=Number(parser.simulateCardEffect(card,slot,observation.stats,null,observation).applied);

@@ -1,11 +1,11 @@
-import { ResultRepository } from './resultRepository.js?v=20261122-0067';
-import { SubmissionQueue } from './submissionQueue.js?v=20261122-0067';
-import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0067';
-import { getCompletedReplay } from './replayRecorder.js?v=20261122-0067';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0067';
-import { battleSummary } from './battleReplay.js?v=20261122-0067';
-import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0067';
-import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0067';
+import { ResultRepository } from './resultRepository.js?v=20261122-0068';
+import { SubmissionQueue } from './submissionQueue.js?v=20261122-0068';
+import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0068';
+import { getCompletedReplay } from './replayRecorder.js?v=20261122-0068';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0068';
+import { battleSummary } from './battleReplay.js?v=20261122-0068';
+import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0068';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0068';
 
 function unsupportedReplayReason(difficulty) {
     return `${getDifficultyDisplayName(difficulty)}の進行形式はリプレイ再生に未対応です。`;

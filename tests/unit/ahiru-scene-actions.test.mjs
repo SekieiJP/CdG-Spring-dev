@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20261122-0067';
-import {ScoreManager} from '../../game/js/scoreManager.js?v=20261122-0067';
-import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20261122-0067';
-import {recommendFreshStatus} from '../../game/js/ahiruFreshAdvice.js?v=20261122-0067';
-import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20261122-0067';
-import {expectedBest,publicRefreshPool} from '../../game/js/ahiruActionEvaluation.js?v=20261122-0067';
-import {createAhiruRoleInspector} from '../../game/js/ahiruCardRoles.js?v=20261122-0067';
+import {CardManager} from '../../game/js/cardManager.js?v=20261122-0068';
+import {ScoreManager} from '../../game/js/scoreManager.js?v=20261122-0068';
+import {DEFAULT_TURNS} from '../../game/js/defaultRules.js?v=20261122-0068';
+import {recommendFreshStatus} from '../../game/js/ahiruFreshAdvice.js?v=20261122-0068';
+import {recommendProStatus} from '../../game/js/ahiruProAdvice.js?v=20261122-0068';
+import {expectedBest,publicRefreshPool} from '../../game/js/ahiruActionEvaluation.js?v=20261122-0068';
+import {createAhiruRoleInspector} from '../../game/js/ahiruCardRoles.js?v=20261122-0068';
 const read=path=>readFileSync(new URL('../../game/data/'+path,import.meta.url),'utf8');
 async function setup(difficulty){
     const manager=new CardManager(null);manager.parseCSV(read(`cards_${difficulty}.csv`));

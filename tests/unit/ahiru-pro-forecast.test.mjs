@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-import {CardManager} from '../../game/js/cardManager.js?v=20261122-0067';
-import {projectProDeck} from '../../game/js/proAcquisitionAdvisor.js?v=20261122-0067';
-import {createValueForecaster} from '../../solver/browser/pro-value-model.js?v=20261122-0067';
-import {projectProAdviceState} from '../../game/js/ahiruProForecast.js?v=20261122-0067';
+import {CardManager} from '../../game/js/cardManager.js?v=20261122-0068';
+import {projectProDeck} from '../../game/js/proAcquisitionAdvisor.js?v=20261122-0068';
+import {createValueForecaster} from '../../solver/browser/pro-value-model.js?v=20261122-0068';
+import {projectProAdviceState} from '../../game/js/ahiruProForecast.js?v=20261122-0068';
 const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../../game/data/cards_pro.csv',import.meta.url),'utf8'));
 const calibration=JSON.parse(readFileSync(new URL('../../game/data/ahiru/pro-projection-calibration.json',import.meta.url),'utf8')),versions={cardVersion:calibration.cardVersion,rankVersion:calibration.rankVersion};
 const card=n=>({...manager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});
@@ -36,4 +36,28 @@ test('物理版・正常モード・観測範囲の一致時だけ時期の補�
  for(const mode of ['calculator','event'])assert.equal(projectProAdviceState({...o,mode},{calibration,versions}).calibrated,false);
  for(const k of ['experience','enrollment','satisfaction','accounting'])assert.ok(r.lowerEnd[k]<=r.expectedEnd[k]&&r.expectedEnd[k]<=r.upperEnd[k]);
  assert.equal(projectProAdviceState({...o,difficulty:'fresh'}),null);
+});
+
+test('事務リーダーの経理回復と追加効果を排他的に投影し、条件境界をまたぐ変動を反映する', () => {
+    const observationForCard = observation();
+    observationForCard.turn = 6;
+    observationForCard.owned = [card(50)];
+    observationForCard.stats.accounting = 13;
+    const crossing = projectProDeck(observationForCard, {
+        forecast: { ...observationForCard.stats, accounting: 15 }
+    }).outputs[0];
+    assert.ok(crossing.delta.accounting > 0 && crossing.delta.accounting < 1);
+    assert.equal(crossing.delta.satisfaction, 3 * crossing.delta.accounting);
+    assert.equal(crossing.sets[0].chance + crossing.delta.accounting, 1);
+    assert.equal(crossing.risk, 0);
+
+    observationForCard.turn = 7;
+    for (const accounting of [13, 14]) {
+        observationForCard.stats.accounting = accounting;
+        const { end, outputs: [output] } = projectProDeck(observationForCard);
+        const actual = manager.simulateCardEffect(
+            observationForCard.owned[0], output.slot, observationForCard.stats, null, observationForCard
+        );
+        assert.deepEqual(end, actual.afterStats);
+    }
 });

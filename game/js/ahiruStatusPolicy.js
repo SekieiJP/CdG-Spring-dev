@@ -1,5 +1,5 @@
-import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261122-0067';
-import {acquisitionAlternatives,evaluateDeletions,evaluateRefresh} from './ahiruActionEvaluation.js?v=20261122-0067';
+import {createAhiruRoleInspector} from './ahiruCardRoles.js?v=20261122-0068';
+import {acquisitionAlternatives,evaluateDeletions,evaluateRefresh} from './ahiruActionEvaluation.js?v=20261122-0068';
 const AXES=['experience','enrollment','satisfaction','accounting'];
 const LABELS={experience:'体験',enrollment:'入塾',satisfaction:'満足',accounting:'経理'},SAFETY=['satisfaction','accounting'];
 const EPSILON=1e-8;
@@ -49,7 +49,9 @@ export function createAhiruStatusPolicy({difficulty,weights,getGoals,projectStat
             row.complements=!!focusAxis&&row.indices.some(i=>inspector.canRecover(input.candidates[i],focusAxis,safetyTargets[focusAxis]||goals.sThresholds[focusAxis]))&&
                 (row.gains[focusAxis]>EPSILON||structuralMissing===focusAxis||(initial&&row.gains[focusAxis]>=-EPSILON))&&distance(row.forecast.expectedEnd)<=distance(estimated)+EPSILON;
         }
-        const preferred=alternatives.find(row=>row.complements)||alternatives[0];
+        const forecastChoice=options.preferredAcquisition;
+        const preferred=(forecastChoice&&alternatives.find(row=>row.indices.join(',')===forecastChoice.join(',')))||
+            alternatives.find(row=>row.complements)||alternatives[0];
         const extra={outlookReason:reason,focusAxis,availableComplement:alternatives.some(row=>row.complements),preferredIndices:preferred?.indices||[],alternatives};
         if(!preferred)return result(tone,'使えるカードを選んで進もう',axis,reason,forecast,extra);
         const refresh=evaluateRefresh(input,options,model,forecast,alternatives);extra.refresh=refresh;

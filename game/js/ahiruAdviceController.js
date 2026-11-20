@@ -1,10 +1,11 @@
-import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261122-0067';
-import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261122-0067';
-import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261122-0067';
-import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261122-0067';
-import {recommendProStatus} from './ahiruProAdvice.js?v=20261122-0067';
-import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261122-0067';
-export const ADVICE_SCENE_VERSION=1;
+import {loadAdviceCalibration} from './ahiruCalibrationLoader.js?v=20261122-0068';
+import {AhiruAdviceView} from './ahiruAdviceView.js?v=20261122-0068';
+import {createAdvisorObservation,recommendAcquisition} from './acquisitionAdvisor.js?v=20261122-0068';
+import {alignAcquisitionWithStatus} from './proAcquisitionConsistency.js?v=20261122-0068';
+import {recommendProStatus} from './ahiruProAdvice.js?v=20261122-0068';
+import {recommendFreshStatus} from './ahiruFreshAdvice.js?v=20261122-0068';
+import {chooseFreshForecastAcquisition} from './freshOutcomeForecast.js?v=20261122-0068';
+export const ADVICE_SCENE_VERSION=2;
 const validStatus=status=>status&&['red','yellow','green'].includes(status.tone)&&typeof status.text==='string'&&status.text.trim()&&Array.from(status.text).length<=25;
 /** 確定状態と提示候補のスナップショットを、助言・取得アシストで共有する。 */
 export class AhiruAdviceController {
@@ -50,7 +51,12 @@ export class AhiruAdviceController {
             catalog:ui.cardManager.allCards,refreshEnabled:state.config?.trainingRefresh?.enabled===true};
         const acquisition=phase==='acquisition'?recommendAcquisition(observation):null;
         const recommend=state.difficulty==='fresh'?recommendFreshStatus:recommendProStatus;
-        const status=recommend(observation,{...options,acquisitionAdvice:acquisition});
+        const optionsWithAcquisition={...options,acquisitionAdvice:acquisition};
+        let status=recommend(observation,optionsWithAcquisition);
+        if(state.difficulty==='fresh'&&phase==='acquisition'&&status?.preferredIndices){
+            const choice=chooseFreshForecastAcquisition(observation,acquisition,status.preferredIndices);
+            if(choice)status=recommend(observation,{...optionsWithAcquisition,preferredAcquisition:choice.indices});
+        }
         if(!validStatus(status))return null;
         const aligned=alignAcquisitionWithStatus(acquisition,status);
         // 選択肢の投影は計算中だけ保持し、中断データへは確定結果だけ保存する。
