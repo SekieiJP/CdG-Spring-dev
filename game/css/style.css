@@ -323,6 +323,19 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     opacity: 0.5;
 }
 
+.card.drag-from-staff {
+    touch-action: none;
+    cursor: grab;
+}
+
+.card.card-drag-preview {
+    position: fixed;
+    inset: 0 auto auto 0;
+    pointer-events: none;
+    z-index: 1700;
+    opacity: 0.9;
+}
+
 .card.skip-option {
     display: flex;
     align-items: center;
@@ -465,17 +478,22 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 .card-icon-hide #hand-cards .card, #hand-cards .card:not(:has(.card-thumbnail)) { grid-template-columns: minmax(0, 1fr); }
 
 /* 効果詳細ツールチップ */
-.effect-tooltip {
+.effect-tooltip-backdrop {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: var(--spacing-md);
+    outline: none;
+    z-index: 1600;
+}
+
+.effect-tooltip {
     background: var(--color-bg-light);
     border: 2px solid var(--color-primary);
     border-radius: var(--border-radius);
     padding: var(--spacing-md);
-    z-index: 1000;
-    max-width: 300px;
+    width: min(100%, 300px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
 }
 
@@ -527,7 +545,7 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     border-radius: var(--border-radius);
     padding: var(--spacing-sm) var(--spacing-md);
     z-index: 1500;
-    max-width: 280px;
+    max-width: min(280px, calc(100vw - 16px));
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     pointer-events: none;
     font-size: 0.85rem;
@@ -1601,6 +1619,26 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 }
 
 /* スケジュール一覧スタイル */
+.schedule-columns {
+    max-width: 1120px;
+    margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+    .schedule-columns {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: var(--spacing-lg);
+        align-items: start;
+    }
+
+    .schedule-columns .score-section-title {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
+    }
+}
+
 .schedule-table {
     width: 100%;
     border-collapse: collapse;
@@ -1612,6 +1650,16 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
     padding: var(--spacing-xs) var(--spacing-sm);
     text-align: center;
     border-bottom: 1px solid var(--color-border);
+}
+
+.schedule-table th:not(:nth-child(3)),
+.schedule-table td:is(:first-child, :nth-child(4), :last-child) {
+    white-space: nowrap;
+}
+
+.schedule-outing-options {
+    display: block;
+    margin-top: 2px;
 }
 
 .schedule-table th {
@@ -1824,9 +1872,13 @@ html.font-normal .compact-stats {
     white-space: nowrap;
 }
 
-/* 長押しヘルプは常時表示 */
-.help-longpress {
-    display: inline;
+.card-details-mouse {
+    display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .card-details-mouse { display: inline; }
+    .card-details-touch { display: none; }
 }
 
 /* 文字サイズトグルスイッチ */
@@ -1929,8 +1981,8 @@ html.font-normal .compact-stats {
 .outing-choice strong, .outing-choice span { display: block; }
 .outing-choice span { margin-top: 4px; color: var(--color-text-secondary); font-size: .82rem; }
 .outing-section-title { margin: 8px 0 0; font-size: 1rem; }
-.outing-card-grid, .outing-delete-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: var(--spacing-sm); }
-.outing-card-grid .card, .outing-delete-grid .card { cursor: pointer; }
+.outing-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: var(--spacing-sm); }
+.outing-card-grid .card { cursor: pointer; }
 .outing-refresh { align-self: flex-start; min-height: 44px; }
 .outing-status { min-height: 1.4em; color: var(--color-text-secondary); }
 .int-meeting-required { color: var(--color-text-secondary); margin: 4px 0 12px; }
@@ -2055,6 +2107,8 @@ html.font-normal .compact-stats {
 }
 
 .token-chip {
+    -webkit-touch-callout: none;
+    user-select: none;
     display: inline-flex;
     align-items: center;
     font-size: 0.8rem;

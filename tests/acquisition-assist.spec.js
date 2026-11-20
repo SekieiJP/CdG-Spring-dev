@@ -42,10 +42,11 @@ test('候補の再提示・中断復帰は5秒を数え直し、確定後はタ�
     expect(decision).toHaveLength(1); expect(decision[0].chosenIndices).toEqual([0,1]);
     expect(decision[0].observation).not.toHaveProperty('seed');
 });
-test('推薦理由を長押し詳細で確認しても選択されない',async({page})=>{
+test('推薦理由をマウスオーバーで確認しても選択されない',async({page})=>{
     await training(page); await page.clock.runFor(5000);
     await page.clock.runFor(32); // 追加情報の目印を次の描画フレームで更新する。
-    await glow(page).first().locator('.card-detail-hint').click();
+    await glow(page).first().hover();
+    await page.clock.runFor(550);
     await expect(page.locator('.tooltip-assist')).toContainText('🐤');
     await expect(page.locator('.tooltip-assist')).not.toContainText('を評価しています');
     await expect(page.locator('#training-cards .selected')).toHaveCount(0);

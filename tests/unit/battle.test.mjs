@@ -5,15 +5,16 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import vm from 'node:vm';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from '../../game/js/replayCodec.js?v=20261110-0066';
-import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261110-0066';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0066';
-import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261110-0066';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from '../../game/js/battleAdvice.js?v=20261110-0066';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from '../../game/js/replayCodec.js?v=20261122-0067';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0067';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0067';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0067';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0067';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0067';
+import { buildScorePayload } from '../../game/js/scoreSubmitter.js?v=20261122-0067';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from '../../game/js/battleAdvice.js?v=20261122-0067';
 import { validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames, interimScore,
-    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261110-0066';
+    compareBattleScores, battleSummary } from '../../game/js/battleReplay.js?v=20261122-0067';
 
 globalThis.window = { BUILD_VERSION: 'v20261107-0061' };
 globalThis.fetch = async url => new Response(await readFile(fileURLToPath(new URL(url))));
@@ -73,9 +74,14 @@ test('短縮形式の参照切れと、参照展開によるサイズ超過を�
 
 test('PROの固定V1は基準3プレイの取得・抽選・配置解決・削除・最終得点を再現する', { timeout: 120000 }, async () => {
     const fixture = JSON.parse(await readFile(new URL('../fixtures/cpu-pro-v1-golden.json', import.meta.url)));
+    const cards = new CardManager();
+    await cards.loadCards(new URL('../fixtures/cpu-pro-v1-cards.csv', import.meta.url).href);
+    const ranks = new ScoreManager(null, { migrateHighScore: false });
+    await ranks.loadRankData(new URL('../../game/data/rankPro.csv', import.meta.url).href);
+    const resources = { cards: cards.allCards, cardVersion: cards.dataVersion, ranks: ranks.rankTable, rankVersion: ranks.dataVersion };
     assert.ok(fixture.games.some(game => game.inspiration));
     for (const game of fixture.games) {
-        const replay = await createCpuReplay({ difficulty: 'pro', seed: game.seed });
+        const replay = await createCpuReplay({ difficulty: 'pro', seed: game.seed, resources });
         assert.deepEqual(replay.result.score, game.score, game.seed);
         const events = replay.turns.flatMap(turn => turn.events.map(event => ({ turn: turn.turn, ...event }))).map(canonical);
         assert.deepEqual(events, game.events, game.seed);

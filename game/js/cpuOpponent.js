@@ -1,15 +1,15 @@
-import { GameState } from './gameState.js?v=20261110-0066';
-import { CardManager } from './cardManager.js?v=20261110-0066';
-import { TurnManager } from './turnManager.js?v=20261110-0066';
-import { ScoreManager } from './scoreManager.js?v=20261110-0066';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261110-0066';
-import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261110-0066';
-import * as formula from './proAcquisitionAdvisor.js?v=20261110-0066';
-import * as researchModule from './cpu/pro-strategy-research.js?v=20261110-0066';
-import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261110-0066';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261110-0066';
-import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261110-0066';
-import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261110-0066';
+import { GameState } from './gameState.js?v=20261122-0067';
+import { CardManager } from './cardManager.js?v=20261122-0067';
+import { TurnManager } from './turnManager.js?v=20261122-0067';
+import { ScoreManager } from './scoreManager.js?v=20261122-0067';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0067';
+import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261122-0067';
+import * as formula from './proAcquisitionAdvisor.js?v=20261122-0067';
+import * as researchModule from './cpu/pro-strategy-research.js?v=20261122-0067';
+import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261122-0067';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0067';
+import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261122-0067';
+import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0067';
 
 const dataJobs = new Map();
 const policyAdvisor = {

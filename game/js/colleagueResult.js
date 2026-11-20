@@ -1,4 +1,4 @@
-import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch } from './resultPresentation.js?v=20261110-0066';
+import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch } from './resultPresentation.js?v=20261122-0067';
 
 const MOVED_RESULT_CONTROLS = [
     '#result-submission-status',

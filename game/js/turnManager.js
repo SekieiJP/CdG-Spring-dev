@@ -1,9 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20261110-0066';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20261110-0066';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261110-0066';
+import { resolveCardAction } from './actionResolver.js?v=20261122-0067';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261122-0067';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261122-0067';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -54,20 +54,7 @@ export class TurnManager {
         return this.gameState.config.rules.getDeleteCandidates?.(this.gameState, 'meeting') || [...this.gameState.player.deck];
     }
 
-    getOutingDeleteCandidates() {
-        return this.gameState.config.rules.getDeleteCandidates?.(this.gameState, 'outing') || this.getMeetingDeleteCandidates();
-    }
-
     deleteMeetingCard(card) { return this.gameState.removeOwnedCard(card); }
-
-    deleteOutingCard(card) {
-        const outing = this.gameState.ruleState.int?.outing;
-        if (this.gameState.phase !== 'outing' || outing?.stage !== 'delete') return false;
-        if (!this.gameState.removeOwnedCard(card)) return false;
-        const result = { deleted: card, acquired: outing.selectedCards || [outing.selectedCard].filter(Boolean) };
-        this.completeOuting();
-        return result;
-    }
 
     beginOuting(placeId) {
         const config = this.getOutingConfig();
@@ -76,13 +63,6 @@ export class TurnManager {
         const offer = { rarity: place.rarity, offerCount: place.offerCount, pickCount: place.pickCount, allowSkip: false };
         const candidates = this.cardManager.drawTrainingOffer(offer);
         if (candidates.length === 0) {
-            if (place.id === 'bookstore') {
-                this.gameState.ruleState.int.outing = { place: place.id, stage: 'delete', candidates: [], selectedCard: null,
-                    selectedCards: [], pickCount: 0 };
-                this.gameState.currentTrainingCards = null;
-                return { place, stage: 'delete', candidates: [], deleteCount: 1,
-                    deleteCandidates: this.getOutingDeleteCandidates() };
-            }
             this.gameState.ruleState.int.outing = { place: place.id, stage: 'complete', candidates: [], selectedCard: null,
                 selectedCards: [], pickCount: 0 };
             const nextPhase = this.completeOuting();
@@ -121,7 +101,7 @@ export class TurnManager {
         const selectedCards = outing.selectedCards || [];
         const required = Math.min(place.pickCount, outing.candidates.length);
         if (selectedCards.length !== required) return;
-        if (required === 0 && place.id !== 'bookstore') {
+        if (required === 0) {
             this.completeOuting();
             return { stage: 'complete' };
         }
@@ -132,11 +112,6 @@ export class TurnManager {
             return { stage: 'staff', selectedCard: outing.selectedCard, selectedCards, staffIds: this.gameState.slotIds };
         }
         selectedCards.forEach(selectedCard => this.gameState.addToDeck(selectedCard));
-        if (place.id === 'bookstore') {
-            outing.stage = 'delete';
-            return { stage: 'delete', acquired: selectedCards, selectedCards, deleteCount: 1,
-                deleteCandidates: this.getOutingDeleteCandidates() };
-        }
         const result = { stage: 'complete', acquired: selectedCards, selectedCards };
         result.nextPhase = this.completeOuting();
         return result;

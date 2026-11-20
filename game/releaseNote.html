@@ -14,9 +14,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>アップデート情報 - カードで学習塾</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="pwa/icon-180.png?v=20261110-0066">
-    <link rel="icon" type="image/png" sizes="32x32" href="pwa/icon-32.png?v=20261110-0066">
-    <link rel="icon" type="image/png" sizes="16x16" href="pwa/icon-16.png?v=20261110-0066">
+    <link rel="apple-touch-icon" sizes="180x180" href="pwa/icon-180.png?v=20261122-0067">
+    <link rel="icon" type="image/png" sizes="32x32" href="pwa/icon-32.png?v=20261122-0067">
+    <link rel="icon" type="image/png" sizes="16x16" href="pwa/icon-16.png?v=20261122-0067">
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
@@ -224,6 +224,10 @@
                 font-size: 0.9rem;
             }
         }
+
+        .card-changes-scroll { max-width: 100%; overflow-x: auto; }
+        .card-changes { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
+        .card-changes th, .card-changes td { padding: 6px; vertical-align: top; border-bottom: 1px solid var(--color-border); }
     </style>
 </head>
 
@@ -236,8 +240,27 @@
 
         <div class="slide-container" id="slide-container">
 
-            <!-- 2026年11月アップデート：1/6 -->
             <div class="slide active november-update">
+                <div class="slide-content">
+                    <h2>2026年11月22日 アップデート</h2>
+                    <h3>PRO・MASTERのカード性能変更</h3>
+                    <div class="card-changes-scroll">
+                        <table class="card-changes">
+                            <thead>
+                                <tr><th scope="col">カード</th><th scope="col">変更前</th><th scope="col">変更後</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><th scope="row">人気の秘密は？他塾研究</th><td>[発想💡][整理🗑️]</td><td>[発想💡][整理🗑️]体験+3。</td></tr>
+                                <tr><th scope="row">補習大会</th><td>【室長・講師】<br>〈入塾15以下〉入塾+4、満足+2。</td><td>【室長・講師】入塾+3。<br>〈入塾20以下〉さらに入塾+2、満足+2。</td></tr>
+                                <tr><th scope="row">事務リーダー1日派遣</th><td>[並行🤹]<br>〈経理13以下〉経理を14にする。</td><td>[並行🤹]<br>〈経理13以下〉経理を14にする。<br>〈経理14以上〉経理+1、満足+3。</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2026年11月アップデート：1/6 -->
+            <div class="slide november-update">
                 <div class="slide-content">
                     <h2>2026年11月アップデート [1/6]</h2>
                     <h3>あひる先生のアドバイス</h3>
@@ -276,7 +299,7 @@
                 <div class="slide-content">
                     <h2>2026年11月アップデート [3/6]</h2>
                     <h3>ホーム画面に置けます！</h3>
-                    <img class="release-app-icon" src="pwa/icon-180.png?v=20261110-0066" width="72" height="72" alt="カードで学習塾のホーム画面用アイコン">
+                    <img class="release-app-icon" src="pwa/icon-180.png?v=20261122-0067" width="72" height="72" alt="カードで学習塾のホーム画面用アイコン">
                     <p>スマートフォンのホーム画面から、アプリのようにゲームを開けるようになりました。</p>
                     <ul>
                         <li><strong>iPhone（Safari）</strong>：ゲームを開き、共有メニューから「ホーム画面に追加」を選んでください。</li>

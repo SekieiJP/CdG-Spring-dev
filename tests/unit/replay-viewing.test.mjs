@@ -3,20 +3,23 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261110-0066';
-import { encodeReplay, decodeReplay } from '../../game/js/replayCodec.js?v=20261110-0066';
-import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from '../../game/js/replayViewing.js?v=20261110-0066';
-import { analyzeReplayScene } from '../../game/js/replaySceneAnalysis.js?v=20261110-0066';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
-import { CardManager } from '../../game/js/cardManager.js?v=20261110-0066';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261110-0066';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
-import { startReplayRecording, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from '../../game/js/replayRecorder.js?v=20261110-0066';
-import { UIController } from '../../game/js/uiController.js?v=20261110-0066';
-import { createEventState, getEventDefinition } from '../../game/js/eventManager.js?v=20261110-0066';
-import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from '../../game/js/cpuEventRuntime.js?v=20261110-0066';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0067';
+import { encodeReplay, decodeReplay } from '../../game/js/replayCodec.js?v=20261122-0067';
+import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from '../../game/js/replayViewing.js?v=20261122-0067';
+import { analyzeReplayScene } from '../../game/js/replaySceneAnalysis.js?v=20261122-0067';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0067';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0067';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0067';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0067';
+import { startReplayRecording, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from '../../game/js/replayRecorder.js?v=20261122-0067';
+import { UIController } from '../../game/js/uiController.js?v=20261122-0067';
+import { createEventState, getEventDefinition } from '../../game/js/eventManager.js?v=20261122-0067';
+import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from '../../game/js/cpuEventRuntime.js?v=20261122-0067';
 
-globalThis.window = { BUILD_VERSION: 'v20261110-0065' };
+const entryPage = await readFile(new URL('../../game/index.html', import.meta.url), 'utf8');
+const [, build] = entryPage.match(/js\/main\.js\?v=(\d{8}-\d{4})/);
+const currentBuildVersion = `v${build}`;
+globalThis.window = { BUILD_VERSION: currentBuildVersion };
 globalThis.fetch = async url => new Response(await readFile(fileURLToPath(new URL(url))));
 const canonical = value => JSON.parse(JSON.stringify(value));
 let fresh;
@@ -147,7 +150,7 @@ test('互換性のない操作列は、操作本体を復元する前に拒否�
     const code = await encodeReplay(record), packet = JSON.parse(gunzipSync(Buffer.from(code.slice(6), 'base64url')));
     packet[1].buildVersion = 'v20261107-0064'; packet[2] = null;
     const incompatible = 'CDGR1.' + gzipSync(JSON.stringify(packet)).toString('base64url');
-    await assert.rejects(decodeReplay(incompatible, { currentBuildVersion: 'v20261110-0065' }), /互換性/);
+    await assert.rejects(decodeReplay(incompatible, { currentBuildVersion }), /互換性/);
 });
 
 test('お手本CPUのイベント処理が通常UIと同じ取得条件・予約・上限・最終効果になる', async () => {
@@ -189,7 +192,7 @@ test('お手本CPUのイベント処理が通常UIと同じ取得条件・予約
 test('イベント付きのお手本を同じシードで完走し、視聴と再出力に必要な記録を残す', async () => {
     const seed = 'sekiei-event-example-replay';
     const record = await createCpuReplay({ difficulty: 'fresh', seed, eventId: 'summer-cup-2026-post-obon' });
-    const decoded = await decodeReplay(await encodeReplay(record), { currentBuildVersion: 'v20261110-0065' });
+    const decoded = await decodeReplay(await encodeReplay(record), { currentBuildVersion });
     assert.equal(decoded.metadata.seed, seed); assert.equal(decoded.metadata.calcMode, false);
     assert.equal(decoded.metadata.eventId, 'summer-cup-2026-post-obon');
     assert.deepEqual(decoded.definitions.event, record.definitions.event);

@@ -26,7 +26,7 @@ export class CardDetailVisibility {
                 part.scrollHeight > part.clientHeight + 1 || part.scrollWidth > part.clientWidth + 1);
             const needed = String(info.fullEffect || '').trim() !== String(info.displayEffect || '').trim() || clipped || !!info.extra();
             element.querySelector('.card-detail-hint').hidden = !needed;
-            element.setAttribute('aria-label', `${element.classList.contains('acquisition-recommended') ? 'おすすめ。' : ''}${element.querySelector('.card-name').textContent}${needed ? '。長押しで詳細' : ''}`);
+            element.setAttribute('aria-label', `${element.classList.contains('acquisition-recommended') ? 'おすすめ。' : ''}${element.querySelector('.card-name').textContent}${needed ? '。詳細あり' : ''}`);
         }
     }
 }
