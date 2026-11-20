@@ -1,14 +1,21 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20261122-0068';
-import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20261122-0068';
-import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20261122-0068';
-import { GameState } from '../../game/js/gameState.js?v=20261122-0068';
-import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20261122-0068';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20261122-0069';
+import { SubmissionQueue } from '../../game/js/submissionQueue.js?v=20261122-0069';
+import { buildScorePayload, submitPayload } from '../../game/js/scoreSubmitter.js?v=20261122-0069';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0069';
+import { snapshotTurnHistory } from '../../game/js/turnHistory.js?v=20261122-0069';
 
 function memoryStorage() {
     const items = new Map();
     return { getItem: key => items.get(key) || null, setItem: (key, value) => items.set(key, value) };
+}
+
+const grant = { sharingGrantId: 'test-grant' };
+globalThis.localStorage = memoryStorage();
+globalThis.localStorage.setItem('cdg_sharing_preference_v1', JSON.stringify({enabled:true, grantId:'test-grant',token:'test-token'}));
+function transmitted({sharingGrantId, ...payload}) {
+    return {...payload, action:'score.submit', sharingToken:'test-token'};
 }
 
 test('評価ログが上限でも取得・配置・取消・削除の履歴を落とさず、版を跨ぐ旧ログも読める', () => {
@@ -26,7 +33,7 @@ test('評価ログが上限でも取得・配置・取消・削除の履歴を�
 });
 
 test('旧GASにはスコア受領だけを記録し、直近5ゲームの履歴を更新後に再送する', async () => {
-    const payload={resultId:'new',turnHistory:[{turn:0,type:'acquire',card:{cardName:'確認'}}]};
+    const payload={...grant,resultId:'new',turnHistory:[{turn:0,type:'acquire',card:{cardName:'確認'}}]};
     const storage=memoryStorage();
     const repository=new ResultRepository(storage);
     repository.commit({resultId:'new'},payload);
@@ -45,13 +52,13 @@ test('旧GASにはスコア受領だけを記録し、直近5ゲームの履歴�
     assert.equal(restored.find('new').submission,'history-outside-queue');
     assert.equal(restored.pending().length,5);
     await new SubmissionQueue(restored,send(true)).start();
-    assert.deepEqual(sent[2],{...payload,resultId:'expired'});
+    assert.deepEqual(sent[2],transmitted({...payload,resultId:'expired'}));
     assert.equal(restored.find('expired').submission,'sent');
     assert.equal(restored.pending().length,0);
 });
 
 test('旧GASのサイズ超過では同じ結果IDでスコアを送り、履歴は保持する', async () => {
-    const payload={resultId:'large',displayScore:8,turnHistory:Array.from({length:600},()=>({turn:1,type:'place',card:{cardName:'詳細を保持するカード'}}))};
+    const payload={...grant,resultId:'large',displayScore:8,turnHistory:Array.from({length:600},()=>({turn:1,type:'place',card:{cardName:'詳細を保持するカード'}}))};
     const requests=[];
     const fetchImpl=async(_url,{body})=>{
         requests.push(JSON.parse(body));
@@ -59,13 +66,13 @@ test('旧GASのサイズ超過では同じ結果IDでスコアを送り、履歴
     };
     const result=await submitPayload(payload,null,{fetchImpl});
     assert.equal(result.ok,false); assert.equal(result.historyPending,true);
-    assert.deepEqual(requests,[payload,{resultId:'large',displayScore:8}]);
+    assert.deepEqual(requests,[transmitted(payload),transmitted({resultId:'large',displayScore:8})]);
     const tooLargeOnNew=await submitPayload(payload,null,{fetchImpl:async()=>({ok:true,json:async()=>({status:'error',message:'payload too large',turnHistorySupported:true})})});
     assert.equal(tooLargeOnNew.historyPending,undefined);
 });
 function add(repository, id, overrides = {}) {
     return repository.commit({ resultId: id, difficulty: 'pro', mode: '通常', rulesVersion: '20260815', cardVersion: 'card-1', rankVersion: 'rank-1', ...overrides },
-        { resultId: id, completedAt: '2026-10-02T00:00:00Z', finalDeck: ['確定カード'] });
+        { ...grant, resultId: id, completedAt: '2026-10-02T00:00:00Z', finalDeck: ['確定カード'] });
 }
 
 test('履歴50件と送信待ち5件は別の上限で、上限から外れた結果も履歴に残る', () => {
@@ -130,16 +137,16 @@ test('完了時に作った送信結果は、次のゲームや元の配列・�
 
 test('fetchとJSON応答の停止をそれぞれタイムアウトし、Abortを無視する通信も待ち続けない', { timeout: 1000 }, async () => {
     for (const fetchImpl of [() => new Promise(() => {}), async () => ({ ok: true, json: () => new Promise(() => {}) })]) {
-        const result = await submitPayload({ resultId: 'timeout' }, null, { timeoutMs: 20, fetchImpl });
+        const result = await submitPayload({ ...grant, resultId: 'timeout' }, null, { timeoutMs: 20, fetchImpl });
         assert.equal(result.ok, false); assert.match(result.error, /タイムアウト/);
     }
 });
 
 test('別の結果IDへの応答を成功扱いせず、中断した送信も未受領として返す', async () => {
-    const mismatch = await submitPayload({ resultId: 'expected' }, null, { fetchImpl: async () => ({ ok: true, json: async () => ({ status: 'ok', resultId: 'other' }) }) });
+    const mismatch = await submitPayload({ ...grant, resultId: 'expected' }, null, { fetchImpl: async () => ({ ok: true, json: async () => ({ status: 'ok', resultId: 'other' }) }) });
     assert.equal(mismatch.ok, false);
     const controller = new AbortController(); controller.abort();
-    const aborted = await submitPayload({ resultId: 'aborted' }, null, { signal: controller.signal, fetchImpl: () => { throw new Error('呼ばない'); } });
+    const aborted = await submitPayload({ ...grant, resultId: 'aborted' }, null, { signal: controller.signal, fetchImpl: () => { throw new Error('呼ばない'); } });
     assert.equal(aborted.ok, false); assert.match(aborted.error, /中断/);
 });
 

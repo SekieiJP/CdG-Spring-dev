@@ -1,22 +1,23 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261122-0068';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261122-0068';
-import { bindCardInteraction } from './cardInteraction.js?v=20261122-0068';
-import { CardDrag } from './cardDrag.js?v=20261122-0068';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261122-0068';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261122-0068';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261122-0068';
-import { ResultController } from './resultController.js?v=20261122-0068';
-import { sortResultDeck } from './resultPresentation.js?v=20261122-0068';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261122-0068';
-import { getDifficultyConfig, getDifficultyDisplayName, listDifficulties } from './difficultyConfig.js?v=20261122-0068';
-import { getPlacementError } from './placementRules.js?v=20261122-0068';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261122-0068';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261122-0068';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0068';
-import { BattleController } from './battleController.js?v=20261122-0068';
-import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0068';
-import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261122-0068';
-import { ReplayViewingController } from './replayViewingController.js?v=20261122-0068';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261122-0069';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261122-0069';
+import { bindCardInteraction } from './cardInteraction.js?v=20261122-0069';
+import { CardDrag } from './cardDrag.js?v=20261122-0069';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261122-0069';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261122-0069';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261122-0069';
+import { ResultController } from './resultController.js?v=20261122-0069';
+import { sortResultDeck } from './resultPresentation.js?v=20261122-0069';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261122-0069';
+import { getDifficultyConfig, getDifficultyDisplayName, listDifficulties } from './difficultyConfig.js?v=20261122-0069';
+import { getPlacementError } from './placementRules.js?v=20261122-0069';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261122-0069';
+import { getSharingPreference, sharingGrantId, showSharingSettings } from './sharingConsent.js?v=20261122-0069';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261122-0069';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0069';
+import { BattleController } from './battleController.js?v=20261122-0069';
+import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0069';
+import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261122-0069';
+import { ReplayViewingController } from './replayViewingController.js?v=20261122-0069';
 
 const CARD_DETAILS_HELP = '<span class="card-details-help"><span class="card-details-touch">[長押しで詳細]</span><span class="card-details-mouse">[マウスオーバーで詳細]</span></span>';
 
@@ -287,13 +288,6 @@ export class UIController {
 
     updateDifficultyModeControls(difficultyId) {
         const intMode = difficultyId === 'int';
-        const startBattle = document.getElementById('start-battle');
-        const resultBattle = document.getElementById('result-battle-lobby');
-        const replayActions = document.querySelector('.replay-title-actions');
-        [startBattle, resultBattle, replayActions].filter(Boolean).forEach(element => {
-            element.classList.toggle('hidden', intMode);
-            element.hidden = intMode;
-        });
         const calcRow = document.getElementById('calc-mode-row');
         if (calcRow) calcRow.classList.toggle('hidden', intMode || calcRow.dataset.visible !== 'true');
         if (intMode) {
@@ -655,12 +649,9 @@ export class UIController {
             const difficulty = options.difficulty || this.selectedDifficulty || 'fresh';
             const room = options.room || null;
             const intMode = difficulty === 'int';
-            if (intMode && (room || options.battle)) {
-                this.showFloatNotification(`${getDifficultyDisplayName(difficulty)}は通常のひとりプレイ専用です。`, 'warning');
-                return false;
-            }
             if (room) this.checkRoomStart(room);
 
+            if (!getSharingPreference().decided && !await showSharingSettings(this, { firstPlay: true })) return false;
             const loaded = window.game ? await window.game.setDifficulty(difficulty) : true;
             if (options.canStart && !options.canStart()) return false;
             if (!loaded) {
@@ -672,6 +663,7 @@ export class UIController {
             const previousState = room ? { ...this.gameState } : null;
             this.gameState.difficulty = difficulty;
             this.turnManager.initializeGame(options.seed ? { seed: options.seed } : {});
+            this.gameState.sharingGrantId = sharingGrantId();
             this.gameState.battle = options.battle || null;
             this.gameState.room = room ? { ...room } : null;
             this.gameState.calcMode = !intMode && !options.battle && !room && !!document.getElementById('calc-mode-toggle')?.checked;
@@ -816,7 +808,10 @@ export class UIController {
             this.gameState.currentTrainingCards = null;
             return null;
         }
-        const cards = this.cardManager.drawTrainingCards('R', 4);
+        const offer = this.gameState.config.rules.getTrainingOfferConfig
+            ? this.turnManager.getTrainingOfferConfig({ mode: 'normal' })
+            : { rarity: 'R', offerCount: 4 };
+        const cards = this.cardManager.drawTrainingOffer(offer);
         this.gameState.currentTrainingCards = cards.map(card => ({ ...card }));
         return cards;
     }
@@ -1485,6 +1480,7 @@ export class UIController {
      * アクションボタン状態更新（常に有効）
      */
     updateActionButtonState() {
+        if (this.isIntMode()) this.ahiruAdvice?.scheduleRefresh();
         const confirmBtn = document.getElementById('confirm-action');
         if (confirmBtn) {
             // ボタンは常に有効（未配置時は警告表示）
@@ -2126,7 +2122,8 @@ export class UIController {
         );
         const required = Math.min(config?.pickCount || 0, this.gameState.currentTrainingCards?.length || 0);
         if (this.intSelectedCards.length !== required) return;
-        captureReplayTrainingChoice(this.gameState, this.intSelectedCards);
+        this.acquisitionAssist.recordChoice(this.intSelectedCards);
+        captureReplayTrainingChoice(this.gameState, this.intSelectedCards, config);
         this.intSelectedCards.forEach(card => this.gameState.addToDeck(card));
         this.gameState.currentTrainingCards = null;
         this.intSelectedCards = [];
@@ -2142,7 +2139,8 @@ export class UIController {
 
     skipIntTraining() {
         if (this.intTrainingMode !== 'inspiration' || !this.intTrainingConfig?.allowSkip) return;
-        captureReplayTrainingChoice(this.gameState, []);
+        this.acquisitionAssist.recordChoice([{ __skip: true }]);
+        captureReplayTrainingChoice(this.gameState, [], this.intTrainingConfig);
         this.advanceIntInspiration();
     }
 
@@ -2217,6 +2215,7 @@ export class UIController {
                 content.appendChild(refresh);
             }
             this.updateIntOutingSelection(outing, option);
+            this.acquisitionAssist.present();
         } else if (outing.stage === 'staff') {
             if (instruction) instruction.textContent = 'スタッフを選ぶとカードをその場で使い、デッキには加えません。職種制限やコストを満たさない場合もカードを消費します。';
             if (outing.selectedCard) {
@@ -2290,21 +2289,16 @@ export class UIController {
     }
 
     confirmIntOutingSelection() {
+        const outing = this.gameState.ruleState.int?.outing;
+        const picks = outing?.selectedCards;
+        if (outing?.stage === 'card' && picks?.length) this.acquisitionAssist.recordChoice(picks);
         if (!this.turnManager.confirmOutingCards()) return;
         this.saveGameState();
         this.routeIntPhase();
     }
 
     refreshIntOutingCandidates() {
-        const remaining = this.gameState.trainingRefreshRemaining ?? 0;
-        const outing = this.gameState.ruleState?.int?.outing;
-        if (remaining <= 0 || outing?.stage !== 'card' || !outing.candidates?.length) return;
-        const option = this.turnManager.getOutingConfig().outingOptions.find(item => item.id === outing.place);
-        outing.candidates = this.cardManager.refreshTrainingCards(option.rarity, outing.candidates, option.offerCount);
-        outing.selectedCards = [];
-        outing.selectedCard = null;
-        this.gameState.currentTrainingCards = outing.candidates.map(card => ({ ...card }));
-        this.gameState.trainingRefreshRemaining = remaining - 1;
+        if (!this.turnManager.refreshOutingCandidates()) return;
         this.saveGameState();
         this.showIntOutingPhase();
     }
@@ -3616,10 +3610,10 @@ export class UIController {
     /**
      * 情報オーバーレイを作成
      */
-    createInfoOverlay(title) {
+    createInfoOverlay(title, { preserveExisting = false } = {}) {
         // 既存のオーバーレイを削除
         const existing = document.querySelector('.info-overlay');
-        if (existing) existing.remove();
+        if (existing && !preserveExisting) existing.remove();
 
         const overlay = document.createElement('div');
         overlay.className = 'info-overlay';
@@ -4490,14 +4484,14 @@ export class UIController {
         // バッジ表示判定
         const showTutorialBadge = !localStorage.getItem('cdg_visited');
         const showReleaseBadge = !!localStorage.getItem('cdg_version_updated');
-        const acquisitionAssistSection = this.isIntMode() ? '' : `
+        const acquisitionAssistSection = `
                 <div class="settings-section">
-                    <h3>取得アシスト（FRESH・PRO）</h3>
+                    <h3>取得アシスト</h3>
                     <div class="font-toggle">
                         <button data-acquisition-assist="on" class="font-toggle-option${this.acquisitionAssist.enabled ? ' active' : ''}">オン</button>
                         <button data-acquisition-assist="off" class="font-toggle-option${!this.acquisitionAssist.enabled ? ' active' : ''}">オフ</button>
                     </div>
-                    <p class="font-toggle-note">候補提示の5秒後に、おすすめの背後が淡く光ります。通常のFRESH・PROで利用できます。</p>
+                    <p class="font-toggle-note">候補提示の5秒後に、おすすめのカードやボタンが光ります。</p>
                 </div>`;
 
         content.innerHTML = `
@@ -4526,6 +4520,10 @@ export class UIController {
                 </div>
                 ${acquisitionAssistSection}
                 <div class="settings-section">
+                    <h3>プレイデータの送信と日誌の共有</h3>
+                    <button type="button" class="btn-secondary" id="settings-sharing-consent">共有設定（現在${getSharingPreference().enabled ? 'オン' : 'オフ'}）</button>
+                </div>
+                <div class="settings-section">
                     <h3>リンク</h3>
                     <div class="settings-links">
                         <a class="settings-link-btn" href="tutorial.html" id="settings-link-tutorial">
@@ -4553,6 +4551,8 @@ export class UIController {
                 </div>
             </div>
         `;
+
+        content.querySelector('#settings-sharing-consent').addEventListener('click', () => { void showSharingSettings(this); });
 
         const exportButton = document.createElement('button');
         exportButton.className = 'btn-secondary';

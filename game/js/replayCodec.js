@@ -1,5 +1,6 @@
-import { compactReplay, expandReplay } from './replayCompact.js?v=20261122-0068';
-import { operationReplayPacket, restoreOperationReplay, ReplaySimulationError } from './replaySimulation.js?v=20261122-0068';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
+import { compactReplay, expandReplay } from './replayCompact.js?v=20261122-0069';
+import { operationReplayPacket, restoreOperationReplay, ReplaySimulationError } from './replaySimulation.js?v=20261122-0069';
 
 export const REPLAY_PREFIX = 'CDGR1:';
 export const COMPACT_REPLAY_PREFIX = 'CDGR1.';
@@ -23,9 +24,11 @@ export function validateReplayRecord(record) {
         Number.isInteger(metadata.totalTurns) && metadata.totalTurns > 0 && metadata.totalTurns <= 64 &&
         object(record.initial) && Array.isArray(record.turns) && record.turns.length === metadata.totalTurns &&
         record.turns.every((turn, index) => object(turn) && turn.turn === index && turn.completed === true && Array.isArray(turn.training) &&
-            object(turn.actionStart) && object(turn.action) && object(turn.action.before) && object(turn.action.placed) &&
+            (metadata.difficulty === 'int' && getDifficultyConfig('int').turns[index]?.type === 'outing'
+                ? object(turn.outing) && object(turn.outing.before) && object(turn.outing.after)
+                : object(turn.actionStart) && object(turn.action) && object(turn.action.before) && object(turn.action.placed) &&
             object(turn.action.cardEffects) && Array.isArray(turn.action.eventEffects) && object(turn.action.after) && object(turn.meeting) &&
-            object(turn.meeting.after) && Array.isArray(turn.meeting.deleted) && typeof turn.meeting.skipped === 'boolean') &&
+            object(turn.meeting.after) && Array.isArray(turn.meeting.deleted) && typeof turn.meeting.skipped === 'boolean')) &&
         object(record.result) && object(record.result.score) && Number.isFinite(record.result.score.displayScore) &&
         Array.isArray(record.result.finalDeck) && object(record.result.state);
     if (!valid) throw new ReplayDataError('再現に必要なプレイ記録が不足しています');
@@ -105,7 +108,7 @@ export async function decodeReplay(text, { currentBuildVersion, maxDecodedBytes 
         const compressed = decodeBase64(normalized.slice(REPLAY_PREFIX.length));
         const bytes = await readBytes(new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip')), maxDecodedBytes);
         record = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
-        if (prefix === COMPACT_REPLAY_PREFIX) record = Array.isArray(record) && record[0] === 1
+        if (prefix === COMPACT_REPLAY_PREFIX) record = Array.isArray(record) && [1, 2].includes(record[0])
             ? await restoreOperationReplay(record, { currentBuildVersion, maxDecodedBytes }) : expandReplay(record, maxDecodedBytes);
     } catch (error) {
         if (error instanceof ReplayDataError) throw error;

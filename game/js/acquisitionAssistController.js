@@ -1,5 +1,5 @@
-import { supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261122-0068';
-import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261122-0068';
+import { createAdvisorObservation, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261122-0069';
+import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261122-0069';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {
@@ -11,30 +11,48 @@ export class AcquisitionAssistController {
         this.observer = new MutationObserver(() => this.present());
         this.observer.observe(this.container, { childList: true });
     }
+    get outing() { return this.ui.gameState.phase === 'outing'; }
+    get candidateContainer() {
+        return this.outing ? document.querySelector('#outing-content .outing-card-grid') : this.container;
+    }
     eligible() {
         const state = this.ui.gameState;
-        return state.battle?.kind !== 'cpu' && supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && state.phase === 'training';
+        return state.battle?.kind !== 'cpu' && supportsAcquisitionAdvice(state.difficulty) && !state.calcMode && !state.event?.enabled && (state.phase === 'training' ||
+            this.outing && state.ruleState.int?.outing?.stage === 'card');
     }
     clear() {
         clearTimeout(this.timer);
         this.shown = false;
         this.ui.cardDetails?.schedule();
-        for (const card of this.container?.children || []) {
-            card.classList.remove('acquisition-recommended');
-            if (card.dataset.assistAria) { card.setAttribute('aria-label',card.dataset.assistAria); delete card.dataset.assistAria; }
+        for (const [element, label] of this.highlighted || []) {
+            element.classList.remove('acquisition-recommended');
+            if (label === null) element.removeAttribute('aria-label');
+            else element.setAttribute('aria-label', label);
         }
+        this.highlighted = [];
     }
     leave() { this.clear(); this.context = null; }
     present() {
         this.clear(); this.context = null;
         const cards = this.ui.gameState.currentTrainingCards;
-        if (!this.eligible() || !cards?.length || this.container.children.length < cards.length) return;
+        const container = this.candidateContainer;
+        if (!this.eligible() || !cards?.length || !container || container.children.length < cards.length) return;
         const presentedAt = performance.now();
         try {
-            const scene=this.ui.ahiruAdvice.getSceneDecision();
-            if(!scene?.acquisition)return;
-            const explanations=explainAcquisitionCandidates({observation:scene.observation,advice:scene.acquisition,status:scene.status});
-            this.context = { observation:scene.observation, advice:scene.acquisition, explanations, presentedAt, recorded: false };
+            const scene = this.ui.ahiruAdvice.getSceneDecision();
+            if (!scene?.acquisition) return;
+            const master = this.ui.gameState.difficulty === 'int';
+            const { acquisition: advice, status } = scene;
+            const observation = master ? createAdvisorObservation(this.ui.gameState, cards, {
+                pickCount: Math.min(scene.observation.offer.pickCount, cards.length),
+                allowSkip: !!scene.observation.offer.allowSkip
+            }) : scene.observation;
+            const explanations = master
+                ? observation.candidates.map((card, index) => ({
+                    text: advice.recommended.indices.includes(index) ? `🐤${status.reason}` : ''
+                }))
+                : explainAcquisitionCandidates({ observation, advice, status });
+            this.context = { observation, advice, explanations, presentedAt, recorded: false };
             this.ui.ahiruAdvice.scheduleRefresh();
             this.schedule();
         } catch (error) { console.warn('[取得アシスト]',error.message); }
@@ -52,15 +70,22 @@ export class AcquisitionAssistController {
     highlight() {
         if (!this.enabled || !this.context || !this.eligible()) return;
         const { advice, observation } = this.context;
-        const indices = advice.recommended?.skip ? [observation.candidates.length] : advice.recommended?.indices || [];
-        for (const index of indices) {
-            const card = this.container.children[index];
-            if (!card) continue;
-            card.classList.add('acquisition-recommended');
-            card.dataset.assistAria = card.getAttribute('aria-label') || '取得しない';
-            card.setAttribute('aria-label',`おすすめ。${card.dataset.assistAria}`);
+        const container = this.candidateContainer;
+        if (!container) return;
+        let elements = (advice.recommended?.indices || []).map(index => container.children[index]);
+        if (advice.refresh) {
+            elements = [this.outing ? document.querySelector('#outing-content [data-outing-refresh]') : document.getElementById('btn-training-refresh')];
+        } else if (advice.recommended?.skip) {
+            elements = [this.ui.gameState.difficulty === 'int'
+                ? document.getElementById('btn-training-skip') : container.children[observation.candidates.length]];
         }
-        this.shown = true;
+        for (const element of elements.filter(Boolean)) {
+            const label = element.getAttribute('aria-label');
+            this.highlighted.push([element, label]);
+            element.classList.add('acquisition-recommended');
+            element.setAttribute('aria-label', `おすすめ。${label || element.textContent.trim() || '取得しない'}`);
+        }
+        this.shown = this.highlighted.length > 0;
         this.ui.cardDetails?.schedule();
     }
     setEnabled(enabled) {

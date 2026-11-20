@@ -47,6 +47,7 @@ export async function finishGame(page) {
         }
         const state = await page.evaluate(() => ({
             phase: window.game.gameState.phase,
+            master: window.game.gameState.difficulty === 'int',
             busy: !!window.game.uiController.actionBusy,
             calc: window.game.gameState.calcMode,
             initial: window.game.gameState.turn === 0 && !window.game.gameState.event?.eventTraining && window.game.gameState.trainingSelectionMode !== 'inspiration'
@@ -79,11 +80,19 @@ export async function finishGame(page) {
             if (state.calc) await page.locator('#calc-action-leader').fill('01');
             else if (await page.locator('#hand-cards .card').count()) await page.locator('#hand-cards .card').first().click();
             await page.locator('#confirm-action').click();
+        } else if (state.phase === 'outing') {
+            await page.locator('[data-outing-place="headquarters"]').click();
+            await page.locator('[data-outing-card-index]').first().click();
+            await page.locator('#confirm-outing').click();
+            await page.locator('[data-outing-staff]').first().click();
         } else if (state.phase === 'meeting') {
+            if (state.master && await page.locator('#confirm-meeting').isDisabled()) {
+                await page.locator('#deck-cards .card').first().click();
+            }
             await page.locator('#confirm-meeting').click();
         }
     }
-    throw new Error('8ターンを完走できませんでした');
+    throw new Error('最終ターンまで進めませんでした');
 }
 
 export async function decodeHistory(page, resultId) {

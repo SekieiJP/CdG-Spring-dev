@@ -1,11 +1,11 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20261122-0068';
-import { makeRunId } from './defaultRules.js?v=20261122-0068';
-import { snapshotTurnHistory } from './turnHistory.js?v=20261122-0068';
+import { getEventItem } from './eventManager.js?v=20261122-0069';
+import { makeRunId } from './defaultRules.js?v=20261122-0069';
+import { snapshotTurnHistory } from './turnHistory.js?v=20261122-0069';
 
-const SCORE_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzaVE8aQRid2p_ZQSr0N40Z1ysd2T0m6CvTQst7vCa_KPNiNp628HAQDiYQdLVbMysAEg/exec';
+import { SCORE_ENDPOINT, tokenForSubmission } from './sharingConsent.js?v=20261122-0069';
 let userUUIDMemory = null;
 
 /**
@@ -78,6 +78,7 @@ export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
     const record = gameState.playRecord?.metadata || {};
     return structuredClone({
         resultId: gameState.runId,
+        sharingGrantId: gameState.sharingGrantId || null,
         totalTurns: gameState.totalTurns || 8,
         startedAt: gameState.startedAt || null,
         completedAt: new Date().toISOString(),
@@ -110,6 +111,10 @@ export function buildScorePayload(gameState, score, finalDeck, metadata = {}) {
 
 /** 1回の送信。JSON応答の読み込みまで含め、通信を8秒で打ち切る。 */
 export async function submitPayload(payload, logger, { timeoutMs = 8000, signal, fetchImpl = globalThis.fetch } = {}) {
+    const { sharingGrantId, ...scorePayload } = payload;
+    const token = tokenForSubmission(sharingGrantId);
+    if (!token) return { ok: false, error: '送信・共有の同意がありません' };
+    const data = { ...scorePayload, action: 'score.submit', sharingToken: token };
     const controller = new AbortController();
     let timer, onAbort;
     const stop = new Promise((_, reject) => {
@@ -120,7 +125,7 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
     });
     try {
         const post = async body => {
-            if (controller.signal.aborted) throw new Error('送信を中断しました');
+            if (controller.signal.aborted || tokenForSubmission(sharingGrantId) !== token) throw new Error('送信を中断しました');
             const response = await fetchImpl(SCORE_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain' },
@@ -132,13 +137,13 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
         };
         const hasHistory = !!payload.turnHistory?.length;
         const request = async () => {
-            const body = JSON.stringify(payload);
+            const body = JSON.stringify(data);
             let result = await post(body);
             let scoreOnly = false;
             // 旧GASのサイズ上限に達しても、同じ結果IDで従来のスコアを受領できるようにする。
             if (hasHistory && body.length > 32000 && result.status === 'error'
-                && result.message === 'payload too large' && result.turnHistorySupported !== true) {
-                const { turnHistory, ...score } = payload;
+                && result.message === 'payload too large' && result.turnHistorySupported !== true && !data.replayText) {
+                const { turnHistory, ...score } = data;
                 const scoreBody = JSON.stringify(score);
                 if (scoreBody.length <= 32000) {
                     result = await post(scoreBody);
@@ -147,6 +152,7 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
             }
             if (result.status !== 'ok') throw new Error(`server: ${result.message || 'unknown error'}`);
             if (result.resultId && result.resultId !== payload.resultId) throw new Error('結果IDが応答と一致しません');
+            if (data.replayText && result.diaryStored !== true) throw new Error('共有日誌の受領を確認できませんでした');
             return { result, historyPending: hasHistory && (scoreOnly || result.turnHistoryStored !== true) };
         };
         const { result, historyPending } = await Promise.race([request(), stop]);
@@ -165,6 +171,7 @@ export async function submitPayload(payload, logger, { timeoutMs = 8000, signal,
 
 /** 旧呼び出し口。ゲーム画面は保存済み結果のSubmissionQueueを利用する。 */
 export async function submitScore(gameState, score, finalDeck, logger) {
+    if (!tokenForSubmission(gameState.sharingGrantId)) return { ok: false, error: '送信・共有の同意がありません' };
     const payload = buildScorePayload(gameState, score, finalDeck);
     for (let attempt = 0; attempt < 3; attempt++) {
         const result = await submitPayload(payload, logger);

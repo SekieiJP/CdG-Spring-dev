@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import '../../game/js/difficultyExtensions.js?v=20261122-0068';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0068';
-import { GameState } from '../../game/js/gameState.js?v=20261122-0068';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0068';
-import { CardManager } from '../../game/js/cardManager.js?v=20261122-0068';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0068';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20261122-0068';
-import { startReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261122-0068';
+import '../../game/js/difficultyExtensions.js?v=20261122-0069';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0069';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0069';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0069';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0069';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0069';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20261122-0069';
+import { startReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261122-0069';
 
 async function loadRanks(manager, difficulty) {
     const path = new URL(`../../game/data/rank${difficulty}.csv`, import.meta.url);
@@ -127,7 +127,7 @@ test('INTの中旬途中保存は難易度と固有状態を保ち、上8桁で�
     assert.equal(manager.isVersionMatch({ buildVersion: 'v20261111-0001' }), false);
 });
 
-test('INT結果は端末履歴に保存し、送信待ちやPRO形式リプレイを作らない', () => {
+test('MASTERは共有停止中も端末に履歴を残し、初回からリプレイの記録を開始できる', () => {
     const repository = new ResultRepository(memoryStorage());
     repository.commit({ resultId: 'int-result', difficulty: 'int', score: { displayScore: 0 } },
         { resultId: 'int-result', difficulty: 'int' }, { submit: false });
@@ -136,6 +136,6 @@ test('INT結果は端末履歴に保存し、送信待ちやPRO形式リプレ�
 
     const state = new GameState();
     state.reset('int');
-    assert.equal(startReplayRecording(state), false);
+    assert.equal(startReplayRecording(state), true);
     assert.equal(getCompletedReplay(state), null);
 });

@@ -1,59 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
-import { createHash } from 'node:crypto';
-import vm from 'node:vm';
+import { createScoreReceiver as server } from '../helpers/score-receiver.mjs';
 
-const source = readFileSync(new URL('../../gas/scoreReceiver.gs', import.meta.url), 'utf8');
 const payload = overrides => ({ resultId: 'game-1', buildVersion: 'v20260815-0052', startedAt: 'start', completedAt: 'end', userUUID: 'user',
     difficulty: 'pro', mode: '通常', experience: 20, enrollment: 10, satisfaction: 10, accounting: 10,
     displayScore: 8, points: 8, grade: 'A', withdrawal: 1, mobilization: 20, enrollmentDiff: 9,
     finalDeck: ['カード'], discardedCards: [], cardVersion: 'sha256:cards', rulesVersion: '20260815', rankVersion: 'sha256:ranks', ...overrides });
-
-function server(initialRows = []) {
-    const rows = structuredClone(initialRows), cache = new Map();
-    const state = { busy: false, locked: false, failWrite: false, failFlush: false, cacheDown: false };
-    const historyRows = [];
-    const makeSheet = (rows, history = false) => ({
-        getLastRow: () => rows.length,
-        getLastColumn: () => Math.max(0, ...rows.map(row => row.length)),
-        appendRow: row => {
-            assert.equal(state.locked, true);
-            if (state.failWrite && rows.length) { state.failWrite = false; throw new Error('write'); }
-            if (history && state.failHistoryPart === rows.length) { state.failHistoryPart = null; throw new Error('history write'); }
-            rows.push([...row]);
-        },
-        getRange: (row, column, height = 1, width = 1) => ({
-            getValues: () => rows.slice(row - 1, row - 1 + height).map(values => values.slice(column - 1, column - 1 + width)),
-            setValue: value => { assert.equal(state.locked, true); rows[row - 1][column - 1] = value; },
-            createTextFinder: value => {
-                let entire = false, caseSensitive = false;
-                const finder = {
-                    matchEntireCell: flag => { entire = flag; return finder; },
-                    matchCase: flag => { caseSensitive = flag; return finder; },
-                    findNext: () => {
-                        const normalize = text => caseSensitive ? String(text || '') : String(text || '').toLowerCase();
-                        return rows.slice(row - 1, row - 1 + height).find(values => entire ? normalize(values[column - 1]) === normalize(value) : normalize(values[column - 1]).includes(normalize(value))) || null;
-                    }
-                }; return finder;
-            }
-        })
-    });
-    const sheet = makeSheet(rows), historySheet = makeSheet(historyRows, true);
-    const context = vm.createContext({
-        console: { log() {}, error() {} },
-        ContentService: { MimeType: { JSON: 'json' }, createTextOutput: text => ({ text, setMimeType() { return this; } }) },
-        LockService: { getScriptLock: () => ({ tryLock: () => { if (state.busy) return false; state.locked = true; return true; }, releaseLock: () => { state.locked = false; } }) },
-        SpreadsheetApp: {
-            getActiveSpreadsheet: () => { assert.equal(state.locked, true); return { getSheetByName: name => name === 'ターン履歴' ? historySheet : sheet, insertSheet: name => name === 'ターン履歴' ? historySheet : sheet }; },
-            flush: () => { if (state.failFlush) { state.failFlush = false; throw new Error('flush'); } }
-        },
-        CacheService: { getScriptCache: () => { if (state.cacheDown) throw new Error('cache'); return { get: key => cache.get(key), put: (key, value) => cache.set(key, value) }; } },
-        Utilities: { DigestAlgorithm: { MD5: 'md5' }, Charset: { UTF_8: 'utf8' }, computeDigest: (_, value) => [...createHash('md5').update(value).digest()] }
-    });
-    vm.runInContext(source, context);
-    return { rows, historyRows, cache, state, submit: data => JSON.parse(context.doPost({ postData: { contents: JSON.stringify(data) } }).text) };
-}
 
 test('応答を失っても同じ結果IDの再送を受領済みとして返し、Cache失効後も1行だけ残す', () => {
     const receiver = server();
@@ -137,4 +89,32 @@ test('先に受領したスコアを再登録せず、更新後の再送では�
     assert.equal(result.turnHistoryStored,true);
     assert.equal(receiver.rows.length,2);
     assert.deepEqual(JSON.parse(receiver.historyRows[1][3]),turnHistory);
+});
+
+test('共有参加者は他の先生の日誌を読める。停止すると一覧と取得の両方から消える', () => {
+    const { submit } = server();
+    const author = submit({ action: 'sharing.enable', nickname: 'あひる' });
+    const reader = submit({ action: 'sharing.enable', nickname: '別の先生' });
+    const play = payload({ buildVersion: 'v20261122-0069', difficulty: 'int', totalTurns: 12,
+        completedAt: '2026-11-22T12:30:00.000Z', replayText: 'CDGR1.testReplay', diaryFinalDeck: [{cardNo:'01',cardName:'授業'}] });
+    assert.equal(submit(play).status, 'error');
+    const share = { ...play, action: 'score.submit', sharingToken: author.token };
+    assert.equal(submit(share).diaryStored, true);
+    assert.equal(submit(share).duplicate, true);
+    assert.equal(submit({ ...share, sharingToken: reader.token }).status, 'error');
+    const list = sharingToken => submit({ action: 'diary.list', sharingToken });
+    const get = sharingToken => submit({ action: 'diary.get', sharingToken, resultId: play.resultId });
+    assert.equal(list(null).status, 'error');
+    assert.equal(get(null).status, 'error');
+    assert.deepEqual(list(author.token).entries, []);
+    const [entry] = list(reader.token).entries;
+    assert.equal(entry.nickname, 'あひる');
+    assert.deepEqual(entry.finalDeck, play.diaryFinalDeck);
+    assert.equal(entry.completedAt, play.completedAt);
+    assert.equal(get(reader.token).entry.replayText, play.replayText);
+    assert.equal(submit({action:'sharing.revoke',sharingToken:author.token}).status, 'ok');
+    assert.equal(submit(share).status, 'error');
+    assert.deepEqual(list(reader.token).entries, []);
+    assert.equal(get(reader.token).status, 'error');
+    assert.equal(list(author.token).status, 'error');
 });

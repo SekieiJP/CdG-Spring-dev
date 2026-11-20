@@ -156,12 +156,14 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                 const logger = { log() {} };
 
                 results.push(await submitScore({
+                    sharingGrantId: 'test-grant',
                     startedAt: '2026-05-03T00:00:00.000Z',
                     difficulty: 'fresh',
                     calcMode: false,
                     discardedCards: []
                 }, baseScore, finalDeck, logger));
                 results.push(await submitScore({
+                    sharingGrantId: 'test-grant',
                     startedAt: '2026-05-03T00:01:00.000Z',
                     difficulty: 'fresh',
                     calcMode: true,
@@ -198,6 +200,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
             try {
                 const { submitScore } = await import('./js/scoreSubmitter.js?v=school-items-test');
                 await submitScore({
+                    sharingGrantId: 'test-grant',
                     startedAt: '2026-08-15T00:00:00.000Z',
                     difficulty: 'fresh',
                     calcMode: false,
@@ -280,6 +283,7 @@ test.describe('startedAt 記録とスコア送信ログ', () => {
                     })
                 });
                 const result = await submitScore({
+                    sharingGrantId: 'test-grant',
                     startedAt: '2026-05-03T00:00:00.000Z',
                     difficulty: 'fresh',
                     calcMode: false,

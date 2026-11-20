@@ -1,8 +1,10 @@
-import { decodeReplay } from './replayCodec.js?v=20261122-0068';
-import { validateBattleReplay } from './battleReplay.js?v=20261122-0068';
-import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from './replayViewing.js?v=20261122-0068';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0068';
+import { mountSharedDiaries } from './sharedDiaryBrowser.js?v=20261122-0069';
+import { decodeReplay } from './replayCodec.js?v=20261122-0069';
+import { validateBattleReplay } from './battleReplay.js?v=20261122-0069';
+import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from './replayViewing.js?v=20261122-0069';
+import { getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
 
+const isAcquisition = scene => ['training', 'outing-card'].includes(scene.kind);
 const STATS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 
 export class ReplayViewingController {
@@ -12,6 +14,7 @@ export class ReplayViewingController {
         document.getElementById('start-replay-example')?.addEventListener('click', () => this.open({ mode: 'example' }));
     }
     close() {
+        this.detachSharedDiaries?.(); this.detachSharedDiaries = null;
         this.session++; this.analysisWorker?.terminate(); this.modelWorker?.terminate();
         this.observer?.disconnect(); this.overlay?.remove(); this.overlay = null;
         this.analysisWorker = null; this.modelWorker = null;
@@ -22,13 +25,14 @@ export class ReplayViewingController {
         url.search = new URL(import.meta.url).search;
         return new Worker(url, { type: 'module' });
     }
-    open({ mode = 'view', text = null } = {}) {
+    open({ mode = 'view', text = null, sharedRecord = false } = {}) {
         this.close(); const session = this.session;
         this.mode = mode; this.record = null; this.scenes = []; this.cursor = 0; this.cache = new Map(); this.reasonOpen = false;
         this.analysisBusy = false; this.analysisError = null;
-        const overlay = this.ui.createInfoOverlay(mode === 'example' ? 'あひる先生のお手本プレイ' : '教室防犯カメラ');
+        const overlay = this.ui.createInfoOverlay(mode === 'example' ? 'あひる先生のお手本プレイ' : '教室日誌');
         this.overlay = overlay; overlay.id = 'replay-workshop';
         overlay.querySelector('.info-overlay-content').innerHTML = `
+            ${mode === 'view' ? '<div id="shared-diary-browser"></div>' : ''}
             <details id="replay-input-panel" open><summary>リプレイデータ</summary>
                 <label for="replay-view-input">読み込むコード</label>
                 <textarea id="replay-view-input" rows="4" spellcheck="false" autocapitalize="off" autocorrect="off" autocomplete="off"></textarea>
@@ -58,9 +62,10 @@ export class ReplayViewingController {
                 <label for="replay-example-code">お手本のリプレイデータ</label>
                 <textarea id="replay-example-code" readonly rows="3" spellcheck="false"></textarea>
                 <button id="replay-example-copy" type="button" class="btn-secondary">リプレイデータをコピー</button>
-                <button id="replay-example-view" type="button" class="btn-primary">📹 このお手本を見る</button>
+                <button id="replay-example-view" type="button" class="btn-primary">📔 このお手本を見る</button>
             </section>`;
         document.body.appendChild(overlay);
+        if (mode === 'view') this.detachSharedDiaries = mountSharedDiaries(this, this.node('shared-diary-browser'), sharedRecord);
         this.observer = new MutationObserver(() => { if (this.overlay === overlay && !overlay.isConnected) this.close(); });
         this.observer.observe(document.body, { childList: true });
         const input = this.node('replay-view-input');
@@ -116,9 +121,9 @@ export class ReplayViewingController {
         this.mode = 'view'; this.node('replay-view-load').textContent = '読み込む';
         this.stopAnalysis(); this.record = record; this.scenes = scenes; this.cursor = 0; this.cache.clear(); this.analysisError = null;
         this.node('replay-camera').classList.remove('hidden'); this.node('replay-input-panel').open = false;
-        this.overlay.querySelector('.info-overlay-title').textContent = '教室防犯カメラ';
-        this.overlay.setAttribute('aria-label', '教室防犯カメラ');
-        const description = `${record.metadata.cpuPolicy ? 'あひる先生' : 'プレイ記録'} / ${record.metadata.difficulty.toUpperCase()}${record.metadata.eventId ? ' / イベント' : ''}`;
+        this.overlay.querySelector('.info-overlay-title').textContent = '教室日誌';
+        this.overlay.setAttribute('aria-label', '教室日誌');
+        const description = `${record.metadata.cpuPolicy ? 'あひる先生' : 'プレイ記録'} / ${getDifficultyDisplayName(record.metadata.difficulty)}${record.metadata.eventId ? ' / イベント' : ''}`;
         this.node('replay-source-description').textContent = description;
         this.renderScene();
         this.overlay.querySelector('.info-overlay-content').scrollTop = 0;
@@ -135,8 +140,13 @@ export class ReplayViewingController {
         const config = getDifficultyConfig(this.record.metadata.difficulty);
         this.node('replay-scene-title').textContent = `${scene.turn + 1}/${this.record.metadata.totalTurns}ターン ${config.turns[scene.turn].name}：${scene.label}`;
         this.node('replay-scene-stats').innerHTML = Object.entries(STATS).map(([key, label]) => `<div><span>${label}</span><strong data-stat="${key}">${escape(scene.stats[key])}</strong></div>`).join('');
-        this.node('replay-stats-timing').textContent = scene.kind === 'action' ? '効果解決後のステータス' : scene.kind === 'meeting' ? '削除前のステータス' : '取得前のステータス';
-        this.node('replay-actual-choice').textContent = scene.kind === 'training' && !scene.selectedIndices.length ? '記録の選択：取得しない' : scene.kind === 'meeting' && !scene.selectedIds.length ? scene.skipped ? 'このターンの教室会議はありません。' : '記録の選択：削除しない' : '';
+        const timing = { action: '効果解決後', meeting: '削除前', training: '取得前',
+            outing: '外出前', 'outing-card': 'カード選択時', 'outing-staff': '効果解決後' };
+        this.node('replay-stats-timing').textContent = `${timing[scene.kind]}のステータス`;
+        this.node('replay-actual-choice').textContent = scene.summary ||
+            (isAcquisition(scene) && !scene.selectedIndices.length ? '記録の選択：取得しない'
+                : scene.kind === 'meeting' && !scene.selectedIds.length
+                    ? scene.skipped ? 'このターンの教室会議はありません。' : '記録の選択：削除しない' : '');
         const placements = this.node('replay-original-placements'); placements.replaceChildren();
         if (scene.kind === 'action') {
             for (const slot of config.slots) {
@@ -147,15 +157,17 @@ export class ReplayViewingController {
         }
         const cards = this.node('replay-scene-cards'); cards.replaceChildren();
         const entries = [];
+        const choiceMark = scene.kind === 'outing-staff' || scene.kind === 'outing-card' && scene.before.ruleState.int.outing.place === 'headquarters'
+            ? '使用' : isAcquisition(scene) ? '取得' : scene.kind === 'meeting' ? '削除' : '配置';
         scene.cards.forEach((card, index) => {
             const same = scene.kind === 'training' && this.record.metadata.calcMode ? entries.find(entry => String(entry.card.cardNo) === String(card.cardNo)) : null;
             if (same) same.indices.push(index); else entries.push({ card, indices: [index] });
         });
         for (const { card, indices } of entries) {
-            const actualCount = scene.kind === 'training' ? indices.filter(i => scene.selectedIndices.includes(i)).length : Number(scene.selectedIds.includes(card.instanceId));
+            const actualCount = isAcquisition(scene) ? indices.filter(i => scene.selectedIndices.includes(i)).length : Number(scene.selectedIds.includes(card.instanceId));
             const node = document.createElement('article'); node.className = `card replay-readonly-card${actualCount ? ' replay-actual-card' : ''}`;
             node.dataset.indices = JSON.stringify(indices); node.dataset.instanceId = card.instanceId || '';
-            node.innerHTML = `<div class="replay-card-marks"><span>${actualCount ? `${scene.kind === 'training' ? '取得' : scene.kind === 'meeting' ? '削除' : '配置'}${actualCount > 1 ? `×${actualCount}` : ''}` : ''}</span><button type="button" data-cpu-choice class="replay-duck" hidden aria-label="あひる先生の選択理由を開く">🐤</button></div>
+            node.innerHTML = `<div class="replay-card-marks"><span>${actualCount ? `${card.autoGenerated ? '講習の補充' : choiceMark}${actualCount > 1 ? `×${actualCount}` : ''}` : ''}</span><button type="button" data-cpu-choice class="replay-duck" hidden aria-label="あひる先生の選択理由を開く">🐤</button></div>
                 <div class="card-header"><span class="card-name">${escape(card.cardName)}</span><span class="card-meta">${escape(card.category)} ${escape(card.rarity)}</span></div>
                 <div class="card-body"><div class="card-effect">${escape(card.topEffect || card.effect)}</div>${this.ui.buildCardThumbnailHTML(card, 'card-thumbnail')}</div>
                 ${card.topEffect && card.topEffect !== card.effect ? `<details class="replay-card-detail"><summary>効果全文</summary><p>${escape(card.effect)}</p></details>` : ''}`;
@@ -171,7 +183,7 @@ export class ReplayViewingController {
     showDecision(decision) {
         const scene = this.scenes[this.cursor]; if (!scene) return;
         for (const card of this.node('replay-scene-cards').children) {
-            const count = decision ? scene.kind === 'training'
+            const count = decision ? isAcquisition(scene)
                 ? JSON.parse(card.dataset.indices).filter(i => decision.selectedIndices.includes(i)).length
                 : Number(decision.selectedIds.includes(card.dataset.instanceId)) : 0;
             const mark = card.querySelector('[data-cpu-choice]'); mark.hidden = !count; mark.textContent = count > 1 ? `🐤×${count}` : '🐤';
@@ -180,7 +192,7 @@ export class ReplayViewingController {
         this.node('replay-ai-reason').setAttribute('aria-expanded', String(this.reasonOpen && !!decision));
         this.node('replay-ai-explanation').classList.toggle('hidden', !this.reasonOpen || !decision);
         this.node('replay-ai-explanation').textContent = decision?.reason || '';
-        this.node('replay-ai-status').textContent = decision ? decision.refresh ? 'あひる先生はリフレッシュで候補を更新します。' : '🐤 同じ場面であひる先生が選ぶカード' : 'あひる先生がこの場面を確認中…';
+        this.node('replay-ai-status').textContent = decision ? decision.refresh ? 'あひる先生はリフレッシュで候補を更新します。' : scene.kind.startsWith('outing') ? '🐤 同じ場面でのあひる先生の判断' : '🐤 同じ場面であひる先生が選ぶカード' : 'あひる先生がこの場面を確認中…';
     }
     requestAnalysis() {
         const scene = this.scenes[this.cursor];
@@ -221,11 +233,11 @@ export class ReplayViewingController {
         worker.onmessage = event => {
             if (!this.live(session) || event.data.id !== id) return;
             if (event.data.error) { finish(event.data.error); return; }
-            if (event.data.progress != null) this.node('replay-example-status').textContent = `あひる先生が同じシードでプレイしています… ${event.data.progress}/8ターン`;
+            if (event.data.progress != null) this.node('replay-example-status').textContent = `あひる先生が同じシードでプレイしています… ${event.data.progress}/${source.metadata.totalTurns}ターン`;
             if (!event.data.record) return;
             this.example = { record: event.data.record, text: event.data.text };
             this.node('replay-example-code').value = event.data.text;
-            this.node('replay-example-summary').textContent = `${event.data.record.metadata.difficulty.toUpperCase()} / 元の記録と同じシード${source.metadata.eventId ? ' / イベントを引き継ぎ' : ''}`;
+            this.node('replay-example-summary').textContent = `${getDifficultyDisplayName(event.data.record.metadata.difficulty)} / 元の記録と同じシード${source.metadata.eventId ? ' / イベントを引き継ぎ' : ''}。元の記録 ${source.result.score.displayScore}点、お手本 ${event.data.record.result.score.displayScore}点。`;
             this.node('replay-example-result').classList.remove('hidden'); finish('お手本が完成しました。');
         };
         worker.postMessage({ type: 'example', id, buildVersion: window.BUILD_VERSION, record: source });

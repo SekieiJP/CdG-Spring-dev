@@ -11,7 +11,7 @@ test('PROの5秒表示・設定はFRESHと共通で、初期2枚・通常1枚を
     await page.clock.runFor(4999);await expect(glow(page)).toHaveCount(0);
     await page.clock.runFor(1);await expect(glow(page)).toHaveCount(2);
     expect(await page.evaluate(()=>JSON.stringify(window.game.gameState))).toBe(before);
-    await page.click('#btn-settings-full');await expect(page.locator('.settings-section').filter({hasText:'取得アシスト'})).toContainText('FRESH・PRO');
+    await page.click('#btn-settings-full');await expect(page.locator('.settings-section').filter({hasText:'取得アシスト'})).toContainText('候補提示の5秒後');
     await page.click('[data-acquisition-assist=off]');await page.click('.info-overlay-close');await expect(glow(page)).toHaveCount(0);
     await page.click('#btn-settings-full');await page.click('[data-acquisition-assist=on]');await page.click('.info-overlay-close');await page.clock.runFor(1);await expect(glow(page)).toHaveCount(2);
     await page.evaluate(()=>{const g=window.game;g.gameState.turn=1;g.gameState.currentTrainingCards=g.cardManager.drawTrainingCards('SR',3);g.uiController.renderTrainingCards(g.gameState.currentTrainingCards);});

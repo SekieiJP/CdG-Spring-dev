@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import '../game/js/difficultyExtensions.js';
-import { GameState } from '../game/js/gameState.js';
-import { CardManager } from '../game/js/cardManager.js';
-import { TurnManager } from '../game/js/turnManager.js';
-import { ScoreManager } from '../game/js/scoreManager.js';
-import { getPlacementError } from '../game/js/placementRules.js';
+import '../game/js/difficultyExtensions.js?v=20261122-0069';
+import { GameState } from '../game/js/gameState.js?v=20261122-0069';
+import { CardManager } from '../game/js/cardManager.js?v=20261122-0069';
+import { TurnManager } from '../game/js/turnManager.js?v=20261122-0069';
+import { ScoreManager } from '../game/js/scoreManager.js?v=20261122-0069';
+import { getPlacementError } from '../game/js/placementRules.js?v=20261122-0069';
 import { observeMaster, createMasterPolicy } from './master-policy.mjs';
 
 export async function loadMasterRules() {

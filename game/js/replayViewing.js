@@ -1,4 +1,5 @@
-import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0068';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
+import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0069';
 
 export function replayCard(record, reference) {
     if (typeof reference === 'string') {
@@ -31,6 +32,28 @@ function trainingScene(record, turn, choice, index) {
         phaseTag: choice.phaseTag, allowSkip: choice.allowSkip, allowRefresh: choice.allowRefresh };
 }
 
+function outingScenes(record, turn) {
+    const { place, before, choice, selectedIndices, staffId, cardId, after } = turn.outing;
+    const config = getDifficultyConfig(record.metadata.difficulty);
+    const destination = config.turns[turn.turn].outingOptions.find(option => option.id === place);
+    const scenes = [{ key: `${turn.turn}:outing`, turn: turn.turn, kind: 'outing', label: '行き先選択',
+        summary: `記録の行き先：${destination.name}`, before, stats: before.player, cards: [], selectedIds: [] }];
+    if (choice) {
+        scenes.push({ key: `${turn.turn}:outing-card`, turn: turn.turn, kind: 'outing-card', label: `${destination.name}のカード選択`,
+            before: choice, stats: staffId ? choice.player : after.player,
+            cards: choice.currentTrainingCards.map(ref => replayCard(record, ref)), selectedIndices });
+    }
+    if (staffId) {
+        const card = replayCard(record, cardId);
+        const staffBefore = structuredClone(choice);
+        staffBefore.ruleState.int.outing = { place, stage: 'staff', selectedCard: card };
+        scenes.push({ key: `${turn.turn}:outing-staff`, turn: turn.turn, kind: 'outing-staff', label: '本部でカードを実行',
+            summary: `記録の担当：${config.slots.find(slot => slot.id === staffId).name}`,
+            before: staffBefore, stats: after.player, cards: [card], selectedIds: [cardId] });
+    }
+    return scenes;
+}
+
 export function sceneAnalysisSource(record, scene) {
     const metadata = record.metadata;
     return { difficulty: metadata.difficulty, seed: metadata.seed, runId: metadata.runId, calcMode: metadata.calcMode,
@@ -46,11 +69,16 @@ export function sceneAnalysisInput(scene) {
 
 export function replayScenes(record) {
     validateBattleReplay(record);
-    if (record.viewingVersion !== 1 || record.turns.some(turn => !Array.isArray(turn.choices) || !turn.choices.length)) {
+    const master = record.metadata.difficulty === 'int';
+    if (record.viewingVersion !== 1 || record.turns.some(turn => !Array.isArray(turn.choices) || !master && !turn.choices.length)) {
         throw new Error('このリプレイには視聴に必要な取得記録がありません');
     }
     const scenes = [];
     for (const turn of record.turns) {
+        if (turn.outing) {
+            scenes.push(...outingScenes(record, turn));
+            continue;
+        }
         turn.choices.forEach((choice, index) => scenes.push(trainingScene(record, turn, choice, index)));
         const before = structuredClone(turn.actionStart);
         if (record.metadata.calcMode) {
@@ -58,10 +86,13 @@ export function replayScenes(record) {
             before.player.placed = Object.fromEntries(Object.keys(before.player.placed).map(slot => [slot, []]));
             before.player.zones = Object.fromEntries(Object.keys(before.player.zones || {}).map(zone => [zone, []]));
         }
-        scenes.push({ key: `${turn.turn}:action`, turn: turn.turn, kind: 'action', label: '配置', before,
-            stats: structuredClone(turn.action.after.player), cards: before.player.hand.map(id => replayCard(record, id)),
-            placements: structuredClone(turn.action.placed), selectedIds: Object.values(turn.action.placed).flat() });
-        const meeting = turn.meetingStart || turn.action.after;
+        const placements = structuredClone(turn.action.placed);
+        const visible = [...new Set([...before.player.hand, ...Object.values(placements).flat()])];
+        const spring = getDifficultyConfig(record.metadata.difficulty).turns[turn.turn].spring;
+        scenes.push({ key: `${turn.turn}:action`, turn: turn.turn, kind: 'action', label: spring ? '講習の配置' : '配置', before,
+            stats: structuredClone(turn.action.after.player), cards: visible.map(id => replayCard(record, id)),
+            placements, selectedIds: Object.values(placements).flat() });
+        const meeting = turn.meetingStart || (master ? turn.meeting.after : turn.action.after);
         scenes.push({ key: `${turn.turn}:meeting`, turn: turn.turn, kind: 'meeting', label: '削除', before: structuredClone(meeting),
             stats: structuredClone(meeting.player), cards: snapshotCards(meeting).map(id => replayCard(record, id)),
             selectedIds: turn.meeting.deleted.map(event => event.card.instanceId), skipped: turn.meeting.skipped });

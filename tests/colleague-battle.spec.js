@@ -74,7 +74,7 @@ async function blockExternalRequests(context, baseURL, submissions = []) {
             const payload = request.postDataJSON();
             submissions.push(payload);
             await route.fulfill({ contentType: 'application/json', body: JSON.stringify({
-                status: 'ok', turnHistoryStored: true,
+                status: 'ok', turnHistoryStored: true, diaryStored: Boolean(payload.replayText),
                 currentVersion: payload.buildVersion, clientVersion: payload.buildVersion, versionMatch: true
             }) });
             return;
@@ -204,7 +204,11 @@ test.describe('同僚と対戦', () => {
             await guestContext.addInitScript(seed => { window.CDG_GAME_SEED = seed; }, TEST_SEED);
             const guest = await guestContext.newPage();
             await guest.clock.install({ time: TEST_DATE });
-            await joinRoom(guest, code);
+            await openRoomLobby(guest);
+            await guest.locator('#battle-room-mode-join').click();
+            await guest.locator('#battle-room-code-input').fill(code);
+            await guest.locator('#battle-room-join-start').click();
+            await guest.locator('#sharing-disable').click();
             await expect(guest.locator('#training-cards .card')).toHaveCount(4);
             expect(await initialCandidates(guest)).toEqual(creatorCandidates);
             expect(await guest.evaluate(() => ({ room: window.game.gameState.room, battle: window.game.gameState.battle }))).toEqual({
@@ -226,7 +230,7 @@ test.describe('同僚と対戦', () => {
         await input.fill('000000000');
         await expect(join).toBeDisabled();
         await expect(page.locator('#battle-lobby-message')).toHaveText('');
-        await expect(page.locator('#battle-room-detected')).toHaveText('部屋コードは数字8桁で入力してください');
+        await expect(page.locator('#battle-room-detected')).toHaveText('部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください');
 
         const code = '00000000';
         await input.fill(code);
@@ -302,6 +306,12 @@ test.describe('同僚と対戦', () => {
         expect(scoreSubmissions[0].mode).toBe('通常');
         expect(scoreSubmissions[0]).not.toHaveProperty('battleKind');
         expect(scoreSubmissions[0]).not.toHaveProperty('room');
+        expect(scoreSubmissions[0]).not.toHaveProperty('roomCode');
+        const sharedSeed = await page.evaluate(async text => {
+            const { decodeReplay } = await import(`/js/replayCodec.js?v=${window.BUILD_VERSION.slice(1)}`);
+            return (await decodeReplay(text)).metadata.seed;
+        }, scoreSubmissions[0].replayText);
+        expect(sharedSeed).toMatch(/^room-hash:[a-f0-9]{8}$/);
         expect(scoreSubmissions[0]).not.toHaveProperty('revenge');
         await page.locator('#colleague-result-menu-toggle').click();
         await expectResultImageDownload(page);

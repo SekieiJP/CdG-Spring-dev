@@ -1,7 +1,7 @@
-import { createAdvisorObservation, recommendAcquisition } from './acquisitionAdvisor.js?v=20261122-0068';
-import { chooseFreshForecastAcquisition, evaluateForecast } from './freshOutcomeForecast.js?v=20261122-0068';
-import { withdrawal } from './proAcquisitionAdvisor.js?v=20261122-0068';
-import { createPlacementEvaluation } from './cpuPlacementEvaluation.js?v=20261122-0068';
+import { createAdvisorObservation, recommendAcquisition } from './acquisitionAdvisor.js?v=20261122-0069';
+import { chooseFreshForecastAcquisition, evaluateForecast } from './freshOutcomeForecast.js?v=20261122-0069';
+import { withdrawal } from './proAcquisitionAdvisor.js?v=20261122-0069';
+import { createPlacementEvaluation } from './cpuPlacementEvaluation.js?v=20261122-0069';
 
 function recoverResources(evaluator, observation, current, hand) {
     if (observation.turn < 2 || withdrawal(current.player) <= 1) return current;

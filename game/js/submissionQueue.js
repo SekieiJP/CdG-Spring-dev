@@ -30,7 +30,7 @@ export class SubmissionQueue {
     }
     async flush(tried) {
         while (this.online()) {
-            const row = this.repository.pending().find(row => !tried.has(row.resultId));
+            const row = this.repository.pending().find(row => !tried.has(row.resultId) && !row.payload.awaitingReplay);
             if (!row) return;
             tried.add(row.resultId);
             this.activeId = row.resultId;

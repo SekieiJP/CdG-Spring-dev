@@ -3,16 +3,18 @@ import { readFile, writeFile, readdir } from 'node:fs/promises';
 const version = process.argv[2];
 if (!/^v\d{8}-\d{4}$/.test(version || '')) throw new Error('例: node scripts/set-build-version.mjs v20260815-0051');
 const suffix = version.slice(1);
+const modulePaths = ['solver/master-benchmark.mjs', 'solver/master-policy.mjs'];
 for (const dir of ['game/js', 'tests/unit']) {
     for (const name of await readdir(dir)) {
-        if (!/\.(js|mjs)$/.test(name)) continue;
-        const path = `${dir}/${name}`;
-        let source = await readFile(path, 'utf8');
-        source = source.replace(/(from\s+['"])(\.[^'"]+\.js)(?:\?v=\d{8}-\d{4})?(['"])/g, `$1$2?v=${suffix}$3`);
-        source = source.replace(/(import\s+['"])(\.[^'"]+\.js)(?:\?v=\d{8}-\d{4})?(['"])/g, `$1$2?v=${suffix}$3`);
-        source = source.replace(/const CACHE_BUSTER = '[^']+';/, `const CACHE_BUSTER = '${version}';`);
-        await writeFile(path, source);
+        if (/\.(js|mjs)$/.test(name)) modulePaths.push(`${dir}/${name}`);
     }
+}
+for (const path of modulePaths) {
+    let source = await readFile(path, 'utf8');
+    source = source.replace(/(from\s+['"])(\.[^'"]+\.js)(?:\?v=\d{8}-\d{4})?(['"])/g, `$1$2?v=${suffix}$3`);
+    source = source.replace(/(import\s+['"])(\.[^'"]+\.js)(?:\?v=\d{8}-\d{4})?(['"])/g, `$1$2?v=${suffix}$3`);
+    source = source.replace(/const CACHE_BUSTER = '[^']+';/, `const CACHE_BUSTER = '${version}';`);
+    await writeFile(path, source);
 }
 for (const name of await readdir('game')) {
     if (!name.endsWith('.html') && name !== 'manifest.webmanifest') continue;

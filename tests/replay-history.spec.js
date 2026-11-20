@@ -66,9 +66,6 @@ for (const difficulty of ['fresh', 'pro']) {
                 return { id: row.resultId, score: row.score, finalDeck: row.finalDeck };
             });
             const originalPlayback = await playbackView(page);
-            await expect.poll(() => scoreSubmissions.length).toBe(1);
-            expect(scoreSubmissions[0]).not.toHaveProperty('replayPending');
-            expect(scoreSubmissions[0]).not.toHaveProperty('replayText');
             if (resumeEncoding) {
                 await expect(page.locator('#result-replay-copy')).toBeDisabled();
                 await expect(page.locator('#result-replay-status')).toContainText('準備しています');
@@ -90,6 +87,9 @@ for (const difficulty of ['fresh', 'pro']) {
             }
             const copy = page.locator('#result-history-overlay [data-replay-id]');
             await expect(copy).toBeEnabled();
+            await expect.poll(() => scoreSubmissions.length).toBe(1);
+            expect(scoreSubmissions[0]).not.toHaveProperty('replayPending');
+            expect(scoreSubmissions[0].replayText).toEqual(await page.evaluate(id => window.game.uiController.resultController.repository.find(id).replayText, original.id));
             await copy.click();
             await expect(page.locator('[data-replay-status]')).toHaveText('リプレイデータをコピーしました。');
             const replay = await decodeHistory(page, original.id);

@@ -44,9 +44,15 @@ export function snapshotReplayState(state, { decision = false } = {}) {
     const cards = list => (list || []).map(card => rememberCard(record, card));
     const groups = value => Object.fromEntries(Object.entries(value || {}).map(([key, list]) => [key, cards(list)]));
     const manager = cardManagers.get(state);
-    const trainingPool = decision && manager && ['start', 'training'].includes(state.phase) ? {
+    const trainingPool = decision && manager && ['start', 'training', 'outing'].includes(state.phase) ? {
         decks: groups(manager.trainingDecks), discards: groups(manager.trainingDiscards)
     } : null;
+    const ruleState = structuredClone(state.ruleState || {});
+    const zones = groups(state.player.zones);
+    if (ruleState.int) {
+        zones.springDiscard = cards(state.ruleState.int.springDiscard);
+        delete ruleState.int.springDiscard;
+    }
     return {
         turn: state.turn,
         phase: state.phase,
@@ -54,10 +60,10 @@ export function snapshotReplayState(state, { decision = false } = {}) {
         player: {
             ...Object.fromEntries(STATUS_KEYS.map(key => [key, state.player[key]])),
             deck: cards(state.player.deck), hand: cards(state.player.hand),
-            placed: groups(state.player.placed), zones: groups(state.player.zones)
+            placed: groups(state.player.placed), zones
         },
         tokens: structuredClone(state.tokens || {}),
-        ruleState: structuredClone(state.ruleState || {}),
+        ruleState,
         event: structuredClone(state.event || null),
         eventCardUsage: structuredClone(state.eventCardUsage || {}),
         currentTrainingCards: state.currentTrainingCards ? cards(state.currentTrainingCards) : null,
@@ -74,10 +80,6 @@ export function snapshotReplayState(state, { decision = false } = {}) {
 
 export function startReplayRecording(state, { cardManager, scoreManager, eventDefinition = null, eventItems = [], captureViewing = false } = {}) {
     if (state.turn !== 0 || !['start', 'training'].includes(state.phase)) return false;
-    if (state.difficulty === 'int') {
-        state.replayRecord = null;
-        return false;
-    }
     if (cardManager) bindReplayCardManager(state, cardManager);
     const config = state.config;
     state.replayRecord = {
@@ -116,7 +118,8 @@ export function captureReplayTrainingChoice(state, selected, options = {}) {
     const eventTraining = state.event?.eventTraining;
     const phaseTag = options.phaseTag || (eventTraining ? 'event' : state.trainingSelectionMode === 'inspiration' ? 'inspiration' : state.turn === 0 ? 'initial' : 'main');
     const rarity = options.rarity || (eventTraining ? 'SSR' : phaseTag === 'inspiration' ? 'SR' : state.config.turns[state.turn].training);
-    const pickCount = options.pickCount ?? (phaseTag === 'initial' ? 2 : 1);
+    const pickCount = options.pickCount ?? (state.difficulty === 'int' && phaseTag !== 'inspiration'
+        ? state.config.turns[state.turn].pickCount : phaseTag === 'initial' ? 2 : 1);
     const allowSkip = options.allowSkip ?? phaseTag === 'inspiration';
     let candidates = options.candidates || eventTraining?.cards || state.currentTrainingCards || [];
     if (state.calcMode && !options.candidates) {
@@ -124,7 +127,7 @@ export function captureReplayTrainingChoice(state, selected, options = {}) {
             .flatMap(card => Array.from({ length: Math.max(1, pickCount) }, (_, i) => ({ ...card, poolId: `manual:${card.cardNo}:${i}` })));
     }
     const chosen = (selected || []).filter(card => card && !card.__skip);
-    if (!chosen.length && !allowSkip) return;
+    if (!chosen.length && !allowSkip && candidates.length) return;
     const used = new Set();
     const selectedIndices = chosen.map(card => {
         const index = candidates.findIndex((candidate, i) => !used.has(i) && (card.poolId && candidate.poolId === card.poolId ||
@@ -137,10 +140,10 @@ export function captureReplayTrainingChoice(state, selected, options = {}) {
     record.operationsRefreshRemaining = state.trainingRefreshRemaining ?? 0;
     (turn.operations ||= []).push({ phaseTag, refreshes,
         selected: state.calcMode ? chosen.map(card => Number(card.cardNo)) : selectedIndices });
-    if (!record.captureViewing) return;
+    if (!record.captureViewing || !candidates.length) return;
     const before = snapshotReplayState(state, { decision: true });
     before.currentTrainingCards = candidates.map(card => rememberCard(record, card));
-    (turn.choices ||= []).push({ before, rarity, pickCount, allowSkip, phaseTag, selectedIndices,
+    (turn.choices ||= []).push({ before, rarity, pickCount: Math.min(pickCount, candidates.length), allowSkip, phaseTag, selectedIndices,
         allowRefresh: !state.calcMode && phaseTag !== 'event' });
 }
 
@@ -199,9 +202,39 @@ export function completeReplayAction(state) {
     turn.action.after ||= snapshotReplayState(state);
 }
 
+export function beginReplayOuting(state, place) {
+    const turn = currentTurn(state);
+    if (!turn || turn.completed) return;
+    turn.outing ||= { place, before: snapshotReplayState(state, { decision: true }), refreshes: 0, selectedIndices: [] };
+}
+
+export function captureReplayOutingChoice(state, candidates, selected) {
+    const turn = currentTurn(state);
+    if (!turn?.outing) return;
+    const record = state.replayRecord;
+    turn.outing.refreshes = record.operationsRefreshRemaining - state.trainingRefreshRemaining;
+    record.operationsRefreshRemaining = state.trainingRefreshRemaining;
+    turn.outing.selectedIndices = selected.map(card => candidates.findIndex(candidate =>
+        candidate === card || (card.poolId && candidate.poolId === card.poolId)));
+    turn.outing.choice = snapshotReplayState(state, { decision: true });
+}
+
+export function captureReplayOutingEffect(state, staffId, card, action) {
+    const turn = currentTurn(state);
+    if (!turn?.outing) return;
+    turn.outing.staffId = staffId;
+    turn.outing.cardId = rememberCard(state.replayRecord, card);
+    turn.outing.effect = structuredClone(action);
+}
+
 export function completeReplayTurn(state) {
     const turn = currentTurn(state);
     if (!turn || turn.completed) return;
+    if (state.phase === 'outing' && turn.outing) {
+        turn.outing.after = snapshotReplayState(state);
+        turn.completed = true;
+        return;
+    }
     if (!turn.actionStart || !turn.action?.after) {
         state.replayRecord.invalid = true;
         return;
@@ -217,9 +250,11 @@ function hasCompleteTurns(record) {
         Number.isInteger(record.metadata?.totalTurns) && record.metadata.totalTurns > 0 &&
         Array.isArray(record.turns) && record.turns.length === record.metadata.totalTurns &&
         Array.from(record.turns).every((turn, index) => turn?.turn === index && turn.completed === true &&
-            turn.actionStart?.player && turn.action?.before?.player && turn.action.placed &&
+            (record.metadata.difficulty === 'int' && record.definitions.turns[index]?.type === 'outing'
+                ? turn.outing?.before?.player && turn.outing?.after?.player
+                : turn.actionStart?.player && turn.action?.before?.player && turn.action.placed &&
             turn.action.cardEffects && Array.isArray(turn.action.eventEffects) && turn.action.cardsAfter?.player &&
-            turn.action.after?.player && turn.meeting?.after?.player);
+            turn.action.after?.player && turn.meeting?.after?.player));
 }
 
 export function finalizeReplayRecording(state, score, finalDeck) {
@@ -235,7 +270,7 @@ export function finalizeReplayRecording(state, score, finalDeck) {
 
 export function getCompletedReplay(state) {
     const record = state?.replayRecord;
-    if (!record?.complete || !['fresh', 'pro'].includes(record.metadata?.difficulty) ||
+    if (!record?.complete || !['fresh', 'pro', 'int'].includes(record.metadata?.difficulty) ||
         record.metadata?.runId !== state.runId || !hasCompleteTurns(record) ||
         !record.result?.score || !Array.isArray(record.result.finalDeck) || record.result.state?.phase !== 'end') return null;
     return structuredClone(record);

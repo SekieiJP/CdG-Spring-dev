@@ -1,8 +1,10 @@
-import { createCpuEngine } from './cpuOpponent.js?v=20261122-0068';
-import { RandomSource } from './randomSource.js?v=20261122-0068';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0068';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0068';
-import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0068';
+import { observeMaster } from './masterPolicy.js?v=20261122-0069';
+import { describeMasterDecision } from './masterAdvice.js?v=20261122-0069';
+import { createCpuEngine } from './cpuOpponent.js?v=20261122-0069';
+import { RandomSource } from './randomSource.js?v=20261122-0069';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0069';
+import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0069';
 
 const STATS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
@@ -25,8 +27,13 @@ function restoreScene(game, source, scene) {
     state.turn = scene.turn; state.phase = scene.kind === 'action' ? 'action' : scene.kind === 'meeting' ? 'meeting' : 'training';
     state.player = { ...structuredClone(before.player), deck: before.player.deck.map(read), hand: before.player.hand.map(read),
         placed: groups(before.player.placed), zones: groups(before.player.zones) };
+    if (source.difficulty === 'int' && scene.kind.startsWith('outing')) state.phase = 'outing';
     state.runId = source.runId; state.nextInstanceId = before.nextInstanceId || 1;
     state.tokens = structuredClone(before.tokens || {}); state.ruleState = structuredClone(before.ruleState || {});
+    if (source.difficulty === 'int' && state.ruleState.int) {
+        state.ruleState.int.springDiscard = state.player.zones.springDiscard || [];
+        delete state.player.zones.springDiscard;
+    }
     state.event = structuredClone(before.event || null); state.eventCardUsage = structuredClone(before.eventCardUsage || {});
     state.discardedCards = [...(before.discardedCards || [])]; state.calcMode = !!source.calcMode;
     state.rng = RandomSource.restore(before.randomState);
@@ -40,7 +47,7 @@ function restoreScene(game, source, scene) {
     if (before.trainingPool) {
         game.cardManager.trainingDecks = groups(before.trainingPool.decks);
         game.cardManager.trainingDiscards = groups(before.trainingPool.discards);
-    } else if (scene.kind === 'training') throw new Error('研修の判断に必要な候補デッキがありません');
+    } else if (scene.kind === 'training' && source.difficulty !== 'int') throw new Error('研修の判断に必要な候補デッキがありません');
 }
 
 function adviceRecord(source, scene, selection) {
@@ -53,10 +60,23 @@ function adviceRecord(source, scene, selection) {
         instances: source.instances, turns };
 }
 
+function analyzeMasterScene(game, policy, scene) {
+    if (scene.kind === 'meeting' && scene.skipped) {
+        return { kind: 'meeting', selectedIds: [], reason: 'この日は教室会議がないので、カードを削除しないよ。' };
+    }
+    const observation = observeMaster(game.turnManager);
+    if (!observation) throw new Error('判断前の状態を復元できません');
+    const move = policy.decide();
+    const { reason } = describeMasterDecision(observation, move, game.gameState.player.placed);
+    return { kind: scene.kind, reason, refresh: move.kind === 'refresh',
+        selectedIndices: move.indices || [], selectedIds: move.ids || move.moves?.map(step => step.id) || [] };
+}
+
 export async function analyzeReplayScene(source, scene) {
     const { game, policy } = await createCpuEngine({ difficulty: source.difficulty, seed: source.seed,
         resources: { cards: source.cards, ranks: source.ranks, cardVersion: source.cardVersion, rankVersion: source.rankVersion } });
     restoreScene(game, source, scene);
+    if (source.difficulty === 'int') return analyzeMasterScene(game, policy, scene);
     const state = game.gameState;
     if (scene.kind === 'training') {
         if (!scene.allowRefresh) state.trainingRefreshRemaining = 0;

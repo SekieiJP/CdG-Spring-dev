@@ -1,12 +1,12 @@
-import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261122-0068';
-import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261122-0068';
-import { recommendProStatus } from './ahiruProAdvice.js?v=20261122-0068';
-import { snapshotCards } from './battleReplay.js?v=20261122-0068';
-import { projectFreshAdviceState } from './ahiruFreshForecast.js?v=20261122-0068';
-import { projectProAdviceState } from './ahiruProForecast.js?v=20261122-0068';
-import { getFreshSGoals } from './ahiruFreshGoals.js?v=20261122-0068';
-import { getProSGoals } from './ahiruProGoals.js?v=20261122-0068';
-import { createAhiruRoleInspector } from './ahiruCardRoles.js?v=20261122-0068';
+import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261122-0069';
+import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261122-0069';
+import { recommendProStatus } from './ahiruProAdvice.js?v=20261122-0069';
+import { snapshotCards } from './battleReplay.js?v=20261122-0069';
+import { projectFreshAdviceState } from './ahiruFreshForecast.js?v=20261122-0069';
+import { projectProAdviceState } from './ahiruProForecast.js?v=20261122-0069';
+import { getFreshSGoals } from './ahiruFreshGoals.js?v=20261122-0069';
+import { getProSGoals } from './ahiruProGoals.js?v=20261122-0069';
+import { createAhiruRoleInspector } from './ahiruCardRoles.js?v=20261122-0069';
 
 const AXES = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
@@ -22,6 +22,28 @@ function observationFromSnapshot(record, snapshot, turnIndex, candidates = []) {
     return createAdvisorObservation(state, candidates, {
         pickCount: Math.max(1, candidates.length), allowSkip: false, rankTable: record.definitions.ranks
     });
+}
+
+export function masterOpponentAdvice(record, turnIndex, phase) {
+    const turn = record.turns[turnIndex];
+    if (!turn) return null;
+    if (phase === 'outing' && turn.outing) {
+        const option = record.definitions.turns[turnIndex].outingOptions.find(place => place.id === turn.outing.place);
+        return option && { tone: 'green', text: `私は${option.name}に行くよ` };
+    }
+    if (phase === 'training') {
+        const choice = turn.training?.find(boundary => boundary.kind === 'training-choice');
+        const names = (choice?.selected ?? []).map(no => record.definitions.cards.find(c => c.cardNo === no)?.cardName).filter(Boolean);
+        if (!choice) return null;
+        if (!names.length) return { tone: 'yellow', text: '私は今回は見送るよ' };
+        const text = `私は「${names.join('」「')}」を選ぶよ`;
+        return { tone: 'green', text: Array.from(text).length <= 25 ? text : `私はこの${names.length}枚を選ぶよ` };
+    }
+    if (phase === 'meeting') {
+        const deleted = turn.meeting?.deleted || [];
+        return { tone: 'yellow', text: deleted.length ? `私は${deleted.length}枚減らして次に備えるね` : '私は今のカードを残すよ' };
+    }
+    return null;
 }
 
 export function cpuTrainingAdvice(record, turnIndex) {

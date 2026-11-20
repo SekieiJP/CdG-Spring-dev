@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { GameState } from '../../game/js/gameState.js';
-import { CardManager } from '../../game/js/cardManager.js';
-import { TurnManager } from '../../game/js/turnManager.js';
-import { getPlacementError } from '../../game/js/placementRules.js';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0069';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0069';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0069';
+import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0069';
 import { createMasterPolicy, observeMaster } from '../../solver/master-policy.mjs';
 import { loadMasterRules, playMaster, summarize } from '../../solver/master-benchmark.mjs';
 

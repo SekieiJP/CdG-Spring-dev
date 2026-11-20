@@ -1,4 +1,4 @@
-var CURRENT_BUILD_VERSION = 'v20261122-0068';
+var CURRENT_BUILD_VERSION = 'v20261122-0069';
 
 /* ===== ヘルパー関数 ===== */
 
@@ -66,7 +66,7 @@ function ensureScoreRecordHeaders(sheet) {
         '難易度', 'モード', '体験', '入塾', '満足', '経理',
         '総合スコア', 'ランク', '目標ポイント',
         '退塾数', '動員合計', '入退差', '最終デッキ', '削除カード', '塾アイテム',
-        '結果ID', 'ルールバージョン', 'カードバージョン', 'ランクバージョン'
+        '結果ID', 'ルールバージョン', 'カードバージョン', 'ランクバージョン', '共有同意ID'
     ];
 
     if (sheet.getLastRow() === 0) {
@@ -111,7 +111,8 @@ function buildScoreRecordRow(headers, data) {
         '結果ID': sanitizeForSheet(data.resultId),
         'ルールバージョン': sanitizeForSheet(data.rulesVersion || ''),
         'カードバージョン': sanitizeForSheet(data.cardVersion || ''),
-        'ランクバージョン': sanitizeForSheet(data.rankVersion || '')
+        'ランクバージョン': sanitizeForSheet(data.rankVersion || ''),
+        '共有同意ID': data.sharingOwner || ''
     };
     return headers.map(function(header) {
         return Object.prototype.hasOwnProperty.call(valuesByHeader, header) ? valuesByHeader[header] : '';
@@ -125,12 +126,14 @@ function buildScoreRecordRow(headers, data) {
 function validatePayload(data) {
     if (!data || typeof data !== 'object' || Array.isArray(data)) return 'invalid payload';
     if (data.turnHistory != null) {
+        var phases = ['start', 'training', 'action', 'meeting', 'end'];
+        if (data.difficulty === 'int') phases.push('outing');
         if (!Array.isArray(data.turnHistory) || data.turnHistory.length > 10000) return 'invalid field: turnHistory';
         for (var h = 0; h < data.turnHistory.length; h++) {
             var entry = data.turnHistory[h];
             if (!entry || !Number.isInteger(entry.turn) || entry.turn < 0 || entry.turn >= (data.totalTurns || 8)
                 || ['acquire', 'place', 'unplace', 'delete'].indexOf(entry.type) === -1
-                || ['start', 'training', 'action', 'meeting', 'end'].indexOf(entry.phase) === -1
+                || phases.indexOf(entry.phase) === -1
                 || !entry.card || typeof entry.card.cardName !== 'string' || entry.card.cardName.length > 200
                 || (entry.staff != null && (typeof entry.staff !== 'string' || !/^[a-z][a-z0-9-]{0,31}$/.test(entry.staff)))
                 || (entry.card.instanceId != null && (typeof entry.card.instanceId !== 'string' || entry.card.instanceId.length > 160))
@@ -138,6 +141,17 @@ function validatePayload(data) {
         }
     }
     if (data.resultId != null && (typeof data.resultId !== 'string' || !/^[a-zA-Z0-9:_-]{1,120}$/.test(data.resultId))) return 'invalid field: resultId';
+    if (data.replayText != null) {
+        if (data.action !== 'score.submit' || !data.resultId || typeof data.replayText !== 'string'
+            || !/^CDGR1[.:][A-Za-z0-9_-]+$/.test(data.replayText)) return 'invalid field: replayText';
+        if (!Array.isArray(data.diaryFinalDeck) || data.diaryFinalDeck.length > 200
+            || data.diaryFinalDeck.some(function(card) {
+                return !card || typeof card.cardName !== 'string' || card.cardName.length > 50
+                    || !/^[a-zA-Z0-9:_-]{1,64}$/.test(String(card.cardNo))
+                    || ['rarity', 'category'].some(function(key) { return card[key] != null && (typeof card[key] !== 'string' || card[key].length > 40); });
+            })) return 'invalid field: diaryFinalDeck';
+        if (typeof data.completedAt !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(data.completedAt)) return 'invalid field: completedAt';
+    }
     if (data.totalTurns != null && (typeof data.totalTurns !== 'number' || data.totalTurns % 1 !== 0 || data.totalTurns < 1 || data.totalTurns > 100)) return 'invalid field: totalTurns';
     var versions = ['buildVersion', 'rulesVersion', 'cardVersion', 'rankVersion'];
     for (var v = 0; v < versions.length; v++) {
@@ -249,7 +263,7 @@ function jsonResponse(value) {
 }
 
 function scoreAcknowledgement(data, duplicate) {
-    return jsonResponse({ status: 'ok', resultId: data.resultId, duplicate: duplicate, turnHistoryStored: true,
+    return jsonResponse({ status: 'ok', resultId: data.resultId, duplicate: duplicate, turnHistoryStored: true, diaryStored: !!data.replayText,
         currentVersion: CURRENT_BUILD_VERSION, clientVersion: data.buildVersion || '',
         versionMatch: isClientVersionCurrent(data.buildVersion || '', CURRENT_BUILD_VERSION) });
 }
@@ -287,6 +301,14 @@ function appendScoreOnce(data) {
     var lock = LockService.getScriptLock();
     if (!lock.tryLock(5000)) return jsonResponse({ status: 'error', message: 'busy' });
     try {
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        var authenticated = data.action === 'score.submit';
+        data.sharingOwner = '';
+        if (authenticated) {
+            var profile = findSharingProfile(ss, data.sharingToken);
+            if (!profile || profile.values[2] !== true) return sharingDenied();
+            data.sharingOwner = profile.values[0];
+        }
         // 古いクライアントも、同じ不変ペイロードの再送を受領済みとして返す。
         data.resultId = data.resultId || 'legacy-' + scoreDigest(JSON.stringify([
             data.userUUID || '', data.startedAt || '', data.completedAt || '', data.displayScore
@@ -294,19 +316,22 @@ function appendScoreOnce(data) {
         var cacheKey = 'score_history_' + scoreDigest(data.resultId + JSON.stringify(data.turnHistory || []));
         var cache = null;
         try {
-            cache = CacheService.getScriptCache();
-            if (cache.get(cacheKey)) return scoreAcknowledgement(data, true);
+            cache = authenticated ? null : CacheService.getScriptCache();
+            if (cache && cache.get(cacheKey)) return scoreAcknowledgement(data, true);
         } catch (cacheError) { /* Cacheは必須ではない */ }
 
-        var ss = SpreadsheetApp.getActiveSpreadsheet();
         var sheet = ss.getSheetByName('スコア記録') || ss.insertSheet('スコア記録');
         var headers = ensureScoreRecordHeaders(sheet);
         var idColumn = headers.indexOf('結果ID') + 1;
         var lastRow = sheet.getLastRow();
         var existing = lastRow > 1 && sheet.getRange(2, idColumn, lastRow - 1, 1)
             .createTextFinder(data.resultId).matchEntireCell(true).matchCase(true).findNext();
-        if (!existing) sheet.appendRow(buildScoreRecordRow(headers, data));
+        if (existing) {
+            var owner = sheet.getRange(existing.getRow(), headers.indexOf('共有同意ID') + 1).getValue();
+            if ((owner || '') !== data.sharingOwner) return sharingDenied();
+        } else sheet.appendRow(buildScoreRecordRow(headers, data));
         appendTurnHistory(ss, data);
+        if (authenticated && data.replayText) appendSharedDiary(ss, data);
         // 永続化できてから受領済みにする。失敗した書き込みをCacheで塞がない。
         SpreadsheetApp.flush();
         try { if (cache) cache.put(cacheKey, '1', 21600); } catch (cacheError) { /* 永続列を使う */ }
@@ -327,6 +352,9 @@ function doPost(e) {
         }
 
         var data = JSON.parse(e.postData.contents);
+        if (data && typeof data.action === 'string' && data.action !== 'score.submit') return sharingAction(data);
+
+        if (data && data.action !== 'score.submit' && buildVersionNumber(data.buildVersion) >= 202611220069) return sharingDenied();
 
         // M1: 型・範囲チェック
         var validationError = validatePayload(data);
@@ -357,7 +385,138 @@ function doGet(e) {
     return ContentService.createTextOutput(JSON.stringify({
         status: 'ok',
         message: 'Score receiver is running',
+        sharingSupported: true,
         currentVersion: CURRENT_BUILD_VERSION
     }))
         .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+function sharingDenied() {
+    return jsonResponse({ status: 'error', message: 'forbidden' });
+}
+
+function sharingTokenHash(token) {
+    if (typeof token !== 'string' || !/^[a-f0-9-]{72}$/.test(token)) return null;
+    return 'token-' + Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, token, Utilities.Charset.UTF_8)
+        .map(function(value) { return ('0' + (value & 0xFF).toString(16)).slice(-2); }).join('');
+}
+
+function findSharingRow(sheet, key) {
+    if (!sheet || sheet.getLastRow() < 2) return null;
+    return sheet.getRange(2, 1, sheet.getLastRow() - 1, 1).createTextFinder(key)
+        .matchEntireCell(true).matchCase(true).findNext();
+}
+
+function findSharingProfile(ss, token) {
+    var hash = sharingTokenHash(token);
+    if (!hash) return null;
+    var sheet = ss.getSheetByName('教室日誌の共有設定');
+    var found = findSharingRow(sheet, hash);
+    if (!found) return null;
+    var row = found.getRow();
+    return { sheet: sheet, row: row, values: sheet.getRange(row, 1, 1, 4).getValues()[0] };
+}
+
+function sharingSheet(ss, name, headers) {
+    var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+    if (!sheet.getLastRow()) sheet.appendRow(headers);
+    return sheet;
+}
+
+function sharingAction(data) {
+    var nickname = typeof data.nickname === 'string' ? data.nickname.trim() : '';
+    if ((data.action === 'sharing.enable' || data.action === 'sharing.rename')
+        && (!nickname || Array.from(nickname).length > 8 || /[\u0000-\u001f\u007f-\u009f]/.test(nickname))) {
+        return jsonResponse({ status: 'error', message: 'invalid nickname' });
+    }
+    var lock = LockService.getScriptLock();
+    if (!lock.tryLock(5000)) return jsonResponse({ status: 'error', message: 'busy' });
+    try {
+        var ss = SpreadsheetApp.getActiveSpreadsheet();
+        if (data.action === 'sharing.enable') {
+            var token = Utilities.getUuid() + Utilities.getUuid();
+            var grantId = Utilities.getUuid();
+            var sheet = sharingSheet(ss, '教室日誌の共有設定', ['トークンハッシュ', 'ニックネームJSON', '共有中', '同意ID']);
+            sheet.appendRow([sharingTokenHash(token), JSON.stringify(nickname), true, grantId]);
+            SpreadsheetApp.flush();
+            return jsonResponse({ status: 'ok', token: token, grantId: grantId });
+        }
+        var profile = findSharingProfile(ss, data.sharingToken);
+        if (!profile) return sharingDenied();
+        if (data.action === 'sharing.revoke') {
+            profile.sheet.getRange(profile.row, 3).setValue(false);
+            SpreadsheetApp.flush();
+            return jsonResponse({ status: 'ok' });
+        }
+        if (profile.values[2] !== true) return sharingDenied();
+        if (data.action === 'sharing.rename') {
+            profile.sheet.getRange(profile.row, 2).setValue(JSON.stringify(nickname));
+            SpreadsheetApp.flush();
+            return jsonResponse({ status: 'ok' });
+        }
+        if (data.action === 'diary.list') return listDiaries(ss, profile.sheet, data.before, profile.values[0]);
+        if (data.action === 'diary.get') return readDiary(ss, profile.sheet, data.resultId);
+        return jsonResponse({ status: 'error', message: 'unknown action' });
+    } finally { lock.releaseLock(); }
+}
+
+function appendSharedDiary(ss, data) {
+    var diaries = sharingSheet(ss, '共有した教室日誌', ['結果ID', '共有同意ID', '日誌一覧JSON', 'リプレイ行', 'リプレイ分割数']);
+    if (findSharingRow(diaries, data.resultId)) return;
+    var deck = data.diaryFinalDeck.map(function(card) {
+        return { cardNo: card.cardNo, cardName: card.cardName, rarity: card.rarity, category: card.category };
+    });
+    var entry = { resultId: data.resultId, difficulty: data.difficulty, displayScore: data.displayScore,
+        grade: data.grade, completedAt: data.completedAt, finalDeck: deck };
+    var parts = sharingSheet(ss, '教室日誌リプレイ', ['リプレイ片']);
+    var firstRow = parts.getLastRow() + 1;
+    var replay = data.replayText;
+    for (var i = 0; i < replay.length; i += 24000) parts.appendRow(['r:' + replay.slice(i, i + 24000)]);
+    SpreadsheetApp.flush();
+    diaries.appendRow([data.resultId, data.sharingOwner, JSON.stringify(entry), firstRow, Math.ceil(replay.length / 24000)]);
+}
+
+function activeDiaryNicknames(sheet) {
+    var nicknames = Object.create(null);
+    sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getValues().forEach(function(row) {
+        if (row[2] === true) nicknames[row[0]] = JSON.parse(row[1]);
+    });
+    return nicknames;
+}
+
+function listDiaries(ss, profiles, before, reader) {
+    var sheet = ss.getSheetByName('共有した教室日誌');
+    var entries = [];
+    if (!sheet || sheet.getLastRow() < 2) return jsonResponse({ status: 'ok', entries: entries, nextBefore: null });
+    var nicknames = activeDiaryNicknames(profiles);
+    var row = Number.isInteger(before) && before >= 2 ? Math.min(sheet.getLastRow(), before - 1) : sheet.getLastRow();
+    while (row >= 2 && entries.length < 20) {
+        var start = Math.max(2, row - 99);
+        var batch = sheet.getRange(start, 1, row - start + 1, 3).getValues();
+        for (var i = batch.length - 1; i >= 0 && entries.length < 20; i--, row--) {
+            if (batch[i][1] === reader) continue;
+            var nickname = nicknames[batch[i][1]];
+            if (!nickname) continue;
+            var entry = JSON.parse(batch[i][2]);
+            entry.nickname = nickname;
+            entries.push(entry);
+        }
+    }
+    return jsonResponse({ status: 'ok', entries: entries, nextBefore: row >= 2 ? row + 1 : null });
+}
+
+function readDiary(ss, profiles, resultId) {
+    if (typeof resultId !== 'string' || !/^[a-zA-Z0-9:_-]{1,120}$/.test(resultId)) return sharingDenied();
+    var sheet = ss.getSheetByName('共有した教室日誌');
+    var found = findSharingRow(sheet, resultId);
+    if (!found) return sharingDenied();
+    var row = sheet.getRange(found.getRow(), 1, 1, 5).getValues()[0];
+    var nickname = activeDiaryNicknames(profiles)[row[1]];
+    if (!nickname) return sharingDenied();
+    var entry = JSON.parse(row[2]);
+    entry.nickname = nickname;
+    entry.replayText = ss.getSheetByName('教室日誌リプレイ').getRange(row[3], 1, row[4], 1).getValues()
+        .map(function(part) { return part[0].slice(2); }).join('');
+    return jsonResponse({ status: 'ok', entry: entry });
 }

@@ -34,6 +34,24 @@ export class ResultRepository {
 
     history() { return this.read().history; }
     pending() { return this.read().pending; }
+
+    pruneSubmissions(allowed) {
+        const data = this.read();
+        data.pending = data.pending.filter(entry => allowed(entry.payload));
+        const pendingIds = new Set(data.pending.map(entry => entry.resultId));
+        let changed = false;
+        for (const row of data.history) {
+            if (pendingIds.has(row.resultId)) continue;
+            if (row.submission === 'pending') {
+                row.submission = 'local';
+                changed = true;
+            } else if (row.submission === 'history-pending') {
+                row.submission = 'history-outside-queue';
+                changed = true;
+            }
+        }
+        if (changed || data.pending.length !== this.memory.pending.length) this.write(data);
+    }
     find(resultId) { return this.history().find(row => row.resultId === resultId) || null; }
     favoriteCount() { return this.history().filter(row => row.favorite === true).length; }
 
@@ -50,14 +68,29 @@ export class ResultRepository {
         return { ok: true, row: structuredClone(row) };
     }
 
-    setReplay(resultId, text) {
+    setReplay(resultId, text, sharedText = text) {
         const data = this.read();
         const row = data.history.find(item => item.resultId === resultId);
-        if (!row) return null;
-        row.replayText = text;
-        delete row.replayPending;
+        if (row) {
+            row.replayText = text;
+            delete row.replayPending;
+        }
+        const pending = data.pending.find(entry => entry.resultId === resultId && entry.payload.awaitingReplay);
+        if (pending) {
+            delete pending.payload.awaitingReplay;
+            pending.payload.replayText = sharedText;
+        }
+        if (row || pending) this.write(data);
+        return row ? structuredClone(row) : null;
+    }
+
+    releaseScoreWithoutReplay(resultId) {
+        const data = this.read();
+        const pending = data.pending.find(entry => entry.resultId === resultId && entry.payload.awaitingReplay);
+        if (!pending) return;
+        delete pending.payload.awaitingReplay;
+        delete pending.payload.diaryFinalDeck;
         this.write(data);
-        return structuredClone(row);
     }
 
     commit(summary, payload, { submit = true } = {}) {
@@ -75,11 +108,7 @@ export class ResultRepository {
             if (index === -1) break;
             data.history.splice(index, 1);
         }
-        if (!submit) {
-            this.write(data);
-            return structuredClone(row);
-        }
-        data.pending.push({ resultId: summary.resultId, payload: structuredClone(payload), attempts: 0, lastError: null });
+        if (submit) data.pending.push({ resultId: summary.resultId, payload: structuredClone(payload), attempts: 0, lastError: null });
         // お気に入り保護で保持履歴と実際の直近ゲームがずれるため、送信期限を別に保持する
         data.recentResultIds = [...data.recentResultIds, summary.resultId].slice(-ResultRepository.PENDING_LIMIT);
         const recentIds = new Set(data.recentResultIds);

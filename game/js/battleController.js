@@ -1,9 +1,10 @@
-import { decodeReplay } from './replayCodec.js?v=20261122-0068';
-import { getCurrentEvent } from './eventManager.js?v=20261122-0068';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0068';
+import { getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
+import { decodeReplay } from './replayCodec.js?v=20261122-0069';
+import { getCurrentEvent } from './eventManager.js?v=20261122-0069';
+import { cpuTrainingAdvice, cpuMeetingAdvice, masterOpponentAdvice } from './battleAdvice.js?v=20261122-0069';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261122-0068';
-import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261122-0068';
+    interimScore, battleSummary } from './battleReplay.js?v=20261122-0069';
+import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261122-0069';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };
@@ -70,6 +71,8 @@ export class BattleController {
         document.getElementById('battle-lobby')?.remove();
         const overlay = this.ui.createInfoOverlay('対戦ロビー'); overlay.id = 'battle-lobby';
         const content = overlay.querySelector('.info-overlay-content');
+        const difficulties = ['fresh', 'pro', 'int'].map(id =>
+            `<option value="${id}">${getDifficultyDisplayName(id)}</option>`).join('');
         content.innerHTML = `<div class="battle-lobby-tabs" role="group" aria-label="対戦方法">
             <button type="button" id="battle-kind-replay" class="btn-primary" aria-pressed="true">リプレイと対戦</button>
             <button type="button" id="battle-kind-cpu" class="btn-secondary" aria-pressed="false">あひる先生と対戦</button>
@@ -82,7 +85,7 @@ export class BattleController {
             <p class="result-note">同一シードではハイスコアを記録しません。リフレッシュや発想研修で候補を引くと、次の候補が先へ進みます。</p>
             <label id="battle-event-label" class="battle-check hidden"><input id="battle-event" type="checkbox">開催中のイベントを自分に適用する</label></div>
             <div id="battle-cpu-controls" class="hidden"><label for="battle-difficulty">ゲーム難易度</label>
-            <select id="battle-difficulty"><option value="fresh">FRESH</option><option value="pro">PRO</option></select>
+            <select id="battle-difficulty">${difficulties}</select>
             <label class="battle-check"><input id="battle-cpu-same-seed" type="checkbox" checked>あひる先生と同じシードで対戦する</label>
             <p class="result-note">シードは対戦のたびに変わります。同じシードでも自己ベストを記録し、スコアを送信します。</p>
             <p>あひる先生は自分の教室を独立して運営します。あなたへの取得アシストとアドバイスはお休みです。</p></div>
@@ -94,12 +97,12 @@ export class BattleController {
             </div>
             <div id="battle-room-create-controls">
                 <label for="battle-room-difficulty">ゲーム難易度</label>
-                <select id="battle-room-difficulty"><option value="fresh">FRESH</option><option value="pro">PRO</option></select>
+                <select id="battle-room-difficulty">${difficulties}</select>
                 <button type="button" id="battle-room-create-start" class="btn-primary">部屋を作成して開始</button>
             </div>
             <div id="battle-room-join-controls" class="hidden">
                 <label for="battle-room-code-input">部屋コード</label>
-                <input id="battle-room-code-input" type="text" inputmode="numeric" pattern="[0-9０-９]*" autocapitalize="off" autocomplete="one-time-code" spellcheck="false" aria-describedby="battle-room-detected battle-lobby-message" placeholder="数字8桁">
+                <input id="battle-room-code-input" type="text" inputmode="numeric" pattern="[0-9０-９]*" autocapitalize="off" autocomplete="one-time-code" spellcheck="false" aria-describedby="battle-room-detected battle-lobby-message" placeholder="数字8桁、MASTERは9から始まる9桁">
                 <p id="battle-room-detected" aria-live="polite"></p>
                 <button type="button" id="battle-room-join-start" class="btn-primary" disabled>部屋に入って開始</button>
             </div>
@@ -131,8 +134,8 @@ export class BattleController {
         const updateRoomInput = () => {
             const parsed = parseRoomCode(roomInput.value);
             const hasText = roomInput.value.trim().length > 0;
-            roomDetected.textContent = parsed ? `${parsed.difficulty.toUpperCase()}で開始します。`
-                : hasText ? '部屋コードは数字8桁で入力してください' : '';
+            roomDetected.textContent = parsed ? `${getDifficultyDisplayName(parsed.difficulty)}で開始します。`
+                : hasText ? '部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください' : '';
             roomJoin.disabled = busy || !parsed;
         };
         const update = () => {
@@ -175,7 +178,7 @@ export class BattleController {
         content.querySelector('#battle-room-mode-create').onclick = () => selectRoomAction('create');
         content.querySelector('#battle-room-mode-join').onclick = () => selectRoomAction('join');
         if (loaded) {
-            summary.textContent = `${loaded.metadata.difficulty.toUpperCase()} ／ ${loaded.metadata.buildVersion} ／ 同じリプレイで再戦します`;
+            summary.textContent = `${getDifficultyDisplayName(loaded.metadata.difficulty)} ／ ${loaded.metadata.buildVersion} ／ 同じリプレイで再戦します`;
             eventLabel.classList.toggle('hidden', !(getCurrentEvent() && (loaded.metadata.eventId || loaded.metadata.calcMode)));
         }
         select(preset?.kind || 'replay');
@@ -197,7 +200,7 @@ export class BattleController {
                 if (request !== this.request || input.value !== text || !overlay.isConnected) return;
                 loaded = record;
                 const mode = record.metadata.eventId ? 'イベント' + (record.metadata.calcMode ? '・計算機' : '') : record.metadata.calcMode ? '計算機' : '通常';
-                summary.textContent = `${record.metadata.difficulty.toUpperCase()} ／ 元のモード：${mode} ／ ${record.metadata.buildVersion}`;
+                summary.textContent = `${getDifficultyDisplayName(record.metadata.difficulty)} ／ 元のモード：${mode} ／ ${record.metadata.buildVersion}`;
                 eventLabel.classList.toggle('hidden', !(getCurrentEvent() && (record.metadata.eventId || record.metadata.calcMode)));
                 message.textContent = '対戦できます。';
             } catch (error) { if (request === this.request) message.textContent = error.message; }
@@ -254,7 +257,7 @@ export class BattleController {
         };
         roomJoin.onclick = () => {
             const parsed = parseRoomCode(roomInput.value);
-            if (!parsed) { message.textContent = '部屋コードは数字8桁で入力してください'; return; }
+            if (!parsed) { message.textContent = '部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください'; return; }
             startRoom({ parsed, created: false });
         };
         start.onclick = async () => {
@@ -265,7 +268,7 @@ export class BattleController {
                 const preparing = difficulty === 'pro' ? 'あひる先生が教材研究中…' : 'あひる先生が準備しています…';
                 if (kind === 'cpu') message.textContent = preparing;
                 const opponent = kind === 'cpu' ? await this.createCpu(difficulty, progress => {
-                    message.textContent = `${preparing} ${progress}/8ターン`;
+                    message.textContent = `${preparing} ${progress}/${getDifficultyConfig(difficulty).turns.length}ターン`;
                 }) : loaded;
                 if (request !== this.request || !overlay.isConnected) return;
                 const same = content.querySelector(kind === 'cpu' ? '#battle-cpu-same-seed' : '#battle-same-seed').checked;
@@ -280,7 +283,7 @@ export class BattleController {
     }
     showRoomCode(code) {
         const parsed = parseRoomCode(code);
-        if (!parsed) throw new TypeError('部屋コードは数字8桁で指定してください。');
+        if (!parsed) throw new TypeError('部屋コードの形式が正しくありません。');
         document.getElementById('room-code-overlay')?.remove();
         const overlay = this.ui.createInfoOverlay('部屋コード'); overlay.id = 'room-code-overlay';
         const content = overlay.querySelector('.info-overlay-content');
@@ -438,7 +441,8 @@ export class BattleController {
         const opponent = this.state.battle.opponent;
         if (this.cpuSpeech?.opponent !== opponent || this.cpuSpeech.turn !== this.state.turn || this.cpuSpeech.phase !== this.state.phase) {
             const recommend = this.state.phase === 'meeting' ? cpuMeetingAdvice : cpuTrainingAdvice;
-            this.cpuSpeech = { opponent, turn: this.state.turn, phase: this.state.phase, advice: recommend(opponent, this.state.turn) };
+            this.cpuSpeech = { opponent, turn: this.state.turn, phase: this.state.phase, advice: this.state.difficulty === 'int'
+                ? masterOpponentAdvice(opponent, this.state.turn, this.state.phase) : recommend(opponent, this.state.turn) };
         }
         return this.cpuSpeech.advice;
     }
@@ -473,7 +477,7 @@ export class BattleController {
         try {
             for (let index = animation.cursor; index < frames.length; index++) {
                 const frame = frames[index]; clock.beginCard();
-                if (header) header.textContent = `${this.opponentName}\n教室行動 ${turn + 1}/8`;
+                if (header) header.textContent = `${this.opponentName}\n教室行動 ${turn + 1}/${this.state.totalTurns}`;
                 if (cards) {
                     const escape = value => this.ui._escapeHTML(String(value || ''));
                     cards.innerHTML = `<div class="animation-card-item battle-animation-card"><div class="anim-card-copy">
@@ -489,7 +493,8 @@ export class BattleController {
                 this.render(this.state.player, frame.after); this.ui.saveGameState();
                 await clock.wait(800);
             }
-            animation.visibleStats = structuredClone(battle.opponent.turns[turn].action.after.player);
+            const opponentTurn = battle.opponent.turns[turn];
+            animation.visibleStats = structuredClone((opponentTurn.outing || opponentTurn.action).after.player);
             animation.done = true; delete animation.visibleDelta;
             this.render(); this.ui.saveGameState();
         } finally {
@@ -508,7 +513,7 @@ export class BattleController {
         const summary = battleSummary(this.state, score);
         const escape = value => this.ui._escapeHTML(String(value ?? ''));
         const other = summary.opponentScore;
-        const pro = this.state.difficulty === 'pro';
+        const pro = this.state.config.scoringModel === 'pro';
         const players = [
             { name: 'あなた', icon: '👤', score, winner: summary.outcome === 'win' },
             { name: summary.opponentName, icon: this.state.battle.kind === 'cpu' ? '🐤' : '🎞️', score: other, winner: summary.outcome === 'lose' }
@@ -530,7 +535,7 @@ export class BattleController {
                 `<td>${player.score.splusBreakdown ? points(player.score.splusBreakdown[key]) : '—'}</td>`).join('')}</tr>`;
         }).join('');
         const result = document.createElement('section'); result.id = 'battle-result';
-        result.innerHTML = `<p class="battle-result-context">${pro ? 'PRO' : 'FRESH'} · ${escape(summary.opponentName)}と対戦</p>
+        result.innerHTML = `<p class="battle-result-context">${escape(this.state.config.name)} · ${escape(summary.opponentName)}と対戦</p>
             <div id="battle-outcome" class="battle-outcome ${summary.outcome}">${OUTCOMES[summary.outcome]}</div>
             <div class="battle-final-score">${players.map(player => `<section class="battle-player-result${player.winner ? ' winner' : ''}">
                 <h3>${player.icon} ${escape(player.name)}${player.winner ? '<span class="battle-result-crown" aria-label="勝者">👑</span>' : ''}</h3>

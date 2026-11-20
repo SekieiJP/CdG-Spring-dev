@@ -45,7 +45,8 @@ test('再読込みで保留結果を同じID・完了時刻・デッキのまま
     await expect(page.locator('#restart-game')).toBeEnabled();
     await page.reload();
     await expect.poll(() => scoreSubmissions.length).toBe(1);
-    expect(scoreSubmissions[0]).toEqual(original);
+    const { sharingGrantId, ...expectedPayload } = original;
+    expect(scoreSubmissions[0]).toEqual({ ...expectedPayload, action:'score.submit', sharingToken:'test-token' });
     await page.click('#start-result-history');
     await expect(page.locator('.result-history-entry')).toHaveCount(1);
     await page.locator('.result-history-entry summary').click();
@@ -78,7 +79,7 @@ test('古い送信の完了が新しい結果の送信状態を上書きしな�
             return new Promise(resolve => window.__responses.push(() => resolve({ ok: true, json: async () => ({ status: 'ok', turnHistoryStored: true }) })));
         };
         const game = window.game; game.gameState.phase = 'end'; game.uiController.showResultPhase();
-        game.gameState.reset('fresh'); game.gameState.phase = 'end'; game.uiController.showResultPhase();
+        game.gameState.reset('fresh'); game.gameState.sharingGrantId = 'test-grant'; game.gameState.phase = 'end'; game.uiController.showResultPhase();
     });
     await page.evaluate(() => window.__responses[0]());
     await expect.poll(() => page.evaluate(() => window.__responses.length)).toBe(2);

@@ -72,9 +72,9 @@ body {
 /* アシストの表示期限や描画の再計測で、研修候補の位置を動かさない。 */
 #training-cards .card-detail-hint[hidden] { display: block; visibility: hidden; }
 .card { -webkit-touch-callout: none; touch-action: pan-y; }
-#training-cards .card.acquisition-recommended { outline: 1px solid #FDE047; outline-offset: -1px; box-shadow: 0 0 18px 4px rgba(253, 224, 71, .4), inset 0 0 10px rgba(253, 224, 71, .15); }
+.acquisition-recommended, .card:hover.acquisition-recommended { outline: 1px solid #FDE047; outline-offset: -1px; box-shadow: 0 0 18px 4px rgba(253, 224, 71, .4), inset 0 0 10px rgba(253, 224, 71, .15); }
 /* 推奨の光を残しながら、選択の青枠を最前面で判別できるようにする。 */
-#training-cards .card.acquisition-recommended.selected { border-color: var(--color-primary); outline: 2px solid var(--color-primary); outline-offset: -2px; }
+.card.acquisition-recommended.selected { border-color: var(--color-primary); outline: 2px solid var(--color-primary); outline-offset: -2px; }
 .tooltip-assist:empty { display: none; }
 .tooltip-assist:not(:empty) { margin-top: 10px; font-size: 12px; color: var(--color-text-secondary); }
 .effect-tooltip { max-height: calc(100vh - 40px); max-height: calc(100dvh - 40px); overflow-y: auto; }
@@ -1804,6 +1804,12 @@ body::before { content: ''; position: fixed; inset: 0 0 auto; height: var(--app-
 .settings-content {
     padding: var(--spacing-md);
 }
+
+#sharing-consent-overlay .info-overlay-content { max-width: 40rem; margin-inline: auto; line-height: 1.6; }
+#sharing-consent-overlay p { margin: 0 0 0.85rem; }
+#sharing-consent-form { display: grid; gap: 0.65rem; margin-bottom: 0.85rem; }
+#sharing-nickname { min-width: 0; padding: 0.65rem; border: 1px solid var(--color-border); border-radius: var(--border-radius); font: inherit; }
+#sharing-consent-status:empty { display: none; }
 
 .settings-section {
     margin-bottom: var(--spacing-lg);

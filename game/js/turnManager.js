@@ -1,9 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20261122-0068';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20261122-0068';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager } from './replayRecorder.js?v=20261122-0068';
+import { resolveCardAction } from './actionResolver.js?v=20261122-0069';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261122-0069';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager, beginReplayOuting, captureReplayOutingChoice, captureReplayOutingEffect } from './replayRecorder.js?v=20261122-0069';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -60,6 +60,7 @@ export class TurnManager {
         const config = this.getOutingConfig();
         const place = config?.outingOptions?.find(option => option.id === placeId);
         if (this.gameState.phase !== 'outing' || !place || this.gameState.ruleState.int?.outing) return null;
+        beginReplayOuting(this.gameState, place.id);
         const offer = { rarity: place.rarity, offerCount: place.offerCount, pickCount: place.pickCount, allowSkip: false };
         const candidates = this.cardManager.drawTrainingOffer(offer);
         if (candidates.length === 0) {
@@ -73,6 +74,20 @@ export class TurnManager {
             selectedCard: null, selectedCards: [] };
         this.gameState.record('outing', { place: place.id, rarity: place.rarity, cards: candidates.map(card => ({ cardNo: card.cardNo, cardName: card.cardName })) });
         return { place, stage: 'card', candidates: this.gameState.currentTrainingCards };
+    }
+
+    refreshOutingCandidates() {
+        const state = this.gameState;
+        const remaining = state.trainingRefreshRemaining ?? 0;
+        const outing = state.ruleState.int?.outing;
+        if (state.phase !== 'outing' || remaining <= 0 || outing?.stage !== 'card' || !outing.candidates?.length) return null;
+        const place = this.getOutingConfig().outingOptions.find(option => option.id === outing.place);
+        outing.candidates = this.cardManager.refreshTrainingCards(place.rarity, outing.candidates, place.offerCount);
+        outing.selectedCards = [];
+        outing.selectedCard = null;
+        state.currentTrainingCards = outing.candidates.map(card => ({ ...card }));
+        state.trainingRefreshRemaining = remaining - 1;
+        return outing.candidates;
     }
 
     selectOutingCard(card) {
@@ -101,6 +116,7 @@ export class TurnManager {
         const selectedCards = outing.selectedCards || [];
         const required = Math.min(place.pickCount, outing.candidates.length);
         if (selectedCards.length !== required) return;
+        captureReplayOutingChoice(this.gameState, outing.candidates, selectedCards);
         if (required === 0) {
             this.completeOuting();
             return { stage: 'complete' };
@@ -122,6 +138,7 @@ export class TurnManager {
         if (this.gameState.phase !== 'outing' || outing?.stage !== 'staff' || !this.gameState.slotIds.includes(staffId)) return null;
         const card = this.gameState.identifyCard(outing.selectedCard);
         const action = this.resolveCardAction(card, staffId);
+        captureReplayOutingEffect(this.gameState, staffId, card, action);
         const result = { stage: 'complete', selectedCard: card, staffId, action };
         result.nextPhase = this.completeOuting();
         return result;
@@ -297,8 +314,8 @@ export class TurnManager {
      */
     executeActions() {
         if (this.gameState.pendingAction?.turn === this.gameState.turn) return this.gameState.pendingAction.actionInfo;
-        beginReplayAction(this.gameState);
         this.gameState.config.rules.beforeAction?.(this.gameState, this.cardManager);
+        beginReplayAction(this.gameState);
         const placed = this.gameState.player.placed;
         const actionInfo = {
             cardEffects: {} // staff -> { beforeStats, afterStats, isRecommended, cards }

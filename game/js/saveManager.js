@@ -1,4 +1,5 @@
-import { RandomSource } from './randomSource.js?v=20261122-0068';
+import { parseRoomCode } from './colleagueRoom.js?v=20261122-0069';
+import { RandomSource } from './randomSource.js?v=20261122-0069';
 /**
  * SaveManager - ゲーム状態の保存・復元管理
  * v20260208-1200: 中断・再開機能実装
@@ -182,6 +183,7 @@ export class SaveManager {
             },
             startedAt: gameState.startedAt || null,
             runId: gameState.runId,
+            sharingGrantId: gameState.sharingGrantId,
             nextInstanceId: gameState.nextInstanceId,
             ruleState: structuredClone(gameState.ruleState || {}),
             pendingAction: structuredClone(gameState.pendingAction || null),
@@ -258,6 +260,7 @@ export class SaveManager {
         gameState.player.zones = this.serializeCardGroups(savedState.player.zones);
         for (const id of gameState.config.cardZones) gameState.player.zones[id] ||= [];
         gameState.runId = savedState.runId || gameState.runId;
+        gameState.sharingGrantId = savedState.sharingGrantId || null;
         gameState.nextInstanceId = savedState.nextInstanceId || 1;
         gameState.ruleState = structuredClone(savedState.ruleState || {});
         gameState.pendingAction = structuredClone(savedState.pendingAction || null);
@@ -265,7 +268,7 @@ export class SaveManager {
         gameState.playRecord = structuredClone(savedState.playRecord || null);
         gameState.replayRecord = structuredClone(savedState.replayRecord || null);
         gameState.battle = structuredClone(savedState.battle || null);
-        gameState.room = savedState.room && typeof savedState.room.code === 'string' && /^\d{8}$/.test(savedState.room.code)
+        gameState.room = savedState.room && parseRoomCode(savedState.room.code)?.difficulty === gameState.difficulty
             ? { code: savedState.room.code, revenge: !!savedState.room.revenge } : null;
         gameState.adviceScenes = structuredClone(savedState.adviceScenes || {});
         gameState.meetingContext = structuredClone(savedState.meetingContext || null);

@@ -1,15 +1,15 @@
-import { ResultRepository } from './resultRepository.js?v=20261122-0068';
-import { SubmissionQueue } from './submissionQueue.js?v=20261122-0068';
-import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0068';
-import { getCompletedReplay } from './replayRecorder.js?v=20261122-0068';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0068';
-import { battleSummary } from './battleReplay.js?v=20261122-0068';
-import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0068';
-import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0068';
+import { sharedReplaySeed } from './randomSource.js?v=20261122-0069';
+import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0069';
+import { ResultRepository } from './resultRepository.js?v=20261122-0069';
+import { SubmissionQueue } from './submissionQueue.js?v=20261122-0069';
+import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0069';
+import { getCompletedReplay } from './replayRecorder.js?v=20261122-0069';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0069';
+import { battleSummary } from './battleReplay.js?v=20261122-0069';
+import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0069';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
 
-function unsupportedReplayReason(difficulty) {
-    return `${getDifficultyDisplayName(difficulty)}の進行形式はリプレイ再生に未対応です。`;
-}
+import { SHARING_PREFERENCE_KEY, retrySharingRevocation, tokenForSubmission } from './sharingConsent.js?v=20261122-0069';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {
@@ -30,11 +30,18 @@ export class ResultController {
     }
 
     init() {
-        window.addEventListener('online', () => this.queue.start());
+        const applySharing = () => {
+            this.repository.pruneSubmissions(payload => !!tokenForSubmission(payload?.sharingGrantId));
+            this.queue.start();
+        };
+        const retryRevocation = () => { void retrySharingRevocation().catch(() => {}); };
+        window.addEventListener('online', () => { applySharing(); retryRevocation(); });
+        window.addEventListener('cdg-sharing-changed', applySharing);
         window.addEventListener('offline', () => this.renderStatus());
         window.addEventListener('storage', event => {
+            if (event.key === SHARING_PREFERENCE_KEY || event.key === null) { applySharing(); retryRevocation(); }
             if (event.key === ResultRepository.KEY || event.key === null) {
-                this.queue.start();
+                applySharing();
                 this.renderReplayControls();
                 this.preparePendingReplays();
             }
@@ -43,7 +50,8 @@ export class ResultController {
         document.getElementById('result-favorite')?.addEventListener('click', () => this.toggleFavorite(this.currentId));
         document.getElementById('result-replay-copy')?.addEventListener('click', () => this.copyReplay(this.currentId));
         document.getElementById('result-replay-view')?.addEventListener('click', () => this.viewReplay(this.currentId));
-        this.queue.start();
+        applySharing();
+        retryRevocation();
         this.preparePendingReplays();
     }
 
@@ -54,9 +62,13 @@ export class ResultController {
             cardVersion: this.ui.cardManager.dataVersion,
             rankVersion: this.ui.scoreManager.dataVersion
         });
-        const submissionSupported = state.difficulty !== 'int';
+        const submissionSupported = !!tokenForSubmission(payload.sharingGrantId);
         const existing = this.repository.find(payload.resultId);
         const replayPending = existing ? null : getCompletedReplay(state);
+        if (submissionSupported && replayPending) {
+            payload.awaitingReplay = true;
+            payload.diaryFinalDeck = finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category }));
+        }
         const summary = this.repository.commit({
             resultId: payload.resultId, startedAt: payload.startedAt, completedAt: payload.completedAt, userUUID: payload.userUUID,
             difficulty: payload.difficulty, difficultyName: state.config.name,
@@ -68,9 +80,7 @@ export class ResultController {
             ...(state.room ? { room: { code: String(state.room.code), revenge: Boolean(state.room.revenge) } } : {}),
             ...(state.battle ? { battle: battleSummary(state, score) } : {}),
             finalDeck: finalDeck.map(({ cardNo, cardName, rarity, category }) => ({ cardNo, cardName, rarity, category })),
-            ...(replayPending ? { replayPending } : { replayUnavailableReason: state.difficulty === 'int'
-                ? unsupportedReplayReason(state.difficulty)
-                : 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
+            ...(replayPending ? { replayPending } : { replayUnavailableReason: 'プレイ開始からの完全な記録がないため、リプレイ出力できません。' })
         }, payload, { submit: submissionSupported });
         const imageButton = document.getElementById('result-image-save');
         if (imageButton && this.currentId !== summary.resultId) imageButton.disabled = false;
@@ -125,12 +135,13 @@ export class ResultController {
         if (this.repository.storageError) return '履歴をこの画面で保持しています。再読み込みすると失われる可能性があります。';
         if (!row) return '履歴はこの端末に残っていません';
         if (row.submission === 'local') {
-            return `この端末に保存済み（${getDifficultyDisplayName(row.difficulty, row.difficultyName)}は送信対象外）`;
+            return 'この端末に保存済み（共有オフ）';
         }
         if (row?.submission === 'sent') return 'スコア送信済み';
         if (row.submission === 'history-pending') return 'スコア送信済み。ターン履歴は送信先の更新待ち';
         if (row.submission === 'history-outside-queue') return 'スコア送信済み（ターン履歴は送信待ちの上限から除外）';
         if (row?.submission === 'outside-queue') return '履歴に保存済み（送信待ちの上限から除外）';
+        if (this.repository.pending().some(entry => entry.resultId === row.resultId && entry.payload.awaitingReplay)) return '送信するリプレイを準備しています';
         if (row?.resultId === this.queue.activeId) return 'スコア送信中。もう一度プレイできます';
         return '履歴に保存済み。通信が戻ると再送します';
     }
@@ -153,11 +164,22 @@ export class ResultController {
         const resultId = row.resultId;
         this.replayMessages.delete(resultId);
         const source = legacy ? decodeReplay(previousText) : Promise.resolve(structuredClone(row.replayPending));
-        const job = source.then(encodeReplay).then(text => {
+        const job = source.then(async record => {
+            const text = await encodeReplay(record);
+            const seed = sharedReplaySeed(record.metadata.seed);
+            let sharedText = text;
+            if (seed !== record.metadata.seed && this.repository.pending().some(entry => entry.resultId === resultId && entry.payload.awaitingReplay)) {
+                sharedText = await encodeReplay({ ...record, metadata: { ...record.metadata, seed } });
+            }
             if (legacy && (this.repository.find(resultId)?.replayText !== previousText || !text.startsWith(COMPACT_REPLAY_PREFIX) || text.length >= previousText.length)) return;
-            this.repository.setReplay(resultId, text);
+            this.repository.setReplay(resultId, text, sharedText);
+            this.queue.start();
         }).catch(error => {
-            if (!legacy) this.replayMessages.set(resultId, 'リプレイデータを準備できませんでした。履歴を開き直すと再試行します。');
+            if (!legacy) {
+                this.replayMessages.set(resultId, 'リプレイデータを準備できませんでした。履歴を開き直すと再試行します。');
+                this.repository.releaseScoreWithoutReplay(resultId);
+                this.queue.start();
+            }
             this.ui.logger?.log(`リプレイデータの準備に失敗: ${error.message}`, 'warning');
         }).finally(() => {
             this.replayJobs.delete(resultId);
@@ -174,7 +196,6 @@ export class ResultController {
         if (this.replayMessages.has(row.resultId)) return this.replayMessages.get(row.resultId);
         if (row.replayText) return 'リプレイデータをコピーできます。';
         if (row.replayPending) return 'リプレイデータを準備しています。';
-        if (row.difficulty === 'int') return unsupportedReplayReason(row.difficulty);
         return row.replayUnavailableReason || 'この履歴には完全なリプレイデータがないため、リプレイ出力できません。';
     }
 
@@ -298,7 +319,16 @@ export class ResultController {
             content.appendChild(empty);
         }
         const escape = value => this.ui._escapeHTML(String(value ?? ''));
+        let previousEpoch = null;
         for (const row of rows) {
+            const epoch = resultRulesEpoch(row);
+            if (epoch !== previousEpoch) {
+                const heading = document.createElement('h3');
+                heading.className = 'history-rule-divider';
+                heading.textContent = epoch === '—' ? 'ルール版不明' : `ルール版 ${epoch}`;
+                content.appendChild(heading);
+                previousEpoch = epoch;
+            }
             const details = document.createElement('details');
             details.className = 'result-history-entry';
             details.dataset.resultId = row.resultId;
@@ -342,7 +372,7 @@ export class ResultController {
             view.type = 'button';
             view.className = 'btn-secondary';
             view.dataset.replayViewId = row.resultId;
-            view.textContent = '📹 教室防犯カメラで見る';
+            view.textContent = '📔 教室日誌で見る';
             view.addEventListener('click', () => this.viewReplay(row.resultId));
             actions.appendChild(view);
             details.appendChild(actions);

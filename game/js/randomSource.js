@@ -1,11 +1,22 @@
+function hashText(text, initial = 2166136261) {
+    let value = initial;
+    for (const char of text) value = Math.imul(value ^ char.charCodeAt(0), 16777619);
+    return value >>> 0;
+}
+
+export function sharedReplaySeed(seed) {
+    return /^room:\d{8,9}$/.test(seed) ? 'room-hash:' + hashText(seed).toString(16).padStart(8, '0') : seed;
+}
+
 /** 名前付き乱数系列。別ターンや研修と山札で乱数消費を分離し、保存から続ける。 */
 export class RandomSource {
     static algorithm = 'split-mulberry32-v1';
     constructor(seed, streams = {}) { this.seed = String(seed); this.streams = structuredClone(streams); }
     hash(key) {
-        let value = 2166136261;
-        for (const char of `${this.seed}:${key}`) value = Math.imul(value ^ char.charCodeAt(0), 16777619);
-        return value >>> 0;
+        if (/^room-hash:[a-f0-9]{8}$/.test(this.seed)) {
+            return hashText(':' + key, Number.parseInt(this.seed.slice(10), 16));
+        }
+        return hashText(this.seed + ':' + key);
     }
     next(key = 'default') {
         const stream = this.streams[key] ||= { state: this.hash(key), calls: 0 };
