@@ -10,9 +10,11 @@ const manager=new CardManager(null);manager.parseCSV(readFileSync(new URL('../..
 const scorer=new ScoreManager(null),savedFetch=globalThis.fetch;globalThis.fetch=async()=>({ok:true,text:async()=>readFileSync(new URL('../../game/data/rankPro.csv',import.meta.url),'utf8')});await scorer.loadRankData('test');globalThis.fetch=savedFetch;
 const card=n=>({...manager.allCards.find(c=>Number(c.cardNo)===n),acquiredTurn:0});
 function observation(nos=[1,2,3,4,5]){return {difficulty:'pro',mode:'normal',turn:6,totalTurns:8,stats:{experience:45,enrollment:40,satisfaction:25,accounting:18},tokens:{passion:0,fatigue:0,inspiration:0,organize:0},owned:nos.map(card),candidates:[25,39,40].map(card),pickCount:1,allowSkip:false,turns:Array(8).fill({}),rankTable:scorer.rankTable};}
-test('庶務カテゴリのNo40や経理14固定のNo50を経理15の回復役に数えない',()=>{
+test('No40は経理の回復役を担わず、No50は経理14以上なら15に届く',()=>{
  const o=observation([5,17,39,40,50]);o.stats.accounting=10;const r=createAhiruRoleInspector(o,{...o.stats,accounting:16});
- assert.equal(r.canRecover(card(40),'accounting',15),false);assert.equal(r.canRecover(card(50),'accounting',15),false);
+ assert.equal(r.canRecover(card(40),'accounting',15),false);assert.equal(r.canRecover(card(50),'accounting',15),true);
+ const below=createAhiruRoleInspector(o,{...o.stats,accounting:13});
+ assert.equal(below.canRecover(card(50),'accounting',15),false);
  assert.equal(r.canRecover(card(5),'accounting',15),true);assert.equal(r.canRecover(card(17),'accounting',15),true);assert.equal(r.canRecover(card(39),'accounting',15),true);
  assert.equal(r.supportsHand(card(40)),true);assert.equal(r.supportsHand(card(51)),false);
 });

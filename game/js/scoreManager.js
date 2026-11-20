@@ -83,6 +83,7 @@ export class ScoreManager {
 
                     const baseRow = {
                         grade,
+                        title: getCell(cells, '称号') || null,
                         thresholds: {
                             experience: toNullableInt(getCell(cells, '体験基準')),
                             enrollment: toNullableInt(getCell(cells, '入塾基準')),
@@ -226,6 +227,9 @@ export class ScoreManager {
             };
         };
 
+        const getEnrollmentGaugeThreshold = row =>
+            config.id === 'int' ? row.thresholds.enrollment : row.enrollmentDiffThreshold;
+
         let target = null;
         let currentMobilizationScore = 0;
         let currentEnrollmentDiffScore = 0;
@@ -255,8 +259,8 @@ export class ScoreManager {
                     const row = this.rankTable[i];
                     if (
                         row?.scores?.enrollmentDiff !== null &&
-                        row?.enrollmentDiffThreshold !== null &&
-                        value >= row.enrollmentDiffThreshold
+                        getEnrollmentGaugeThreshold(row) !== null &&
+                        value >= getEnrollmentGaugeThreshold(row)
                     ) {
                         currentEnrollmentDiffScore = row.scores.enrollmentDiff;
                         break;
@@ -265,7 +269,7 @@ export class ScoreManager {
 
                 target = getScoreGroupTarget(
                     'enrollmentDiff',
-                    (row) => row?.enrollmentDiffThreshold,
+                    getEnrollmentGaugeThreshold,
                     currentEnrollmentDiffScore
                 );
             } else if (statKey === 'satisfaction' || statKey === 'accounting') {
@@ -342,7 +346,7 @@ export class ScoreManager {
             } else if (statKey === 'enrollment') {
                 startThreshold = getScoreGroupStartThreshold(
                     'enrollmentDiff',
-                    (row) => row?.enrollmentDiffThreshold,
+                    getEnrollmentGaugeThreshold,
                     currentEnrollmentDiffScore
                 );
             } else if (statKey === 'satisfaction' || statKey === 'accounting') {
@@ -456,11 +460,11 @@ export class ScoreManager {
         } : { experience: 0, enrollmentDiff: 0, satisfaction: 0 };
         const points = eventMode ? Math.round((basePoints + overflow.experience + overflow.enrollmentDiff + overflow.satisfaction) * 10) / 10 : basePoints;
 
-        let rankGrade = this.rankTable[0]?.grade || 'F';
+        let rankRow = this.rankTable[0];
         for (let i = this.rankTable.length - 1; i >= 0; i -= 1) {
             const row = this.rankTable[i];
             if (row?.rankThreshold !== null && points >= row.rankThreshold) {
-                rankGrade = row.grade;
+                rankRow = row;
                 break;
             }
         }
@@ -471,6 +475,8 @@ export class ScoreManager {
         this.logger?.log(`入退差: ${enrollmentDiff}`, 'status');
         this.logger?.log(`目標ポイント: ${points}`, 'status');
 
+        const rankGrade = rankRow?.grade || 'F';
+        const rankTitle = gameState.difficulty === 'int' ? rankRow?.title : PRO_RANK_NAMES[rankGrade];
         return {
             points,
             displayScore: points,
@@ -483,7 +489,7 @@ export class ScoreManager {
             accounting: gameState.player.accounting,
             rank: {
                 grade: rankGrade,
-                name: PRO_RANK_NAMES[rankGrade] || rankGrade
+                name: rankTitle || rankGrade
             },
             breakdown: {
                 mobilizationPoints,

@@ -177,9 +177,8 @@ for (const difficulty of ['fresh', 'pro']) {
             if (difficulty === 'fresh' && mode.name === '通常') {
                 const opponentCards = page.locator('#battle-opponent-deck .result-card-thumb');
                 await expect(opponentCards).toHaveCount(source.record.result.finalDeck.length);
-                await opponentCards.first().click();
-                await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
-                await page.locator('.effect-tooltip').click();
+                await opponentCards.first().hover();
+                await expect(page.locator('.hover-tooltip .tooltip-effect')).not.toBeEmpty();
                 await expectResultImageDownload(page);
             }
             await page.locator('#view-result-history').click();

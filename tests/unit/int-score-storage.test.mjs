@@ -24,61 +24,47 @@ function memoryStorage() {
     return { getItem: key => data.get(key) || null, setItem: (key, value) => data.set(key, value) };
 }
 
-test('INTは1.5倍切り上げのランク境界とPRO得点帯を使う', async () => {
+test('MASTERのゲージと結果に新しい基準を使う', async () => {
     const manager = new ScoreManager(null, { migrateHighScore: false });
     await loadRanks(manager, 'Int');
 
-    const nearExperienceTarget = manager.getStatusRank('experience', 22, 'int');
-    assert.equal(nearExperienceTarget.grade, 'D');
-    assert.equal(nearExperienceTarget.targetGrade, 'C');
-    assert.equal(nearExperienceTarget.deficit, 1);
-    assert.equal(manager.getStatusRank('accounting', 22, 'int').grade, 'A+');
-    assert.equal(manager.getStatusRank('experience', 74, 'int').deficit, 1);
-    assert.equal(manager.getStatusRank('experience', 75, 'int').grade, 'SS');
-    assert.equal(manager.getStatusRank('enrollment', 11, 'int').deficit, 1);
-    for (const [value, start, next] of [[19, 0, 20], [20, 20, 38], [23, 20, 38], [38, 38, 53], [53, 53, 53]]) {
+    assert.equal(manager.getStatusRank('experience', 31, 'int').deficit, 1);
+    assert.equal(manager.getStatusRank('experience', 84, 'int').grade, 'SSS');
+    assert.equal(manager.getStatusRank('enrollment', 20, 'int').deficit, 1);
+    assert.equal(manager.getStatusRank('enrollment', 0, 'int').startThreshold, 0);
+    assert.equal(manager.getStatusRank('accounting', 14, 'int').deficit, 1);
+    for (const [value, start, next] of [[14, 0, 15], [15, 15, 30], [30, 30, 40], [40, 40, 40]]) {
         const rank = manager.getStatusRank('satisfaction', value, 'int');
         assert.deepEqual([rank.startThreshold, rank.nextThreshold], [start, next]);
     }
 
-    const pointThresholds = manager.calculateScore({ difficulty: 'int', player: {
-        experience: 23, enrollment: 12, satisfaction: 38, accounting: 20
-    } });
-    assert.deepEqual(pointThresholds.breakdown, {
-        mobilizationPoints: 1, withdrawalPoints: 1,
-        enrollmentDiffPoints: 1, satisfactionPoints: 1
+    const score = (experience, enrollment, satisfaction, accounting) => manager.calculateScore({
+        difficulty: 'int', player: { experience, enrollment, satisfaction, accounting }
     });
-
-    const maxScore = manager.calculateScore({ difficulty: 'int', player: {
-        experience: 75, enrollment: 72, satisfaction: 53, accounting: 20
-    } });
-    assert.equal(maxScore.points, 16);
-    assert.equal(maxScore.rank.grade, 'SS');
-
-    const score = manager.calculateScore({ difficulty: 'int', player: {
-        experience: 23, enrollment: 18, satisfaction: 17, accounting: 19
-    } });
-    assert.equal(score.withdrawal, 4);
-    assert.equal(score.enrollmentDiff, 14);
-    assert.deepEqual(score.breakdown, {
-        mobilizationPoints: 1, withdrawalPoints: -5,
-        enrollmentDiffPoints: 1, satisfactionPoints: 0
+    assert.deepEqual(score(32, 21, 30, 15).breakdown, {
+        mobilizationPoints: 1, withdrawalPoints: 1, enrollmentDiffPoints: 1, satisfactionPoints: 1
     });
-    assert.equal(score.points, -3);
-
-    const fallback = manager.calculateScore({ difficulty: 'int', player: {
-        experience: 0, enrollment: 0, satisfaction: 20, accounting: 15
-    } });
-    assert.equal(fallback.withdrawal, 5);
-    assert.equal(fallback.breakdown.withdrawalPoints, -13);
+    const top = score(84, 70, 30, 15);
+    assert.equal(top.points, 19);
+    assert.deepEqual(top.rank, { grade: 'SSS', name: '業界に轟く伝説の室長、爆誕！！！' });
+    assert.equal(score(83, 70, 30, 15).rank.grade, 'SS+');
+    assert.equal(score(32, 28, 13, 11).breakdown.withdrawalPoints, -9);
+    const lowest = score(0, 0, 0, 0);
+    assert.equal(lowest.withdrawal, 30);
+    assert.equal(lowest.breakdown.withdrawalPoints, -15);
 });
 
-test('INTの退塾基準は20で、FRESHとPROの15基準は維持する', () => {
+test('MASTERは満足・経理3で開始し、両方が15に達すると退塾0人になる', () => {
     const manager = new ScoreManager(null, { migrateHighScore: false });
-    const state = (difficulty, accounting, satisfaction) => ({ difficulty, player: { accounting, satisfaction } });
-    assert.equal(manager.calculateWithdrawal(state('int', 19, 17)), 4);
-    assert.equal(manager.calculateWithdrawal(state('pro', 14, 13)), 3);
-    assert.equal(manager.calculateWithdrawal(state('fresh', 14, 13)), 3);
+    const state = new GameState();
+    state.reset('int');
+    assert.equal(state.player.satisfaction, 3);
+    assert.equal(state.player.accounting, 3);
+    assert.equal(manager.calculateWithdrawal(state), 24);
+    Object.assign(state.player, { satisfaction: 14, accounting: 16 });
+    assert.equal(manager.calculateWithdrawal(state), 1);
+    state.player.satisfaction = 15;
+    assert.equal(manager.calculateWithdrawal(state), 0);
 });
 
 test('講習で要求枚数に足りない山札から残りを引き、手札と捨て札を保持する', () => {

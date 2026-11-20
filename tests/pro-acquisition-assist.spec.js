@@ -32,7 +32,7 @@ test('あひる先生の経理不足と取得候補を揃え、再評価要求�
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.modelStatus)).toBe('ready');
     await page.evaluate(()=>{
         const g=window.game,card=no=>({...g.cardManager.allCards.find(c=>Number(c.cardNo)===no),acquiredTurn:0});
-        g.gameState.turn=1;Object.assign(g.gameState.player,{experience:5,enrollment:2,satisfaction:5,accounting:5,
+        g.gameState.turn=1;Object.assign(g.gameState.player,{experience:5,enrollment:2,satisfaction:5,accounting:2,
             deck:[2,3,4,5,8,13].map(card),hand:[],discard:[],placed:{leader:[],teacher:[],staff:[]}});
         Object.assign(g.gameState.tokens,{passion:0,fatigue:0,inspiration:0,organize:0});
         g.uiController.trainingSelectionMode='normal';g.uiController.selectedInitialCards=[];g.uiController.selectedTrainingCard=null;

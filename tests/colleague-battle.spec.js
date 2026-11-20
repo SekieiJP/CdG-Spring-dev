@@ -261,9 +261,8 @@ test.describe('同僚と対戦', () => {
         }
         const deckCards = page.locator('#colleague-result-deck .colleague-result-thumb');
         await expect(deckCards).toHaveCount(expected.deckCount);
-        await deckCards.first().click();
-        await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
-        await page.locator('.effect-tooltip').click();
+        await deckCards.first().hover();
+        await expect(page.locator('.hover-tooltip .tooltip-effect')).not.toBeEmpty();
 
         await expectRoomResultFits(page, 320, 440);
         await expectRoomResultFits(page, 568, 256);

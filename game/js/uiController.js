@@ -1,6 +1,7 @@
 import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261110-0066';
 import {FloatNotificationView} from './floatNotificationView.js?v=20261110-0066';
 import { bindCardInteraction } from './cardInteraction.js?v=20261110-0066';
+import { CardDrag } from './cardDrag.js?v=20261110-0066';
 import { MobileLayoutController } from './mobileLayoutController.js?v=20261110-0066';
 import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261110-0066';
 import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261110-0066';
@@ -16,6 +17,16 @@ import { BattleController } from './battleController.js?v=20261110-0066';
 import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261110-0066';
 import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261110-0066';
 import { ReplayViewingController } from './replayViewingController.js?v=20261110-0066';
+
+const CARD_DETAILS_HELP = '<span class="card-details-help"><span class="card-details-touch">[長押しで詳細]</span><span class="card-details-mouse">[マウスオーバーで詳細]</span></span>';
+
+const TOKEN_DETAILS = [
+    { key: 'passion', keyword: '情熱', label: '情熱✊', description: '次の行動フェーズのドロー+1枚' },
+    { key: 'inspiration', keyword: '発想', label: '発想💡', description: '次の研修フェーズで追加習得+1回' },
+    { key: 'organize', keyword: '整理', label: '整理🗑️', description: '次の会議フェーズのカード削除上限+1枚' },
+    { key: 'fatigue', keyword: '疲労', label: '疲労💤', description: '次の行動フェーズのドロー-1枚' },
+    { keyword: '並行', label: '並行🤹', description: '既にカードが配置されたスタッフにも重ねて配置できる' },
+];
 
 /**
  * UIController - UI操作・表示制御
@@ -94,6 +105,12 @@ export class UIController {
         this.mobileLayout = new MobileLayoutController(gameState);
         this.floatNotification = new FloatNotificationView();
         this.cardDetails = new CardDetailVisibility();
+        this.cardDrag = new CardDrag({
+            slots: () => this.gameState.slotIds.map(id => document.getElementById(`slot-${id}`)).filter(Boolean),
+            canDrag: () => this.gameState.phase === 'action' && !this.gameState.calcMode &&
+                !this.actionBusy && !this.gameState.pendingAction,
+            place: (card, staff, source) => this.tryPlaceCardToSlot(card, staff, source)
+        });
         this.acquisitionAssist = new AcquisitionAssistController(this);
         this.ahiruAdvice = new AhiruAdviceController(this);
         this.battleController = new BattleController(this);
@@ -497,12 +514,7 @@ export class UIController {
     createCardElement(card, options = {}) {
         const cardDiv = document.createElement('div');
         cardDiv.className = 'card';
-        if (options.draggable) {
-            cardDiv.draggable = true;
-            cardDiv.addEventListener('dragstart', (e) => this.onCardDragStart(e, card));
-            cardDiv.addEventListener('dragend', (e) => this.onCardDragEnd(e));
-        }
-
+        if (options.draggable) this.cardDrag.bind(cardDiv, card, options.sourceStaff);
 
         // カテゴリ色クラス
         const categoryClass = `category-${this._escapeHTML(card.category)}`;
@@ -531,7 +543,7 @@ export class UIController {
             </div>
             <span class="card-detail-hint" hidden aria-label="カードの詳細">ⓘ</span>
         `;
-        cardDiv.setAttribute('aria-label', `${card.cardName}。長押しで詳細`);
+        cardDiv.setAttribute('aria-label', card.cardName);
         this.setupCardThumbnailFallback(cardDiv);
         this.cardDetails.register(cardDiv, { fullEffect: card.effect, displayEffect,
             extra: () => /情熱|発想|整理|疲労|並行/.test(card.effect || '') || this.acquisitionAssist.explanation(card) });
@@ -566,79 +578,69 @@ export class UIController {
         });
     }
 
-    /**
-     * 効果詳細ツールチップ表示
-     */
-    showEffectTooltip(card, event) {
-        const existing = document.querySelector('.effect-tooltip');
-        if (existing) existing.remove();
-        const tokenDefs = [
-            { keyword: '情熱', label: '情熱✊', desc: '次の行動フェーズのドロー+1枚' },
-            { keyword: '発想', label: '発想💡', desc: '次の研修フェーズで追加習得+1回' },
-            { keyword: '整理', label: '整理🗑️', desc: '次の会議フェーズのカード削除上限+1枚' },
-            { keyword: '疲労', label: '疲労💤', desc: '次の行動フェーズのドロー-1枚' },
-            { keyword: '並行', label: '並行🤹', desc: '既にカードが配置されたスタッフにも重ねて配置できる' },
-        ];
+    cardTooltipContent(card) {
         const effect = card.effect || '';
-        const matchedTokens = tokenDefs.filter(t => effect.includes(t.keyword));
-        const tokensHTML = matchedTokens.length > 0
-            ? '<div class="tooltip-tokens"><div class="tooltip-tokens-title">トークン効果</div>' +
-              matchedTokens.map(t => '<div class="tooltip-token-item">' + t.label + ' — ' + t.desc + '</div>').join('') +
-              '</div>'
+        const tokens = TOKEN_DETAILS.filter(token => effect.includes(token.keyword));
+        const tokenList = tokens.length > 0
+            ? `<div class="tooltip-tokens"><div class="tooltip-tokens-title">トークン効果</div>
+                ${tokens.map(({ label, description }) => `<div class="tooltip-token-item">${label} — ${description}</div>`).join('')}
+                </div>`
             : '';
-        const tooltip = document.createElement('div');
-        tooltip.className = 'effect-tooltip';
-        tooltip.innerHTML =
-            '<div class="tooltip-title">' + this._escapeHTML(card.cardName) + '</div>' +
-            '<div class="tooltip-effect">' + this._escapeHTML(effect) + '</div>' +
-            '<div class="tooltip-assist">' + this._escapeHTML(this.acquisitionAssist.explanation(card)) + '</div>' +
-            tokensHTML +
-            '<div class="tooltip-close">タップ/クリックで閉じる</div>';
-        tooltip.addEventListener('click', () => tooltip.remove());
-        document.body.appendChild(tooltip);
+        return `<div class="tooltip-title">${this._escapeHTML(card.cardName)}</div>
+            <div class="tooltip-effect">${this._escapeHTML(effect)}</div>
+            <div class="tooltip-assist">${this._escapeHTML(this.acquisitionAssist.explanation(card))}</div>${tokenList}`;
     }
 
-    /**
-     * PCマウスオーバー用フローティングツールチップ（カード下隣に表示）
-     */
-    showHoverTooltip(card, cardDiv) {
-        // 既存のhover-tooltipを削除
-        const existing = document.querySelector('.hover-tooltip');
-        if (existing) existing.remove();
+    showEffectTooltip(card) {
+        this.showDetailsPopup(card.cardName, this.cardTooltipContent(card));
+    }
 
-        // トークン検出
-        const tokenDefs = [
-            { keyword: '情熱', label: '情熱✊', desc: '次の行動フェーズのドロー+1枚' },
-            { keyword: '発想', label: '発想💡', desc: '次の研修フェーズで追加習得+1回' },
-            { keyword: '整理', label: '整理🗑️', desc: '次の会議フェーズのカード削除上限+1枚' },
-            { keyword: '疲労', label: '疲労💤', desc: '次の行動フェーズのドロー-1枚' },
-            { keyword: '並行', label: '並行🤹', desc: '既にカードが配置されたスタッフにも重ねて配置できる' },
-        ];
-        const effect = card.effect || '';
-        const matchedTokens = tokenDefs.filter(t => effect.includes(t.keyword));
+    showHoverTooltip(card, anchor) {
+        this.showDetailsHover(this.cardTooltipContent(card), anchor);
+    }
 
-        // 仕様3: トークンなし かつ カード説明「全文」設定 → 表示しない
+    showDetailsPopup(title, content) {
+        document.querySelector('.effect-tooltip-backdrop')?.remove();
+        document.querySelector('.hover-tooltip')?.remove();
+        const previousFocus = document.activeElement;
+        const backdrop = document.createElement('div');
+        backdrop.className = 'effect-tooltip-backdrop';
+        backdrop.tabIndex = -1;
+        backdrop.setAttribute('role', 'dialog');
+        backdrop.setAttribute('aria-modal', 'true');
+        backdrop.setAttribute('aria-label', title);
+        backdrop.innerHTML = `<div class="effect-tooltip">${content}
+            <div class="tooltip-close">画面をタップして閉じる</div></div>`;
+        const close = () => {
+            backdrop.remove();
+            previousFocus?.focus({ preventScroll: true });
+        };
+        // 開いた指を離すときの合成clickで閉じないよう、ポップアップが開いてから押した操作で閉じる
+        let dismissPressed = false;
+        backdrop.addEventListener('pointerdown', () => { dismissPressed = true; });
+        backdrop.addEventListener('pointercancel', () => { dismissPressed = false; });
+        backdrop.addEventListener('click', () => {
+            if (dismissPressed) close();
+        });
+        backdrop.addEventListener('keydown', event => {
+            if (event.key === 'Escape') close();
+        });
+        document.body.appendChild(backdrop);
+        backdrop.focus({ preventScroll: true });
+    }
 
-
-        const tokensHTML = matchedTokens.length > 0
-            ? '<div class="tooltip-tokens"><div class="tooltip-tokens-title">トークン効果</div>' +
-              matchedTokens.map(t => '<div class="tooltip-token-item">' + t.label + ' — ' + t.desc + '</div>').join('') +
-              '</div>'
-            : '';
-
+    showDetailsHover(content, anchor) {
+        document.querySelector('.hover-tooltip')?.remove();
         const tooltip = document.createElement('div');
         tooltip.className = 'hover-tooltip';
-        tooltip.innerHTML =
-            '<div class="tooltip-title">' + this._escapeHTML(card.cardName) + '</div>' +
-            '<div class="tooltip-effect">' + this._escapeHTML(effect) + '</div>' +
-            tokensHTML;
-
-        // カードの下隣に位置を設定
-        const rect = cardDiv.getBoundingClientRect();
-        tooltip.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 288)) + 'px';
-        tooltip.style.top = Math.min(rect.bottom + 4, window.innerHeight - 160) + 'px';
-
+        tooltip.setAttribute('role', 'tooltip');
+        tooltip.innerHTML = content;
         document.body.appendChild(tooltip);
+        const rect = anchor.getBoundingClientRect();
+        const { width, height } = tooltip.getBoundingClientRect();
+        const top = rect.bottom + 4 + height <= window.innerHeight ? rect.bottom + 4 : rect.top - height - 4;
+        tooltip.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - width - 8))}px`;
+        tooltip.style.top = `${Math.max(8, top)}px`;
     }
 
     /**
@@ -867,7 +869,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = CARD_DETAILS_HELP;
             if (this.gameState.turn === 0) {
                 instruction.innerHTML = `初回研修: 4枚から2枚を選んで習得してください${helpText}`;
             } else {
@@ -1077,27 +1079,23 @@ export class UIController {
         if (containers.length === 0) return;
 
         const tokens = this.gameState.tokens ?? {};
-        const tokenDefs = [
-            { key: 'passion',     label: '情熱✊',  cls: 'token-passion'     },
-            { key: 'inspiration', label: '発想💡',  cls: 'token-inspiration' },
-            { key: 'organize',    label: '整理🗑️', cls: 'token-organize'    },
-            { key: 'fatigue',     label: '疲労💤',  cls: 'token-fatigue'     },
-        ];
-
-        const chips = tokenDefs
-            .filter(t => (tokens[t.key] ?? 0) > 0)
-            .map(t => `<span class="token-chip ${t.cls}">${t.label} ×${tokens[t.key]}</span>`)
-            .join('');
-
-        containers.forEach(container => {
-            if (chips) {
-                container.innerHTML = chips;
-                container.classList.remove('hidden');
-            } else {
-                container.innerHTML = '';
-                container.classList.add('hidden');
-            }
-        });
+        const activeTokens = TOKEN_DETAILS.filter(({ key }) => key && (tokens[key] ?? 0) > 0);
+        for (const container of containers) {
+            const chips = activeTokens.map(({ key, label, description }) => {
+                const chip = document.createElement('span');
+                chip.className = `token-chip token-${key}`;
+                chip.textContent = `${label} ×${tokens[key]}`;
+                chip.setAttribute('aria-label', `${chip.textContent}。 ${description}`);
+                const content = `<div class="tooltip-title">${label}</div><div class="tooltip-effect">${description}</div>`;
+                bindCardInteraction(chip, {
+                    details: () => this.showDetailsPopup(label, content),
+                    hover: () => this.showDetailsHover(content, chip)
+                });
+                return chip;
+            });
+            container.replaceChildren(...chips);
+            container.classList.toggle('hidden', chips.length === 0);
+        }
     }
 
     /**
@@ -1193,11 +1191,11 @@ export class UIController {
     /**
      * カードをスロットに配置を試みる（職種チェック付き）
      */
-    tryPlaceCardToSlot(card, staff) {
-        const staffNames = this.gameState.staffNames;
-        const currentStaffName = staffNames[staff];
-
-        const error = getPlacementError(this.cardManager, this.gameState, card, staff);
+    tryPlaceCardToSlot(card, staff, source) {
+        const placed = this.gameState.player.placed;
+        if (source && (source === staff || !placed[source]?.includes(card))) return;
+        const proposed = source ? { ...placed, [source]: placed[source].filter(item => item !== card) } : placed;
+        const error = getPlacementError(this.cardManager, this.gameState, card, staff, proposed);
         if (error) { this.showFloatNotification(error, 'error'); return; }
 
         // 条件付き効果〈〉のチェック（満たしていない場合のみ警告）
@@ -1206,19 +1204,23 @@ export class UIController {
             this.showFloatNotification(`一部の効果が発動しない可能性があります`, 'warning');
         }
 
-        if (this.willCardHaveCostShortage(card, staff)) {
+        if (this.willCardHaveCostShortage(card, staff, proposed)) {
             this.showFloatNotification('コスト不足のため、このカードの効果は無効になる予定です', 'warning');
         }
 
+        if (source) {
+            this.gameState.removePlacedCard(card, source);
+            this.renderStaffSlot(source);
+        }
         this.placeCardToSlot(card, staff);
     }
 
     /**
      * 配置済みカードを実行順に仮適用し、新規カードがコスト不足になるか判定
      */
-    willCardHaveCostShortage(card, staff) {
+    willCardHaveCostShortage(card, staff, placed = this.gameState.player.placed) {
         const staffOrder = this.gameState.slotIds;
-        const simulatedPlaced = this.copyPlaced(this.gameState.player.placed);
+        const simulatedPlaced = this.copyPlaced(placed);
         simulatedPlaced[staff].push(card);
 
         const simulation = this.turnManager.createSimulationState();
@@ -1351,7 +1353,7 @@ export class UIController {
             const remainingTurnMatch = condition.match(/残り(\d+)ターン以上/);
             if (remainingTurnMatch) {
                 const required = parseInt(remainingTurnMatch[1], 10);
-                const remaining = 8 - (this.gameState.turn || 0);
+                const remaining = this.gameState.totalTurns - this.gameState.turn;
                 if (remaining < required) {
                     unmetConditions.push(condition);
                 }
@@ -1408,6 +1410,8 @@ export class UIController {
             cards.forEach(card => {
                 const cardElem = this.createCardElement(card, {
                     clickable: true,
+                    draggable: !this.gameState.calcMode,
+                    sourceStaff: staff,
                     compact: true, shortDescription: true,
                     onClick: () => this.onPlacedCardClick(card, staff)
                 });
@@ -1466,25 +1470,6 @@ export class UIController {
             const slot = document.getElementById(`slot-${staff}`);
             if (!slot) return;
 
-            // プロパティ代入で上書きし、累積登録を防ぐ
-            slot.ondragover = (e) => {
-                e.preventDefault();
-                slot.classList.add('drag-over');
-            };
-
-            slot.ondragleave = () => {
-                slot.classList.remove('drag-over');
-            };
-
-            slot.ondrop = (e) => {
-                e.preventDefault();
-                slot.classList.remove('drag-over');
-
-                if (this.draggedCard) {
-                    this.tryPlaceCardToSlot(this.draggedCard, staff);
-                }
-            };
-
             slot.onclick = () => {
                 // 手動指定モードON かつ カード選択中 のときのみ処理
                 if (!this.slotSelectionMode || !this.selectedCardForPlacement) return;
@@ -1494,22 +1479,6 @@ export class UIController {
                 this.tryPlaceCardToSlot(card, staff);
             };
         });
-    }
-
-    /**
-     * カードドラッグ開始
-     */
-    onCardDragStart(e, card) {
-        this.draggedCard = card;
-        e.currentTarget.classList.add('dragging');
-    }
-
-    /**
-     * カードドラッグ終了
-     */
-    onCardDragEnd(e) {
-        e.currentTarget.classList.remove('dragging');
-        this.draggedCard = null;
     }
 
     /**
@@ -2120,7 +2089,7 @@ export class UIController {
         const countToPick = Math.min(config.pickCount || 0, cards.length);
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = CARD_DETAILS_HELP;
             instruction.innerHTML = selectedMode === 'inspiration'
                 ? `💡 発想追加習得（残り${this.inspirationRemaining}回）: ${config.rarity}カード${config.offerCount}枚から${countToPick}枚を選ぶか、見送ってください${helpText}`
                 : `${config.rarity}カード${config.offerCount}枚から${countToPick}枚を選んで習得してください${helpText}`;
@@ -2196,8 +2165,7 @@ export class UIController {
         const instruction = document.getElementById('outing-instruction');
         if (instruction) instruction.textContent = '行き先を1か所選んでください。';
         content.innerHTML = `<div class="outing-choice-grid">${config.outingOptions.map(option => {
-            const operation = option.id === 'headquarters' ? '使用して廃棄'
-                : option.id === 'bookstore' ? '獲得 1枚削除' : '獲得';
+            const operation = option.id === 'headquarters' ? 'を選んで1回発動' : '獲得';
             return `<button type="button" class="outing-choice" data-outing-place="${option.id}">
                 <strong>${this._escapeHTML(option.name)}</strong>
                 <span>${option.rarity}カード ${option.offerCount}枚から${option.pickCount}枚${operation}</span>
@@ -2250,7 +2218,7 @@ export class UIController {
             }
             this.updateIntOutingSelection(outing, option);
         } else if (outing.stage === 'staff') {
-            if (instruction) instruction.textContent = 'このカードを実行するスタッフを選んでください。配置制限やコストにかかわらず、選んだ後に消費します。';
+            if (instruction) instruction.textContent = 'スタッフを選ぶとカードをその場で使い、デッキには加えません。職種制限やコストを満たさない場合もカードを消費します。';
             if (outing.selectedCard) {
                 const selected = this.createCardElement(outing.selectedCard, { compact: true });
                 selected.classList.add('int-outing-selected-card');
@@ -2268,27 +2236,10 @@ export class UIController {
             });
             content.appendChild(staffGrid);
         } else if (outing.stage === 'delete') {
-            if (instruction) instruction.textContent = '所持カードから1枚を必ず削除してください。';
-            const cards = this.turnManager.getOutingDeleteCandidates();
-            if (cards.length === 0) {
-                this.turnManager.completeOuting();
-                this.routeIntPhase();
-                return;
-            }
-            const grid = document.createElement('div');
-            grid.className = 'outing-delete-grid';
-            cards.forEach((card, index) => {
-                const cardElem = this.createCardElement(card, {
-                    clickable: true,
-                    compact: true,
-                    onClick: selected => this.selectIntOutingDeletion(selected)
-                });
-                cardElem.classList.add('int-outing-delete-card');
-                cardElem.dataset.outingDeleteIndex = String(index);
-                grid.appendChild(cardElem);
-            });
-            content.appendChild(grid);
-            this.updateIntOutingSelection(outing, option);
+            // 旧版で書店の獲得まで済んだ中断データは、そのまま次のターンに進める
+            this.turnManager.completeOuting();
+            this.routeIntPhase();
+            return;
         } else {
             this.renderIntOutingChoices();
         }
@@ -2312,15 +2263,6 @@ export class UIController {
     updateIntOutingSelection(outing, option) {
         const confirm = document.getElementById('confirm-outing');
         confirm.hidden = false;
-        if (outing.stage === 'delete') {
-            const cards = this.turnManager.getOutingDeleteCandidates();
-            document.querySelectorAll('.int-outing-delete-card').forEach((element, index) => {
-                element.classList.toggle('selected', cards[index].instanceId === outing.deleteCardId);
-            });
-            confirm.textContent = '削除を確定';
-            confirm.disabled = !cards.some(card => card.instanceId === outing.deleteCardId);
-            return;
-        }
         const selected = outing.selectedCards || [];
         const required = Math.min(option.pickCount, outing.candidates.length);
         document.getElementById('outing-instruction').textContent = required > 0
@@ -2341,30 +2283,14 @@ export class UIController {
     }
 
     selectIntOutingStaff(staffId) {
-        this.turnManager.selectOutingStaff(staffId);
+        if (!this.turnManager.selectOutingStaff(staffId)) return;
         this.updateStatusDisplay();
         this.saveGameState();
         this.routeIntPhase();
     }
 
-    selectIntOutingDeletion(card) {
-        const outing = this.gameState.ruleState.int.outing;
-        outing.deleteCardId = outing.deleteCardId === card.instanceId ? null : card.instanceId;
-        this.updateIntOutingSelection(outing);
-        this.saveGameState();
-    }
-
     confirmIntOutingSelection() {
-        const outing = this.gameState.ruleState.int?.outing;
-        if (this.gameState.phase !== 'outing' || !outing) return;
-        if (outing.stage === 'card') {
-            if (!this.turnManager.confirmOutingCards()) return;
-        } else if (outing.stage === 'delete') {
-            const card = this.turnManager.getOutingDeleteCandidates().find(candidate => candidate.instanceId === outing.deleteCardId);
-            if (!card || !this.turnManager.deleteOutingCard(card)) return;
-        } else {
-            return;
-        }
+        if (!this.turnManager.confirmOutingCards()) return;
         this.saveGameState();
         this.routeIntPhase();
     }
@@ -2459,7 +2385,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = CARD_DETAILS_HELP;
             instruction.innerHTML = `3枚から1枚を選んで習得してください${helpText}`;
         }
     }
@@ -2774,7 +2700,7 @@ export class UIController {
 
         const instruction = document.querySelector('#training-area .instruction');
         if (instruction) {
-            const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
+            const helpText = CARD_DETAILS_HELP;
             instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
         }
 
@@ -3025,9 +2951,11 @@ export class UIController {
                 thumb.appendChild(image);
             }
             thumb.appendChild(fallback);
-            thumb.addEventListener('click', () => {
-                const definition = card.effect ? card : this.cardManager.getCardByNo(card.cardNo) || card;
-                this.showEffectTooltip(definition);
+            const definition = card.effect ? card : this.cardManager.getCardByNo(card.cardNo) || card;
+            bindCardInteraction(thumb, {
+                tapDetails: true,
+                details: () => this.showEffectTooltip(definition),
+                hover: () => this.showHoverTooltip(definition, thumb)
             });
             grid.appendChild(thumb);
         }
@@ -3286,6 +3214,10 @@ export class UIController {
     showScheduleOverlay() {
         const overlay = this.createInfoOverlay('スケジュール一覧');
         const content = overlay.querySelector('.info-overlay-content');
+        const columns = document.createElement('div');
+        columns.className = 'schedule-columns';
+        const schedule = document.createElement('div');
+        const scoring = document.createElement('div');
 
         // ターン設定を取得
         const turnConfigs = this.turnManager.getTurnConfigs();
@@ -3337,9 +3269,11 @@ export class UIController {
             tbody.appendChild(tr);
         });
 
-        content.appendChild(table);
-        this.renderEventItemsSection(content);
-        this.renderScoreSection(content);
+        schedule.appendChild(table);
+        this.renderEventItemsSection(schedule);
+        this.renderScoreSection(scoring);
+        columns.append(schedule, scoring);
+        content.appendChild(columns);
         document.body.appendChild(overlay);
     }
 
@@ -3872,7 +3806,7 @@ export class UIController {
             if (confirmBtn) confirmBtn.disabled = true;
             const instruction = document.querySelector('#training-area .instruction');
             if (instruction) {
-                const helpText = '<span class="help-longpress">[長押しで詳細]</span>';
+                const helpText = CARD_DETAILS_HELP;
                 instruction.innerHTML = `💡 発想追加習得 (残り${this.inspirationRemaining}回): SRカード3枚から1枚を選んで習得してください${helpText}`;
             }
             this.updateTrainingRefreshUI('SR');
@@ -4581,7 +4515,7 @@ export class UIController {
                         <button class="font-toggle-option${currentCardDesc === 'full' ? ' active' : ''}" data-card-desc="full">全文</button>
                         <button class="font-toggle-option${currentCardDesc === 'short' ? ' active' : ''}" data-card-desc="short">短縮</button>
                     </div>
-                    <p class="font-toggle-note">短縮表示時は長押しで全文を確認できます。設定は次回再読み込み時に適用</p>
+                    <p class="font-toggle-note">短縮表示時はマウスオーバーまたはタッチの長押しで全文を確認できます。設定は次回再読み込み時に適用</p>
                 </div>
                 <div class="settings-section">
                     <h3>カード画像</h3>

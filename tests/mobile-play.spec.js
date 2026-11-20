@@ -49,7 +49,10 @@ test('配置済みの短縮表示に目印があり長押し後のclickで取り
     await page.clock.fastForward(550);
     await card.dispatchEvent('pointerup', { pointerType: 'touch', isPrimary: true }); await card.dispatchEvent('click');
     await expect(page.locator('.effect-tooltip')).toContainText('〈室長〉体験+3');
-    await expect(page.locator('#slot-leader .card')).toHaveCount(1);
+    const bounds = await card.boundingBox();
+    await page.mouse.click(bounds.x + 2, bounds.y + 2);
+    await expect(page.locator('.effect-tooltip')).toHaveCount(0);
+    await expect(card).toHaveCount(1);
 });
 
 test('カード中央は配置、目印の文字部分は詳細としてタップを区別する', async ({ page }) => {
@@ -59,7 +62,10 @@ test('カード中央は配置、目印の文字部分は詳細としてタッ�
     await expect(page.locator('.effect-tooltip')).toHaveCount(0);
     await page.evaluate(() => { const ui = window.game.uiController; ui.gameState.player.placed.leader[0].effect += '、情熱1'; ui.renderStaffSlot('leader'); });
     await expect(page.locator('#slot-leader .card-detail-hint')).toBeVisible();
-    await page.locator('#slot-leader .card-detail-hint').click();
+    const hint = page.locator('#slot-leader .card-detail-hint');
+    await hint.dispatchEvent('pointerdown', { pointerType: 'touch', isPrimary: true, button: 0 });
+    await hint.dispatchEvent('pointerup', { pointerType: 'touch', isPrimary: true });
+    await hint.dispatchEvent('click');
     await expect(page.locator('.effect-tooltip')).toBeVisible();
     await expect(page.locator('#slot-leader .card')).toHaveCount(1);
 });

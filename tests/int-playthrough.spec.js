@@ -72,8 +72,8 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
         }));
         expect(new Set(positions.map(({ x }) => x)).size).toBe(1);
         expect(new Set(positions.map(({ y }) => y)).size).toBe(3);
-        await expect(page.locator('[data-outing-place="bookstore"]')).toContainText('Rカード 3枚から2枚獲得 1枚削除');
-        await expect(page.locator('[data-outing-place="headquarters"]')).toContainText('SRカード 4枚から1枚使用して廃棄');
+        await expect(page.locator('[data-outing-place="bookstore"]')).toContainText('Rカード 3枚から2枚獲得');
+        await expect(page.locator('[data-outing-place="headquarters"]')).toContainText('SSRカード 3枚から1枚を選んで1回発動');
         await page.locator('[data-outing-place="bookstore"]').click();
         await expect(page.locator('.int-outing-card')).toHaveCount(3);
         await page.locator('[data-outing-refresh]').click();
@@ -81,33 +81,32 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
         await page.locator('.int-outing-card').nth(0).click();
         await expect(page.locator('#confirm-outing')).toBeDisabled();
         await page.locator('.int-outing-card').nth(1).click();
-        await expect(page.locator('.int-outing-delete-card')).toHaveCount(0);
-        await page.locator('#confirm-outing').click();
-        const deleteCards = page.locator('.int-outing-delete-card');
-        await expect(deleteCards).toHaveCount(8);
-        const cardName = await deleteCards.first().locator('.card-name').innerText();
+        const before = await page.evaluate(() => window.game.gameState.getOwnedCards().length);
+        const selected = await page.locator('.int-outing-card.selected .card-name').allTextContents();
         await page.reload();
-        await expect(deleteCards).toHaveCount(8);
-        await expect(deleteCards.first().locator('.card-name')).toHaveText(cardName);
-        await deleteCards.first().click();
-        await expect(deleteCards).toHaveCount(8);
-        await page.reload();
-        await expect(deleteCards.locator('.card-name').first()).toHaveText(cardName);
-        await expect(deleteCards.first()).toHaveClass(/selected/);
+        await expect(page.locator('.int-outing-card.selected .card-name')).toHaveText(selected);
         await page.locator('#confirm-outing').click();
+        await expect(page.locator('#training-area')).toBeVisible();
+        expect(await page.evaluate(() => window.game.gameState.getOwnedCards().length)).toBe(before + 2);
         await prepare(page);
     }
 
     await expect(page.locator('[data-outing-place]')).toHaveCount(3);
+    await expect(page.locator('[data-outing-place="bookstore"]')).toContainText('Rカード 4枚から2枚獲得');
+    await expect(page.locator('[data-outing-place="neighbor"]')).toContainText('SRカード 4枚から1枚獲得');
     await page.locator('[data-outing-place="headquarters"]').click();
-    await expect(page.locator('.int-outing-card')).toHaveCount(3);
+    await expect(page.locator('.int-outing-card')).toHaveCount(4);
     await page.locator('.int-outing-card').first().click();
     await page.locator('#confirm-outing').click();
-    await expect(page.locator('[data-outing-staff]')).toHaveCount(3);
+    const staffChoices = page.locator('[data-outing-staff]');
+    await expect(staffChoices.first()).toBeVisible();
+    const staffLabels = await staffChoices.allTextContents();
     await page.reload();
-    await expect(page.locator('[data-outing-staff]')).toHaveCount(3);
+    await expect(staffChoices).toHaveText(staffLabels);
     const ownedBefore = await page.evaluate(() => window.game.gameState.getOwnedCards().length);
-    await page.locator('[data-outing-staff="staff"]').click();
+    await staffChoices.first().click();
+    expect(await page.evaluate(() => window.game.gameState.playRecord.events
+        .filter(event => event.turn === 5 && event.type === 'resolve'))).toHaveLength(1);
     await expect(page.locator('.turn-overlay-week')).toHaveText('春期1日目');
     await expect(page.locator('#action-area')).toBeVisible();
     expect(await page.evaluate(() => window.game.gameState.getOwnedCards().length)).toBe(ownedBefore);
@@ -128,7 +127,7 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
     expect(firstDay.used).toHaveLength(1);
     expect(firstDay.kept).toHaveLength(2);
 
-    for (const day of [1, 2, 3, 4, 5]) {
+    for (const day of [1, 2, 3, 4]) {
         if (day === 3) await finishTraining(page);
         await page.locator('#confirm-action').click();
         await page.waitForFunction(turn => {
@@ -174,8 +173,8 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
     await expect(thumbnails.first()).toBeVisible();
     await expect(thumbnails.first().locator('img')).toBeVisible();
     await expect(page.locator('#result-cards .card-detail-hint')).toHaveCount(0);
-    await thumbnails.first().click();
-    await expect(page.locator('.effect-tooltip .tooltip-effect')).not.toBeEmpty();
+    await thumbnails.first().hover();
+    await expect(page.locator('.hover-tooltip .tooltip-effect')).not.toBeEmpty();
     const history = await page.evaluate(() => window.game.uiController.resultController.repository.history());
     expect(history).toHaveLength(1);
     expect(history[0]).toMatchObject({ difficulty: 'int', difficultyName: 'MASTER', submission: 'local' });
