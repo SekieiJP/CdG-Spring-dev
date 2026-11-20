@@ -102,7 +102,7 @@ export class BattleController {
             </div>
             <div id="battle-room-join-controls" class="hidden">
                 <label for="battle-room-code-input">部屋コード</label>
-                <input id="battle-room-code-input" type="text" inputmode="numeric" pattern="[0-9０-９]*" autocapitalize="off" autocomplete="one-time-code" spellcheck="false" aria-describedby="battle-room-detected battle-lobby-message" placeholder="数字8桁、MASTERは9から始まる9桁">
+                <input id="battle-room-code-input" type="text" inputmode="numeric" pattern="[0-9０-９]*" autocapitalize="off" autocomplete="one-time-code" spellcheck="false" aria-describedby="battle-room-detected battle-lobby-message" placeholder="1〜6で始まる数字8桁">
                 <p id="battle-room-detected" aria-live="polite"></p>
                 <button type="button" id="battle-room-join-start" class="btn-primary" disabled>部屋に入って開始</button>
             </div>
@@ -135,7 +135,7 @@ export class BattleController {
             const parsed = parseRoomCode(roomInput.value);
             const hasText = roomInput.value.trim().length > 0;
             roomDetected.textContent = parsed ? `${getDifficultyDisplayName(parsed.difficulty)}で開始します。`
-                : hasText ? '部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください' : '';
+                : hasText ? '部屋コードは1〜6で始まる数字8桁で入力してください' : '';
             roomJoin.disabled = busy || !parsed;
         };
         const update = () => {
@@ -257,7 +257,7 @@ export class BattleController {
         };
         roomJoin.onclick = () => {
             const parsed = parseRoomCode(roomInput.value);
-            if (!parsed) { message.textContent = '部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください'; return; }
+            if (!parsed) { message.textContent = '部屋コードは1〜6で始まる数字8桁で入力してください'; return; }
             startRoom({ parsed, created: false });
         };
         start.onclick = async () => {

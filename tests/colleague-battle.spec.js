@@ -188,8 +188,7 @@ test.describe('同僚と対戦', () => {
         await page.locator('#battle-room-create-start').click();
         await expect(page.locator('#room-code-overlay')).toBeVisible();
         const code = await page.locator('#room-code-display').inputValue();
-        expect(code).toMatch(/^\d{8}$/);
-        expect(Number(code.at(-1)) % 2).toBe(1);
+        expect(code).toMatch(/^[34]\d{7}$/);
         await page.locator('#room-code-ok').click();
         await expect(page.locator('#training-cards .card')).toHaveCount(4);
         const creatorCandidates = await initialCandidates(page);
@@ -220,7 +219,7 @@ test.describe('同僚と対戦', () => {
         }
     });
 
-    test('先頭0の未発行コードを受け付け、9桁を拒否し、リタイア後の結果を一画面に表示する', async ({ page, scoreSubmissions }) => {
+    test('FRESHの未発行コードを受け付け、9桁を拒否し、リタイア後の結果を一画面に表示する', async ({ page, scoreSubmissions }) => {
         test.setTimeout(180000);
         page.on('dialog', dialog => dialog.accept());
         await openRoomLobby(page);
@@ -230,9 +229,9 @@ test.describe('同僚と対戦', () => {
         await input.fill('000000000');
         await expect(join).toBeDisabled();
         await expect(page.locator('#battle-lobby-message')).toHaveText('');
-        await expect(page.locator('#battle-room-detected')).toHaveText('部屋コードは数字8桁、MASTERは9から始まる9桁で入力してください');
+        await expect(page.locator('#battle-room-detected')).toHaveText('部屋コードは1〜6で始まる数字8桁で入力してください');
 
-        const code = '00000000';
+        const code = '10000000';
         await input.fill(code);
         await expect(join).toBeEnabled();
         await expect(page.locator('#battle-room-detected')).toContainText('FRESH');
@@ -322,7 +321,7 @@ test.describe('同僚と対戦', () => {
             return { text: row.replayText, record: await decodeReplay(row.replayText) };
         });
         expect(replay.text).toMatch(/^CDGR1[.:]/);
-        expect(replay.record.metadata.seed).toBe(`room:${code}`);
+        expect(replay.record.metadata.seed).toBe(`room:${replay.record.metadata.buildVersion.slice(1, 9)}:${code}`);
         expect(replay.record).not.toHaveProperty('room');
 
         await page.locator('#colleague-result-lobby').click();
@@ -348,7 +347,7 @@ test.describe('同僚と対戦', () => {
                 document.documentElement.classList.toggle('font-normal', count === 20);
                 uiController.showPhaseArea('result');
                 renderColleagueResult(uiController, {
-                    room: { code: '01563828', revenge: true },
+                    room: { code: '21563828', revenge: true },
                     difficulty: 'fresh', score, buildVersion: window.BUILD_VERSION,
                     finalDeck: [...cardManager.allCards.slice(0, count - 1), cardManager.allCards[0]]
                 });

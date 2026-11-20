@@ -5,7 +5,7 @@ function hashText(text, initial = 2166136261) {
 }
 
 export function sharedReplaySeed(seed) {
-    return /^room:\d{8,9}$/.test(seed) ? 'room-hash:' + hashText(seed).toString(16).padStart(8, '0') : seed;
+    return /^room:(?:\d{8}:)?\d{8,9}$/.test(seed) ? 'room-hash:' + hashText(seed).toString(16).padStart(8, '0') : seed;
 }
 
 /** 名前付き乱数系列。別ターンや研修と山札で乱数消費を分離し、保存から続ける。 */

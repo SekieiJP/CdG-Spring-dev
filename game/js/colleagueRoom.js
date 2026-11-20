@@ -1,18 +1,30 @@
-const ROOM_START_KEY = 'cdg_room_started_codes';
-const ROOM_CODE_PATTERN = /^(?:9\d{8}|\d{8})$/;
+import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0069';
+
+const DIFFICULTIES = ['fresh', 'pro', 'int'];
+const FIRST_CODE = 10_000_000;
+const CODES_PER_DIFFICULTY = 20_000_000;
+const ROOM_CODE_PATTERN = /^[1-6]\d{7}$/;
+
+function rulesEpoch() {
+    return resultRulesEpoch({ buildVersion: globalThis.window?.BUILD_VERSION });
+}
+
+function startedRoomsKey() {
+    return 'cdg_room_started_codes:' + rulesEpoch();
+}
 
 export function parseRoomCode(input) {
     const code = String(input ?? '').trim().replace(/[０-９]/g, digit =>
         String.fromCharCode(digit.charCodeAt(0) - 0xFEE0));
     if (!ROOM_CODE_PATTERN.test(code)) return null;
-    const difficulty = code.length === 9 ? 'int' : Number(code.at(-1)) % 2 === 0 ? 'fresh' : 'pro';
-    return { code, difficulty, seed: `room:${code}` };
+    const difficulty = DIFFICULTIES[Math.floor((Number(code) - FIRST_CODE) / CODES_PER_DIFFICULTY)];
+    return { code, difficulty, seed: `room:${rulesEpoch()}:${code}` };
 }
 
 export function createRoomCode(difficulty) {
-    if (!['fresh', 'pro', 'int'].includes(difficulty)) throw new TypeError('未対応の部屋の難易度です。');
-    const master = difficulty === 'int';
-    const range = master ? 100_000_000 : 50_000_000;
+    const index = DIFFICULTIES.indexOf(difficulty);
+    if (index < 0) throw new TypeError('未対応の部屋の難易度です。');
+    const range = CODES_PER_DIFFICULTY;
     let n;
     if (globalThis.crypto?.getRandomValues) {
         const limit = Math.floor(0x100000000 / range) * range;
@@ -22,12 +34,11 @@ export function createRoomCode(difficulty) {
     } else {
         n = Math.floor(Math.random() * range);
     }
-    if (master) return '9' + String(n).padStart(8, '0');
-    return String(2 * n + (difficulty === 'pro' ? 1 : 0)).padStart(8, '0');
+    return String(FIRST_CODE + index * range + n);
 }
 
 function readStartedRooms(storage) {
-    const raw = storage.getItem(ROOM_START_KEY);
+    const raw = storage.getItem(startedRoomsKey());
     if (raw === null) return new Set();
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.some(code => typeof code !== 'string' || !ROOM_CODE_PATTERN.test(code))) {
@@ -50,7 +61,7 @@ export function recordRoomStart(code, storage = globalThis.localStorage) {
     const started = readStartedRooms(storage);
     if (started.has(parsed.code)) return false;
     started.add(parsed.code);
-    storage.setItem(ROOM_START_KEY, JSON.stringify([...started]));
+    storage.setItem(startedRoomsKey(), JSON.stringify([...started]));
     if (!readStartedRooms(storage).has(parsed.code)) {
         throw new Error('部屋コードの開始記録を保存できませんでした。');
     }

@@ -72,7 +72,7 @@ test('MASTERの部屋コードを作成し、リロード後も部屋とSR候補
     await page.locator('#battle-room-difficulty').selectOption('int');
     await page.locator('#battle-room-create-start').click();
     const code = await page.locator('#room-code-display').inputValue();
-    expect(code).toMatch(/^9\d{8}$/);
+    expect(code).toMatch(/^[56]\d{7}$/);
     await page.locator('#room-code-ok').click();
     await expect(page.locator('#training-cards .rarity-SR')).toHaveCount(4);
     const cards = await page.locator('#training-cards .card-name').allTextContents();
