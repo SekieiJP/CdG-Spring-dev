@@ -47,11 +47,12 @@ body.colleague-results #result-area {
 #colleague-result {
     --colleague-height: calc(100dvh - var(--app-safe-top) - var(--app-safe-bottom) - 64px);
     --colleague-width: calc(100vw - var(--app-safe-left) - var(--app-safe-right) - 12px);
-    --colleague-px: clamp(.2px, min(calc(var(--colleague-height) / 376), calc(var(--colleague-width) / 308)), 1px);
+    --colleague-px: clamp(.2px, min(calc(var(--colleague-height) / 376), calc(var(--colleague-width) / 240)), 1.6px);
+    --colleague-action-height: max(44px, calc(34 * var(--colleague-px)));
     --colleague-thumb-size: calc(28 * var(--colleague-px));
     position: relative;
     display: grid;
-    grid-template-rows: minmax(0, 1fr) 44px;
+    grid-template-rows: minmax(0, 1fr) var(--colleague-action-height);
     align-content: stretch;
     gap: 5px;
     width: 100%;
@@ -83,8 +84,8 @@ body.colleague-results #result-area {
 
 .colleague-result-content {
     display: grid;
-    grid-template-rows: auto auto minmax(0, 1fr);
-    gap: 5px;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: max(5px, calc(6 * var(--colleague-px)));
     min-width: 0;
     min-height: 0;
 }
@@ -133,11 +134,15 @@ body.colleague-results #result-area {
 }
 
 .colleague-result-evaluation {
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
     min-width: 0;
+    min-height: 0;
 }
 
 #colleague-result-table {
     width: 100%;
+    height: 100%;
     border-collapse: collapse;
     table-layout: fixed;
     font-variant-numeric: tabular-nums;
@@ -161,7 +166,11 @@ body.colleague-results #result-area {
 }
 
 #colleague-result-table th:first-child {
-    width: 38%;
+    width: calc(78 * var(--colleague-px));
+    text-align: left;
+}
+
+#colleague-result-table :is(th, td):nth-child(2) {
     text-align: left;
 }
 
@@ -249,14 +258,14 @@ body.colleague-results #result-area {
     min-width: 0;
     min-height: 44px;
     padding: 6px 8px;
-    font-size: 16px;
+    font-size: clamp(16px, calc(14 * var(--colleague-px)), 21px);
     line-height: 1.2;
 }
 
 #colleague-result-menu {
     position: absolute;
     z-index: 30;
-    inset: 6px 6px 58px;
+    inset: 6px 6px calc(var(--colleague-action-height) + 14px);
     overflow: auto;
     padding: 10px;
     border: 1px solid var(--color-border);
@@ -294,12 +303,12 @@ body.colleague-results #result-area {
     .colleague-result-deck-section { grid-area: deck; }
 }
 
-@media (min-width: 700px) and (min-height: 351px) {
+@media (orientation: landscape) and (min-width: 700px) and (min-height: 351px) {
     .colleague-result-content {
         grid-template-columns: minmax(320px, .8fr) minmax(0, 1.2fr);
         grid-template-rows: auto minmax(0, 1fr);
     }
     .colleague-result-summary { flex-direction: row; justify-content: space-between; grid-column: 1 / -1; }
-    .colleague-result-evaluation { grid-column: 1; grid-row: 2; align-self: start; }
+    .colleague-result-evaluation { grid-column: 1; grid-row: 2; }
     .colleague-result-deck-section { grid-column: 2; grid-row: 2; align-self: start; }
 }

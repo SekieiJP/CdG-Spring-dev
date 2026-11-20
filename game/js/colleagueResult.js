@@ -37,7 +37,7 @@ function renderDeck(ui, finalDeck) {
     if (!deck || !count) return;
 
     count.textContent = `${finalDeck.length}枚`;
-    const columns = Math.max(10, Math.ceil(finalDeck.length / 2));
+    const columns = Math.max(5, Math.ceil(finalDeck.length / 2));
     deck.style.setProperty('--colleague-columns', String(columns));
     ui.renderResultDeckThumbnails(deck, finalDeck, 'colleague-result-thumb');
 }
