@@ -76,8 +76,9 @@ test('防犯カメラで時間移動・解決後の値・選択理由を確認�
     expect(await page.evaluate(() => window.game.gameState.runId)).not.toBe(source.row.resultId);
 });
 
-for (const options of [{ difficulty: 'fresh', calcMode: true, eventMode: true }, { difficulty: 'pro' }]) {
-    test(`${options.difficulty.toUpperCase()}のお手本が同じシードとイベントを使い、計算機を引き継がず直接視聴できる`, async ({ page, scoreSubmissions }) => {
+for (const options of [{ difficulty: 'fresh' }, { difficulty: 'fresh', calcMode: true, eventMode: true }, { difficulty: 'pro' }]) {
+    const mode = options.eventMode ? 'イベント' : '通常';
+    test(`${options.difficulty.toUpperCase()} ${mode}のお手本が同じシードで完走し、直接視聴できる`, async ({ page, scoreSubmissions }) => {
         test.setTimeout(180000);
         const source = await sourceReplay(page, options);
         await page.locator('#restart-game').click();
@@ -92,7 +93,9 @@ for (const options of [{ difficulty: 'fresh', calcMode: true, eventMode: true },
         expect(example.record.metadata.eventId).toBe(source.record.metadata.eventId);
         expect(example.record.metadata.calcMode).toBe(false);
         expect(example.record.metadata.exampleOf).toBe(source.record.metadata.runId);
-        expect(example.record.metadata.cpuPolicy).toBe(options.difficulty === 'pro' ? 'fixed-pro-v1' : 'reach@fresh_stable');
+        const expectedPolicy = options.difficulty === 'pro' ? 'fixed-pro-v1'
+            : options.eventMode ? 'reach@fresh_stable' : 'draw-forecast-v1';
+        expect(example.record.metadata.cpuPolicy).toBe(expectedPolicy);
         expect(example.record.complete).toBe(true); expect(example.record.turns).toHaveLength(8);
         await page.locator('#replay-example-copy').click();
         expect(await page.evaluate(() => window.__copiedReplays.at(-1))).toBe(example.text);

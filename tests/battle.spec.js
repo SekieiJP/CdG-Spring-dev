@@ -208,7 +208,7 @@ for (const difficulty of ['fresh', 'pro']) {
         await expect(page.locator('#training-area')).toBeVisible();
         expect(await page.evaluate(() => window.game.gameState.battle.opponent)).toEqual(opponent);
         await speedUp(page);
-        expect(await page.evaluate(() => window.game.gameState.battle.opponent.metadata.cpuPolicy)).toBe(difficulty === 'pro' ? 'fixed-pro-v1' : 'reach@fresh_stable');
+        expect(await page.evaluate(() => window.game.gameState.battle.opponent.metadata.cpuPolicy)).toBe(difficulty === 'pro' ? 'fixed-pro-v1' : 'draw-forecast-v1');
         expect(await page.evaluate(() => window.game.uiController.acquisitionAssist.eligible())).toBe(false);
         expect(await page.evaluate(() => window.game.uiController.ahiruAdvice.getSceneDecision())).toBeNull();
         await expect.poll(() => page.evaluate(() => window.game.uiController.ahiruAdvice.lastAdvice?.text)).toMatch(/ね|よ/);

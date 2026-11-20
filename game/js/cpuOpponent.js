@@ -1,15 +1,17 @@
-import { GameState } from './gameState.js?v=20261122-0067';
-import { CardManager } from './cardManager.js?v=20261122-0067';
-import { TurnManager } from './turnManager.js?v=20261122-0067';
-import { ScoreManager } from './scoreManager.js?v=20261122-0067';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0067';
-import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261122-0067';
-import * as formula from './proAcquisitionAdvisor.js?v=20261122-0067';
-import * as researchModule from './cpu/pro-strategy-research.js?v=20261122-0067';
-import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261122-0067';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0067';
-import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261122-0067';
-import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0067';
+import { GameState } from './gameState.js?v=20261122-0068';
+import { CardManager } from './cardManager.js?v=20261122-0068';
+import { TurnManager } from './turnManager.js?v=20261122-0068';
+import { ScoreManager } from './scoreManager.js?v=20261122-0068';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0068';
+import * as acquisitionAdvisor from './acquisitionAdvisor.js?v=20261122-0068';
+import * as formula from './proAcquisitionAdvisor.js?v=20261122-0068';
+import * as researchModule from './cpu/pro-strategy-research.js?v=20261122-0068';
+import { createCpuPolicyKernel } from './cpu/policyKernel.js?v=20261122-0068';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0068';
+import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261122-0068';
+import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0068';
+import { createFreshForecastCpuPolicy } from './freshCpuPolicy.js?v=20261122-0068';
+import { FORECAST_MODEL } from './freshOutcomeForecast.js?v=20261122-0068';
 
 const dataJobs = new Map();
 const policyAdvisor = {
@@ -63,7 +65,7 @@ export async function createCpuEngine({ difficulty, seed, resources = null }) {
     }
     const game = { gameState: state, cardManager, turnManager, scoreManager };
     const policy = createCpuPolicyKernel(game, { difficulty, acquisitionAdvisor: policyAdvisor, formula, researchModule, research, valueModel });
-    return { game, policy };
+    return { game, policy: difficulty === 'fresh' ? createFreshForecastCpuPolicy(game, policy) : policy };
 }
 
 export async function createCpuReplay({ difficulty, seed, onProgress = () => {}, resources = null, eventId = null, captureViewing = false }) {
@@ -114,6 +116,6 @@ export async function createCpuReplay({ difficulty, seed, onProgress = () => {},
     }
     const record = finalizeReplayRecording(state, scoreManager.calculateScore(state), state.getOwnedCards());
     if (!record) throw new Error('あひる先生のプレイ記録を確定できませんでした');
-    record.metadata.cpuPolicy = difficulty === 'pro' ? 'fixed-pro-v1' : 'reach@fresh_stable';
+    record.metadata.cpuPolicy = difficulty === 'pro' ? 'fixed-pro-v1' : eventId ? 'reach@fresh_stable' : FORECAST_MODEL;
     return record;
 }

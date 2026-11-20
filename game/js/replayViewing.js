@@ -1,4 +1,4 @@
-import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0067';
+import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0068';
 
 export function replayCard(record, reference) {
     if (typeof reference === 'string') {
