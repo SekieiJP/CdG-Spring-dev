@@ -1,4 +1,4 @@
-import {projectAhiruState} from './ahiruForecast.js?v=20261110-0066';
+import {projectAhiruState} from './ahiruForecast.js?v=20261122-0067';
 const WEIGHTS=Object.freeze({experience:2.8,enrollment:3.5,satisfaction:1.9,accounting:2.1,future:.8});
 export function projectFreshAdviceState(input,options={}){
     return projectAhiruState(input,options,{difficulty:'fresh',weights:WEIGHTS});

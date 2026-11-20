@@ -1,9 +1,9 @@
 /**
  * ScoreManager - スコア計算・記録・共有
  */
-import { getHighScoreKey, getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261110-0066';
-import { isEventActive } from './eventManager.js?v=20261110-0066';
-import { fingerprint } from './playRecord.js?v=20261110-0066';
+import { getHighScoreKey, getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0067';
+import { isEventActive } from './eventManager.js?v=20261122-0067';
+import { fingerprint } from './playRecord.js?v=20261122-0067';
 
 export class ScoreManager {
     constructor(logger, { migrateHighScore = true } = {}) {

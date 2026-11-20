@@ -1,9 +1,9 @@
-import { decodeReplay } from './replayCodec.js?v=20261110-0066';
-import { getCurrentEvent } from './eventManager.js?v=20261110-0066';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261110-0066';
+import { decodeReplay } from './replayCodec.js?v=20261122-0067';
+import { getCurrentEvent } from './eventManager.js?v=20261122-0067';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0067';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261110-0066';
-import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261110-0066';
+    interimScore, battleSummary } from './battleReplay.js?v=20261122-0067';
+import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261122-0067';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };

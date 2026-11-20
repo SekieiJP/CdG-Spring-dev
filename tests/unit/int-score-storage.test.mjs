@@ -1,14 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import '../../game/js/difficultyExtensions.js?v=20261110-0066';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261110-0066';
-import { GameState } from '../../game/js/gameState.js?v=20261110-0066';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261110-0066';
-import { CardManager } from '../../game/js/cardManager.js?v=20261110-0066';
-import { SaveManager } from '../../game/js/saveManager.js?v=20261110-0066';
-import { ResultRepository } from '../../game/js/resultRepository.js?v=20261110-0066';
-import { startReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261110-0066';
+import '../../game/js/difficultyExtensions.js?v=20261122-0067';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0067';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0067';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0067';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0067';
+import { SaveManager } from '../../game/js/saveManager.js?v=20261122-0067';
+import { ResultRepository } from '../../game/js/resultRepository.js?v=20261122-0067';
+import { startReplayRecording, getCompletedReplay } from '../../game/js/replayRecorder.js?v=20261122-0067';
 
 async function loadRanks(manager, difficulty) {
     const path = new URL(`../../game/data/rank${difficulty}.csv`, import.meta.url);
