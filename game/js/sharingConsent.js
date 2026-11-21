@@ -30,8 +30,11 @@ function savePreference(preference) {
     window.dispatchEvent(new Event('cdg-sharing-changed'));
 }
 
-async function sharingRequest(action, parameters = {}) {
+async function sharingRequest(action, parameters = {}, signal) {
     const controller = new AbortController();
+    const abort = () => controller.abort();
+    signal?.addEventListener('abort', abort, { once: true });
+    if (signal?.aborted) abort();
     const timeout = setTimeout(() => controller.abort(), 8000);
     try {
         const response = await fetch(SCORE_ENDPOINT, {
@@ -43,7 +46,10 @@ async function sharingRequest(action, parameters = {}) {
         const result = await response.json();
         if (result.status !== 'ok') throw new Error(result.message || '通信エラー');
         return result;
-    } finally { clearTimeout(timeout); }
+    } finally {
+        clearTimeout(timeout);
+        signal?.removeEventListener('abort', abort);
+    }
 }
 
 function requestDiaries(action, parameters) {
@@ -71,12 +77,13 @@ export async function retrySharingRevocation() {
     if (readPreference()?.pendingRevocation === token) savePreference({ enabled: false });
 }
 
-async function enableSharing(nickname) {
+async function enableSharing(nickname, signal) {
     nickname = nickname.trim();
     if (!nickname || [...nickname].length > 8 || /[\u0000-\u001f\u007f-\u009f]/.test(nickname)) {
         throw new Error('ニックネームは1〜8文字で入力してください。');
     }
     await retrySharingRevocation();
+    if (signal.aborted) return;
     const saved = readPreference();
     if (saved?.enabled && saved.nickname === nickname) return;
     if (saved?.enabled) {
@@ -84,7 +91,8 @@ async function enableSharing(nickname) {
         if (tokenForSubmission(saved.grantId) === saved.token) savePreference({ ...saved, nickname });
         return;
     }
-    const { token, grantId } = await sharingRequest('sharing.enable', { nickname });
+    const { token, grantId } = await sharingRequest('sharing.enable', { nickname }, signal);
+    if (signal.aborted) return;
     if (!token || !grantId) throw new Error('共有を設定できませんでした。');
     savePreference({ enabled: true, nickname, token, grantId });
 }
@@ -110,12 +118,14 @@ export function showSharingSettings(ui, { firstPlay = false } = {}) {
             <input id="sharing-nickname" type="text" autocomplete="off" spellcheck="false" required>
             <button type="submit" class="btn-primary" id="sharing-enable"></button>
             <button type="button" class="btn-secondary" id="sharing-disable"></button>
+            <button type="button" class="btn-secondary" id="sharing-cancel" hidden>送信をキャンセル</button>
         </form>
         <p id="sharing-consent-status" role="status"></p>`;
     const form = content.querySelector('form');
     const nickname = content.querySelector('#sharing-nickname');
     const enable = content.querySelector('#sharing-enable');
     const disable = content.querySelector('#sharing-disable');
+    const cancel = content.querySelector('#sharing-cancel');
     const status = content.querySelector('#sharing-consent-status');
     const close = overlay.querySelector('.info-overlay-close');
     nickname.value = preference.nickname;
@@ -125,29 +135,53 @@ export function showSharingSettings(ui, { firstPlay = false } = {}) {
     document.body.append(overlay);
 
     return new Promise(resolve => {
-        let busy = false;
+        let active = null;
         const finish = () => { overlay.remove(); resolve(true); };
+        const setBusy = (busy, cancellable = false) => {
+            nickname.disabled = enable.disabled = disable.disabled = close.disabled = busy;
+            cancel.hidden = !cancellable;
+            status.classList.toggle('is-loading', cancellable);
+        };
         close.addEventListener('click', () => resolve(false));
         overlay.addEventListener('keydown', event => { if (event.key === 'Escape') resolve(false); });
-        overlay.addEventListener('keydown', event => { if (busy && event.key === 'Escape') event.stopImmediatePropagation(); }, true);
-        const apply = async (operation, isDisable) => {
-            if (busy) return;
-            busy = true;
-            enable.disabled = disable.disabled = close.disabled = true;
+        overlay.addEventListener('keydown', event => { if (active && event.key === 'Escape') event.stopImmediatePropagation(); }, true);
+        const apply = async (operation, { isDisable = false, cancellable = false } = {}) => {
+            if (active) return;
+            const controller = new AbortController();
+            active = controller;
+            setBusy(true, cancellable);
+            if (cancellable) {
+                status.textContent = '同意内容を送信しています…';
+                cancel.focus();
+            }
             try {
-                await operation();
-                finish();
+                await operation(controller.signal);
+                if (active === controller) finish();
             } catch (error) {
+                if (active !== controller) return;
                 const stopping = getSharingPreference().revocationPending;
                 status.textContent = stopping ? 'この端末の送信を停止しました。サーバーへ通知できませんでした。オンラインになると再試行します。'
                     : (!isDisable && error.message.startsWith('ニックネーム') ? error.message : '設定を保存できませんでした。もう一度お試しください。');
                 if (firstPlay && isDisable) finish();
             } finally {
-                busy = false;
-                enable.disabled = disable.disabled = close.disabled = false;
+                if (active === controller) {
+                    active = null;
+                    setBusy(false);
+                }
             }
         };
-        form.addEventListener('submit', event => { event.preventDefault(); void apply(() => enableSharing(nickname.value), false); });
-        disable.addEventListener('click', () => { void apply(disableSharing, true); });
+        cancel.addEventListener('click', () => {
+            if (!active || cancel.hidden) return;
+            active.abort();
+            active = null;
+            setBusy(false);
+            status.textContent = '送信をキャンセルしました。';
+            enable.focus();
+        });
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            void apply(signal => enableSharing(nickname.value, signal), { cancellable: !getSharingPreference().enabled });
+        });
+        disable.addEventListener('click', () => { void apply(disableSharing, { isDisable: true }); });
     });
 }

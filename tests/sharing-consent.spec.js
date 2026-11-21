@@ -45,3 +45,47 @@ test('8文字の名前で同意でき、設定で停止すると進行中のゲ�
     await expect(page.locator('#result-submission-status')).toContainText('共有オフ');
     expect(scoreSubmissions).toHaveLength(0);
 });
+
+test('同意を送信中はローディングとキャンセルを表示し、取り消した応答が後で届いても同意を保存しない', async ({ page }) => {
+    await page.goto('/');
+    await page.evaluate(() => {
+        const originalFetch = window.fetch;
+        window.sharingRequests = [];
+        window.fetch = (url, options) => {
+            if (!String(url).startsWith('https://script.google.com/') || JSON.parse(options?.body || '{}').action !== 'sharing.enable') {
+                return originalFetch(url, options);
+            }
+            return new Promise(resolve => {
+                window.sharingRequests.push({
+                    signal: options.signal,
+                    reply: grantId => resolve(new Response(JSON.stringify({ status: 'ok', grantId, token: 'test-token' })))
+                });
+            });
+        };
+    });
+    await page.locator('#start-game').click();
+    const decline = page.locator('#sharing-disable');
+    const cancel = page.locator('#sharing-cancel');
+    const status = page.locator('#sharing-consent-status');
+    const enable = page.locator('#sharing-enable');
+    await expect(cancel).toBeHidden();
+    await page.locator('#sharing-nickname').fill('あひる先生');
+    await enable.click();
+    await expect(status).toHaveText('同意内容を送信しています…');
+    await expect(status).toHaveClass('is-loading');
+    await expect(decline).toBeDisabled();
+    await expect(cancel).toBeFocused();
+    await cancel.click();
+    await expect(status).toHaveText('送信をキャンセルしました。');
+    await expect(status).not.toHaveClass('is-loading');
+    await expect(cancel).toBeHidden();
+    await expect(decline).toBeEnabled();
+    expect(await page.evaluate(() => window.sharingRequests[0].signal.aborted)).toBe(true);
+
+    await enable.click();
+    await expect(status).toHaveText('同意内容を送信しています…');
+    await page.evaluate(() => window.sharingRequests[0].reply('cancelled'));
+    await page.evaluate(() => window.sharingRequests[1].reply('accepted'));
+    await expect(page.locator('#training-cards .card').first()).toBeVisible();
+    expect(await page.evaluate(() => window.game.gameState.sharingGrantId)).toBe('accepted');
+});
