@@ -225,6 +225,12 @@
             }
         }
 
+        .master-intro .slide-content { justify-content: flex-start; height: auto; }
+        .master-intro dl { text-align: left; line-height: 1.65; }
+        .master-intro dt { font-weight: bold; }
+        .master-intro dd { margin: 0 0 12px; }
+        .master-intro .card-changes { margin-bottom: 12px; }
+
         .card-changes-scroll { max-width: 100%; overflow-x: auto; }
         .card-changes { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem; }
         .card-changes th, .card-changes td { padding: 6px; vertical-align: top; border-bottom: 1px solid var(--color-border); }
@@ -240,7 +246,47 @@
 
         <div class="slide-container" id="slide-container">
 
-            <div class="slide active november-update">
+            <div class="slide active november-update master-intro">
+                <div class="slide-content">
+                    <h2>難易度MASTER [1/2]</h2>
+                    <h3>主なポイント</h3>
+                    <p>PROは全8ターン。MASTERはPROと同じカードを使い、外出2回と春期講習4日間を含む全12ターンで教室を運営します。</p>
+                    <dl>
+                        <dt>初回研修でSRを2枚取る</dt>
+                        <dd>PROの初回はR4枚から2枚。MASTERはSR4枚から2枚を選びます。経理はPROの5に対して3から始まるので、序盤の支出にも気を配りましょう。</dd>
+                        <dt>2月と3月に外出する</dt>
+                        <dd>外出の日は書店・近隣校・本部から1か所を選びます。書店と近隣校は今後のデッキを強化でき、本部ではSSRの効果をその場で使えます。</dd>
+                        <dt>春期講習の4日間にカードを配分する</dt>
+                        <dd>PROではターンが終わるたびにカードを山札に戻します。MASTERの講習中は使ったカードを取り置くため、今日使うカードと翌日以降に残すカードを考えます。</dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="slide november-update master-intro">
+                <div class="slide-content">
+                    <h2>難易度MASTER [2/2]</h2>
+                    <h3>細かなルールの違い</h3>
+                    <dl>
+                        <dt>研修と教室会議</dt>
+                        <dd>候補のリフレッシュはPROの2回に対して、MASTERでは1ゲームに3回。外出先でも同じ回数枠を使います。講習の通常研修は3日目のみです。序盤の4回の教室会議では、削除を見送れるPROに対し、MASTERでは削除できるカードがあれば1枚以上を削除します。</dd>
+                        <dt>外出は2月中旬と3月中旬</dt>
+                        <dd>外出先の候補は1回目が3枚、2回目が4枚です。書店ではRを2枚、近隣校ではSRを1枚取得します。本部ではSSRを1枚選び、担当を決めてその場で1回だけ使います。</dd>
+                        <dt>講習中の手札と教務カード</dt>
+                        <dd>PROでは毎ターン基本4枚を引きます。MASTERの講習中は毎日基本3枚を引き、使わなかった手札は翌日へ持ち越します。講習明けに、手札と講習中に使ったカードを山札に戻します。教務カードが毎日1枚以上必要で、室長・講師の空き枠には「質問対応の基本」が入ります。</dd>
+                    </dl>
+                    <table class="card-changes" aria-label="通常プレイの得点上限と最高ランク">
+                        <thead>
+                            <tr><th scope="col">通常プレイ</th><th scope="col">PRO</th><th scope="col">MASTER</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><th scope="row">得点上限</th><td>16点</td><td>20点</td></tr>
+                            <tr><th scope="row">最高ランク</th><td>SS・15点以上</td><td>SSS・19点以上</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="slide november-update">
                 <div class="slide-content">
                     <h2>2026年11月22日 アップデート</h2>
                     <h3>MASTERのお手本と教室日誌</h3>
