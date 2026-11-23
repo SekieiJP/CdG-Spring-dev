@@ -1,10 +1,10 @@
-import { observeMaster } from './masterPolicy.js?v=20261122-0069';
-import { describeMasterDecision } from './masterAdvice.js?v=20261122-0069';
-import { createCpuEngine } from './cpuOpponent.js?v=20261122-0069';
-import { RandomSource } from './randomSource.js?v=20261122-0069';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
-import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0069';
-import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0069';
+import { observeMaster } from './masterPolicy.js?v=20261122-0070';
+import { describeMasterDecision } from './masterAdvice.js?v=20261122-0070';
+import { createCpuEngine } from './cpuOpponent.js?v=20261122-0070';
+import { RandomSource } from './randomSource.js?v=20261122-0070';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0070';
+import { cpuTrainingAdvice, cpuMeetingAdvice } from './battleAdvice.js?v=20261122-0070';
+import { resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0070';
 
 const STATS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
@@ -67,7 +67,7 @@ function analyzeMasterScene(game, policy, scene) {
     const observation = observeMaster(game.turnManager);
     if (!observation) throw new Error('判断前の状態を復元できません');
     const move = policy.decide();
-    const { reason } = describeMasterDecision(observation, move, game.gameState.player.placed);
+    const { reason } = describeMasterDecision(observation, move);
     return { kind: scene.kind, reason, refresh: move.kind === 'refresh',
         selectedIndices: move.indices || [], selectedIds: move.ids || move.moves?.map(step => step.id) || [] };
 }

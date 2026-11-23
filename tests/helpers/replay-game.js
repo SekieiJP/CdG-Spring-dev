@@ -84,7 +84,7 @@ export async function finishGame(page) {
             await page.locator('[data-outing-place="headquarters"]').click();
             await page.locator('[data-outing-card-index]').first().click();
             await page.locator('#confirm-outing').click();
-            await page.locator('[data-outing-staff]').first().click();
+            if (await page.locator('[data-outing-staff]').count()) await page.locator('[data-outing-staff]').first().click();
         } else if (state.phase === 'meeting') {
             if (state.master && await page.locator('#confirm-meeting').isDisabled()) {
                 await page.locator('#deck-cards .card').first().click();

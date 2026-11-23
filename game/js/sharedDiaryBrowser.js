@@ -1,6 +1,6 @@
-import { getSharingPreference, listSharedDiaries, getSharedDiary } from './sharingConsent.js?v=20261122-0069';
-import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
-import { sortResultDeck } from './resultPresentation.js?v=20261122-0069';
+import { getSharingPreference, listSharedDiaries, getSharedDiary } from './sharingConsent.js?v=20261122-0070';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0070';
+import { sortResultDeck } from './resultPresentation.js?v=20261122-0070';
 
 // 日誌の一覧は開いた時だけ取得する。設定変更や画面を閉じた後の応答は表示しない
 export function mountSharedDiaries(viewer, host, sharedRecord) {

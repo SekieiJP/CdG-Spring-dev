@@ -1,5 +1,5 @@
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
-import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0069';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0070';
+import { validateBattleReplay, snapshotCards, BATTLE_STATS } from './battleReplay.js?v=20261122-0070';
 
 export function replayCard(record, reference) {
     if (typeof reference === 'string') {
@@ -33,17 +33,17 @@ function trainingScene(record, turn, choice, index) {
 }
 
 function outingScenes(record, turn) {
-    const { place, before, choice, selectedIndices, staffId, cardId, after } = turn.outing;
+    const { place, before, choice, selectedIndices, staffId, cardId, after, automatic } = turn.outing;
     const config = getDifficultyConfig(record.metadata.difficulty);
     const destination = config.turns[turn.turn].outingOptions.find(option => option.id === place);
     const scenes = [{ key: `${turn.turn}:outing`, turn: turn.turn, kind: 'outing', label: '行き先選択',
         summary: `記録の行き先：${destination.name}`, before, stats: before.player, cards: [], selectedIds: [] }];
     if (choice) {
         scenes.push({ key: `${turn.turn}:outing-card`, turn: turn.turn, kind: 'outing-card', label: `${destination.name}のカード選択`,
-            before: choice, stats: staffId ? choice.player : after.player,
+            before: choice, stats: staffId && !automatic ? choice.player : after.player,
             cards: choice.currentTrainingCards.map(ref => replayCard(record, ref)), selectedIndices });
     }
-    if (staffId) {
+    if (staffId && !automatic) {
         const card = replayCard(record, cardId);
         const staffBefore = structuredClone(choice);
         staffBefore.ruleState.int.outing = { place, stage: 'staff', selectedCard: card };

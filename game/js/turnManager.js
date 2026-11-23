@@ -1,9 +1,9 @@
 /**
  * TurnManager - ターン進行管理
  */
-import { resolveCardAction } from './actionResolver.js?v=20261122-0069';
-import { DEFAULT_TURNS } from './defaultRules.js?v=20261122-0069';
-import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager, beginReplayOuting, captureReplayOutingChoice, captureReplayOutingEffect } from './replayRecorder.js?v=20261122-0069';
+import { resolveCardAction, snapshotStats } from './actionResolver.js?v=20261122-0070';
+import { DEFAULT_TURNS } from './defaultRules.js?v=20261122-0070';
+import { beginReplayAction, captureReplayAction, captureReplayBoundary, completeReplayTurn, bindReplayCardManager, beginReplayOuting, captureReplayOutingChoice, captureReplayOutingEffect } from './replayRecorder.js?v=20261122-0070';
 
 export class TurnManager {
     static TURN_CONFIG = DEFAULT_TURNS;
@@ -108,7 +108,7 @@ export class TurnManager {
         return outing.selectedCards;
     }
 
-    confirmOutingCards() {
+    confirmOutingCards({ legacyHeadquarters = false } = {}) {
         const outing = this.gameState.ruleState.int?.outing;
         if (this.gameState.phase !== 'outing' || outing?.stage !== 'card') return;
         const place = this.getOutingConfig()?.outingOptions?.find(option => option.id === outing.place);
@@ -125,7 +125,12 @@ export class TurnManager {
         this.gameState.currentTrainingCards = null;
         if (place.id === 'headquarters') {
             outing.stage = 'staff';
-            return { stage: 'staff', selectedCard: outing.selectedCard, selectedCards, staffIds: this.gameState.slotIds };
+            const { staffIds, requiresChoice } = this.getHeadquartersStaffOptions(outing.selectedCard);
+            if (!legacyHeadquarters && !requiresChoice) {
+                return this.selectOutingStaff(staffIds[0], { automatic: true });
+            }
+            return { stage: 'staff', selectedCard: outing.selectedCard, selectedCards,
+                staffIds: legacyHeadquarters ? this.gameState.slotIds : staffIds };
         }
         selectedCards.forEach(selectedCard => this.gameState.addToDeck(selectedCard));
         const result = { stage: 'complete', acquired: selectedCards, selectedCards };
@@ -133,12 +138,26 @@ export class TurnManager {
         return result;
     }
 
-    selectOutingStaff(staffId) {
+    getHeadquartersStaffOptions(card) {
+        const state = this.gameState;
+        const parsed = this.cardManager.parseEffect(card?.effect || '');
+        const stats = snapshotStats(state.player);
+        const allowed = state.slotIds.filter(id => !parsed.staffRestrictions.length || parsed.staffRestrictions.includes(id));
+        const affordable = allowed.filter(id => this.cardManager.simulateCardEffect(card, id, stats, null, state).applied);
+        const effects = new Set(affordable.map(id => JSON.stringify(
+            this.cardManager.getApplicableEffects(parsed, id, stats, state).filter(effect => effect.type !== 'immediate')
+        )));
+        return { staffIds: affordable.length ? affordable : allowed.length ? allowed : state.slotIds,
+            requiresChoice: effects.size > 1 };
+    }
+
+    selectOutingStaff(staffId, { automatic = false, legacyHeadquarters = false } = {}) {
         const outing = this.gameState.ruleState.int?.outing;
         if (this.gameState.phase !== 'outing' || outing?.stage !== 'staff' || !this.gameState.slotIds.includes(staffId)) return null;
+        if (!legacyHeadquarters && !this.getHeadquartersStaffOptions(outing.selectedCard).staffIds.includes(staffId)) return null;
         const card = this.gameState.identifyCard(outing.selectedCard);
         const action = this.resolveCardAction(card, staffId);
-        captureReplayOutingEffect(this.gameState, staffId, card, action);
+        captureReplayOutingEffect(this.gameState, staffId, card, action, automatic);
         const result = { stage: 'complete', selectedCard: card, staffId, action };
         result.nextPhase = this.completeOuting();
         return result;

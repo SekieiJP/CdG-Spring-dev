@@ -1,8 +1,8 @@
-import { createMasterPolicy, observeMaster } from './masterPolicy.js?v=20261122-0069';
+import { createMasterPolicy, observeMaster, MASTER_PLAY_POLICY } from './masterPolicy.js?v=20261122-0070';
 
 export function createMasterCpuPolicy(game) {
     const { gameState: state, cardManager, turnManager, scoreManager } = game;
-    const decide = createMasterPolicy({ catalog: cardManager.allCards, scorer: scoreManager });
+    const decide = createMasterPolicy({ catalog: cardManager.allCards, scorer: scoreManager, ...MASTER_PLAY_POLICY });
     const observation = () => observeMaster(turnManager);
 
     return {

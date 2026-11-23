@@ -1,11 +1,11 @@
 /**
  * ScoreSubmitter - ゲーム完了時のスコアをGAS Web Appに送信
  */
-import { getEventItem } from './eventManager.js?v=20261122-0069';
-import { makeRunId } from './defaultRules.js?v=20261122-0069';
-import { snapshotTurnHistory } from './turnHistory.js?v=20261122-0069';
+import { getEventItem } from './eventManager.js?v=20261122-0070';
+import { makeRunId } from './defaultRules.js?v=20261122-0070';
+import { snapshotTurnHistory } from './turnHistory.js?v=20261122-0070';
 
-import { SCORE_ENDPOINT, tokenForSubmission } from './sharingConsent.js?v=20261122-0069';
+import { SCORE_ENDPOINT, tokenForSubmission } from './sharingConsent.js?v=20261122-0070';
 let userUUIDMemory = null;
 
 /**

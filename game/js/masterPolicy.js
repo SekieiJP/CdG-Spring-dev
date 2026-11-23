@@ -1,9 +1,11 @@
-import { CardManager } from './cardManager.js?v=20261122-0069';
-import { GameState } from './gameState.js?v=20261122-0069';
-import { snapshotStats, resolveCardAction } from './actionResolver.js?v=20261122-0069';
-import { getPlacementError } from './placementRules.js?v=20261122-0069';
+import { CardManager } from './cardManager.js?v=20261122-0070';
+import { GameState } from './gameState.js?v=20261122-0070';
+import { snapshotStats, resolveCardAction } from './actionResolver.js?v=20261122-0070';
+import { getPlacementError } from './placementRules.js?v=20261122-0070';
 
 const compareInstances = (a, b) => a.instanceId.localeCompare(b.instanceId);
+export const MASTER_PLAY_POLICY = Object.freeze({ beamWidth: 20, springReserve: 1.25, reserveForNextDraw: true });
+export const MASTER_POLICY_VERSION = 'master-v3';
 
 // 山札順・研修プール・ゲームの乱数を方策へ渡さない
 export function observeMaster(turns) {
@@ -15,7 +17,8 @@ export function observeMaster(turns) {
         owned: state.getOwnedCards().sort(compareInstances), refreshes: state.trainingRefreshRemaining
     };
     if (state.phase === 'action' && !state.pendingAction) {
-        return { ...common, kind: 'place', hand: [...state.player.hand, ...Object.values(state.player.placed).flat()] };
+        const hand = [...state.player.hand, ...Object.values(state.player.placed).flat()];
+        return { ...common, kind: 'place', hand, activeCards: state.player.deck.length + hand.length };
     }
     if (state.phase === 'meeting') {
         const cards = turns.getMeetingDeleteCandidates().sort(compareInstances);
@@ -33,7 +36,8 @@ export function observeMaster(turns) {
         if (!outing) return { ...common, kind: 'outing', options: day.outingOptions };
         const offer = day.outingOptions.find(option => option.id === outing.place);
         if (outing.stage === 'card') return { ...common, kind: 'acquire', cards: [...outing.candidates], offer };
-        if (outing.stage === 'staff') return { ...common, kind: 'staff', card: outing.selectedCard };
+        if (outing.stage === 'staff') return { ...common, kind: 'staff', card: outing.selectedCard,
+            staffIds: turns.getHeadquartersStaffOptions(outing.selectedCard).staffIds };
     }
     return null;
 }
@@ -82,7 +86,10 @@ function expectedPicks(values, offerCount, pickCount) {
     }, 0);
 }
 
-export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth = 10 }) {
+export function createMasterPolicy({
+    catalog, scorer, strategy = 'v2', beamWidth = 10, springReserve = 0, latePoints = 0, experienceBias = 0,
+    reserveForNextDraw = false, experienceWeight = 0
+}) {
     if (!['v1', 'v2'].includes(strategy) || !Number.isSafeInteger(beamWidth) || beamWidth < 1) {
         throw new Error('方策名または探索幅が不正です');
     }
@@ -112,6 +119,8 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
             if (id === 43 && cash < 14) value -= 2;
         }
         if (others.some(item => item.cardNo === card.cardNo)) value -= 1.2;
+        if (experienceBias && obs.kind === 'acquire' && obs.turn < 6 && premiumRecruiting.has(id) &&
+            obs.stats.experience - obs.stats.enrollment < 8) value += experienceBias;
         return value;
     }
 
@@ -125,7 +134,7 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
             const { experience, enrollment, satisfaction, accounting } = sim.player;
             const { passion, fatigue, inspiration, organize } = sim.tokens;
             const lead = Math.min(Math.max(0, experience - enrollment), 10);
-            const growth = Math.min(experience, 84) * (revised ? 0.8 : 0.68) + Math.min(enrollment, 70) * 0.98
+            const growth = Math.min(experience, 84) * ((revised ? 0.8 : 0.68) + experienceWeight) + Math.min(enrollment, 70) * 0.98
                 + (left > 2 ? lead * (revised ? 0.5 : 0.32) : 0);
             const cash = Math.min(accounting, target) * incomeWeight
                 + Math.min(accounting, target + Math.min(left, 4)) * 0.18;
@@ -153,7 +162,7 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
 
     function headquarters(obs, card, evaluate = evaluator(obs)) {
         const sim = simulate(obs);
-        const choices = obs.config.slots.map(({ id }) => {
+        const choices = (obs.staffIds || obs.config.slots.map(slot => slot.id)).map(id => {
             const next = resolve(sim, card, id, obs.config.turns[obs.turn]);
             return { staff: id, value: next ? evaluate(next) - evaluate(sim) : -Infinity };
         });
@@ -225,7 +234,12 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
         const placed = Object.fromEntries(slots.map(slot => [slot.id, []]));
         const root = simulate(obs);
         const evaluate = evaluator(obs);
-        const initial = { sim: root, placed, moves: [], used: new Set(), value: evaluate(root) };
+        const reserve = day.spring && config.turns[turn + 1]?.spring ? springReserve : 0;
+        const points = turn >= 9 && turn < config.turns.length - 1 ? latePoints : 0;
+        const withoutReserve = reserveForNextDraw ? Math.max(0, (obs.activeCards ?? hand.length) - 3) : 0;
+        const value = (sim, moves) => evaluate(sim) - reserve * Math.max(0, moves.length - withoutReserve) +
+            (points ? points * scorer.calculateScore(sim).displayScore : 0);
+        const initial = { sim: root, placed, moves: [], used: new Set(), value: value(root, []) };
         let beam = [initial];
         const teaching = new Map(slots.map(({ id }) => [id, config.rules.getSpringTeachingCard(root, cards, id)]));
         function prune(nodes) {
@@ -251,7 +265,7 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
                     const finished = auto && !stack.length ? resolve(node.sim, auto, slot.id, day) : node.sim;
                     const finalSlot = slot === slots.at(-1);
                     if (!finalSlot || !config.rules.getActionValidationError({ ...root, player: { placed: node.placed } })) {
-                        ends.push({ ...node, sim: finished, value: evaluate(finished) });
+                        ends.push({ ...node, sim: finished, value: value(finished, node.moves) });
                     }
                     for (let i = 0; i < hand.length; i++) {
                         if (node.used.has(i) || getPlacementError(cards, root, hand[i], slot.id, node.placed)) continue;
@@ -260,7 +274,7 @@ export function createMasterPolicy({ catalog, scorer, strategy = 'v2', beamWidth
                         const used = new Set(node.used).add(i);
                         const nextPlaced = { ...node.placed, [slot.id]: [...stack, hand[i]] };
                         const moves = [...node.moves, { id: hand[i].instanceId, staff: slot.id }];
-                        next.push({ sim, used, placed: nextPlaced, moves, value: evaluate(sim) });
+                        next.push({ sim, used, placed: nextPlaced, moves, value: value(sim, moves) });
                     }
                 }
                 layer = prune(next);

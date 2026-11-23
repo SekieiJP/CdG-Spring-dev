@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createRoomCode, parseRoomCode, hasStartedRoom, recordRoomStart } from '../../game/js/colleagueRoom.js?v=20261122-0069';
+import { createRoomCode, parseRoomCode, hasStartedRoom, recordRoomStart } from '../../game/js/colleagueRoom.js?v=20261122-0070';
 
 test('部屋の発行と入室は先頭数字で難易度を決め、割り当て範囲外を拒む', () => {
     for (const [difficulty, low, high] of [['fresh',1,2], ['pro',3,4], ['int',5,6]]) {

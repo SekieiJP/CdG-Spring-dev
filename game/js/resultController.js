@@ -1,15 +1,15 @@
-import { sharedReplaySeed } from './randomSource.js?v=20261122-0069';
-import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0069';
-import { ResultRepository } from './resultRepository.js?v=20261122-0069';
-import { SubmissionQueue } from './submissionQueue.js?v=20261122-0069';
-import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0069';
-import { getCompletedReplay } from './replayRecorder.js?v=20261122-0069';
-import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0069';
-import { battleSummary } from './battleReplay.js?v=20261122-0069';
-import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0069';
-import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
+import { sharedReplaySeed } from './randomSource.js?v=20261122-0070';
+import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0070';
+import { ResultRepository } from './resultRepository.js?v=20261122-0070';
+import { SubmissionQueue } from './submissionQueue.js?v=20261122-0070';
+import { buildScorePayload, getOrCreateUserUUID, submitPayload } from './scoreSubmitter.js?v=20261122-0070';
+import { getCompletedReplay } from './replayRecorder.js?v=20261122-0070';
+import { encodeReplay, decodeReplay, REPLAY_PREFIX, COMPACT_REPLAY_PREFIX } from './replayCodec.js?v=20261122-0070';
+import { battleSummary } from './battleReplay.js?v=20261122-0070';
+import { createResultImage, downloadResultImage } from './resultImage.js?v=20261122-0070';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0070';
 
-import { SHARING_PREFERENCE_KEY, retrySharingRevocation, tokenForSubmission } from './sharingConsent.js?v=20261122-0069';
+import { SHARING_PREFERENCE_KEY, retrySharingRevocation, tokenForSubmission } from './sharingConsent.js?v=20261122-0070';
 
 /** 完了した結果の保存・履歴表示・通信を、進行中のゲームから分離する。 */
 export class ResultController {

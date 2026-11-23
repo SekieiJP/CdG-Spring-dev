@@ -1,14 +1,14 @@
-import { getPlacementError } from './placementRules.js?v=20261122-0069';
-import { GameState } from './gameState.js?v=20261122-0069';
-import { CardManager } from './cardManager.js?v=20261122-0069';
-import { TurnManager } from './turnManager.js?v=20261122-0069';
-import { ScoreManager } from './scoreManager.js?v=20261122-0069';
-import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0069';
-import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261122-0069';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0069';
-import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0069';
+import { getPlacementError } from './placementRules.js?v=20261122-0070';
+import { GameState } from './gameState.js?v=20261122-0070';
+import { CardManager } from './cardManager.js?v=20261122-0070';
+import { TurnManager } from './turnManager.js?v=20261122-0070';
+import { ScoreManager } from './scoreManager.js?v=20261122-0070';
+import { getDifficultyConfig } from './difficultyConfig.js?v=20261122-0070';
+import { createEventState, getEventDefinition, getEventItem } from './eventManager.js?v=20261122-0070';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0070';
+import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from './cpuEventRuntime.js?v=20261122-0070';
 
-const CACHE_BUSTER = 'v20261122-0069';
+const CACHE_BUSTER = 'v20261122-0070';
 const STATS = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const resourceJobs = new Map();
 
@@ -125,9 +125,12 @@ export async function restoreOperationReplay(packet, { currentBuildVersion = CAC
                 for (const index of selected) {
                     if (!candidates[integer(index)] || !turns.selectOutingCard(candidates[index])) invalid();
                 }
-                const result = turns.confirmOutingCards();
+                const legacyHeadquarters = metadata.buildVersion < 'v20261122-0070';
+                const result = turns.confirmOutingCards({ legacyHeadquarters });
                 if (!result) invalid();
-                if (result.stage === 'staff' ? !turns.selectOutingStaff(staff) : staff !== null) invalid();
+                if (result.stage === 'staff') {
+                    if (!turns.selectOutingStaff(staff, { legacyHeadquarters })) invalid();
+                } else if ((result.staffId ?? null) !== staff) invalid();
             }
             checkSize();
             continue;

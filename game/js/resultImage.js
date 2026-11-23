@@ -1,5 +1,5 @@
-import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch, sortResultDeck } from './resultPresentation.js?v=20261122-0069';
-import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
+import { formatResultNumber, formatResultPoints, resultMetrics, resultPrecisionText, resultRulesEpoch, sortResultDeck } from './resultPresentation.js?v=20261122-0070';
+import { getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0070';
 
 const WIDTH = 640;
 const MARGIN = 20;

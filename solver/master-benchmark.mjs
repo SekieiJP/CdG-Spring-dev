@@ -2,12 +2,12 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import '../game/js/difficultyExtensions.js?v=20261122-0069';
-import { GameState } from '../game/js/gameState.js?v=20261122-0069';
-import { CardManager } from '../game/js/cardManager.js?v=20261122-0069';
-import { TurnManager } from '../game/js/turnManager.js?v=20261122-0069';
-import { ScoreManager } from '../game/js/scoreManager.js?v=20261122-0069';
-import { getPlacementError } from '../game/js/placementRules.js?v=20261122-0069';
+import '../game/js/difficultyExtensions.js?v=20261122-0070';
+import { GameState } from '../game/js/gameState.js?v=20261122-0070';
+import { CardManager } from '../game/js/cardManager.js?v=20261122-0070';
+import { TurnManager } from '../game/js/turnManager.js?v=20261122-0070';
+import { ScoreManager } from '../game/js/scoreManager.js?v=20261122-0070';
+import { getPlacementError } from '../game/js/placementRules.js?v=20261122-0070';
 import { observeMaster, createMasterPolicy } from './master-policy.mjs';
 
 export async function loadMasterRules() {
@@ -29,7 +29,7 @@ function checkSubset(selected, allowed, min, max) {
     for (const item of selected) assert.ok(allowed.includes(item), '候補外の選択');
 }
 
-export function playMaster(seed, { catalog, scorer }, decide, trace = null) {
+export function playMaster(seed, { catalog, scorer }, decide, trace = null, captureObservation = null) {
     const state = new GameState();
     state.difficulty = 'int';
     const cards = new CardManager();
@@ -42,6 +42,7 @@ export function playMaster(seed, { catalog, scorer }, decide, trace = null) {
     function ask() {
         const obs = observeMaster(turns);
         assert.ok(obs, '判断が必要な局面');
+        captureObservation?.(obs);
         const answer = decide(obs);
         counts[answer.kind] = (counts[answer.kind] || 0) + 1;
         if (trace) {
@@ -74,9 +75,13 @@ export function playMaster(seed, { catalog, scorer }, decide, trace = null) {
                 break;
             }
             assert.ok(state.trainingRefreshRemaining > 0 && candidates.length > 0, 'リフレッシュ条件');
-            candidates = cards.refreshTrainingCards(offer.rarity, candidates, offer.offerCount);
-            state.trainingRefreshRemaining--;
-            if (outing) outing.candidates = candidates;
+            if (outing) {
+                candidates = turns.refreshOutingCandidates();
+                assert.ok(Array.isArray(candidates), '外出の候補を更新');
+            } else {
+                candidates = cards.refreshTrainingCards(offer.rarity, candidates, offer.offerCount);
+                state.trainingRefreshRemaining--;
+            }
         }
     }
 

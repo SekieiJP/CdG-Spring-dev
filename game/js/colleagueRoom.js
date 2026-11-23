@@ -1,4 +1,4 @@
-import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0069';
+import { resultRulesEpoch } from './resultPresentation.js?v=20261122-0070';
 
 const DIFFICULTIES = ['fresh', 'pro', 'int'];
 const FIRST_CODE = 10_000_000;

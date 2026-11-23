@@ -1,12 +1,12 @@
-import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261122-0069';
-import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261122-0069';
-import { recommendProStatus } from './ahiruProAdvice.js?v=20261122-0069';
-import { snapshotCards } from './battleReplay.js?v=20261122-0069';
-import { projectFreshAdviceState } from './ahiruFreshForecast.js?v=20261122-0069';
-import { projectProAdviceState } from './ahiruProForecast.js?v=20261122-0069';
-import { getFreshSGoals } from './ahiruFreshGoals.js?v=20261122-0069';
-import { getProSGoals } from './ahiruProGoals.js?v=20261122-0069';
-import { createAhiruRoleInspector } from './ahiruCardRoles.js?v=20261122-0069';
+import { createAdvisorObservation } from './acquisitionAdvisor.js?v=20261122-0070';
+import { recommendFreshStatus } from './ahiruFreshAdvice.js?v=20261122-0070';
+import { recommendProStatus } from './ahiruProAdvice.js?v=20261122-0070';
+import { snapshotCards } from './battleReplay.js?v=20261122-0070';
+import { projectFreshAdviceState } from './ahiruFreshForecast.js?v=20261122-0070';
+import { projectProAdviceState } from './ahiruProForecast.js?v=20261122-0070';
+import { getFreshSGoals } from './ahiruFreshGoals.js?v=20261122-0070';
+import { getProSGoals } from './ahiruProGoals.js?v=20261122-0070';
+import { createAhiruRoleInspector } from './ahiruCardRoles.js?v=20261122-0070';
 
 const AXES = ['experience', 'enrollment', 'satisfaction', 'accounting'];
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
