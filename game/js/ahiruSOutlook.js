@@ -64,12 +64,13 @@ export function estimateSOutlook(observation, phase) {
         shortfall: scene.shortfall };
 }
 
-export function withSOutlook(status, outlook) {
+export function withSOutlook(status, outlook, ending = '。') {
     if (!status || !outlook) return status;
     const label = LABELS[outlook.shortfall];
-    const warning = outlook.tone === 'red' ? `${label}が不足。 ` : `${label}が不足気味。 `;
+    const concern = `${label}が${outlook.tone === 'red' ? '不足' : '不足気味'}`;
+    const warning = `${concern}。 `;
     const alreadyWarns = status.text.includes(`${label}が不足`) || status.text.includes(`${label}が心配`);
     const text = outlook.tone === 'green' || alreadyWarns ? status.text
-        : Array.from(warning + status.text).length <= 25 ? warning + status.text : warning.trim();
+        : Array.from(warning + status.text).length <= 25 ? warning + status.text : concern + ending;
     return { ...status, tone: outlook.tone, text, outlook };
 }

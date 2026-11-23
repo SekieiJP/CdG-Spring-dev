@@ -2,7 +2,7 @@
 const FACES=Object.freeze({red:{file:'worried.svg',name:'心配'},yellow:{file:'notice.svg',name:'気づき'},green:{file:'happy.svg',name:'順調'}});
 let nextId=0;
 export class AhiruAdviceView {
-    constructor(statusPanel,{assetBase=new URL('../data/ahiru/',import.meta.url).href}={}) {
+    constructor(statusPanel,{assetBase=new URL('../data/ahiru/',import.meta.url).href,onToggle=()=>{}}={}) {
         if(!statusPanel?.parentNode)throw new Error('パラメータ欄が必要です');
         const doc=statusPanel.ownerDocument;
         this.host=doc.createElement('div');
@@ -26,14 +26,22 @@ export class AhiruAdviceView {
         statusPanel.insertAdjacentElement('afterend',this.host);
         this.assetBase=assetBase.endsWith('/')?assetBase:assetBase+'/';
         this.open=false;this.disposed=false;
-        this.onClick=()=>{this.open=!this.open;this.updateExpanded();};
+        this.headerButtons=doc.querySelector('#full-header .header-buttons');
+        this.onClick=()=>{this.open=!this.open;this.updateExpanded();onToggle();};
         this.button.addEventListener('click',this.onClick);
         this.updateExpanded();
+    }
+    setActionLayout(active) {
+        if (!this.headerButtons || active === this.actionLayout) return;
+        this.actionLayout = active;
+        this.host.classList.toggle('ahiru-advice--action', active);
+        (active ? this.headerButtons : this.host).prepend(this.button);
     }
     updateExpanded() {
         this.button.setAttribute('aria-expanded',String(this.open));
         this.button.setAttribute('aria-label',`あひる先生のアドバイスを${this.open?'閉じる':'開く'}${this.tone?'・'+FACES[this.tone].name:''}`);
         this.speech.hidden=!this.open;
+        this.host.classList.toggle('ahiru-advice--open',this.open);
     }
     show({tone,text}) {
         if(this.disposed)throw new Error('破棄済みの表示です');
@@ -44,12 +52,14 @@ export class AhiruAdviceView {
         this.host.dataset.tone=tone;
         this.speech.textContent=text;
         this.host.hidden=false;
+        this.button.hidden=false;
         this.updateExpanded();
     }
-    hide() {this.host.hidden=true;}
+    hide() {this.host.hidden=true;this.button.hidden=true;}
     reset() {this.open=false;this.tone=null;this.speech.textContent='';this.hide();this.updateExpanded();}
     destroy() {
         this.button.removeEventListener('click',this.onClick);
+        this.button.remove();
         this.host.remove();this.disposed=true;
     }
 }

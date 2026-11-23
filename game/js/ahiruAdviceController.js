@@ -17,11 +17,17 @@ export class AhiruAdviceController {
     get calibration(){return this.models.get(this.ui.gameState.difficulty)?.calibration||null;}
     init(){
         const panel=document.getElementById('full-status-panel');if(!panel)return;
-        this.view=new AhiruAdviceView(panel);
+        this.view=new AhiruAdviceView(panel,{onToggle:()=>{
+            if(this.phase==='action')this.ui.mobileLayout?.schedule();
+        }});
         for(const difficulty of ['fresh','pro'])this.loadCalibration(difficulty);
         this.scheduleRefresh();
     }
-    setPhase(phase){this.phase=phase;if(!this.eligible())this.view?.hide();else this.scheduleRefresh();}
+    setPhase(phase){
+        this.phase=phase;
+        this.view?.setActionLayout(phase==='action');
+        if(!this.eligible())this.view?.hide();else this.scheduleRefresh();
+    }
     setDeleteMax(value){this.deleteMax=Math.max(0,Number(value)||0);this.scheduleRefresh();}
     scheduleRefresh(){
         if(!this.view||this.disposed||this.scheduled)return;this.scheduled=true;
@@ -120,7 +126,7 @@ export class AhiruAdviceController {
         const observation = { difficulty, turn, stats: snapshot.player, tokens: snapshot.tokens, owned,
             rankTable: opponent.definitions.ranks, mode: opponent.metadata.eventId ? 'event' : 'normal' };
         const speech = phase === 'action' ? { tone: 'yellow', text: '発動条件と配置順を確認するね' } : battleController.cpuAdvice();
-        const status = withSOutlook(speech, estimateSOutlook(observation, phase));
+        const status = withSOutlook(speech, estimateSOutlook(observation, phase), 'だね');
         this.opponentAdvice = { opponent, turn, phase, status };
         return status;
     }
