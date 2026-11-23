@@ -4,6 +4,8 @@ import { GameState } from '../../game/js/gameState.js?v=20261122-0070';
 import { CardManager } from '../../game/js/cardManager.js?v=20261122-0070';
 import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0070';
 import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0070';
+import { AhiruAdviceController } from '../../game/js/ahiruAdviceController.js?v=20261122-0070';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0070';
 import { createMasterAdvice } from '../../game/js/masterAdvice.js?v=20261122-0070';
 import { createMasterPolicy, observeMaster } from '../../solver/master-policy.mjs';
 import { loadMasterRules, playMaster, summarize } from '../../solver/master-benchmark.mjs';
@@ -76,6 +78,21 @@ test('講習の配置を下書きしても局面の助言と表情を保つ', ()
     state.removeFromHand(card);
     state.placeCard(card, 'teacher');
     assert.equal(advice(), before);
+});
+
+test('MASTERの対戦でも行動開始時に表情を判定し、演出中は更新しない', async () => {
+    const { state } = game();
+    const opponent = await createCpuReplay({ difficulty: 'int', seed: 'master-test', resources: {
+        cards: rules.catalog, ranks: rules.scorer.rankTable
+    } });
+    state.turn = 6;
+    state.phase = 'action';
+    state.battle = { kind: 'cpu', opponent };
+    const advisor = new AhiruAdviceController({ gameState: state, battleController: { cpuAdvice: () => null } });
+    const before = advisor.getOpponentAdvice();
+    assert.ok(before.outlook.probability >= 0 && before.outlook.probability <= 1);
+    state.battle.animation = { turn: state.turn, done: true };
+    assert.equal(advisor.getOpponentAdvice(), before);
 });
 
 test('外出先の不足提示・本部の担当者・講習中の削除上限を扱う', () => {
