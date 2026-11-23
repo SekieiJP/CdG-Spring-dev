@@ -2,19 +2,19 @@
  * Main - エントリーポイント
  * v20260320-2335: 難易度選択システム追加
  */
-import { Logger } from './logger.js?v=20261122-0069';
-import { GameState } from './gameState.js?v=20261122-0069';
-import { CardManager } from './cardManager.js?v=20261122-0069';
-import { TurnManager } from './turnManager.js?v=20261122-0069';
-import { ScoreManager } from './scoreManager.js?v=20261122-0069';
-import { UIController } from './uiController.js?v=20261122-0069';
-import { SaveManager } from './saveManager.js?v=20261122-0069';
-import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0069';
-import { getDifficultyConfig, registerDifficulty } from './difficultyConfig.js?v=20261122-0069';
-import { getEventDefinition } from './eventManager.js?v=20261122-0069';
-import './difficultyExtensions.js?v=20261122-0069';
+import { Logger } from './logger.js?v=20261122-0070';
+import { GameState } from './gameState.js?v=20261122-0070';
+import { CardManager } from './cardManager.js?v=20261122-0070';
+import { TurnManager } from './turnManager.js?v=20261122-0070';
+import { ScoreManager } from './scoreManager.js?v=20261122-0070';
+import { UIController } from './uiController.js?v=20261122-0070';
+import { SaveManager } from './saveManager.js?v=20261122-0070';
+import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0070';
+import { getDifficultyConfig, registerDifficulty } from './difficultyConfig.js?v=20261122-0070';
+import { getEventDefinition } from './eventManager.js?v=20261122-0070';
+import './difficultyExtensions.js?v=20261122-0070';
 
-const CACHE_BUSTER = 'v20261122-0069';
+const CACHE_BUSTER = 'v20261122-0070';
 
 // ビルドバージョンをグローバルに公開
 window.BUILD_VERSION = CACHE_BUSTER;

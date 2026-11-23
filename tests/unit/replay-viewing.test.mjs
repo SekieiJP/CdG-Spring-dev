@@ -3,18 +3,18 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { gzipSync, gunzipSync } from 'node:zlib';
-import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0069';
-import { encodeReplay, decodeReplay } from '../../game/js/replayCodec.js?v=20261122-0069';
-import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from '../../game/js/replayViewing.js?v=20261122-0069';
-import { analyzeReplayScene } from '../../game/js/replaySceneAnalysis.js?v=20261122-0069';
-import { GameState } from '../../game/js/gameState.js?v=20261122-0069';
-import { CardManager } from '../../game/js/cardManager.js?v=20261122-0069';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0069';
-import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0069';
-import { startReplayRecording, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from '../../game/js/replayRecorder.js?v=20261122-0069';
-import { UIController } from '../../game/js/uiController.js?v=20261122-0069';
-import { createEventState, getEventDefinition } from '../../game/js/eventManager.js?v=20261122-0069';
-import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from '../../game/js/cpuEventRuntime.js?v=20261122-0069';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0070';
+import { encodeReplay, decodeReplay } from '../../game/js/replayCodec.js?v=20261122-0070';
+import { replayScenes, sceneAnalysisSource, sceneAnalysisInput } from '../../game/js/replayViewing.js?v=20261122-0070';
+import { analyzeReplayScene } from '../../game/js/replaySceneAnalysis.js?v=20261122-0070';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0070';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0070';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0070';
+import { ScoreManager } from '../../game/js/scoreManager.js?v=20261122-0070';
+import { startReplayRecording, captureReplayTrainingChoice, completeReplayAction, finalizeReplayRecording } from '../../game/js/replayRecorder.js?v=20261122-0070';
+import { UIController } from '../../game/js/uiController.js?v=20261122-0070';
+import { createEventState, getEventDefinition } from '../../game/js/eventManager.js?v=20261122-0070';
+import { prepareCpuEventTurn, finishCpuEventTraining, resolveCpuEventEffects } from '../../game/js/cpuEventRuntime.js?v=20261122-0070';
 
 const entryPage = await readFile(new URL('../../game/index.html', import.meta.url), 'utf8');
 const [, build] = entryPage.match(/js\/main\.js\?v=(\d{8}-\d{4})/);
@@ -217,7 +217,8 @@ test('MASTERの操作列で本部の効果と講習の補充・捨て札・最�
         assert.deepEqual(outing, canonical(record.turns[index].outing));
     }
     const scenes = replayScenes(restored);
-    const headquarters = scenes.find(scene => scene.kind === 'outing-staff');
+    const headquarters = scenes.find(scene => scene.kind === 'outing-staff'
+        || scene.kind === 'outing-card' && restored.turns[scene.turn].outing.automatic);
     assert.ok(headquarters);
     assert.deepEqual(headquarters.stats, restored.turns[headquarters.turn].outing.after.player);
     const decision = await analyzeReplayScene(sceneAnalysisSource(restored, headquarters), sceneAnalysisInput(headquarters));

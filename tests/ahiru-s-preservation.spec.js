@@ -1,5 +1,5 @@
 import {test,expect} from './fixtures.js';
-for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}は現在Sなら注意表示とし、空配置で残り3ターンもSを保てる`,async({page})=>{
+for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}はS到達見込みが85%以上なら緑を表示し、空配置で残り3ターンもSを保てる`,async({page})=>{
     await page.clock.pauseAt(new Date('2026-08-20T03:00:01Z'));await page.goto('/');
     if(difficulty==='pro')await page.click('.difficulty-btn[data-difficulty="pro"]');
     await page.click('#start-game');await page.waitForSelector('#training-cards .card');
@@ -13,7 +13,8 @@ for(const difficulty of ['pro','fresh'])test(`${difficulty.toUpperCase()}は現�
         g.uiController.showTrainingPhase();
     },difficulty);
     await expect.poll(()=>page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice?.outlookReason)).toBe('current-s-protect');
-    await expect(page.locator('.ahiru-advice')).toHaveAttribute('data-tone','yellow');
+    expect(await page.evaluate(()=>window.game.uiController.ahiruAdvice.lastAdvice.outlook.probability)).toBeGreaterThanOrEqual(0.85);
+    await expect(page.locator('.ahiru-advice')).toHaveAttribute('data-tone','green');
     await page.clock.runFor(1850);await expect(page.locator('.turn-overlay')).toHaveCount(0);
     const face=page.locator('.ahiru-advice__face');if(await page.evaluate(()=>navigator.maxTouchPoints>0))await face.tap();else await face.click();
     await expect(page.locator('.ahiru-advice__speech')).not.toContainText('不足');

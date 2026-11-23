@@ -1,9 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { GameState } from '../../game/js/gameState.js?v=20261122-0069';
-import { CardManager } from '../../game/js/cardManager.js?v=20261122-0069';
-import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0069';
-import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0069';
+import { GameState } from '../../game/js/gameState.js?v=20261122-0070';
+import { CardManager } from '../../game/js/cardManager.js?v=20261122-0070';
+import { TurnManager } from '../../game/js/turnManager.js?v=20261122-0070';
+import { getPlacementError } from '../../game/js/placementRules.js?v=20261122-0070';
+import { AhiruAdviceController } from '../../game/js/ahiruAdviceController.js?v=20261122-0070';
+import { createCpuReplay } from '../../game/js/cpuOpponent.js?v=20261122-0070';
+import { createMasterAdvice } from '../../game/js/masterAdvice.js?v=20261122-0070';
 import { createMasterPolicy, observeMaster } from '../../solver/master-policy.mjs';
 import { loadMasterRules, playMaster, summarize } from '../../solver/master-benchmark.mjs';
 
@@ -62,6 +65,36 @@ test('講習の途中配置から同名カードを区別して合法な完成�
     assert.ok(Object.values(state.player.placed).flat().some(card => card.category === '教務'));
 });
 
+test('講習の配置を下書きしても局面の助言と表情を保つ', () => {
+    const { state, cards, turns } = game();
+    state.turn = 6;
+    state.phase = 'action';
+    state.addToHand({ ...cards.getCardByNo(42) });
+    state.addToHand({ ...cards.getCardByNo(50) });
+    const advice = createMasterAdvice({ turnManager: turns, cardManager: cards, scoreManager: rules.scorer });
+    const before = advice();
+    assert.ok(before.status.outlook.probability >= 0 && before.status.outlook.probability <= 1);
+    const card = state.player.hand.at(0);
+    state.removeFromHand(card);
+    state.placeCard(card, 'teacher');
+    assert.equal(advice(), before);
+});
+
+test('MASTERの対戦でも行動開始時に表情を判定し、演出中は更新しない', async () => {
+    const { state } = game();
+    const opponent = await createCpuReplay({ difficulty: 'int', seed: 'master-test', resources: {
+        cards: rules.catalog, ranks: rules.scorer.rankTable
+    } });
+    state.turn = 6;
+    state.phase = 'action';
+    state.battle = { kind: 'cpu', opponent };
+    const advisor = new AhiruAdviceController({ gameState: state, battleController: { cpuAdvice: () => null } });
+    const before = advisor.getOpponentAdvice();
+    assert.ok(before.outlook.probability >= 0 && before.outlook.probability <= 1);
+    state.battle.animation = { turn: state.turn, done: true };
+    assert.equal(advisor.getOpponentAdvice(), before);
+});
+
 test('外出先の不足提示・本部の担当者・講習中の削除上限を扱う', () => {
     const { state, cards, turns } = game();
     state.turn = 2;
@@ -78,9 +111,10 @@ test('外出先の不足提示・本部の担当者・講習中の削除上限�
     turns.beginOuting('headquarters');
     state.ruleState.int.outing.candidates = [{ ...cards.getCardByNo(46) }];
     turns.selectOutingCard(state.ruleState.int.outing.candidates[0]);
-    turns.confirmOutingCards();
-    const staff = decide(observeMaster(turns));
-    assert.ok(turns.selectOutingStaff(staff.staff).action.applied);
+    const effect = turns.confirmOutingCards();
+    assert.equal(effect.staffId, 'leader');
+    assert.ok(effect.action.applied);
+    assert.equal(turns.selectOutingStaff('leader'), null);
     state.turn = 6;
     state.phase = 'meeting';
     const discarded = state.player.deck.shift();
@@ -91,6 +125,22 @@ test('外出先の不足提示・本部の担当者・講習中の削除上限�
     assert.ok(scene.cards.some(card => card.instanceId === discarded.instanceId));
     assert.equal(scene.max, 1);
     assert.ok(decide(scene).ids.length <= 1);
+});
+
+test('本部の公開模試は効果が異なる担当者だけ提示し、職種違反とコスト不足を拒否する', () => {
+    const { state, cards, turns } = game();
+    state.turn = 2;
+    state.phase = 'outing';
+    state.player.accounting = 2;
+    turns.beginOuting('headquarters');
+    const card = { ...cards.getCardByNo(45) };
+    state.ruleState.int.outing.candidates = [card];
+    turns.selectOutingCard(card);
+    assert.deepEqual(turns.confirmOutingCards().staffIds, ['leader', 'teacher']);
+    assert.equal(turns.selectOutingStaff('staff'), null);
+    state.player.accounting = 1;
+    assert.equal(turns.selectOutingStaff('leader'), null);
+    assert.equal(turns.selectOutingStaff('teacher').action.applied, true);
 });
 
 test('評価器は候補外の取得と必須削除の見送りを失敗として扱う', () => {

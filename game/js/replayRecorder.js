@@ -219,12 +219,13 @@ export function captureReplayOutingChoice(state, candidates, selected) {
     turn.outing.choice = snapshotReplayState(state, { decision: true });
 }
 
-export function captureReplayOutingEffect(state, staffId, card, action) {
+export function captureReplayOutingEffect(state, staffId, card, action, automatic = false) {
     const turn = currentTurn(state);
     if (!turn?.outing) return;
     turn.outing.staffId = staffId;
     turn.outing.cardId = rememberCard(state.replayRecord, card);
     turn.outing.effect = structuredClone(action);
+    if (automatic) turn.outing.automatic = true;
 }
 
 export function completeReplayTurn(state) {

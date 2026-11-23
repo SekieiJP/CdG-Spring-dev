@@ -56,7 +56,7 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
     await expect(page.locator(choices)).toHaveCount(4);
     await expect(page.locator(choices).locator('.rarity-SR')).toHaveCount(4);
     await expect(page.locator('#training-refresh-count')).toHaveText('残り3回');
-    await expect.poll(() => page.evaluate(() => window.game.uiController.acquisitionAssist.context?.advice.version)).toBe('master-v2');
+    await expect.poll(() => page.evaluate(() => window.game.uiController.acquisitionAssist.context?.advice.version)).toBe('master-v3');
     await page.clock.runFor(5100);
     await expect(page.locator('#training-area .acquisition-recommended').first()).toBeVisible();
     expect(await page.evaluate(() => window.game.uiController.ahiruAdvice.lastAdvice?.text)).toBeTruthy();
@@ -104,20 +104,40 @@ test('MASTERを完走し、外出の途中から再開して旧INTの記録を�
     await expect(page.locator('[data-outing-place="neighbor"]')).toContainText('SRカード 4枚から1枚獲得');
     await page.locator('[data-outing-place="headquarters"]').click();
     await expect(page.locator('.int-outing-card')).toHaveCount(4);
+    const { manual, owned } = await page.evaluate(() => {
+        const game = window.game;
+        const candidate = game.gameState.ruleState.int.outing.candidates[0];
+        return { manual: game.turnManager.getHeadquartersStaffOptions(candidate).requiresChoice,
+            owned: game.gameState.getOwnedCards().length };
+    });
+    const observeAnimation = () => page.evaluate(() => {
+        const ui = window.game.uiController;
+        const render = ui.showStatusAnimation.bind(ui);
+        ui.showStatusAnimation = (...args) => {
+            if (args[3]?.outing) window.headquartersAnimation = args[3].outing.action.turn;
+            return render(...args);
+        };
+    });
+    await observeAnimation();
     await page.locator('.int-outing-card').first().click();
     await page.locator('#confirm-outing').click();
     const staffChoices = page.locator('[data-outing-staff]');
-    await expect(staffChoices.first()).toBeVisible();
-    const staffLabels = await staffChoices.allTextContents();
-    await page.reload();
-    await expect(staffChoices).toHaveText(staffLabels);
-    const ownedBefore = await page.evaluate(() => window.game.gameState.getOwnedCards().length);
-    await staffChoices.first().click();
+    if (manual) {
+        await expect(staffChoices.first()).toBeVisible();
+        const staffLabels = await staffChoices.allTextContents();
+        await page.reload();
+        await expect(staffChoices).toHaveText(staffLabels);
+        await observeAnimation();
+        await prepare(page);
+        await staffChoices.first().click();
+    } else {
+        await expect(staffChoices).toHaveCount(0);
+    }
+    await expect.poll(() => page.evaluate(() => window.headquartersAnimation)).toBe(5);
+    await expect(page.locator('#action-area')).toBeVisible();
     expect(await page.evaluate(() => window.game.gameState.playRecord.events
         .filter(event => event.turn === 5 && event.type === 'resolve'))).toHaveLength(1);
-    await expect(page.locator('.turn-overlay-week')).toHaveText('春期1日目');
-    await expect(page.locator('#action-area')).toBeVisible();
-    expect(await page.evaluate(() => window.game.gameState.getOwnedCards().length)).toBe(ownedBefore);
+    expect(await page.evaluate(() => window.game.gameState.getOwnedCards().length)).toBe(owned);
     await prepare(page);
 
     await expect(page.locator('#hand-cards .card')).toHaveCount(3);

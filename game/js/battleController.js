@@ -1,10 +1,10 @@
-import { getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0069';
-import { decodeReplay } from './replayCodec.js?v=20261122-0069';
-import { getCurrentEvent } from './eventManager.js?v=20261122-0069';
-import { cpuTrainingAdvice, cpuMeetingAdvice, masterOpponentAdvice } from './battleAdvice.js?v=20261122-0069';
+import { getDifficultyConfig, getDifficultyDisplayName } from './difficultyConfig.js?v=20261122-0070';
+import { decodeReplay } from './replayCodec.js?v=20261122-0070';
+import { getCurrentEvent } from './eventManager.js?v=20261122-0070';
+import { cpuTrainingAdvice, cpuMeetingAdvice, masterOpponentAdvice } from './battleAdvice.js?v=20261122-0070';
 import { BATTLE_STATS, validateBattleReplay, opponentSnapshot, opponentDeck, opponentFrames,
-    interimScore, battleSummary } from './battleReplay.js?v=20261122-0069';
-import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261122-0069';
+    interimScore, battleSummary } from './battleReplay.js?v=20261122-0070';
+import { createRoomCode, hasStartedRoom, parseRoomCode } from './colleagueRoom.js?v=20261122-0070';
 
 const LABELS = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
 const ANIMATION_STATS = { experience: 'exp', enrollment: 'enr', satisfaction: 'sat', accounting: 'acc' };

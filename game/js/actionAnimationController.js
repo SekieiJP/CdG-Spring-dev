@@ -1,4 +1,4 @@
-import { AnimationClock } from './animationClock.js?v=20261122-0069';
+import { AnimationClock } from './animationClock.js?v=20261122-0070';
 /** 確定した解決結果を表示する。通常のカード効果はここでは再適用しない。 */
 export class ActionAnimationController {
     constructor(ui) {
@@ -8,14 +8,14 @@ export class ActionAnimationController {
         this.scoreManager = ui.scoreManager;
         this.clock = new AnimationClock();
     }
-    async showStatusAnimation(beforeStats, afterStats, actionInfo) {
+    async showStatusAnimation(beforeStats, afterStats, actionInfo, { outing = null } = {}) {
         const overlay = document.getElementById('status-animation-overlay');
         const header = document.getElementById('animation-header');
         const cards = document.getElementById('animation-cards');
 
         if (!overlay || !header || !cards) {
             // 演出要素がなければスキップして次へ進む
-            await this.ui.finishActionPhase();
+            if (!outing) await this.ui.finishActionPhase();
             return;
         }
 
@@ -43,12 +43,13 @@ export class ActionAnimationController {
             cards.innerHTML = '';
 
             // 演出シーケンス
-            const config = this.turnManager.getCurrentTurnConfig();
-            const placed = this.gameState.player.placed;
+            const turn = outing?.action.turn ?? this.gameState.turn;
+            const config = outing ? this.turnManager.getTurnConfigs()[turn] : this.turnManager.getCurrentTurnConfig();
+            const placed = outing ? { [outing.staffId]: [outing.selectedCard] } : this.gameState.player.placed;
 
             // ターン情報表示
             await this._sleep(300);
-            header.innerHTML = `${this.gameState.turn + 1}/${this.gameState.totalTurns}ターン ${config.week}`;
+            header.innerHTML = `${turn + 1}/${this.gameState.totalTurns}ターン ${config.week}${outing ? '・本部' : ''}`;
 
             // おすすめ行動表示
             if (config.recommended) {
@@ -78,7 +79,7 @@ export class ActionAnimationController {
             const staffNames = this.gameState.staffNames;
 
             for (const staff of staffOrder) {
-                const staffCards = placed[staff]; // 配列
+                const staffCards = placed[staff] || [];
                 const cardEffectInfo = actionInfo?.cardEffects?.[staff];
                 if (staffCards.length === 0 || !cardEffectInfo) continue;
 
@@ -129,9 +130,11 @@ export class ActionAnimationController {
             }
 
             // カード効果に続けて、同じ画面・同じ体裁で塾アイテム効果を表示する。
-            await this.ui.resolveEventActionEffects({ overlay, header, cards, currentStats });
-            eventEffectsResolved = true;
-            await this.ui.battleController?.playOpponentAction();
+            if (!outing) {
+                await this.ui.resolveEventActionEffects({ overlay, header, cards, currentStats });
+                eventEffectsResolved = true;
+                await this.ui.battleController?.playOpponentAction();
+            }
 
             // 演出終了（📊行動結果ステップを除去）
             await this._sleep(500);
@@ -140,7 +143,7 @@ export class ActionAnimationController {
             document.removeEventListener('click', advance, true);
             document.removeEventListener('keydown', advance, true);
             this.clock.finish();
-            await this.ui.finishActionPhase({ eventEffectsResolved });
+            if (!outing) await this.ui.finishActionPhase({ eventEffectsResolved });
         }
     }
 

@@ -55,4 +55,8 @@
     border-bottom:1px solid #6B7280;
 }
 
+.ahiru-advice--action {min-height:0;}
+.ahiru-advice--action:not(.ahiru-advice--open),.ahiru-advice__face[hidden] {display:none;}
+.ahiru-advice--action .ahiru-advice__speech::before {display:none;}
+
 .font-normal .ahiru-advice__speech {font-size:14px;}

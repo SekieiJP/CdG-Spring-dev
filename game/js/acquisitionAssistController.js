@@ -1,5 +1,5 @@
-import { createAdvisorObservation, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261122-0069';
-import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261122-0069';
+import { createAdvisorObservation, supportsAcquisitionAdvice } from './acquisitionAdvisor.js?v=20261122-0070';
+import {explainAcquisitionCandidates} from './acquisitionExplanation.js?v=20261122-0070';
 
 /** 設定・5秒の提示期限・候補DOMだけを管理する。選択やゲーム進行は行わない。 */
 export class AcquisitionAssistController {

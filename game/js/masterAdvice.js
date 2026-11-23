@@ -1,73 +1,73 @@
-import { createMasterPolicy, observeMaster } from './masterPolicy.js?v=20261122-0069';
+import { createMasterPolicy, observeMaster, MASTER_PLAY_POLICY, MASTER_POLICY_VERSION } from './masterPolicy.js?v=20261122-0070';
+import { createAhiruRoleInspector } from './ahiruCardRoles.js?v=20261122-0070';
+import { estimateSOutlook, withSOutlook } from './ahiruSOutlook.js?v=20261122-0070';
 
-export function createMasterAdvice({ gameState, turnManager, cardManager, scoreManager }) {
-    const decide = createMasterPolicy({ catalog: cardManager.allCards, scorer: scoreManager });
-    let previousKey, previousMove;
+const AXES = { experience: '体験', enrollment: '入塾', satisfaction: '満足', accounting: '経理' };
+
+export function createMasterAdvice({ turnManager, cardManager, scoreManager }) {
+    const decide = createMasterPolicy({ catalog: cardManager.allCards, scorer: scoreManager, ...MASTER_PLAY_POLICY });
+    let previousKey, previousScene;
     return () => {
         const observation = observeMaster(turnManager);
         if (!observation) return null;
         const { config, ...visible } = observation;
+        if (visible.hand) visible.hand = [...visible.hand].sort((a, b) => a.instanceId.localeCompare(b.instanceId));
         const key = JSON.stringify(visible);
         if (key !== previousKey) {
-            previousMove = decide(observation);
+            const move = decide(observation);
+            const phase = observation.kind === 'delete' ? 'meeting' : observation.kind === 'place' ? 'action'
+                : observation.kind === 'outing' || observation.offer?.id || observation.kind === 'staff' ? 'outing' : 'training';
+            const outlook = estimateSOutlook({ ...observation, difficulty: 'int', rankTable: scoreManager.rankTable }, phase);
+            const status = withSOutlook(describeMasterDecision(observation, move, outlook?.shortfall), outlook);
+            const acquisition = observation.kind === 'acquire' ? {
+                version: MASTER_POLICY_VERSION,
+                recommended: { indices: move.indices || [], skip: move.kind === 'acquire' && !move.indices.length },
+                refresh: move.kind === 'refresh'
+            } : null;
+            previousScene = { observation, move, status, acquisition };
             previousKey = key;
         }
-        const move = previousMove;
-        const status = describeMasterDecision(observation, move, gameState.player.placed);
-        const acquisition = observation.kind === 'acquire' ? {
-            version: 'master-v2',
-            recommended: { indices: move.indices || [], skip: move.kind === 'acquire' && !move.indices.length },
-            refresh: move.kind === 'refresh'
-        } : null;
-        return { observation, move, status, acquisition };
+        return previousScene;
     };
 }
 
-export function describeMasterDecision(observation, move, placed = {}) {
-    const status = (tone, text, reason = text) => ({ tone, text, reason });
-    const slotName = id => observation.config.slots.find(slot => slot.id === id)?.name;
+export function describeMasterDecision(observation, move, shortfall) {
+    const status = (text, reason = text) => ({ tone: 'yellow', text, reason });
+    const { config, stats, turn } = observation;
+    const day = config.turns[turn];
     switch (move.kind) {
     case 'refresh':
-        return status('yellow', '候補をリフレッシュしよう', 'いまの候補では欲しい役割を補いにくいので、残りのリフレッシュを使うよ。');
+        return status('リフレッシュで候補を見直そう');
     case 'acquire': {
         if (!move.indices.length) return observation.offer.allowSkip
-            ? status('yellow', '今回は発想研修を見送ろう', '候補を加えず、いまのデッキを回しやすくするよ。')
-            : status('green', '候補がないので次へ進もう');
-        const names = move.indices.map(index => observation.cards[index].cardName);
-        const headquarters = observation.offer.id === 'headquarters';
-        const verb = headquarters ? '使おう' : '選ぼう';
-        const text = names.length === 1 && Array.from(names[0]).length <= 17 ? `「${names[0]}」を${verb}`
-            : `おすすめの${names.length}枚を${verb}`;
-        return status('green', text, headquarters
-            ? `「${names.join('」「')}」を本部で使うよ。今のパラメータで見込める効果を重視したよ。`
-            : `「${names.join('」「')}」を選ぶよ。今のパラメータとデッキの役割を見て決めたよ。`);
+            ? status('今回は発想研修を見送ろう', 'デッキを増やさず、所持カードを引きやすく保とう。')
+            : status('候補がないので次へ進もう');
+        const selected = move.indices.map(index => observation.cards[index]);
+        const inspector = createAhiruRoleInspector({ ...observation,
+            totalTurns: observation.offer.id === 'headquarters' ? turn + 1 : config.turns.length }, stats);
+        const priority = [...new Set([shortfall, 'experience', 'accounting', 'enrollment', 'satisfaction'].filter(Boolean))];
+        const axis = priority.find(key => selected.some(card => inspector.canRecover(card, key, stats[key] + 1)));
+        if (axis) return status(`${AXES[axis]}を伸ばせる効果に注目しよう`);
+        if (selected.some(card => inspector.supportsHand(card))) return status('手数を増やせる効果に注目しよう');
+        return status('今の条件で発動する効果を見よう');
     }
-    case 'outing': {
-        const name = observation.options.find(option => option.id === move.place).name;
-        return status('green', `${name}へ行こう`, `行き先は${name}がおすすめ。今のパラメータと各行き先で得られる効果を比べたよ。`);
-    }
+    case 'outing':
+        return move.place === 'headquarters' ? status('外出先で得られる即効性に注目しよう')
+            : status('講習で繰り返し使える札を探そう');
     case 'staff':
-        return status('green', `${slotName(move.staff)}で実行しよう`);
-    case 'delete': {
-        const names = move.ids.map(id => observation.cards.find(card => card.instanceId === id)?.cardName).filter(Boolean);
-        if (!names.length) return status('green', '今回は削除せず次へ進もう');
-        const text = names.length === 1 && Array.from(names[0]).length <= 15 ? `「${names[0]}」の削除がおすすめ` : `${names.length}枚削除してデッキを整えよう`;
-        return status('yellow', text, `「${names.join('」「')}」を削除して、残したカードを引きやすくするよ。`);
-    }
-    case 'place': {
-        const plan = Object.fromEntries(observation.config.slots.map(slot => [slot.id, []]));
-        for (const step of move.moves) plan[step.staff].push(step.id);
-        for (const { id, name } of observation.config.slots) {
-            const ids = (placed[id] || []).map(card => card.instanceId);
-            const wrong = ids.findIndex((cardId, index) => cardId !== plan[id][index]);
-            if (wrong !== -1) return status('yellow', `${name}の配置を見直そう`);
-            const next = observation.hand.find(card => card.instanceId === plan[id][ids.length]);
-            if (next) {
-                const text = `「${next.cardName}」を${name}へ`;
-                return status('green', Array.from(text).length <= 25 ? text : `${name}におすすめのカードを置こう`, text);
-            }
+        return status('担当者で変わる追加効果を比べよう');
+    case 'delete':
+        return move.ids.length ? status('効果の小さい札を減らして回そう')
+            : status('このまま次に進もう');
+    case 'place':
+        if (day.spring) {
+            const saveCards = config.turns[turn + 1]?.spring && observation.activeCards - move.moves.length <= 3;
+            return status(saveCards ? '自動の教務で手札を残そう' : '自動の教務枠を活かそう',
+                '室長と講師の空き枠には基本の教務が入るよ。講習で使った札は講習終了まで戻らないよ。');
         }
-        return status('green', 'この配置で実行しよう');
-    }
+        if (turn >= 9) return status('入退差と退塾の得点を見よう');
+        return stats.enrollment + 4 >= stats.experience
+            ? status('体験を先に伸ばせる順を考えよう')
+            : status('コストを払える配置を選ぼう');
     }
 }

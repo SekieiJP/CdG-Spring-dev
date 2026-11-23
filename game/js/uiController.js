@@ -1,23 +1,23 @@
-import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261122-0069';
-import {FloatNotificationView} from './floatNotificationView.js?v=20261122-0069';
-import { bindCardInteraction } from './cardInteraction.js?v=20261122-0069';
-import { CardDrag } from './cardDrag.js?v=20261122-0069';
-import { MobileLayoutController } from './mobileLayoutController.js?v=20261122-0069';
-import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261122-0069';
-import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261122-0069';
-import { ResultController } from './resultController.js?v=20261122-0069';
-import { sortResultDeck } from './resultPresentation.js?v=20261122-0069';
-import { ActionAnimationController } from './actionAnimationController.js?v=20261122-0069';
-import { getDifficultyConfig, getDifficultyDisplayName, listDifficulties } from './difficultyConfig.js?v=20261122-0069';
-import { getPlacementError } from './placementRules.js?v=20261122-0069';
-import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261122-0069';
-import { getSharingPreference, sharingGrantId, showSharingSettings } from './sharingConsent.js?v=20261122-0069';
-import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261122-0069';
-import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0069';
-import { BattleController } from './battleController.js?v=20261122-0069';
-import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0069';
-import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261122-0069';
-import { ReplayViewingController } from './replayViewingController.js?v=20261122-0069';
+import { AhiruAdviceController } from './ahiruAdviceController.js?v=20261122-0070';
+import {FloatNotificationView} from './floatNotificationView.js?v=20261122-0070';
+import { bindCardInteraction } from './cardInteraction.js?v=20261122-0070';
+import { CardDrag } from './cardDrag.js?v=20261122-0070';
+import { MobileLayoutController } from './mobileLayoutController.js?v=20261122-0070';
+import { AcquisitionAssistController } from './acquisitionAssistController.js?v=20261122-0070';
+import { CardDetailVisibility } from './cardDetailVisibility.js?v=20261122-0070';
+import { ResultController } from './resultController.js?v=20261122-0070';
+import { sortResultDeck } from './resultPresentation.js?v=20261122-0070';
+import { ActionAnimationController } from './actionAnimationController.js?v=20261122-0070';
+import { getDifficultyConfig, getDifficultyDisplayName, listDifficulties } from './difficultyConfig.js?v=20261122-0070';
+import { getPlacementError } from './placementRules.js?v=20261122-0070';
+import { getOrCreateUserUUID } from './scoreSubmitter.js?v=20261122-0070';
+import { getSharingPreference, sharingGrantId, showSharingSettings } from './sharingConsent.js?v=20261122-0070';
+import { getCurrentEvent, getEventDefinition, getEventItem, createEventState, isEventActive, getOwnedCardCount, recordItemConditionMetTurn } from './eventManager.js?v=20261122-0070';
+import { startReplayRecording, captureReplayBoundary, captureReplayTrainingChoice, captureReplayEventEffect, completeReplayAction, finalizeReplayRecording } from './replayRecorder.js?v=20261122-0070';
+import { BattleController } from './battleController.js?v=20261122-0070';
+import { hasStartedRoom, recordRoomStart } from './colleagueRoom.js?v=20261122-0070';
+import { clearColleagueResult, renderColleagueResult } from './colleagueResult.js?v=20261122-0070';
+import { ReplayViewingController } from './replayViewingController.js?v=20261122-0070';
 
 const CARD_DETAILS_HELP = '<span class="card-details-help"><span class="card-details-touch">[長押しで詳細]</span><span class="card-details-mouse">[マウスオーバーで詳細]</span></span>';
 
@@ -2217,7 +2217,12 @@ export class UIController {
             this.updateIntOutingSelection(outing, option);
             this.acquisitionAssist.present();
         } else if (outing.stage === 'staff') {
-            if (instruction) instruction.textContent = 'スタッフを選ぶとカードをその場で使い、デッキには加えません。職種制限やコストを満たさない場合もカードを消費します。';
+            const { staffIds, requiresChoice } = this.turnManager.getHeadquartersStaffOptions(outing.selectedCard);
+            if (!requiresChoice) {
+                this.selectIntOutingStaff(staffIds[0], { automatic: true });
+                return;
+            }
+            if (instruction) instruction.textContent = '担当者によって効果が変わります。カードを使うスタッフを選んでください。';
             if (outing.selectedCard) {
                 const selected = this.createCardElement(outing.selectedCard, { compact: true });
                 selected.classList.add('int-outing-selected-card');
@@ -2225,7 +2230,7 @@ export class UIController {
             }
             const staffGrid = document.createElement('div');
             staffGrid.className = 'outing-staff-grid';
-            this.gameState.slots.forEach(slot => {
+            this.gameState.slots.filter(slot => staffIds.includes(slot.id)).forEach(slot => {
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = 'outing-staff-choice';
@@ -2281,20 +2286,37 @@ export class UIController {
         return first?.cardNo === second?.cardNo && first?.cardName === second?.cardName && first?.rarity === second?.rarity;
     }
 
-    selectIntOutingStaff(staffId) {
-        if (!this.turnManager.selectOutingStaff(staffId)) return;
-        this.updateStatusDisplay();
-        this.saveGameState();
-        this.routeIntPhase();
+    selectIntOutingStaff(staffId, options) {
+        const result = this.turnManager.selectOutingStaff(staffId, options);
+        if (result) return this.finishIntHeadquarters(result);
     }
 
     confirmIntOutingSelection() {
         const outing = this.gameState.ruleState.int?.outing;
         const picks = outing?.selectedCards;
         if (outing?.stage === 'card' && picks?.length) this.acquisitionAssist.recordChoice(picks);
-        if (!this.turnManager.confirmOutingCards()) return;
+        const result = this.turnManager.confirmOutingCards();
+        if (!result) return;
+        if (result.action) return this.finishIntHeadquarters(result);
         this.saveGameState();
         this.routeIntPhase();
+    }
+
+    async finishIntHeadquarters(result) {
+        const { action, staffId } = result;
+        const runId = this.gameState.runId;
+        if (this.isRestoring) await Promise.resolve();
+        if (this.gameState.runId !== runId) return;
+        this.saveGameState();
+        try {
+            await this.showStatusAnimation(action.beforeStats, action.afterStats,
+                { cardEffects: { [staffId]: { cards: [action] } } }, { outing: result });
+        } finally {
+            if (this.gameState.runId === runId) {
+                this.updateStatusDisplay();
+                this.routeIntPhase();
+            }
+        }
     }
 
     refreshIntOutingCandidates() {

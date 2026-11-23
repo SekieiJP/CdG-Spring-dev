@@ -13,6 +13,9 @@ test('390×844で8枚の通常手札とステータス・配置・実行ボタ�
         game.gameState.player.hand = Array.from({ length: 8 }, (_, index) => ({ ...game.cardManager.getBasicCards()[index % 5] }));
         game.uiController.renderHand();
     });
+    const face = page.locator('#full-header .ahiru-advice__face');
+    await expect(face).toBeVisible();
+    await expect(face).toHaveAttribute('aria-expanded', 'false');
     await expect.poll(() => page.locator('#hand-cards').evaluate(el => parseFloat(el.style.maxHeight) > 0)).toBe(true);
     await expect.poll(() => page.locator('#hand-cards').evaluate(el => el.scrollHeight <= el.clientHeight + 2)).toBe(true);
     const bounds = await page.locator('#confirm-action').boundingBox(); expect(bounds.y + bounds.height).toBeLessThanOrEqual(844);
